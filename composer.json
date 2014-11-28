@@ -1,0 +1,27 @@
+{
+    "name": "analogue/orm",
+    "description": "Analogue ORM",
+    "keywords": ["orm", "analogue", "datamapper", "data mapper", 
+    "entity", "repository", "mapper", "laravel", "l4", "l5"],
+    "homepage": "http://github.com/plateau-io/analogue",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rémi Collin",
+            "email": "remi@plateau.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.*|5.*",
+        "illuminate/database": "4.*|5.*",
+        "illuminate/events": "4.*|5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Analogue\\ORM\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable":true
+}
