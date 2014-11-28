@@ -1,19 +1,22 @@
 # Analogue ORM
 
-**Analogue** is a translation of the Eloquent ORM, but implemented as a Data Mapper. It aims to provide a flexible, decoupled and easy to use ORM for large application designs.
+**Analogue** is a port of the laravel's *Eloquent ORM*, implemented as a Data Mapper. It aims to provide a flexible, decoupled and easy to use ORM for large application designs.
 
 ##Main Features :
 
-* Extendable Repositories
+* Map SQL Database to database agnostic objects.
+* Store Entity as a 'root aggregate', saving related Entities on the fly. 
 * Make queries using the Fluent Query Builder
-* Lazy loading of relationships
-* Eager Loading (N+1)
+* Lazy loading of relationships via Proxy objects.
+* Eager Loading for solving the N+1 problem
 * Timestamps support
+* Soft Deletes
 * Polymorphic Relationships
 * Dynamic Relationships
-* Entity Events
-* Authentication Driver for Laravel.
-* Laravel 5 ready.
+* Flexible event system
+* Out of the box Authentication Driver for Laravel.
+* Easily Extendable
+
 
 ## Installation
 
@@ -42,6 +45,8 @@ If you're using facades, add this line to the aliases :
 
 ## Getting Started
 
+### Creating Entity Object
+
 First let's create a simple user Entity class :
 
 ```php
@@ -60,7 +65,11 @@ class User extends Entity {
 }
 ```
 
-Analogue's Entity objects are the equivalent of Eloquent objects, with the main difference that they have no interaction with the database at all. DB Queries takes place inside of repository object. You can either create your own repository classes by *extending the Analogue\ORM\Repository class*, or use a factory method to build a repository on the fly. Let's use the latter for now :
+Analogue's Entity objects are the equivalent of Eloquent objects, with the main difference that they have no interaction with the database at all. DB Queries takes place inside of a repository object. 
+
+### Repositories
+
+You can either create your own repository classes by *extending the Analogue\ORM\Repository class*, or use a factory method to build a repository on the fly. Let's use the latter for now :
 
 ```php
 
@@ -94,9 +103,6 @@ $user = $userRepository->paginate(50);
 
 	(coming soon)
 
-##Contributing
-
-	See contribution guidelines.
 
 ## Licence
 
