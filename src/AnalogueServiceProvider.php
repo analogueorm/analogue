@@ -22,8 +22,10 @@ class AnalogueServiceProvider extends ServiceProvider {
 	{
 		$this->extendAuthDriver();
 
-		Manager::registerPlugin(new TimestampsPlugin);
-		Manager::registerPlugin(new SoftDeletesPlugin);
+		$manager = $this->app->make('analogue');
+
+		$manager->registerPlugin(new TimestampsPlugin);
+		$manager->registerPlugin(new SoftDeletesPlugin);
 	}
 
 	/**
