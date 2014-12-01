@@ -3,7 +3,7 @@
     "description": "Analogue ORM, a data mapper for the Laravel Framework",
     "keywords": ["orm", "analogue", "datamapper", "data mapper", 
     "entity", "repository", "mapper", "laravel", "l4", "l5"],
-    "homepage": "http://github.com/plateau-io/analogue",
+    "homepage": "http://github.com/analogueorm/analogue",
     "license": "MIT",
     "authors": [
         {
