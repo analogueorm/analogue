@@ -1,4 +1,4 @@
-# Analogue ORM (BETA Release)
+# Analogue ORM 
 
 **Analogue** is a decoupled port of the laravel's *Eloquent ORM*, implemented 'a la' Data Mapper. It aims to provide a flexible, extendable and easy to use ORM for large application designs. 
 
