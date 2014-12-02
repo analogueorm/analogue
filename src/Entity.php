@@ -30,11 +30,21 @@ class Entity implements ArrayAccess, JsonableInterface, JsonSerializable, Arraya
 		return $this->attributes;
 	}
 
+	/**
+	 * Set the raw entity attributes
+	 * @param string $key  
+	 * @param string $value
+	 */
 	public function setEntityAttribute($key, $value)
 	{
 		$this->attributes[$key] = $value;
 	}
 
+	/**
+	 * Return the entity's attribute 
+	 * @param  string $key 
+	 * @return mixed
+	 */
 	public function getEntityAttribute($key)
 	{
 		if (! array_key_exists($key, $this->attributes))
