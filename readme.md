@@ -141,7 +141,8 @@ class Comment extends Entity {
 ```
 
 PostMap.php
-```
+```php
+
 namespace Acme\Posts;
 
 use Analogue\ORM\EntityMap;
@@ -152,7 +153,7 @@ class PostMap extends EntityMap
 
 	public function comments($entity)
 	{
-		return $this->hasMany('Acme\Comments\Comment');
+		return $this->hasMany($entity, 'Acme\Comments\Comment');
 	}
 
 }
