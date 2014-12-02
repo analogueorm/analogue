@@ -138,6 +138,7 @@ class Comment extends Entity {
 	}
 
 }
+```
 
 PostMap.php
 ```
