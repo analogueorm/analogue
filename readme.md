@@ -1,6 +1,11 @@
-# Analogue ORM
+# Analogue ORM (BETA Release)
 
-**Analogue** is a port of the laravel's *Eloquent ORM*, implemented as a Data Mapper. It aims to provide a flexible, decoupled and easy to use ORM for large application designs. The project started as an attempt to solve the 'Repository pattern dilemna', and evolved into a fully functionnal ORM build to work nicely over the Laravel Database Abstraction layer.
+**Analogue** is a decoupled port of the laravel's *Eloquent ORM*, implemented 'a la' Data Mapper. It aims to provide a flexible, extendable and easy to use ORM for large application designs. 
+
+The project started as an attempt to solve the 'Repository pattern dilemna' trying to decouple Eloquent in a Repository/Entity fashion, and evolved into a fully functionnal ORM build to work nicely over the Laravel Database Abstraction layer.
+
+It's not 'strictly' a data mapper, as the Domain objects extend an Entity class. It's a voluntary tradeoff, with the sole intention to reduce the boilerplate required in 'classic' datamappers, like getters & setters, array/json conversion, etc... 
+
 
 ##Main Features :
 
