@@ -10,7 +10,7 @@ It's not 'strictly' a data mapper, as the Domain objects extend an Entity class.
 ##Main Features :
 
 * Map SQL Database to database agnostic objects.
-* Store Entity as a 'root aggregate', saving related Entities on the fly. 
+* Store Entity & Relationships in one method call. 
 * Make queries using the Fluent Query Builder
 * Lazy loading of relationships via Proxy objects.
 * Eager Loading for solving the N+1 problem
@@ -18,6 +18,7 @@ It's not 'strictly' a data mapper, as the Domain objects extend an Entity class.
 * Soft Deletes
 * Polymorphic Relationships
 * Dynamic Relationships
+* Embeddable Value Objects
 * Flexible event system
 * Out of the box Authentication Driver for Laravel.
 * Easily Extendable
@@ -109,41 +110,7 @@ When you instantiate a repository for an Entity class, Analogue automatically cr
 
 However, if you need a more complex mapping, like adding relationships to other entities, defining a custom table name, using timestamps... you need to create an EntityMap class.
 
-Let's create a Post entity and a related Comment entity.
-
-Post.php :
-```php
-namespace Acme\Posts;
-
-use Analogue\ORM\Entity;
-
-class Post extends Entity {
-	
-	public function __construct($title, $content)
-	{
-		$this->title = $title;
-		$this->content = $content;
-	}
-
-}
-
-```
-
-Comment.php :
-```php
-namespace Acme\Comments;
-
-use Analogue\ORM\Entity;
-
-class Comment extends Entity {
-	
-	public function __construct($message)
-	{
-		$this->message = $message;
-	}
-
-}
-```
+Let's create a Post Mapping with timestamps support and add a relationship definition with a Comment entity :
 
 PostMap.php
 ```php
@@ -154,27 +121,16 @@ use Analogue\ORM\EntityMap;
 
 class PostMap extends EntityMap
 {
+	protected $table = 'posts';
+
 	protected $timestamps = true;
 
+	// Note that you always have to pass the entity as a parameter
 	public function comments($entity)
 	{
 		return $this->hasMany($entity, 'Acme\Comments\Comment');
 	}
 
-}
-
-```
-
-Like in *Eloquent*, the EntityMap class automagically guess the table name from the plural of the class name ('posts' in this case). You can override it by setting the corresponding attribute :
-
- ```php
-namespace Acme\Posts;
-
-use Analogue\ORM\EntityMap;
-
-class Post extends EntityMap
-{
-	protected $table='blogposts';
 }
 
 ```
@@ -194,9 +150,17 @@ Analogue::register('Acme\Posts\Post', 'Acme\Posts\PostMap');
 
 ## Working with relationships
 
-Let's take our previous *Post* class and add some code to manage Comments.
+Once you have mapped relationships inside of an EntityMap object, working with relationships is really straightforward, as Analogue deal with the complex database work for you. 
 
+Inside your domain logic, you work with Entities and Collections, and let the mapper makes the transformations both when querying & writing to the database.
+
+As an example, let's create a Post entity and a related Comment entity :
+
+Post.php :
 ```php
+namespace Acme\Posts;
+
+use Analogue\ORM\Entity;
 
 class Post extends Entity {
 	
@@ -204,7 +168,7 @@ class Post extends Entity {
 	{
 		$this->title = $title;
 		$this->content = $content;
-
+		
 		// Initialize comments as an empty collection object
 		$this->comments = new Collection;
 	}
@@ -213,14 +177,31 @@ class Post extends Entity {
 	{
 		$this->comments->add($comment);
 	}
-
 }
 
 ```
 
-Regarding the relation type, *Analogue* expects a Entity object if the relation is 'single', and a collection if the relation is 'many'. As our Post object may be related to many comments, we initialize an empty collection in the constructor to handle this.
+*Analogue* expects as attribute an Entity object if the relation is 'single', and a Collection if the relation is 'many'. As our Post object may be related to many comments, we initialize an empty collection in the constructor to handle this.
 
-Now let's create a post and a related comment using the previous code :
+Now let's create a simple Comment entity :
+
+Comment.php :
+```php
+namespace Acme\Comments;
+
+use Analogue\ORM\Entity;
+
+class Comment extends Entity {
+	
+	public function __construct($message)
+	{
+		$this->message = $message;
+	}
+
+}
+```
+
+Last, let's use our freshly crafted code to store a post and a related comment :
 
 ```php
 
@@ -231,14 +212,15 @@ $comment = new Comment('Our first Comment');
 $post->addComment($comment);
 
 $postRepository = Analogue::repository('Acme\Posts\Post');
+
 $postRepository->store($post);
 
 echo $post->id; // '1'
 ```
 
-And that's it.
+And that's all. Nice isn't it ? 
 
-Behind the scene, *Analogue* parse the Post object for any relationship defined in the corresponding EntityMap and will create & link any related Entity. 
+*Analogue* repository acts as an Aggregate for your entities & relationships. That means in the previous example, during the call to the store method, both the Post and the Comment were created in the database.
 
 
 ## Creating custom Repositories
