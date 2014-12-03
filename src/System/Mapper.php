@@ -72,7 +72,7 @@ class Mapper {
 
 		$this->entityMap->setDateFormat($connection->getQueryGrammar()->getDateFormat());
 
-		$this->cache = new EntityCache;
+		$this->cache = new EntityCache($entityMap);
 
 		// Fire Initializing Event
 		$this->fireEvent('initializing', $this);

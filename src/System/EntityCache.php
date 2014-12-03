@@ -1,11 +1,19 @@
 <?php namespace Analogue\ORM\System;
 
 use Analogue\ORM\Entity;
+use Analogue\ORM\EntityMap;
 use Analogue\ORM\EntityCollection;
 
 class EntityCache {
 
 	protected $cache = [];
+
+	protected $entityMap;
+
+	public function __construct(EntityMap $entityMap)
+	{
+		$this->entityMap = $entityMap;
+	}
 
 	/**
 	 * Add an array of key=>attributes representing
@@ -130,7 +138,7 @@ class EntityCache {
 	
 	protected function cachedArray(Entity $entity)
 	{
-		$attributes = $entity->getEntityAttributes();
+		$attributes = $this->flattenEmbeddables($entity->getEntityAttributes());
 
 		$cache = [];
 
@@ -157,5 +165,21 @@ class EntityCache {
 		}
 		
 		return $cache;
+	}
+
+	protected function flattenEmbeddables($attributes)
+	{
+		$embeddables = $this->entityMap->getEmbeddables();
+		
+		foreach($embeddables as $localKey => $embed)
+		{
+			$valueObject = $attributes[$localKey];
+
+			unset($attributes[$localKey]);
+
+			$attributes = array_merge($attributes, $valueObject->toArray());
+		}
+		
+		return $attributes;
 	}
 }

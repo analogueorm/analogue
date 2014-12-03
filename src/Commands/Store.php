@@ -306,7 +306,23 @@ class Store extends Command
 	 */
 	protected function getAttributes()
 	{
-		return $this->entity->getEntityAttributes();
+		return $this->flattenEmbeddables($this->entity->getEntityAttributes());
+	}
+
+	protected function flattenEmbeddables($attributes)
+	{
+		$embeddables = $this->entityMap->getEmbeddables();
+		
+		foreach($embeddables as $localKey => $embed)
+		{
+			$valueObject = $attributes[$localKey];
+
+			unset($attributes[$localKey]);
+
+			$attributes = array_merge($attributes, $valueObject->toArray());
+		}
+		
+		return $attributes;
 	}
 
 	/**
@@ -541,7 +557,7 @@ class Store extends Command
 		$entity = $this->entity;
 
 		$attributes = $this->getRawAttributes();
-
+		
 		$id = $this->query->insertGetId($attributes);
 
 		$keyName = $this->entityMap->getKeyName();

@@ -50,7 +50,7 @@ abstract class Command {
 		$this->mapper = $mapper;
 
 		$this->entityState = new StateChecker($entity, $mapper);
-
+		
 		$this->entityMap = $mapper->getEntityMap();
 
 		$this->query = $query->from($this->entityMap->getTable());

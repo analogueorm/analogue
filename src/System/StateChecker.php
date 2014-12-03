@@ -132,12 +132,12 @@ class StateChecker {
 	
 	public function getDirtyAttributes()
 	{
-		$attributes = $this->entity->getEntityAttributes();
+		$attributes = $this->flattenEmbeddables($this->entity->getEntityAttributes());
 
 		$id = $attributes[$this->keyName];
 
 		$cachedAttributes = $this->mapper->getEntityCache()->get($id);
-
+		
 		$dirty = [];
 
 		foreach($attributes as $key => $value)
@@ -156,6 +156,22 @@ class StateChecker {
 		}
 
 		return $dirty;
+	}
+
+	protected function flattenEmbeddables($attributes)
+	{
+		$embeddables = $this->entityMap->getEmbeddables();
+		
+		foreach($embeddables as $localKey => $embed)
+		{
+			$valueObject = $attributes[$localKey];
+
+			unset($attributes[$localKey]);
+
+			$attributes = array_merge($attributes, $valueObject->toArray());
+		}
+		
+		return $attributes;
 	}
 
 	/**

@@ -5,7 +5,6 @@ use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Eloquent\ScopeInterface;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
@@ -828,6 +827,11 @@ class Query {
 
 			$resultArray = (array) $result;
 
+			$tmpCache[$resultArray[$keyName] ] = $resultArray;
+
+			// Hydrate any embedded Value Object
+			$this->hydrateValueObjects($resultArray);
+
 			// We need to set the proxy for lazy loading on 
 			// the first hydration pass. 
 			if (! $proxyLoaded)
@@ -842,14 +846,40 @@ class Query {
 				$instance->setEntityAttributes($resultArray + $proxies);
 			}
 			
-			$tmpCache[$resultArray[$keyName] ] = $resultArray;
-			
 			$entities[] = $instance;
 		}
 
 		$this->mapper->getEntityCache()->add($tmpCache);
 
 		return $entities;
+	}
+
+	protected function hydrateValueObjects(& $attributes)
+	{
+		foreach($this->entityMap->getEmbeddables() as $localKey => $valueClass)
+		{
+			$this->hydrateValueObject($attributes, $localKey, $valueClass);
+		}	
+	}
+
+	protected function hydrateValueObject(& $attributes, $localKey, $valueClass)
+	{
+		$map = Manager::getValueMap($valueClass);
+
+		$embeddedAttributes = $map->getAttributes();
+
+		//$nestedValueObjects = $map->getEmbeddables();
+
+		$valueObject = Manager::getValueObjectInstance($valueClass);
+
+		foreach($embeddedAttributes as $key)
+		{
+			$valueObject->$key = $attributes[$key];
+			
+			unset($attributes[$key]);
+		}
+		
+		$attributes[$localKey] = $valueObject;
 	}
 
 	/**

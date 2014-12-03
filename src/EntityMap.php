@@ -46,11 +46,11 @@ class EntityMap {
 	protected $class = null;
 
 	/**
-	 * The attributes to map on a custom domain class.
+	 * Embeddables ValueObjects
 	 * 
 	 * @var array
 	 */
-	protected $attributes = [];
+	protected $embeddables = [];
 		
 	/**
 	 * Determine the relationships method used on the entity.
@@ -58,21 +58,21 @@ class EntityMap {
 	 * 
 	 * @var array
 	 */
-	protected $relationships = null;
+	private $relationships = null;
 
 	/**
 	 * Relationships that should be treated as collection.
 	 * 
 	 * @var array
 	 */
-	protected $manyRelations = null;
+	private $manyRelations = null;
 
 	/**
 	 * Relationships that should be treated as single entity.
 	 * 
 	 * @var array
 	 */
-	protected $singleRelations = null;
+	private $singleRelations = null;
 
 	/**
 	 * Runtime added relationships
@@ -299,25 +299,23 @@ class EntityMap {
 	}
 
 	/**
-	 * Get the attributes to map on a custom domain
-	 * class.
+	 * Get the embedded Value Objects
 	 * 
 	 * @return array
 	 */
-	public function getAttributes()
+	public function getEmbeddables()
 	{
-		return $this->attributes;
+		return $this->embeddables;
 	}
 
 	/**
-	 * Set the attributes to map on a custom domain
-	 * class.
+	 * Set the embedded Value Objects
 	 * 
-	 * @param array
+	 * @param array $embeddables 
 	 */
-	public function setAttributes()
+	public function setEmbeddables(array $embeddables)
 	{
-		$this->attributes = $attributes;
+		$this->embeddables = $embeddables;
 	}
 
 	/**

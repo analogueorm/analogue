@@ -7,7 +7,8 @@ use Analogue\ORM\Repository;
 use Analogue\ORM\System\Mapper;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use Analogue\ORM\Plugins\AnaloguePluginInterface ;
+use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\Plugins\AnaloguePluginInterface;
 
 class Manager {
 
@@ -24,6 +25,13 @@ class Manager {
 	 * @var array
 	 */
 	protected static $entityClasses = [];
+
+	/**
+	 * Key value store of Value Classes and corresponding maps
+	 * 
+	 * @var array
+	 */
+	protected static $valueClasses = [];
 
 	/**
 	 * Loaded Mappers
@@ -173,7 +181,7 @@ class Manager {
 	/**
 	 * Register an entity 
 	 * 
-	 * @param  string $entity    entity's class name
+	 * @param  string|Entity $entity    entity's class name
 	 * @param  string $entityMap map's class name
 	 * @return void
 	 */
@@ -183,12 +191,63 @@ class Manager {
 
 		if (static::isRegisteredEntity($entity))
 		{
-			// Throw exception
+			throw new MappingException("Entity $entity is already registered.");
 		}
 
 		static::$entityClasses[$entity] = $entityMap;
 	}
 
+	/**
+	 * Register a Value Object
+	 * 
+	 * @param  string|ValueObject $valueObject 
+	 * @param  string $valueMap    
+	 * @return void
+	 */
+	public static function registerValueObject($valueObject, $valueMap)
+	{
+		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+
+		static::$valueClasses[$valueObject] = $valueMap;
+	}
+
+	/**
+	 * Get the Value Map for a given Value Object Class
+	 * 
+	 * @param  string $valueObject 
+	 * @return \Analogue\ORM\ValueMap
+	 */
+	public static function getValueMap($valueObject)
+	{
+		$valueMap = new static::$valueClasses[$valueObject];
+
+		$valueMap->setClass($valueObject);
+
+		return $valueMap;
+	}
+
+	/**
+	 * Instanciate a new Value Object instance
+	 * 
+	 * @param  string $valueObject 
+	 * @return ValueObject
+	 */
+	public static function getValueObjectInstance($valueObject)
+	{
+		$prototype = unserialize(sprintf('O:%d:"%s":0:{}',
+			strlen($valueObject),
+            			$valueObject
+         			)
+        		);
+		return $prototype;
+	}
+
+	/**
+	 * Register Analogue Plugin
+	 * 
+	 * @param  AnaloguePluginInterface $plugin 
+	 * @return void
+	 */
 	public static function registerPlugin(AnaloguePluginInterface $plugin)
 	{
 		$plugin->register();
