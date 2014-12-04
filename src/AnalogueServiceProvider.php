@@ -2,8 +2,6 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Auth\AuthManager;
-use Analogue\ORM\Auth\AnalogueUserProvider;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\Proxy\ProxyCache;
 use Analogue\ORM\Plugins\Timestamps\TimestampsPlugin;
@@ -20,8 +18,6 @@ class AnalogueServiceProvider extends ServiceProvider {
 
 	public function boot()
 	{
-		$this->extendAuthDriver();
-
 		$manager = $this->app->make('analogue');
 
 		$manager->registerPlugin(new TimestampsPlugin);
@@ -43,21 +39,8 @@ class AnalogueServiceProvider extends ServiceProvider {
 
 			return new Manager($db, $event);
 		});
-
-		
 	}
-
-	protected function extendAuthDriver()
-	{
-		$this->app[AuthManager::class]->extend('analogue', function ($app) {
-			return new AnalogueUserProvider(
-				$app['Illuminate\Hashing\HasherInterface'],
-				$app['analogue'],
-				$app['config']['auth.model']
-			);
-		});
-	}
-
+	
 	/**
 	 * Get the services provided by the provider.
 	 *

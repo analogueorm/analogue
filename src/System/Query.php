@@ -517,26 +517,6 @@ class Query {
 	}
 
 	/**
-	 * Call the given model scope on the underlying model.
-	 *
-	 * @param  string  $scope
-	 * @param  array  $parameters
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	// protected function callScope($scope, $parameters)
-	// {
-	// 	array_unshift($parameters, $this);
-
-	// 	return call_user_func_array(array($this->model, $scope), $parameters) ?: $this;
-	// }
-
-	//--------------------------
-	//-------------------------------------
-	////-------------------------------------------------
-	////---------------------------------------------------------------------
-	/////---------------------------------------------------------------------------------
-	
-	/**
 	 * Set the relationships that should be eager loaded.
 	 *
 	 * @param  mixed  $relations
@@ -824,7 +804,7 @@ class Query {
 		foreach($results as $result)
 		{
 			$instance = clone $prototype;
-
+			
 			$resultArray = (array) $result;
 
 			$tmpCache[$resultArray[$keyName] ] = $resultArray;
