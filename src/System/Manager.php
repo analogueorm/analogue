@@ -279,7 +279,7 @@ class Manager {
 		{
 			throw new \Exception("Analogue : Event $event doesn't exist");
 		}
-		static::$eventDispatcher->listen("analog.{$event}.*", $callback);
+		static::$eventDispatcher->listen("analogue.{$event}.*", $callback);
 	}
 
 }

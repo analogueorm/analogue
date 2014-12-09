@@ -151,7 +151,7 @@ class Mapper {
 	 */
 	public function fireEvent($event, $entity, $halt = true)
 	{
-		$event = "analog.{$event}.".$this->entityMap->getClass();
+		$event = "analogue.{$event}.".$this->entityMap->getClass();
 
 		$method = $halt ? 'until' : 'fire';
 
@@ -169,7 +169,7 @@ class Mapper {
 	{
 		$name = $this->entityMap->getClass();
 
-		$this->dispatcher->listen("analog.{$event}.{$name}", $callback);
+		$this->dispatcher->listen("analogue.{$event}.{$name}", $callback);
 	}
 
 	/**
