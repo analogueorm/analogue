@@ -557,10 +557,10 @@ class Store extends Command
 		$entity = $this->entity;
 
 		$attributes = $this->getRawAttributes();
-		
-		$id = $this->query->insertGetId($attributes);
 
-		$keyName = $this->entityMap->getKeyName();
+        $keyName = $this->entityMap->getKeyName();
+		
+		$id = $this->query->insertGetId($attributes, $keyName);
 		
 		$entity->$keyName = $id;
 	}
