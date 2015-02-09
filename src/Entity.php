@@ -3,10 +3,10 @@
 use ArrayAccess;
 use JsonSerializable;
 use Analogue\ORM\System\ProxyInterface;
-use Illuminate\Support\Contracts\JsonableInterface;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Arrayable;
 
-class Entity extends ValueObject implements ArrayAccess, JsonableInterface, JsonSerializable, ArrayableInterface{
+class Entity extends ValueObject implements ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
 	/**
 	 * Return the entity's attribute 
