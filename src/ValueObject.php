@@ -2,10 +2,10 @@
 
 use ArrayAccess;
 use JsonSerializable;
-use Illuminate\Support\Contracts\JsonableInterface;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Arrayable;
 
-class ValueObject implements ArrayAccess, JsonableInterface, JsonSerializable, ArrayableInterface {
+class ValueObject implements ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
 	protected $attributes;
 
