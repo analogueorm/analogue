@@ -2,7 +2,7 @@
     "name": "analogue/orm",
     "description": "Analogue ORM, a data mapper for the Laravel Framework",
     "keywords": ["orm", "analogue", "datamapper", "data mapper", 
-    "entity", "repository", "mapper", "laravel", "l4", "l5"],
+    "entity", "repository", "mapper", "laravel", "l4"],
     "homepage": "http://github.com/analogueorm/analogue",
     "license": "MIT",
     "authors": [
@@ -13,15 +13,15 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.*|5.*",
-        "illuminate/database": "4.*|5.*",
-        "illuminate/events": "4.*|5.*"
+        "illuminate/support": "4.*",
+        "illuminate/database": "4.*",
+        "illuminate/events": "4.*"
     },
     "autoload": {
         "psr-4": {
             "Analogue\\ORM\\": "src/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable":true
 }
