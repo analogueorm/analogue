@@ -28,8 +28,14 @@ It's not 'strictly' a data mapper, as the Domain objects extend an Entity class.
 
 Add this line to your composer.json file : 
 
+Laravel 4 : 
 ```
 "Analogue/ORM": "~1.0"
+```
+
+Laravel 5 : 
+```
+"Analogue/ORM": "~2.0"
 ```
 
 Then run : 
