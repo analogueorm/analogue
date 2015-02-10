@@ -51,7 +51,7 @@ class EntityCollection extends Collection {
 	 * @param  mixed  $key
 	 * @return bool
 	 */
-	public function contains($key)
+	public function contains($key, $value = null)
 	{
 		return ! is_null($this->find($key));
 	}
