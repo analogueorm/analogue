@@ -18,7 +18,7 @@ use Analogue\ORM\Relationships\MorphToMany;
 class EntityMap {
 
 	/**
-	 * The Databse Connection name for the model.
+	 * The database connection name for the model.
 	 *
 	 * @var string
 	 */
@@ -87,20 +87,6 @@ class EntityMap {
 	 * @var int
 	 */
 	protected $perPage = 15;
-
-	/**
-	 * The attributes that should be hidden for arrays.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array();
-
-	/**
-	 * The attributes that should be visible in arrays.
-	 *
-	 * @var array
-	 */
-	protected $visible = array();
 
 	/**
 	 * The accessors to append to the model's array form.
@@ -390,26 +376,6 @@ class EntityMap {
 	public function getEagerloadedRelationships()
 	{
 		return $this->with;
-	}
-
-	/**
-	 * Get Visible Attributes
-	 * 
-	 * @return array
-	 */
-	public function getVisibleAttributes()
-	{
-		return $this->visible;
-	}
-
-	/**
-	 * Get Hidden
-	 * 
-	 * @return array
-	 */
-	public function getHiddenAttributes()
-	{
-		return $this->hidden;
 	}
 
 	/**
