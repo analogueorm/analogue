@@ -16,8 +16,8 @@ use Analogue\ORM\System\CollectionProxy;
 class Store extends Command 
 {
 	/**
-	 * List of relationships that with foreign key
-	 * is part of entities attributes
+	 * List of relationships which foreign key
+	 * is part of the entity's attributes
 	 * 
 	 * @var array
 	 */
