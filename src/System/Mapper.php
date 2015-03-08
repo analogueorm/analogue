@@ -8,7 +8,7 @@ use Illuminate\Events\Dispatcher;
 use Analogue\ORM\Commands\Command;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-
+use Analogue\ORM\Exceptions\MappingException;
 /*
  * The mapper provide all the interactions with the database layer
  * and holds the states for the loaded entity. One instance is 
@@ -337,6 +337,11 @@ class Mapper {
 	 */
 	protected function customClassInstance($className)
 	{
+		if(! class_exists($className))
+		{
+			throw new MappingException("Tried to instantiate a non-existing Entity class : $className");
+		}
+
 		$prototype = unserialize(sprintf('O:%d:"%s":0:{}',
 			strlen($className),
             			$className
