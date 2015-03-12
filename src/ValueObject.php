@@ -5,7 +5,7 @@ use JsonSerializable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class ValueObject implements ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
 	protected $attributes;
 

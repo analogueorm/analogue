@@ -2,7 +2,7 @@
 
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Relationships\Relationship;
-
+use ReflectionClass, ReflectionMethod;
 /**
  * This class register some edm behaviour specified by
  * the map configuration.
@@ -27,15 +27,47 @@ class MapInitializer {
 	{
 		$map = $this->mapper->getEntityMap();
 
-		$relationships = $this->guessRelations($map);
-		
+		$userMethods = $this->guessRelations($map);
+
+		if(count($userMethods) > 0)
+		{
+			$relationships = $this->parseMethodsForRelationship($map, $userMethods);
+		}
+		else
+		{
+			$relationships = [];
+		}
+
 		$map->setRelationships($relationships);
 
 		return $map;
 	}
 
+	public function parseMethodsForRelationship(EntityMap $map, array $guessedRelations)
+	{
+		$relationships = [];
+
+		$class = new ReflectionClass(get_class($map));
+
+		foreach($guessedRelations as $methodName)
+		{
+			$method = $class->getMethod($methodName);
+
+			if($method->getNumberOfParameters() == 0) continue;
+
+			$params = $method->getParameters();
+
+			if ($params[0]->getClass()->implementsInterface('Analogue\ORM\Mappable'))
+			{
+				$relationships[] = $methodName;
+			}
+		}
+
+		return $relationships;
+	}
+
 	/**
-	 * Parse entity map relations 
+	 * Guess entity map relations 
 	 * 
 	 * @param  EntityMap $map 
 	 * @return array
@@ -44,7 +76,7 @@ class MapInitializer {
 	{
 		$mapMethods = get_class_methods($map);
 
-		$parentsMethods = get_class_methods('Analogue\ORM\EntityMap');
+		$parentsMethods = get_class_methods(EntityMap::class);
 		
 		$guessedRelations = array_diff($mapMethods, $parentsMethods);
 

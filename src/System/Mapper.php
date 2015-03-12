@@ -1,6 +1,6 @@
 <?php namespace Analogue\ORM\System;
 
-use Analogue\ORM\Entity;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Commands\Store;
 use Analogue\ORM\Commands\Delete;
@@ -92,7 +92,7 @@ class Mapper {
 	 * @param  $entity [description]
 	 * @return Entity
 	 */
-	public function store(Entity $entity)
+	public function store(Mappable $entity)
 	{
 		$store = new Store($entity, $this, $this->newQueryBuilder() );
 
@@ -105,7 +105,7 @@ class Mapper {
 	 * @param  object $entity 
 	 * @return null
 	 */
-	public function delete(Entity $entity)
+	public function delete(Mappable $entity)
 	{
 		$delete = new Delete($entity, $this, $this->newQueryBuilder() );
 
@@ -292,7 +292,7 @@ class Mapper {
 	 * @param  \Analogue\ORM\Entity $entity  
 	 * @return mixed
 	 */
-	public function executeCustomCommand($command, Entity $entity)
+	public function executeCustomCommand($command, Mappable $entity)
 	{
 		$commandClass = $this->customCommands[$command];
 

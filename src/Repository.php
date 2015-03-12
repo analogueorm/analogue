@@ -52,7 +52,7 @@ class Repository {
 	 * @param  \Analogue\ORM\Entity $entity 
 	 * @return void
 	 */
-	public function delete(Entity $entity)
+	public function delete(Mappable $entity)
 	{
 		return $this->mapper->delete($entity);
 	}
@@ -63,7 +63,7 @@ class Repository {
 	 * @param  \Analogue\ORM\Entity $entity 
 	 * @return \Analogue\ORM\Entity
 	 */
-	public function store(Entity $entity)
+	public function store(Mappable $entity)
 	{
 		return $this->mapper->store($entity);	
 	}

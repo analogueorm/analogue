@@ -1,6 +1,6 @@
 <?php namespace Analogue\ORM\System;
 
-use Analogue\ORM\Entity;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\EntityCollection;
 
@@ -124,7 +124,7 @@ class EntityCache {
 		}
 	}
 
-	public function refresh(Entity $entity)
+	public function refresh(Mappable $entity)
 	{
 		$class = get_class($entity);
 
@@ -136,7 +136,7 @@ class EntityCache {
 	}
 
 	
-	protected function cachedArray(Entity $entity)
+	protected function cachedArray(Mappable $entity)
 	{
 		$attributes = $this->flattenEmbeddables($entity->getEntityAttributes());
 
@@ -146,7 +146,7 @@ class EntityCache {
 		{
 			if ($value instanceof ProxyInterface) continue;
 
-			if ($value instanceof Entity)
+			if ($value instanceof Mappable)
 			{
 				$class = get_class($value);
 				$mapper = Manager::mapper($class);

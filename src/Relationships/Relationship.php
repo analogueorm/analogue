@@ -2,6 +2,7 @@
 
 use Closure;
 use Carbon\Carbon;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
@@ -384,7 +385,7 @@ abstract class Relationship {
 		{
 			$key = $results->getEntityHashes();
 		}
-		if($results instanceof Entity)
+		if($results instanceof Mappable)
 		{
 			$key = $this->getEntityHash($results);
 		}
@@ -396,7 +397,7 @@ abstract class Relationship {
 		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 	}
 
-	protected function getEntityHash(Entity $entity)
+	protected function getEntityHash(Mappable $entity)
 	{
 		$class = get_class($results);
 		

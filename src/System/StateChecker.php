@@ -1,6 +1,6 @@
 <?php namespace Analogue\ORM\System;
 
-use Analogue\ORM\Entity;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
 
 class StateChecker {
@@ -35,10 +35,10 @@ class StateChecker {
 		
 	/**
 	 * 
-	 * @param \Analogue\ORM\Entity $entity 
+	 * @param \Analogue\ORM\Mappable $entity 
 	 * @param \Analogue\ORM\System\Mapper $mapper 
 	 */
-	public function __construct(Entity $entity, Mapper $mapper)
+	public function __construct(Mappable $entity, Mapper $mapper)
 	{
 		$this->entity = $entity;
 		$this->mapper = $mapper;
@@ -100,7 +100,7 @@ class StateChecker {
 
 			if($value instanceof CollectionProxy) continue;
 
-			if($value instanceof Entity)
+			if($value instanceof Mappable)
 			{
 				if (! $this->checkEntityForExistence($value))
 				{

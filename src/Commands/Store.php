@@ -1,6 +1,6 @@
 <?php namespace Analogue\ORM\Commands;
 
-use Analogue\ORM\Entity;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\EntityProxy;
@@ -193,7 +193,7 @@ class Store extends Command
 
 			if($value instanceof CollectionProxy) continue;
 
-			if($value instanceof Entity)
+			if($value instanceof Mappable)
 			{
 				$this->createEntityIfNotExists($value);
 			}
@@ -255,7 +255,7 @@ class Store extends Command
 
 					continue;
 				}
-				if ($value instanceof Entity)
+				if ($value instanceof Mappable)
 				{
 					$hash = $this->getEntityHash($value);
 
@@ -290,7 +290,7 @@ class Store extends Command
 		}
 	}
 
-	protected function getEntityHash(Entity $entity)
+	protected function getEntityHash(Mappable $entity)
 	{
 		$mapper = Manager::mapper($entity);
 
@@ -518,7 +518,7 @@ class Store extends Command
 				}
 				continue;
 			}
-			if ($value instanceof Entity)
+			if ($value instanceof Mappable)
 			{
 				$this->updateEntityIfDirty($value);
 				continue;

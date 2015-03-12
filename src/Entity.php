@@ -6,7 +6,7 @@ use Analogue\ORM\System\ProxyInterface;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Entity extends ValueObject implements ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
 	/**
 	 * Return the entity's attribute 

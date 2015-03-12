@@ -1,7 +1,7 @@
 <?php namespace Analogue\ORM\Commands;
 
 use Carbon\Carbon;
-use Analogue\ORM\Entity;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\StateChecker;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -43,7 +43,7 @@ abstract class Command {
 	 */
 	protected $query;
 
-	public function __construct(Entity $entity, Mapper $mapper, QueryBuilder $query)
+	public function __construct(Mappable $entity, Mapper $mapper, QueryBuilder $query)
 	{
 		$this->entity = $entity;
 
