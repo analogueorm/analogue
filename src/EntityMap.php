@@ -152,6 +152,12 @@ class EntityMap {
 	protected $morphClass;
 
 	/**
+	 * The class has an activator method
+	 * @var boolean
+	 */
+	public $hasActivator = false;
+
+	/**
 	 * Indicates if the entity should be timestamped.
 	 *
 	 * @var bool
@@ -282,6 +288,17 @@ class EntityMap {
 		// Throw exception if class not exists
 		
 		$this->class = $class;
+	}
+
+
+	public function hasActivator()
+	{
+		return $this->hasActivator;
+	}
+
+	public function setActivatorMethod()
+	{
+		$this->hasActivator = true;
 	}
 
 	/**

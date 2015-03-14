@@ -321,15 +321,30 @@ class Mapper {
 	{
 		$class = $this->entityMap->getClass();
 
-		$entity = $this->customClassInstance($class);
+		// If an activator method is present
+		// on the entity map, use it to 
+		// instantiate the entity.
+		if ($this->entityMap->hasActivator() )
+		{
+			$entity = $this->entityMap->activator();
+		}
+		else
+		{
+			$entity = $this->customClassInstance($class);
+		}
 
-		// Prevent Hydrating with an empty array 
+		// prevent hydrating with an empty array
 		if (count($attributes) > 0)
 		{
 			$entity->setEntityAttributes($attributes);
 		}
 
 		return $entity;
+	}
+
+	protected function getInstanceFromActivator()
+	{
+
 	}
 
 	/**

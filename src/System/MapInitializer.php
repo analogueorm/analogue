@@ -3,6 +3,7 @@
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Relationships\Relationship;
 use ReflectionClass, ReflectionMethod;
+
 /**
  * This class register some edm behaviour specified by
  * the map configuration.
@@ -27,7 +28,7 @@ class MapInitializer {
 	{
 		$map = $this->mapper->getEntityMap();
 
-		$userMethods = $this->guessRelations($map);
+		$userMethods = $this->getCustomMethods($map);
 
 		if(count($userMethods) > 0)
 		{
@@ -36,6 +37,11 @@ class MapInitializer {
 		else
 		{
 			$relationships = [];
+		}
+
+		if (in_array('activator',$userMethods))
+		{
+			$map->setActivatorMethod();
 		}
 
 		$map->setRelationships($relationships);
@@ -72,7 +78,7 @@ class MapInitializer {
 	 * @param  EntityMap $map 
 	 * @return array
 	 */
-	public function guessRelations(EntityMap $map)
+	public function getCustomMethods(EntityMap $map)
 	{
 		$mapMethods = get_class_methods($map);
 
