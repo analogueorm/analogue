@@ -53,9 +53,7 @@ class StateChecker {
 	 */
 	public function exists()
 	{
-		$key = $this->keyName;
-
-		if (is_null($this->entity->$key))
+		if (! $this->hasPrimaryKeyDefined() )
 		{
 			$this->exists = false;
 		}
@@ -76,6 +74,13 @@ class StateChecker {
 		}
 
 		return $this->exists;
+	}
+
+	protected function hasPrimaryKeyDefined()
+	{
+		$entityAttributes = $this->entity->getEntityAttributes();
+
+		return array_key_exists($this->keyName, $entityAttributes) ? true : false;
 	}
 
 	/**

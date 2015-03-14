@@ -9,6 +9,9 @@ class Repository {
 
 	protected $entityMap;
 
+	/**
+	 * @param Mapper $mapper 
+	 */
 	public function __construct(Mapper $mapper)
 	{
 		$this->mapper = $mapper;

@@ -29,5 +29,5 @@ interface Mappable {
      * @return mixed
      */
     public function getEntityAttribute($key);
-    
+
 }

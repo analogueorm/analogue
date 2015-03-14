@@ -346,7 +346,16 @@ class Store extends Command
 	{
 		$keyName = $this->entityMap->getKeyName();
 
-		return $this->entity->getEntityAttribute($keyName);
+		$entityAttributes = $this->entity->getEntityAttributes();
+
+		if (! array_key_exists($keyName, $entityAttributes))
+		{
+			return null;
+		}
+		else
+		{
+			return $entityAttributes[$keyName];
+		}
 	}
 
 	protected function postStoreProcess()

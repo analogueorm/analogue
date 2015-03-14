@@ -181,7 +181,7 @@ class Manager {
 	/**
 	 * Register an entity 
 	 * 
-	 * @param  string|Entity $entity    entity's class name
+	 * @param  string|Mappable $entity    entity's class name
 	 * @param  string $entityMap map's class name
 	 * @return void
 	 */
