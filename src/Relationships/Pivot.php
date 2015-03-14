@@ -4,8 +4,6 @@ use Analogue\ORM\Entity;
 
 class Pivot extends Entity{
 
-	protected $attributes = array();
-
 	protected $exists;
 
 	/**

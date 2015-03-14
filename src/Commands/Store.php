@@ -296,7 +296,7 @@ class Store extends Command
 
 		$key = $mapper->getEntityMap()->getKeyName();
 
-		return get_class($entity).'.'.$entity->$key;
+		return get_class($entity).'.'.$entity->getEntityAttribute($key);
 	}
 
 	/**

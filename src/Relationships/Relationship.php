@@ -392,18 +392,20 @@ abstract class Relationship {
 
 		$parentKey = $this->parentMap->getKeyName();
 
-		$cache = [$this->parent->$parentKey => $key];
+		$this->parent->setEntityAttribute($parentKey, $key);
+
+		$cache = [$key];
 
 		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 	}
 
 	protected function getEntityHash(Mappable $entity)
 	{
-		$class = get_class($results);
+		$class = get_class($entity);
 		
-		$keyName = Manager::mapper($class)->getEntityMap()->getKeyName;
+		$keyName = Manager::mapper($class)->getEntityMap()->getKeyName();
 		
-		$hash = $class.'.'.$results->$keyName;
+		$hash = $class.'.'.$entity->getEntityAttribute($keyName);
 
 		return $hash;
 	}

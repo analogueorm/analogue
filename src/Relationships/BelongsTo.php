@@ -143,7 +143,7 @@ class BelongsTo extends Relationship {
 		// execute a "where in" statement to gather up all of those related records.
 		foreach ($entities as $entity)
 		{
-			if ( ! is_null($value = $entity->{$this->foreignKey}))
+			if ( ! is_null($value = $entity->getEntityAttribute($this->foreignKey)))
 			{
 				$keys[] = $value;
 			}
@@ -196,9 +196,6 @@ class BelongsTo extends Relationship {
 		// the parents using that dictionary and the primary key of the children.
 		$dictionary = [];
 
-		// Not use caching this.
-		//$cache = [];
-
 		$parentKey = $this->parentMap->getKeyName();
 
 		foreach ($results as $result)
@@ -211,17 +208,11 @@ class BelongsTo extends Relationship {
 		// the primary key of the children to map them onto the correct instances.
 		foreach ($entities as $entity)
 		{
-			if (isset($dictionary[$entity->$foreign]))
+			if (isset($dictionary[$entity->getEntityAttribute($foreign)])
 			{
-				$entity->setEntityAttribute($relation, $dictionary[$entity->$foreign]);
-
-				// Not use caching this.
-				//$cache[$entity->$parentKey] = $entity->$foreign;
+				$entity->setEntityAttribute($relation, $dictionary[$entity->getEntityAttribute($foreign)]);
 			}
 		}
-
-		// Not use caching this.
-		//$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 
 		return $entities;
 	}

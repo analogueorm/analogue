@@ -122,7 +122,7 @@ class EntityCollection extends Collection {
 			
 			$keyName = $mapper->getEntityMap()->getKeyName();
 			
-			return $class.'.'.$entity->$keyName; 
+			return $class.'.'.$entity->getEntityAttribute($keyName); 
 		}, 
 		$this->items);
 	}

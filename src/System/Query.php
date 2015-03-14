@@ -115,7 +115,7 @@ class Query {
 
 		foreach($entities as $entity)
 		{
-			$cache->set($entity->$keyName, $entity->getEntityAttributes() );
+			$cache->set($entity->getEntityAttribute($keyName), $entity->getEntityAttributes() );
 		}
 	}
 	
@@ -790,7 +790,7 @@ class Query {
 	public function getEntities($columns = array('*'))
 	{
 		$results = $this->query->get($columns);
-		
+
 		$entities = array();
 
 		$prototype = $this->getEntityInstance();

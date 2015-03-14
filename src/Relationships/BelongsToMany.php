@@ -248,7 +248,9 @@ class BelongsToMany extends Relationship {
 	{
 		$values = array();
 
-		foreach ($entity->getEntityAttributes() as $key => $value)
+		$attributes = $entity->getEntityAttributes()
+
+		foreach ($attributes as $key => $value)
 		{
 			// To get the pivots attributes we will just take any of the attributes which
 			// begin with "pivot_" and add those to this arrays, as well as unsetting
@@ -257,9 +259,12 @@ class BelongsToMany extends Relationship {
 			{
 				$values[substr($key, 6)] = $value;
 
-				unset($entity->$key);
+				unset($attributes[$key]);
 			}
 		}
+
+		// Rehydrate Entity with cleaned array.
+		$entity->setEntityAttributes($attributes);
 
 		return $values;
 	}

@@ -16,13 +16,13 @@ class Restore extends Command {
 
 		$keyName = $this->entityMap->getKeyName();
 		
-		$query = $this->query->where($keyName, '=', $entity->$keyName);
+		$query = $this->query->where($keyName, '=', $entity->getEntityAttribute($keyName));
 
 		$deletedAtColumn = $this->entityMap->getQualifiedDeletedAtColumn();
 
 		$query->update([$deletedAtColumn => null]);
 		
-		$entity->$deletedAtColumn = null;
+		$entity->setEntityAttribute($deletedAtColumn, null);
 		
 		$mapper->fireEvent('restored', $entity, false);
 

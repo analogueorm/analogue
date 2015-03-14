@@ -35,7 +35,7 @@ class SoftDeletesPlugin implements AnaloguePluginInterface {
 					
 			$deletedAtField = $entityMap->getQualifiedDeletedAtColumn();
 			
-			if(! is_null($entity->$deletedAtField))
+			if(! is_null($entity->getEntityAttribute($deletedAtField)))
 			{
 				return true;
 			}

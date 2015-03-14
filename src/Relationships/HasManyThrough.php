@@ -184,7 +184,7 @@ class HasManyThrough extends Relationship {
 
 				$entity->setEntityAttribute($relation, $value);
 
-				$cache[$entity->$parentKey] = $value->getEntityHashes();
+				$cache[$entity->getEntityAttribute($parentKey)] = $value->getEntityHashes();
 			}
 		}
 

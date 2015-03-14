@@ -30,8 +30,8 @@ class TimestampsPlugin implements AnaloguePluginInterface {
 
 					$time= new Carbon;
 
-					$entity->$createdAtField = $time;
-					$entity->$updatedAtField = $time;
+					$entity->setEntityAttribute($createdAtField, $time);
+					$entity->setEntityAttribute($updatedAtField, $time);
 
 				});
 
@@ -41,7 +41,7 @@ class TimestampsPlugin implements AnaloguePluginInterface {
 
 					$time= new Carbon;
 
-					$entity->$updatedAtField = $time;
+					$entity->setEntityAttribute($updatedAtField,$time);
 				});				
 			}
 		});

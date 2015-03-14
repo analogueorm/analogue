@@ -638,7 +638,7 @@ class EntityMap {
 		// If the type value is null it is probably safe to assume we're eager loading
 		// the relationship. When that is the case we will pass in a dummy query as
 		// there are multiple types in the morph and we can't use single queries.
-		if (is_null($class = $entity->$type))
+		if (is_null($class = $entity->getEntityAttribute($type)))
 		{
 			return new MorphTo(
 				$mapper, $entity, $id, null, $type, $name

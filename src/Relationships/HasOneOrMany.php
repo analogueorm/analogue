@@ -177,7 +177,7 @@ abstract class HasOneOrMany extends Relationship {
 				}
 				else
 				{
-					$cache[$key] = get_class($value).'.'.$value->$foreignKey;
+					$cache[$key] = get_class($value).'.'.$value->getEntityAttribute($foreignKey);
 				}
 			}
 		}
