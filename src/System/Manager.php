@@ -150,13 +150,24 @@ class Manager {
 
 		if(is_null($map))
 		{
-			$map = static::createMapForEntity($entity);
+			// Check if an EntityMap exist in the same namespace
+			// as the entity.
+			if (class_exists($entity.'Map'))
+			{
+				$map = $entity.'Map';
+			}
+			else 
+			{
+				// Generate an EntityMap obeject
+				$map = static::createMapForEntity($entity);
+			}
 		}
 
 		if(is_string($map))
 		{
 			$map = new $map;
 		}
+		
 		$map->setClass($entity);
 		
 		static::$entityClasses[$entity] = $map;
