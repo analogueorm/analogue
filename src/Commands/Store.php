@@ -571,7 +571,7 @@ class Store extends Command
 
 		$keyName = $this->entityMap->getKeyName();
 		
-		$entity->$keyName = $id;
+		$entity->setEntityAttribute($keyName, $id);
 	}
 
 	/**
