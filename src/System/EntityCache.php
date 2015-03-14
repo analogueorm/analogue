@@ -132,7 +132,7 @@ class EntityCache {
 
 		$keyName = $mapper->getEntityMap()->getKeyName();
 
-		$this->cache[$entity->$keyName] = $this->cachedArray($entity);
+		$this->cache[$entity->getEntityAttribute($keyName)] = $this->cachedArray($entity);
 	}
 
 	
