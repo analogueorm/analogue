@@ -50,23 +50,23 @@ class Repository {
 	}
 	
 	/**
-	 * Delete an entity from the database
+	 * Delete an entity or an entity collection from the database
 	 * 
-	 * @param  \Analogue\ORM\Entity $entity 
-	 * @return void
+	 * @param  Mappable|Collection $entity 
+	 * @return Mappable|Collection
 	 */
-	public function delete(Mappable $entity)
+	public function delete($entity)
 	{
 		return $this->mapper->delete($entity);
 	}
 
 	/**
-	 * Persist an entity in the database.
+	 * Persist an entity or an entity collection in the database.
 	 * 
-	 * @param  \Analogue\ORM\Entity $entity 
-	 * @return \Analogue\ORM\Entity
+	 * @param  Mappable|Collection $entity 
+	 * @return Mappable|Collection
 	 */
-	public function store(Mappable $entity)
+	public function store($entity)
 	{
 		return $this->mapper->store($entity);	
 	}

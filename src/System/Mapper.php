@@ -5,10 +5,12 @@ use Analogue\ORM\EntityMap;
 use Analogue\ORM\Commands\Store;
 use Analogue\ORM\Commands\Delete;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Collection;
 use Analogue\ORM\Commands\Command;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Analogue\ORM\Exceptions\MappingException;
+
 /*
  * The mapper provide all the interactions with the database layer
  * and holds the states for the loaded entity. One instance is 
@@ -87,12 +89,27 @@ class Mapper {
 	}
 
 	/**
-	 * Persist an entity into the database
+	 * Persist an entity or an entity collection into the database
 	 * 
-	 * @param  $entity [description]
+	 * @param  Mappable|Collection $entity
+	 * @return Mappable|Collection
+	 */
+	public function store($entity)
+	{
+		if($entity instanceof Collection)
+		{
+			return $this->storeCollection($entity);
+		}
+		else return $this->storeEntity($entity);
+	}
+
+	/**
+	 * Store a single entity into the database
+	 * 
+	 * @param  Mappable $entity
 	 * @return Entity
 	 */
-	public function store(Mappable $entity)
+	protected function storeEntity(Mappable $entity)
 	{
 		$store = new Store($entity, $this, $this->newQueryBuilder() );
 
@@ -100,16 +117,71 @@ class Mapper {
 	}
 
 	/**
-	 * Delete an entity from the database
+	 * Store an entity collection inside a single DB Transaction
 	 * 
-	 * @param  object $entity 
-	 * @return null
+	 * @param  Collection $entities [description]
+	 * @return Collection
+	 */
+	protected function storeCollection(Collection $entities)
+	{
+		$thid->connection->beginTransaction();
+
+		foreach($entities as $entity)
+		{
+			$this->storeEntity($entity);
+		}
+
+		$thid->connection->commit();
+
+		return $entities;
+	}
+
+	/**
+	 * Delete an entity or an entity collection from the database
+	 * 
+	 * @param  Mappable|Collection 
+	 * @return Mappable|Collection
 	 */
 	public function delete(Mappable $entity)
+	{
+		if($entity instanceof Collection)
+		{
+			return $this->deleteCollection($entity);
+		}
+		else return $this->deleteEntity($entity);
+	}
+
+	/**
+	 * Delete a single entity from the database.
+	 * 
+	 * @param  Mappable $entity
+	 * @return Mappable
+	 */
+	protected function deleteEntity(Mappable $entity)
 	{
 		$delete = new Delete($entity, $this, $this->newQueryBuilder() );
 
 		return $delete->execute();
+	}
+
+	/**
+	 * Delete an Entity Collection inside a single db transaction
+	 * 
+	 * @param  Collection $entities
+	 * @return Collection
+	 */
+	protected function deleteCollection(Collection $entities)
+	{
+		$thid->connection->beginTransaction();
+
+		foreach($entities as $entity)
+		{
+			$this->deleteEntity($entity);
+		}
+
+		$thid->connection->commit();
+		
+		return $entities;
 	}
 
 	/**
