@@ -790,7 +790,7 @@ class Query {
 	public function getEntities($columns = array('*'))
 	{
 		$results = $this->query->get($columns);
-
+		
 		$entities = array();
 
 		$prototype = $this->getEntityInstance();

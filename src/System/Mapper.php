@@ -315,7 +315,7 @@ class Mapper {
 	 * Create a new instance of the mapped entity class
 	 * 
 	 * @param  array  $attributes 
-	 * @return Analogue\ORM\Entity
+	 * @return mixed
 	 */
 	public function newInstance($attributes = array() )
 	{
@@ -323,7 +323,11 @@ class Mapper {
 
 		$entity = $this->customClassInstance($class);
 
-		$entity->setEntityAttributes($attributes);
+		// Prevent Hydrating with an empty array 
+		if (count($attributes) > 0)
+		{
+			$entity->setEntityAttributes($attributes);
+		}
 
 		return $entity;
 	}
@@ -333,7 +337,7 @@ class Mapper {
 	 * can instantiate without calling the constructor,
 	 * allowing users to have proper entity's constructors.
 	 * 
-	 * @return Analogue\ORM\Entity
+	 * @return mixed
 	 */
 	protected function customClassInstance($className)
 	{
