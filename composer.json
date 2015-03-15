@@ -13,9 +13,10 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.*|5.*",
-        "illuminate/database": "4.*|5.*",
-        "illuminate/events": "4.*|5.*"
+        "illuminate/contracts": "5.*",
+        "illuminate/support": "5.*",
+        "illuminate/database": "5.*",
+        "illuminate/events": "5.*"
     },
     "autoload": {
         "psr-4": {

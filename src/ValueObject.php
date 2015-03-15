@@ -9,6 +9,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 
 	protected $attributes;
 
+	protected $hiddenAttributes = [];
+
 	/**
 	 * Set the object attribute raw values (hydration)
 	 * 
@@ -182,6 +184,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 
 		foreach($this->attributes as $key => $attribute)
 		{
+			if (in_array($key, $this->hiddenAttributes )) continue;
+
 			if ($attribute instanceof ValueObject)
 			{
 				$attributes[$key] = $attribute->toArray();
