@@ -5,7 +5,7 @@ use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
 use Analogue\ORM\System\Mapper;
-use Illuminate\Events\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Plugins\AnaloguePluginInterface;
@@ -63,12 +63,13 @@ class Manager {
 		'creating', 'created', 'updating', 'updated', 'deleting', 'deleted' ];
 
 	/**
-	 * @param DatabaseManager $db       
+	 * @param DatabaseManager|Analogue $connectionProvider       
+	 * @param Dispatcher $event (optional)
 	 * @param ProxyCache      $proxyCache 
 	 */
-	public function __construct(DatabaseManager $db, Dispatcher $event)
+	public function __construct($connectionProvider, Dispatcher $event)
 	{
-		static::$db = $db;
+		static::$db = $connectionProvider;
 
 		static::$eventDispatcher = $event;
 	}

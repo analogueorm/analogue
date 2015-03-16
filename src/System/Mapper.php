@@ -414,15 +414,9 @@ class Mapper {
 		return $entity;
 	}
 
-	protected function getInstanceFromActivator()
-	{
-
-	}
-
 	/**
 	 * Use a trick to generate a class prototype that we 
-	 * can instantiate without calling the constructor,
-	 * allowing users to have proper entity's constructors.
+	 * can instantiate without calling the constructor.
 	 * 
 	 * @return mixed
 	 */
