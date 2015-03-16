@@ -13,7 +13,8 @@ use Analogue\ORM\Relationships\MorphTo;
 use Analogue\ORM\Relationships\MorphToMany;
 
 /**
- * Entity Map 
+ * The Entity Map defines the Mapping behaviour of an Entity,
+ * including relationships.
  */
 class EntityMap {
 
@@ -46,7 +47,7 @@ class EntityMap {
 	protected $class = null;
 
 	/**
-	 * Embeddables ValueObjects
+	 * Attributes that should be treated as Value Objects
 	 * 
 	 * @var array
 	 */
@@ -89,60 +90,11 @@ class EntityMap {
 	protected $perPage = 15;
 
 	/**
-	 * The accessors to append to the model's array form.
-	 *
-	 * @var array
-	 */
-	protected $appends = array();
-
-	/**
-	 * Indicates if all mass assignment is enabled.
-	 *
-	 * @var bool
-	 */
-	protected $unguarded = false;
-
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = array();
-
-	/**
-	 * The attributes that aren't mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $guarded = array('*');
-
-	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
-	 */
-	protected $dates = array();
-
-	/**
-	 * The relationships that should be touched on save.
-	 *
-	 * @var array
-	 */
-	protected $touches = array();
-
-	/**
-	 * User exposed observable events
-	 *
-	 * @var array
-	 */
-	protected $observables = array();
-
-	/**
 	 * The relations to eager load on every query.
 	 *
 	 * @var array
 	 */
-	protected $with = array();
+	protected $with = [];
 
 	/**
 	 * The class name to be used in polymorphic relations.
@@ -290,11 +242,16 @@ class EntityMap {
 		$this->class = $class;
 	}
 
-
+	/**
+	 * Has the EntityMap an activator method 
+	 * 
+	 * @return boolean 
+	 */
 	public function hasActivator()
 	{
 		return $this->hasActivator;
 	}
+
 
 	public function setActivatorMethod()
 	{
@@ -343,42 +300,74 @@ class EntityMap {
 		$this->relationships = $relationships;
 	}
 
+	/**
+	 * Set Relationships of the Entity type
+	 * 
+	 * @return array
+	 */
 	public function setSingleRelationships(array $singleRelations)
 	{
 		$this->singleRelations = $singleRelations;
 	}
 
+	/**
+	 * Relationships of the Entity type
+	 * 
+	 * @return array
+	 */
 	public function getSingleRelationships()
 	{
 		return $this->singleRelations;
 	}
 
+	/**
+	 * Set Relationships of type Collection
+	 * 
+	 * @param array $manyRelations 
+	 */
 	public function setManyRelationships(array $manyRelations)
 	{
 		$this->manyRelations = $manyRelations;
 	}
 
+	/**
+	 * Relationships of type Collection
+	 * 
+	 * @return array
+	 */
 	public function getManyRelationships()
 	{
 		return $this->manyRelations;
 	}
 
+	/**
+	 * Are the relations method been parsed?
+	 * 
+	 * @return boolean
+	 */
 	public function relationsParsed()
 	{
 		return ! is_null($this->singleRelations);
 	}
 
 	/**
-	 * Adding dynamic relationship as a closure that can be called
-	 * at run time.
+	 * Add a Relationship method at runtime.
+	 * 
+	 * @param string  $name         Relation name
+	 * @param Closure $relationship 
 	 *
-	 * (useful for polymorphic driven extensions)
+	 * @return void
 	 */
 	public function addRelationshipMethod($name, Closure $relationship )
 	{
 		$this->dynamicRelationships[$name] = $relationship;
 	}
 
+	/**
+	 * Get the dynamic relationship method names.
+	 *
+	 * @return array
+	 */
 	public function getDynamicRelationships()
 	{
 		return array_keys($this->dynamicRelationships);
@@ -494,47 +483,6 @@ class EntityMap {
 	public function getQualifiedDeletedAtColumn()
 	{
 		return $this->deletedAtColumn;
-	}
-
-	/**
-	 * Get the attributes that should be converted to dates.
-	 * 
-	 * @return string
-	 */
-	public function getDates()
-	{
-		return $this->dates;
-	}
-
-	/**
-	 * Determine if the given attribute may be mass assigned.
-	 *
-	 * @param  string  $key
-	 * @return bool
-	 */
-	public function isFillable($key)
-	{
-		if ($this->unguarded) return true;
-
-		// If the key is in the "fillable" array, we can of course assume that it's
-		// a fillable attribute. Otherwise, we will check the guarded array when
-		// we need to determine if the attribute is black-listed on the model.
-		if (in_array($key, $this->fillable)) return true;
-
-		if ($this->isGuarded($key)) return false;
-
-		return empty($this->fillable) && ! starts_with($key, '_');
-	}
-
-	/**
-	 * Determine if the given key is guarded.
-	 *
-	 * @param  string  $key
-	 * @return bool
-	 */
-	public function isGuarded($key)
-	{
-		return in_array($key, $this->guarded) || $this->guarded == array('*');
 	}
 
 	/**

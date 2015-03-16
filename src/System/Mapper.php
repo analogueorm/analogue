@@ -448,6 +448,16 @@ class Mapper {
 	}
 	
 	/**
+	 * Get the Analogue Query Builer for this instance
+	 * 
+	 * @return \Analogue\ORM\System\Query
+	 */
+	public function query()
+	{
+		return $this->getQuery();
+	}
+
+	/**
 	 * Get a new QueryBuilder instance for the current connection.
 	 *
 	 * @return \Illuminate\Database\Query\Builder

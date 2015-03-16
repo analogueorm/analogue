@@ -265,7 +265,7 @@ class Store extends Command
 					}
 					continue;
 				}
-				// Throw MappingException
+				throw new MappingException("Store : couldn't interpret the value of $".$relation);
 			}
 
 			if(is_array($cachedValue))
@@ -284,8 +284,7 @@ class Store extends Command
 
 					$this->entityMap->$relation($this->entity)->detachMany($missing);
 				}
-
-				// Throw MappingException
+				throw new MappingException("Store : couldn't interpret the value of $".$relation);
 			}
 		}
 	}
