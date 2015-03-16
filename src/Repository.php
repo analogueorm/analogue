@@ -7,15 +7,12 @@ class Repository {
 
 	protected $mapper;
 
-	protected $entityMap;
-
 	/**
 	 * @param Mapper $mapper 
 	 */
 	public function __construct(Mapper $mapper)
 	{
 		$this->mapper = $mapper;
-		$this->entityMap = $mapper->getEntityMap();
 	}
 
 	/**
