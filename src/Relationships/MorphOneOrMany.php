@@ -22,8 +22,8 @@ abstract class MorphOneOrMany extends HasOneOrMany {
 	/**
 	 * Create a new has many relationship instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  Mappable  $parent
 	 * @param  string  $type
 	 * @param  string  $id
 	 * @param  string  $localKey
@@ -56,9 +56,9 @@ abstract class MorphOneOrMany extends HasOneOrMany {
 	/**
 	 * Get the relationship count query.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Builder  $parent
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  \Analogue\ORM\System\Query  $parent
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function getRelationCountQuery(Query $query, Query $parent)
 	{

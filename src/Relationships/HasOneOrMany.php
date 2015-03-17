@@ -22,8 +22,8 @@ abstract class HasOneOrMany extends Relationship {
 	/**
 	 * Create a new has many relationship instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  Mappable  $parent
 	 * @param  string  $foreignKey
 	 * @param  string  $localKey
 	 * @return void
@@ -205,7 +205,7 @@ abstract class HasOneOrMany extends Relationship {
 	/**
 	 * Build model dictionary keyed by the relation's foreign key.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Collection  $results
+	 * @param  \Analogue\ORM\EntityCollection  $results
 	 * @return array
 	 */
 	protected function buildDictionary(EntityCollection $results)

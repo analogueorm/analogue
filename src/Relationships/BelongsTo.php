@@ -38,8 +38,8 @@ class BelongsTo extends Relationship {
 	/**
 	 * Create a new belongs to relationship instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  Mappable  $parent
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
 	 * @param  string  $relation
@@ -231,7 +231,7 @@ class BelongsTo extends Relationship {
 	/**
 	 * Dissociate previously associated model from the given parent.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Model
+	 * @return Mappable
 	 */
 	public function dissociate()
 	{

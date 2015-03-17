@@ -291,10 +291,10 @@ class Mapper {
 	}
 
 	/**
-	 * Apply all of the global scopes to an Eloquent builder.
+	 * Apply all of the global scopes to an Analogue Query builder.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $builder
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @param  \Analogue\ORM\System\Query  $builder
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function applyGlobalScopes($query)
 	{
@@ -307,10 +307,10 @@ class Mapper {
 	}
 
 	/**
-	 * Remove all of the global scopes from an Eloquent builder.
+	 * Remove all of the global scopes from an Analogue Query builder.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $builder
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @param  \Analogue\ORM\System\Query  $builder
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function removeGlobalScopes($query)
 	{

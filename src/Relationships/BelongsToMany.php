@@ -4,7 +4,7 @@ use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Analogue\ORM\Exceptions\EntityNotFoundException;
 
 class BelongsToMany extends Relationship {
 
@@ -49,7 +49,7 @@ class BelongsToMany extends Relationship {
 	 * Create a new has many relationship instance.
 	 *
 	 * @param  \Analogue\ORM\Query  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  Mappable  $parent
 	 * @param  string  $table
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
@@ -119,7 +119,7 @@ class BelongsToMany extends Relationship {
 	 * @param  string  $operator
 	 * @param  mixed   $value
 	 * @param  string  $boolean
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Analogue\ORM\Relationships\BelongsToMany
 	 */
 	public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
 	{
@@ -132,7 +132,7 @@ class BelongsToMany extends Relationship {
 	 * @param  string  $column
 	 * @param  string  $operator
 	 * @param  mixed   $value
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Analogue\ORM\Relationships\BelongsToMany
 	 */
 	public function orWherePivot($column, $operator = null, $value = null)
 	{
@@ -156,22 +156,22 @@ class BelongsToMany extends Relationship {
 	 * Execute the query and get the first result or throw an exception.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Model|static
+	 * @return Mappable|static
 	 *
-	 * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+	 * @throws MappableNotFoundException
 	 */
 	public function firstOrFail($columns = array('*'))
 	{
 		if ( ! is_null($entity = $this->first($columns))) return $entity;
 
-		throw new ModelNotFoundException;
+		throw new EntityNotFoundException;
 	}
 
 	/**
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @return \Analogue\ORM\EntityCollection
 	 */
 	public function get($columns = array('*'))
 	{
@@ -196,27 +196,6 @@ class BelongsToMany extends Relationship {
 
 		return $this->relatedMap->newCollection($entities);
 	}
-
-	// /**
-	//  * Get a paginator for the "select" statement.
-	//  *
-	//  * @param  int    $perPage
-	//  * @param  array  $columns
-	//  * @return \Illuminate\Pagination\Paginator
-	//  */
-	// public function paginate($perPage = null, $columns = array('*'))
-	// {
-	// 	$this->query->addSelect($this->getSelectColumns($columns));
-
-	// 	// When paginating results, we need to add the pivot columns to the query and
-	// 	// then hydrate into the pivot objects once the results have been gathered
-	// 	// from the database since this isn't performed by the Eloquent builder.
-	// 	$pager = $this->query->paginate($perPage, $columns);
-
-	// 	$this->hydratePivotRelation($pager->getItems());
-
-	// 	return $pager;
-	// }
 
 	/**
 	 * Hydrate the pivot table relationship on the models.
@@ -334,7 +313,7 @@ class BelongsToMany extends Relationship {
 	 * Set the select clause for the relation query.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Analogue\ORM\Relationships\BelongsToMany
 	 */
 	protected function getSelectColumns(array $columns = array('*'))
 	{
@@ -473,7 +452,7 @@ class BelongsToMany extends Relationship {
 	/**
 	 * Build model dictionary keyed by the relation's foreign key.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Collection  $results
+	 * @param  \Analogue\ORM\EntityCollection  $results
 	 * @return array
 	 */
 	protected function buildDictionary(EntityCollection $results)
@@ -530,115 +509,6 @@ class BelongsToMany extends Relationship {
 
 		return $this->getQuery()->select($fullKey)->lists($related->getKeyName());
 	}
-
-	// /**
-	//  * Sync the intermediate tables with a list of IDs or collection of models.
-	//  *
-	//  * @param  $ids
-	//  * @param  bool   $detaching
-	//  * @return array
-	//  */
-	// public function sync($ids, $detaching = true)
-	// {
-	// 	$changes = array(
-	// 		'attached' => array(), 'detached' => array(), 'updated' => array()
-	// 	);
-
-	// 	if ($ids instanceof Collection) $ids = $ids->modelKeys();
-
-	// 	// First we need to attach any of the associated models that are not currently
-	// 	// in this joining table. We'll spin through the given IDs, checking to see
-	// 	// if they exist in the array of current ones, and if not we will insert.
-	// 	$current = $this->newPivotQuery()->lists($this->otherKey);
-
-	// 	$records = $this->formatSyncList($ids);
-
-	// 	$detach = array_diff($current, array_keys($records));
-
-	// 	// Next, we will take the differences of the currents and given IDs and detach
-	// 	// all of the entities that exist in the "current" array but are not in the
-	// 	// the array of the IDs given to the method which will complete the sync.
-	// 	if ($detaching && count($detach) > 0)
-	// 	{
-	// 		$this->detach($detach);
-
-	// 		$changes['detached'] = (array) array_map(function($v) { return (int) $v; }, $detach);
-	// 	}
-
-	// 	// Now we are finally ready to attach the new records. Note that we'll disable
-	// 	// touching until after the entire operation is complete so we don't fire a
-	// 	// ton of touch operations until we are totally done syncing the records.
-	// 	$changes = array_merge(
-	// 		$changes, $this->attachNew($records, $current, false)
-	// 	);
-
-	// 	if (count($changes['attached']) || count($changes['updated']))
-	// 	{
-	// 		$this->touchIfTouching();
-	// 	}
-
-	// 	return $changes;
-	// }
-
-	// /**
-	//  * Format the sync list so that it is keyed by ID.
-	//  *
-	//  * @param  array  $records
-	//  * @return array
-	//  */
-	// protected function formatSyncList(array $records)
-	// {
-	// 	$results = array();
-
-	// 	foreach ($records as $id => $attributes)
-	// 	{
-	// 		if ( ! is_array($attributes))
-	// 		{
-	// 			list($id, $attributes) = array($attributes, array());
-	// 		}
-
-	// 		$results[$id] = $attributes;
-	// 	}
-
-	// 	return $results;
-	// }
-
-	// /**
-	//  * Attach all of the IDs that aren't in the current array.
-	//  *
-	//  * @param  array  $records
-	//  * @param  array  $current
-	//  * @param  bool   $touch
-	//  * @return array
-	//  */
-	// protected function attachNew(array $records, array $current, $touch = true)
-	// {
-	// 	$changes = array('attached' => array(), 'updated' => array());
-
-	// 	foreach ($records as $id => $attributes)
-	// 	{
-	// 		// If the ID is not in the list of existing pivot IDs, we will insert a new pivot
-	// 		// record, otherwise, we will just update this existing record on this joining
-	// 		// table, so that the developers will easily update these records pain free.
-	// 		if ( ! in_array($id, $current))
-	// 		{
-	// 			$this->attach($id, $attributes, $touch);
-
-	// 			$changes['attached'][] = (int) $id;
-	// 		}
-
-	// 		// Now we'll try to update an existing pivot record with the attributes that were
-	// 		// given to the method. If the model is actually updated we will add it to the
-	// 		// list of updated pivot records so we return them back out to the consumer.
-	// 		elseif (count($attributes) > 0 &&
-	// 			$this->updateExistingPivot($id, $attributes, $touch))
-	// 		{
-	// 			$changes['updated'][] = (int) $id;
-	// 		}
-	// 	}
-
-	// 	return $changes;
-	// }
 
 	public function updatePivot($entity)
 	{
@@ -854,39 +724,7 @@ class BelongsToMany extends Relationship {
 
 		return $results;
 	}
-
-	// /**
-	//  * If we're touching the parent model, touch.
-	//  *
-	//  * @return void
-	//  */
-	// public function touchIfTouching()
-	// {
-	// 	if ($this->touchingParent()) $this->getParent()->touch();
-
-	// 	if ($this->getParent()->touches($this->relationName)) $this->touch();
-	// }
-
-	// /**
-	//  * Determine if we should touch the parent on sync.
-	//  *
-	//  * @return bool
-	//  */
-	// protected function touchingParent()
-	// {
-	// 	return $this->getRelated()->touches($this->guessInverseRelation());
-	// }
-
-	// /**
-	//  * Attempt to guess the name of the inverse of the relation.
-	//  *
-	//  * @return string
-	//  */
-	// protected function guessInverseRelation()
-	// {
-	// 	return camel_case(str_plural(class_basename($this->getParent())));
-	// }
-
+	
 	/**
 	 * Create a new query builder for the pivot table.
 	 *
@@ -933,7 +771,7 @@ class BelongsToMany extends Relationship {
 	 *
 	 * @param  array  $attributes
 	 * @param  bool   $exists
-	 * @return \Illuminate\Database\Eloquent\Relations\Pivot
+	 * @return \Analogue\ORM\Relationships\Pivot
 	 */
 	public function newPivot(array $attributes = array(), $exists = false)
 	{
@@ -946,7 +784,7 @@ class BelongsToMany extends Relationship {
 	 * Create a new existing pivot model instance.
 	 *
 	 * @param  array  $attributes
-	 * @return \Illuminate\Database\Eloquent\Relations\Pivot
+	 * @return \Analogue\ORM\Relationships\Pivot
 	 */
 	public function newExistingPivot(array $attributes = array())
 	{
@@ -973,22 +811,12 @@ class BelongsToMany extends Relationship {
 	 *
 	 * @param  mixed  $createdAt
 	 * @param  mixed  $updatedAt
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Analogue\ORM\Relationships\BelongsToMany
 	 */
 	public function withTimestamps($createdAt = null, $updatedAt = null)
 	{
 		return $this->withPivot($createdAt ?: $this->createdAt(), $updatedAt ?: $this->updatedAt());
 	}
-
-	// /**
-	//  * Get the related model's updated at column name.
-	//  *
-	//  * @return string
-	//  */
-	// public function getRelatedFreshUpdate()
-	// {
-	// 	return array($this->related->getUpdatedAtColumn() => $this->related->freshTimestamp());
-	// }
 
 	/**
 	 * Get the key for comparing against the parent key in "has" query.

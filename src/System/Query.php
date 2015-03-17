@@ -9,9 +9,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * Analogue Query builder.
- * 
- * Forked from Eloquent Query Builder by Taylor Otwell
- * 
  */
 class Query {
 
@@ -161,7 +158,7 @@ class Query {
 	 * @param  array  $columns
 	 * @return mixed|static
 	 *
-	 * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+	 * @throws MappableNotFoundException
 	 */
 	public function findOrFail($id, $columns = array('*'))
 	{
@@ -186,9 +183,9 @@ class Query {
 	 * Execute the query and get the first result or throw an exception.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Model|static
+	 * @return Mappable|static
 	 *
-	 * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+	 * @throws MappableNotFoundException
 	 */
 	public function firstOrFail($columns = array('*'))
 	{
@@ -249,7 +246,7 @@ class Query {
 
 		// If the model has a mutator for the requested column, we will spin through
 		// the results and mutate the values so that the mutated version of these
-		// columns are returned as you would expect from these Eloquent models.
+		// columns are returned as you would expect from these Entities.
 		if ($this->model->hasGetMutator($column))
 		{
 			foreach ($results as $key => &$value)
@@ -378,7 +375,7 @@ class Query {
 	 * @param  string  $column
 	 * @param  string  $operator
 	 * @param  mixed   $value
-	 * @return \Illuminate\Database\Eloquent\Builder|static
+	 * @return \Analogue\ORM\System\Query|static
 	 */
 	public function orWhere($column, $operator = null, $value = null)
 	{
@@ -393,7 +390,7 @@ class Query {
 	 * @param  int     $count
 	 * @param  string  $boolean
 	 * @param  \Closure  $callback
-	 * @return \Illuminate\Database\Eloquent\Builder|static
+	 * @return \Analogue\ORM\System\Query|static
 	 */
 	public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
 	{
@@ -903,9 +900,7 @@ class Query {
 	 */
 	public function newQuery()
 	{
-		$builder = $this->newEloquentBuilder(
-			$this->newBaseQueryBuilder(), $this->mapper
-		);
+		$builder = new Query($this->newBaseQueryBuilder(), $this->mapper);
 
 		return $this->applyGlobalScopes($builder);
 	}

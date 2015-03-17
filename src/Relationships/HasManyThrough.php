@@ -39,8 +39,8 @@ class HasManyThrough extends Relationship {
 	/**
 	 * Create a new has many relationship instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  Mappable  $parent
 	 * @param  string  $firstKey
 	 * @param  string  $secondKey
 	 * @return void
@@ -234,7 +234,7 @@ class HasManyThrough extends Relationship {
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @return \Analogue\ORM\EntityCollection
 	 */
 	public function get($columns = array('*'))
 	{
@@ -260,7 +260,7 @@ class HasManyThrough extends Relationship {
 	 * Set the select clause for the relation query.
 	 *
 	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 * @return \Analogue\ORM\Relationships\BelongsToMany
 	 */
 	protected function getSelectColumns(array $columns = array('*'))
 	{

@@ -52,7 +52,7 @@ class MorphPivot extends Pivot {
 	 * Set the morph class for the pivot.
 	 *
 	 * @param  string  $morphClass
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphPivot
+	 * @return \Analogue\ORM\Relationships\MorphPivot
 	 */
 	public function setMorphClass($morphClass)
 	{

@@ -83,7 +83,7 @@ abstract class Relationship {
 	 * Create a new relation instance.
 	 *
 	 * @param  \Analogue\ORM\System\Mapper  $mapper
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  Mappable  $parent
 	 * @return void
 	 */
 	public function __construct(Mapper $mapper, $parent)
@@ -167,7 +167,7 @@ abstract class Relationship {
 	 * Match the eagerly loaded results to their parents.
 	 *
 	 * @param  array   $entities
-	 * @param  \Illuminate\Database\Eloquent\Collection  $results
+	 * @param  \Analogue\ORM\EntityCollection  $results
 	 * @param  string  $relation
 	 * @return array
 	 */
@@ -184,7 +184,7 @@ abstract class Relationship {
 	/**
 	 * Get the relationship for eager loading.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @return \Analogue\ORM\EntityCollection
 	 */
 	public function getEager()
 	{
@@ -271,7 +271,7 @@ abstract class Relationship {
 	}
 
 	/**
-	 * Get the base query builder driving the Eloquent builder.
+	 * Get the base query builder 
 	 *
 	 * @return \Illuminate\Database\Query\Builder
 	 */
@@ -283,7 +283,7 @@ abstract class Relationship {
 	/**
 	 * Get the parent model of the relation.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Model
+	 * @return Mappable
 	 */
 	public function getParent()
 	{

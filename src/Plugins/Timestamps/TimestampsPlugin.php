@@ -7,8 +7,7 @@ use Analogue\ORM\System\Manager;
 use Analogue\ORM\Plugins\AnaloguePluginInterface;
 
 /**
- * Implements the Eloquent Timestamps behaviour on Analogue Entities
- * 
+ * Implements the Timestamps support on Analogue Entities
  */
 class TimestampsPlugin implements AnaloguePluginInterface {
 

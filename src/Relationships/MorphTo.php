@@ -45,8 +45,8 @@ class MorphTo extends BelongsTo {
 	/**
 	 * Create a new belongs to relationship instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  Mappable  $parent
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
 	 * @param  string  $type
@@ -118,8 +118,6 @@ class MorphTo extends BelongsTo {
 
 	/*
 	 * Get the results of the relationship.
-	 *
-	 * Called via eager load method of Eloquent query builder.
 	 *
 	 * @return mixed
 	 */
