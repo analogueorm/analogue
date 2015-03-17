@@ -361,10 +361,10 @@ class Mapper {
 	 * Execute a custom command on an Entity
 	 * 
 	 * @param  string $command 
-	 * @param  \Analogue\ORM\Entity $entity  
+	 * @param  \Analogue\ORM\Entity|Collection $entity  
 	 * @return mixed
 	 */
-	public function executeCustomCommand($command, Mappable $entity)
+	public function executeCustomCommand($command, $entity)
 	{
 		$commandClass = $this->customCommands[$command];
 
@@ -381,6 +381,11 @@ class Mapper {
 	public function getCustomCommands()
 	{
 		return array_keys($this->customCommands);
+	}
+
+	public function hasCustomCommand($command)
+	{
+		return in_array($command, $this->getCustomCommands());
 	}
 
 	/**
@@ -480,4 +485,34 @@ class Mapper {
 
 		return new QueryBuilder($connection, $grammar, $connection->getPostProcessor() );
 	}
+
+	/**
+	 * Dynamically handle calls to custom commands.
+	 *
+	 * @param  string  $method
+	 * @param  array   $parameters
+	 * @return mixed
+	 */
+	public function __call($method, $parameters)
+	{
+		if(! $this->hasCustomCommand($method))
+		{
+			throw new \Exception("No Method $method on mapper");
+		}
+		if(count($parameters) == 0)
+		{
+			throw new \Exception("Mapper Command must at least have 1 argument");
+		}
+
+		if($parameters[0] instanceof Mappable || $parameters[0] instanceof Collection)
+		{
+			return $this->executeCustomCommand($method, $parameters[0]);	
+		}
+		else
+		{
+			throw new \InvalidArgumentException("Mapper Command first argument must be an instance of Mappable or Collection");	
+		}
+		
+	}
+	
 }
