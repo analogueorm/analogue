@@ -458,7 +458,17 @@ class Mapper {
 	}
 
 	/**
-	 * Get a new QueryBuilder instance for the current connection.
+	 * Get an unscoped Analogue Query Builer for this instance
+	 * 
+	 * @return \Analogue\ORM\System\Query
+	 */
+	public function globalQuery()
+	{
+		return $this->newQueryWithoutScopes();
+	}
+
+	/**
+	 * Get a new Illuminate QueryBuilder instance for the current connection.
 	 *
 	 * @return \Illuminate\Database\Query\Builder
 	 */
