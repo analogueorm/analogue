@@ -32,7 +32,7 @@ class Analogue {
 
     public function boot()
     {
-        if ($this->booted)
+        if (static::$booted)
         {
             return $this;
         }
