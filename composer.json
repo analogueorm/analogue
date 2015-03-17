@@ -18,11 +18,14 @@
         "illuminate/database": "5.*",
         "illuminate/events": "5.*"
     },
+     "suggest": {
+        "analogue/laravel-auth": "Analogue authentication driver for Laravel."
+    },
     "autoload": {
         "psr-4": {
             "Analogue\\ORM\\": "src/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable":true
 }
