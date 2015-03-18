@@ -1,16 +1,10 @@
 <?php namespace AnalogueTest;
 
-use Mockery as m;
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityCollection as Collection;
 use PHPUnit_Framework_TestCase;
 
 class EntityCollectionTest extends PHPUnit_Framework_TestCase {
-
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testAddingEntitiesToCollection()
     {
