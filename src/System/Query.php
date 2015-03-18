@@ -108,24 +108,6 @@ class Query {
 	}
 
 	/**
-	 * Cache the result set
-	 * 
-	 * @param  array  $entities
-	 * @return void
-	 */
-	protected function cacheResults(array $entities)
-	{
-		$keyName = $this->entityMap->getKeyName();
-
-		$cache = $this->mapper->getEntityCache();
-
-		foreach($entities as $entity)
-		{
-			$cache->set($entity->getEntityAttribute($keyName), $entity->getEntityAttributes() );
-		}
-	}
-	
-	/**
 	 * Find an entity by its primary key
 	 * 
 	 * @param  string|integer $id 

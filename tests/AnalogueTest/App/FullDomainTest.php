@@ -146,7 +146,7 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['users']);
     }
 
-    public function testStorePolymorphicManyRelations()
+    public function testStoreAndLoadPolymorphicManyRelations()
     {
         $analogue = get_analogue();
 
@@ -154,12 +154,19 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
 
         $u1 = new User('u1', new Role('r1'));
         $u2 = new User('u2', new Role('r2'));
-
         $resource->users = new EntityCollection([$u1, $u2]);
+
+        $image1 = new Image('i1');
+        $image2 = new Image('i2');
+        $resource->images = new EntityCollection([$image1,$image2]);
 
         $analogue->mapper($resource)->store($resource);
 
         $this->assertGreaterThan(0, $resource->custom_id);
+        
+        $resourceMapper = get_mapper($resource);
+        $id = $resource->custom_id;
+        $res = $resourceMapper->query()->with(['users','images'])->find($id);
     }
 
     public function testMissingPermissions()

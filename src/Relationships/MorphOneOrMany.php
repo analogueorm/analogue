@@ -38,6 +38,12 @@ abstract class MorphOneOrMany extends HasOneOrMany {
 		$this->morphClass = $this->parentMap->getMorphClass();
 	}
 
+	public function attachOne($entity)
+	{
+		$entity->setEntityAttribute($this->getPlainMorphType(), get_class($this->parent));
+		$entity->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
+	}
+
 	/**
 	 * Set the base constraints on the relation query.
 	 *

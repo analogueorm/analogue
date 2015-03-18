@@ -10,10 +10,10 @@ class MorphMany extends MorphOneOrMany {
 	 * @return mixed
 	 */
 	public function getResults($relation)
-	{
+	{	
 		$results = $this->query->get();
 
-		$this->cacheResults($results);
+		$this->cacheRelation($result, $relation);
 
 		return $results;
 	}
