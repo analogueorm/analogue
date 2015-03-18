@@ -294,27 +294,27 @@ class Manager {
 		static::$eventDispatcher->listen("analogue.{$event}.*", $callback);
 	}
 
-	/**
-	 * Shortcut to Mapper store
-	 * 
-	 * @param  Mappable|Collection|array $entity
-	 * @return mixed
-	 */
-	public static function store($entity)
-	{
-		return static::mapper($entity)->store($entity);
-	}
+	// /**
+	//  * Shortcut to Mapper store
+	//  * 
+	//  * @param  Mappable|Collection|array $entity
+	//  * @return mixed
+	//  */
+	// public static function store($entity)
+	// {
+	// 	return static::mapper($entity)->store($entity);
+	// }
 
-	/**
-	 * Shortcut to Mapper delete
-	 * 
-	 * @param  Mappable|Collection|array $entity
-	 * @return mixed
-	 */
-	public static function delete($entity)
-	{
-		return static::mapper($entity)->delete($entity);
-	}
+	// /**
+	//  * Shortcut to Mapper delete
+	//  * 
+	//  * @param  Mappable|Collection|array $entity
+	//  * @return mixed
+	//  */
+	// public static function delete($entity)
+	// {
+	// 	return static::mapper($entity)->delete($entity);
+	// }
 
 	/**
 	 * Shortcut to Mapper query
