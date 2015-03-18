@@ -1,18 +1,27 @@
-<?php
-namespace Analogue\ORM;
+<?php namespace Analogue\ORM;
 
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
+use Analogue\ORM\System\Manager;
 
 class Repository {
 
 	protected $mapper;
 
 	/**
-	 * @param Mapper $mapper 
+	 * @param Mapper|Mappable $mapper 
 	 */
-	public function __construct(Mapper $mapper)
+	public function __construct($mapper)
 	{
-		$this->mapper = $mapper;
+		if($mapper instanceof Mappable)
+		{
+			$this->mapper = Manager::mapper($mapper);
+		}
+		else if($mapper instanceof Mapper)
+		{
+			$this->mapper = $mapper;
+		}
+		else new \InvalidArgumentException('Repository class constuctor need a valid Mapper or Mappable object.');
 	}
 
 	/**
