@@ -15,7 +15,7 @@ class Manager {
 	/**
 	 * Database Manager
 	 * 
-	 * @var \Illuminate\Database\DatabaseManager
+	 * @var DatabaseManager|Analogue
 	 */
 	protected static $db;
 
@@ -50,7 +50,7 @@ class Manager {
 	/**
 	 * Event dispatcher instance
 	 * 
-	 * @var \Illuminate\Events\Dispatcher
+	 * @var Illuminate\Contracts\Events\Dispatcher
 	 */
 	protected static $eventDispatcher;
 
@@ -64,8 +64,7 @@ class Manager {
 
 	/**
 	 * @param DatabaseManager|Analogue $connectionProvider       
-	 * @param Dispatcher $event (optional)
-	 * @param ProxyCache      $proxyCache 
+	 * @param Dispatcher $event 
 	 */
 	public function __construct($connectionProvider, Dispatcher $event)
 	{
@@ -110,7 +109,7 @@ class Manager {
 	 * Get the Repository instance for the given Entity 
 	 * 
 	 * @param  Entity|String $entity 
-	 * @return Analogue\ORM\Repository
+	 * @return \Analogue\ORM\Repository
 	 */
 	public static function repository($entity)
 	{
@@ -130,8 +129,8 @@ class Manager {
 	/**
 	 * Get the entity map instance for a custom entity
 	 * 
-	 * @param  [type] $entity [description]
-	 * @return [type]         [description]
+	 * @param  string|object $entity 
+	 * @return Mappable
 	 */
 	protected static function getEntityMapInstanceFor($entity)
 	{
@@ -160,7 +159,7 @@ class Manager {
 			else 
 			{
 				// Generate an EntityMap obeject
-				$map = static::createMapForEntity($entity);
+				$map = static::generateBlankMap();
 			}
 		}
 
@@ -180,14 +179,11 @@ class Manager {
 	/**
 	 * Dynamically create an entity map for a custom entity class
 	 * 
-	 * @param  string $entity 
 	 * @return EntityMap         
 	 */
-	protected static function createMapForEntity($entity)
+	protected static function generateBlankMap()
 	{
-		$map = new EntityMap;
-		
-		return $map;
+		return new EntityMap;
 	}
 
 	/**
@@ -266,9 +262,10 @@ class Manager {
 	}
 
 	/**
-	 * [isRegisteredEntity description]
-	 * @param  [type]  $entity [description]
-	 * @return boolean         [description]
+	 * Check if the entity is already registered
+	 * 
+	 * @param  string|object  $entity
+	 * @return boolean         
 	 */
 	public static function isRegisteredEntity($entity)
 	{
@@ -294,32 +291,32 @@ class Manager {
 		static::$eventDispatcher->listen("analogue.{$event}.*", $callback);
 	}
 
-	// /**
-	//  * Shortcut to Mapper store
-	//  * 
-	//  * @param  Mappable|Collection|array $entity
-	//  * @return mixed
-	//  */
-	// public static function store($entity)
-	// {
-	// 	return static::mapper($entity)->store($entity);
-	// }
+	/**
+	 * Shortcut to Mapper store
+	 * 
+	 * @param  mixed $entity
+	 * @return mixed
+	 */
+	public static function store($entity)
+	{
+		return static::mapper($entity)->store($entity);
+	}
 
-	// /**
-	//  * Shortcut to Mapper delete
-	//  * 
-	//  * @param  Mappable|Collection|array $entity
-	//  * @return mixed
-	//  */
-	// public static function delete($entity)
-	// {
-	// 	return static::mapper($entity)->delete($entity);
-	// }
+	/**
+	 * Shortcut to Mapper delete
+	 * 
+	 * @param  mixed $entity
+	 * @return mixed
+	 */
+	public static function delete($entity)
+	{
+		return static::mapper($entity)->delete($entity);
+	}
 
 	/**
 	 * Shortcut to Mapper query
 	 * 
-	 * @param  Mappable|Collection|array $entity
+	 * @param  mixed $entity
 	 * @return Analogue\System\Query
 	 */
 	public static function query($entity)
