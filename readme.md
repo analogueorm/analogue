@@ -28,6 +28,19 @@ $analogue->store($gallery);
 
 Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for a guided tour.
 
+##Features
+
+- Lazy loading
+- Eager Loading
+- Timestamps
+- Soft Deletes
+- Polymorphic Relationships
+- Dynamic Relationships
+- Embeddable Value Objects
+- Cast Entities to Array / Json
+- Flexible event system
+- Extendable via Plugins
+
 ## Install :
 
 ```
@@ -50,19 +63,6 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 ###Version 2.0
 
 - Laravel 5 Support.
-
-##Features
-
-- Lazy loading
-- Eager Loading
-- Timestamps
-- Soft Deletes
-- Polymorphic Relationships
-- Dynamic Relationships
-- Embeddable Value Objects
-- Cast Entities to Array / Json
-- Flexible event system
-- Extendable via Plugins
 
 ## Documentation
 
