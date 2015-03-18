@@ -6,15 +6,6 @@ use Illuminate\Support\Collection as Collection;
 
 class EntityCollection extends Collection {
 	
-	protected $entityMap;
-
-	public function __construct(array $items = array(), EntityMap $entityMap)
-	{
-		$this->entityMap = $entityMap;
-
-		parent::__construct($items);
-	}
-
 	/**
 	 * Find an entity in the collection by key.
 	 *
@@ -93,18 +84,6 @@ class EntityCollection extends Collection {
 		{
 			return (is_null($result) || $item->{$key} < $result) ? $item->{$key} : $result;
 		});
-	}
-
-	/**
-	 * Get the array of primary keys
-	 *
-	 * @return array
-	 */
-	public function modelKeys()
-	{
-		$keyName = $this->entityMap->getKeyName();
-
-		return array_map(function($m) use ($keyName){ return $m->$keyName; }, $this->items);
 	}
 
 	/**

@@ -48,7 +48,7 @@ class BelongsToMany extends Relationship {
 	/**
 	 * Create a new has many relationship instance.
 	 *
-	 * @param  \Analogue\ORM\Query  $query
+	 * @param  Mapper  $mapper
 	 * @param  Mappable  $parent
 	 * @param  string  $table
 	 * @param  string  $foreignKey
@@ -690,6 +690,13 @@ class BelongsToMany extends Relationship {
 		$record[$this->updatedAt()] = $fresh;
 
 		return $record;
+	}
+
+	protected function getModelKeysFromCollection(EntityCollection $entities)
+	{
+		$keyName = $this->relatedMap->getKeyName();
+
+		return array_map(function($m) use ($keyName){ return $m->$keyName; }, $entities->items);
 	}
 
 	/**
