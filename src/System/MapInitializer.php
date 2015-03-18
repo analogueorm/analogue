@@ -39,11 +39,6 @@ class MapInitializer {
 			$relationships = [];
 		}
 
-		if (in_array('activator',$userMethods))
-		{
-			$map->setActivatorMethod();
-		}
-
 		$map->setRelationships($relationships);
 
 		return $map;
@@ -97,6 +92,7 @@ class MapInitializer {
 	public function splitRelationsTypes($entity)
 	{
 		$map = $this->mapper->getEntityMap();
+		
 		// Add dynamic relationships to the game
 		$relations = $map->getRelationships() + $map->getDynamicRelationships();
 

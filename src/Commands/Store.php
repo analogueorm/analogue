@@ -174,7 +174,7 @@ class Store extends Command
 	 * Create related Entities if they don't exist
 	 * in the database
 	 * 
-	 * @param  string $relations 
+	 * @param  array $relations 
 	 * @return void            
 	 */
 	protected function createRelatedIfNotExists($relations)

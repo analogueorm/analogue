@@ -90,5 +90,16 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
         $analogue->mapper($a)->delete($a);
     }
 
-    
+
+    public function testLazyLoadingEntity()
+    {
+           
+    }
+
+    public function testEntityLazyCollection()
+    {
+
+    }
+
+
 }

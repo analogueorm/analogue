@@ -104,12 +104,6 @@ class EntityMap {
 	protected $morphClass;
 
 	/**
-	 * The class has an activator method
-	 * @var boolean
-	 */
-	public $hasActivator = false;
-
-	/**
 	 * Indicates if the entity should be timestamped.
 	 *
 	 * @var bool
@@ -240,22 +234,6 @@ class EntityMap {
 		// Throw exception if class not exists
 		
 		$this->class = $class;
-	}
-
-	/**
-	 * Has the EntityMap an activator method 
-	 * 
-	 * @return boolean 
-	 */
-	public function hasActivator()
-	{
-		return $this->hasActivator;
-	}
-
-
-	public function setActivatorMethod()
-	{
-		$this->hasActivator = true;
 	}
 
 	/**
@@ -873,6 +851,16 @@ class EntityMap {
 	public function newCollection(array $entities = array())
 	{
 		return new EntityCollection($entities, $this);
+	}
+
+	/**
+	 * Override this method for custom entity instantiation
+	 * 
+	 * @return mixed
+	 */
+	public function activator()
+	{
+		//
 	}
 
 	/**

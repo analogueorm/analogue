@@ -6,6 +6,13 @@ use Analogue\ORM\EntityCollection;
 class StateChecker {
 
 	/**
+	 * Entity to check
+	 * 
+	 * @var Mappable
+	 */
+	protected $entity;
+
+	/**
 	 * Entity's mapper instance
 	 * 
 	 * @var \Analogue\ORM\System\Mapper

@@ -261,7 +261,7 @@ class Mapper {
 	 * @param  \Analogue\ORM\System\ScopeInterface  $scope
 	 * @return bool
 	 */
-	public static function hasGlobalScope($scope)
+	public function hasGlobalScope($scope)
 	{
 		return ! is_null($this->getGlobalScope($scope));
 	}
@@ -272,7 +272,7 @@ class Mapper {
 	 * @param  \Analogue\ORM\System\ScopeInterface   $scope
 	 * @return \Analogue\ORM\System\ScopeInterface |null
 	 */
-	public static function getGlobalScope($scope)
+	public function getGlobalScope($scope)
 	{
 		return array_first($this->globalScopes, function($key, $value) use ($scope)
 		{
@@ -398,10 +398,7 @@ class Mapper {
 	{
 		$class = $this->entityMap->getClass();
 
-		// If an activator method is present
-		// on the entity map, use it to 
-		// instantiate the entity.
-		if ($this->entityMap->hasActivator() )
+		if ($this->entityMap->activator() != null)
 		{
 			$entity = $this->entityMap->activator();
 		}
