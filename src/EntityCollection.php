@@ -1,6 +1,7 @@
 <?php
 namespace Analogue\ORM;
 
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use Illuminate\Support\Collection as Collection;
 
@@ -18,22 +19,32 @@ class EntityCollection extends Collection {
 	{
 		return array_first($this->items, function($itemKey, $entity) use ($key)
 		{
-			return $entity->getEntityKey() == $key;
+			return $this->getEntityKey($entity) == $key;
 
 		}, $default);
 	}
 
 	/**
-	 * Add an item to the collection.
+	 * Add an entity to the collection.
 	 *
-	 * @param  mixed  $item
+	 * @param  Mappable  $entity
 	 * @return $this
 	 */
-	public function add($item)
+	public function add(Mappable $entity)
 	{
-		$this->items[] = $item;
+		$this->items[] = $entity;
 
 		return $this;
+	}
+
+	/**
+	 * Remove an entity from the collection
+	 */
+	public function remove(Mappable $entity)
+	{
+		$keyName = $this->getEntityKey($entity);
+
+		return $this->pull($entity->getEntityAttribute($keyName));
 	}
 
 	/**
@@ -68,7 +79,8 @@ class EntityCollection extends Collection {
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
-			return (is_null($result) || $item->{$key} > $result) ? $item->{$key} : $result;
+			return (is_null($result) || $item->getEntityAttribute($key) > $result) ? 
+				$item->getEntityAttribute($key) : $result;
 		});
 	}
 
@@ -82,7 +94,8 @@ class EntityCollection extends Collection {
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
-			return (is_null($result) || $item->{$key} < $result) ? $item->{$key} : $result;
+			return (is_null($result) || $item->getEntityAttribute($key) < $result) 
+				? $item->getEntityAttribute($key) : $result;
 		});
 	}
 
@@ -142,7 +155,7 @@ class EntityCollection extends Collection {
 
 		foreach ($items as $item)
 		{
-			$dictionary[$item->getEntityKey()] = $item;
+			$dictionary[$this->getEntityKey($item)] = $item;
 		}
 
 		return new static(array_values($dictionary));
@@ -162,7 +175,7 @@ class EntityCollection extends Collection {
 
 		foreach ($this->items as $item)
 		{
-			if ( ! isset($dictionary[$item->getEntityKey()]))
+			if ( ! isset($dictionary[$this->getEntityKey($item)]))
 			{
 				$diff->add($item);
 			}
@@ -185,7 +198,7 @@ class EntityCollection extends Collection {
 
 		foreach ($this->items as $item)
 		{
-			if (isset($dictionary[$item->getEntityKey()]))
+			if (isset($dictionary[$this->getEntityKey($item)]))
 			{
 				$intersect->add($item);
 			}
@@ -246,10 +259,16 @@ class EntityCollection extends Collection {
 
 		foreach ($items as $value)
 		{
-			$dictionary[$value->getEntityKey()] = $value;
+			$dictionary[$this->getEntityKey($value)] = $value;
 		}
 
 		return $dictionary;
+	}
+
+	protected function getEntityKey(Mappable $entity)
+	{
+		$keyName = Manager::mapper($entity)->getEntityMap()->getKeyName();
+		return $entity->getEntityAttribute($keyName);
 	}
 
 	/**
