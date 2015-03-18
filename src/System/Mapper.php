@@ -100,7 +100,11 @@ class Mapper {
 		{
 			return $this->storeCollection($entity);
 		}
-		else return $this->storeEntity($entity);
+		if($entity instanceof Mappable)
+		{
+			return $this->storeEntity($entity);
+		}
+		throw new \InvalidArgumentException("MStore Command first argument must be an instance of Mappable array, or Collection");	
 	}
 
 	/**
@@ -148,7 +152,11 @@ class Mapper {
 		{
 			return $this->deleteCollection($entity);
 		}
-		else return $this->deleteEntity($entity);
+		if($entity instanceof Mappable)
+		{
+			return $this->deleteEntity($entity);
+		}
+		throw new \InvalidArgumentException("MStore Command first argument must be an instance of Mappable array, or Collection");	
 	}
 
 	/**
