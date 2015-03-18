@@ -105,44 +105,85 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
         $role = null;
 
         $bob = $analogue->query('AnalogueTest\App\User')->whereEmail('bob@example.com')->first();
-
+        
+        $rawAttributes = $bob->getEntityAttributes();
+        $this->assertInstanceOf('Analogue\ORM\System\EntityProxy', $rawAttributes['role']);
         $this->assertInstanceOf('AnalogueTest\App\Role', $bob->role);
-
+        $this->assertEquals('guest', $bob->role->label);        
     }
 
     public function testEntityLazyCollection()
     {
         $analogue = get_analogue();
+
+        $role = new Role('user');
+
+        $a = new Permission('P1');
+        $b = new Permission('P2');
+        $c = new Permission('P3');
+
+        $perms = new EntityCollection([$a,$b,$c]);
+
+        $role->permissions = $perms;
+        $analogue->mapper($role)->store($role);
+        
+        $ur=$analogue->query('AnalogueTest\App\Role')->whereLabel('user')->first();
+        
+        $rawAttributes = $ur->getEntityAttributes();
+        
+        $this->assertInstanceOf('Analogue\ORM\System\CollectionProxy', $rawAttributes['permissions']);
+        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $ur->permissions);
+        $this->assertEquals($perms->lists('label'), $ur->permissions->lists('label')); 
     }
 
-    public function testHasMany()
+    public function testEagerLoading()
     {
         $analogue = get_analogue();
+
+        $ur=$analogue->query('AnalogueTest\App\Role')->with(['users','permissions'])->whereLabel('user')->first();
+        $rawAttributes = $ur->getEntityAttributes();
+        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']);
+        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['users']);
     }
 
-    public function testBelongsTo()
+    public function testStorePolymorphicManyRelations()
     {
         $analogue = get_analogue();
+
+        $resource = new Resource('Poly');
+
+        $u1 = new User('u1', new Role('r1'));
+        $u2 = new User('u2', new Role('r2'));
+
+        $resource->users = new EntityCollection([$u1, $u2]);
+
+        $analogue->mapper($resource)->store($resource);
+
+        $this->assertGreaterThan(0, $resource->custom_id);
     }
 
-    // public function test()
-    // {
-    //     $analogue = get_analogue();
-    // }
+    public function testMissingPermissions()
+    {
+        $mapper = get_mapper('AnalogueTest\App\Permission');
 
-    // public function test()
-    // {
-    //     $analogue = get_analogue();
-    // }
+        $permissions = $mapper->query()->get();
 
-    // public function test()
-    // {
-    //     $analogue = get_analogue();
-    // }
+        $mapper->delete($permissions);
 
-    // public function test()
-    // {
-    //     $analogue = get_analogue();
-    // }
+        $roleMapper = get_mapper('AnalogueTest\App\Role');
+
+        $roles = $roleMapper->query()->with('permissions')->get();
+
+        foreach($roles as $role)
+        {
+            $this->assertEquals(0, $role->permissions->count());
+        }
+        
+    }
+
+
+   
+
+    
 
 }

@@ -241,7 +241,7 @@ class EntityCollection extends Collection {
 	/**
 	 * Merge the collection with the given items.
 	 *
-	 * @param  \ArrayAccess|array  $items
+	 * @param  array  $items
 	 * @return static
 	 */
 	public function merge($items)

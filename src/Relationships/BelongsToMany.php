@@ -473,30 +473,6 @@ class BelongsToMany extends Relationship {
 	}
 
 	/**
-	 * Touch all of the related models for the relationship.
-	 *
-	 * E.g.: Touch all roles associated with this user.
-	 *
-	 * @return void
-	 */
-	public function touch()
-	{
-		$key = $this->getRelated()->getKeyName();
-
-		$columns = $this->getRelatedFreshUpdate();
-
-		// If we actually have IDs for the relation, we will run the query to update all
-		// the related model's timestamps, to make sure these all reflect the changes
-		// to the parent models. This will help us keep any caching synced up here.
-		$ids = $this->getRelatedIds();
-
-		if (count($ids) > 0)
-		{
-			$this->getRelated()->newQuery()->whereIn($key, $ids)->update($columns);
-		}
-	}
-
-	/**
 	 * Get all of the IDs for the related models.
 	 *
 	 * @return array
@@ -507,9 +483,15 @@ class BelongsToMany extends Relationship {
 
 		$fullKey = $relatedMap->getQualifiedKeyName();
 
-		return $this->getQuery()->select($fullKey)->lists($related->getKeyName());
+		return $this->getQuery()->select($fullKey)->lists($this->relatedMap->getKeyName());
 	}
 
+	/**
+	 * Update Pivot
+	 * 
+	 * @param  $entity 
+	 * @return void
+	 */
 	public function updatePivot($entity)
 	{
 		$keyName = $this->relatedMap->getKeyName();
@@ -520,6 +502,12 @@ class BelongsToMany extends Relationship {
 		);
 	}
 
+	/**
+	 * Update Multiple pivot
+	 * 
+	 * @param  $relatedEntities 
+	 * @return void           
+	 */
 	public function updatePivots($relatedEntities)
 	{
 		foreach($relatedEntities as $entity)
@@ -528,6 +516,12 @@ class BelongsToMany extends Relationship {
 		}
 	}
 
+	/**
+	 * Create Pivot Records
+	 * 
+	 * @param  $relatedEntities 
+	 * @return void
+	 */
 	public function createPivots($relatedEntities)
 	{
 		$keys = [];

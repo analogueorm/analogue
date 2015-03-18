@@ -196,8 +196,6 @@ class BelongsTo extends Relationship {
 		// the parents using that dictionary and the primary key of the children.
 		$dictionary = [];
 
-		$parentKey = $this->parentMap->getKeyName();
-
 		foreach ($results as $result)
 		{
 			$dictionary[$result->getEntityAttribute($other)] = $result;

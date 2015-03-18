@@ -11,7 +11,7 @@ class RoleMap extends EntityMap {
 
     public function permissions(Role $entity)
     {
-        return $this->belongsToMany($entity, 'AnalogueTest\App\Permission');
+        return $this->belongsToMany($entity, 'AnalogueTest\App\Permission', 'role_permission');
     }
 
     public function resources(Role $entity)

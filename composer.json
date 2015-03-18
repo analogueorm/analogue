@@ -1,8 +1,8 @@
 {
     "name": "analogue/orm",
     "description": "An intuitive Data Mapper ORM built on top of Illuminate components",
-    "keywords": ["orm", "analogue", "datamapper", "data mapper", 
-    "entity", "repository", "mapper", "laravel", "l4", "l5"],
+    "keywords": ["orm", "datamapper", "laravel", 
+    "entity", "repository", "mapper"],
     "homepage": "http://github.com/analogueorm/analogue",
     "license": "MIT",
     "authors": [

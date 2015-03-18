@@ -164,7 +164,7 @@ class Mapper {
 	 * @param  Mappable|Collection 
 	 * @return Mappable|Collection
 	 */
-	public function delete(Mappable $entity)
+	public function delete($entity)
 	{
 		if($this->isArrayOrCollection($entity))
 		{
