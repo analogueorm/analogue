@@ -93,13 +93,42 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
 
     public function testLazyLoadingEntity()
     {
-           
+        $analogue = get_analogue();
     }
 
     public function testEntityLazyCollection()
     {
-
+        $analogue = get_analogue();
     }
 
+    public function testHasMany()
+    {
+        $analogue = get_analogue();
+    }
+
+    public function testBelongsTo()
+    {
+        $analogue = get_analogue();
+    }
+
+    // public function test()
+    // {
+    //     $analogue = get_analogue();
+    // }
+
+    // public function test()
+    // {
+    //     $analogue = get_analogue();
+    // }
+
+    // public function test()
+    // {
+    //     $analogue = get_analogue();
+    // }
+
+    // public function test()
+    // {
+    //     $analogue = get_analogue();
+    // }
 
 }

@@ -1,5 +1,6 @@
 <?php namespace Analogue\ORM\System;
 
+use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Commands\Store;
@@ -96,15 +97,25 @@ class Mapper {
 	 */
 	public function store($entity)
 	{
-		if($entity instanceof Collection | is_array($entity))
+		if($this->isArrayOrCollection($entity))
 		{
 			return $this->storeCollection($entity);
 		}
-		if($entity instanceof Mappable)
+		else if ($this->isMappable($entity)) 
 		{
 			return $this->storeEntity($entity);
 		}
-		throw new \InvalidArgumentException("MStore Command first argument must be an instance of Mappable array, or Collection");	
+		throw new InvalidArgumentException("Store Command first argument must be an instance of Mappable array, or Collection");
+	}
+
+	protected function isMappable($item)
+	{
+		return $item instanceof Mappable;
+	}
+
+	protected function isArrayOrCollection($argument)
+	{
+		return ($argument instanceof Collection || is_array($argument)) ? true : false;
 	}
 
 	/**
@@ -132,7 +143,14 @@ class Mapper {
 
 		foreach($entities as $entity)
 		{
-			$this->storeEntity($entity);
+			if($this->isMappable($entity))
+			{
+				$this->storeEntity($entity);
+			}
+			else
+			{
+				throw new MappingException("Store : Non Mappable Item found into array/collection");	
+			}
 		}
 
 		$this->connection->commit();
@@ -148,15 +166,15 @@ class Mapper {
 	 */
 	public function delete(Mappable $entity)
 	{
-		if($entity instanceof Collection | is_array($entity))
+		if($this->isArrayOrCollection($entity))
 		{
 			return $this->deleteCollection($entity);
-		}
-		if($entity instanceof Mappable)
+		} 
+		else if ($this->isMappable($entity))
 		{
 			return $this->deleteEntity($entity);
 		}
-		throw new \InvalidArgumentException("MStore Command first argument must be an instance of Mappable array, or Collection");	
+		throw new InvalidArgumentException("Store Command first argument must be an instance of Mappable array, or Collection");	
 	}
 
 	/**
@@ -183,8 +201,11 @@ class Mapper {
 		$this->connection->beginTransaction();
 
 		foreach($entities as $entity)
-		{
-			$this->deleteEntity($entity);
+		{	
+			if($this->isMappable($entity))
+			{
+				$this->deleteEntity($entity);
+			}
 		}
 
 		$this->connection->commit();
