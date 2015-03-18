@@ -96,7 +96,7 @@ class Mapper {
 	 */
 	public function store($entity)
 	{
-		if($entity instanceof Collection)
+		if($entity instanceof Collection | is_array($entity))
 		{
 			return $this->storeCollection($entity);
 		}
@@ -119,19 +119,19 @@ class Mapper {
 	/**
 	 * Store an entity collection inside a single DB Transaction
 	 * 
-	 * @param  Collection $entities [description]
+	 * @param  Collection|array $entities [description]
 	 * @return Collection
 	 */
-	protected function storeCollection(Collection $entities)
+	protected function storeCollection($entities)
 	{
-		$thid->connection->beginTransaction();
+		$this->connection->beginTransaction();
 
 		foreach($entities as $entity)
 		{
 			$this->storeEntity($entity);
 		}
 
-		$thid->connection->commit();
+		$this->connection->commit();
 
 		return $entities;
 	}
@@ -144,7 +144,7 @@ class Mapper {
 	 */
 	public function delete(Mappable $entity)
 	{
-		if($entity instanceof Collection)
+		if($entity instanceof Collection | is_array($entity))
 		{
 			return $this->deleteCollection($entity);
 		}
@@ -167,19 +167,19 @@ class Mapper {
 	/**
 	 * Delete an Entity Collection inside a single db transaction
 	 * 
-	 * @param  Collection $entities
+	 * @param  Collection|array $entities
 	 * @return Collection
 	 */
-	protected function deleteCollection(Collection $entities)
+	protected function deleteCollection($entities)
 	{
-		$thid->connection->beginTransaction();
+		$this->connection->beginTransaction();
 
 		foreach($entities as $entity)
 		{
 			$this->deleteEntity($entity);
 		}
 
-		$thid->connection->commit();
+		$this->connection->commit();
 		
 		return $entities;
 	}
@@ -504,7 +504,7 @@ class Mapper {
 			throw new \Exception("Mapper Command must at least have 1 argument");
 		}
 
-		if($parameters[0] instanceof Mappable || $parameters[0] instanceof Collection)
+		if($parameters[0] instanceof Mappable || $parameters[0] instanceof Collection || is_array($parameters[0]))
 		{
 			return $this->executeCustomCommand($method, $parameters[0]);	
 		}
