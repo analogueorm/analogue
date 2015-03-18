@@ -15,19 +15,21 @@ class Query {
 	/**
 	 * Mapper Instance
 	 * 
-	 * @var \Analogue\ORM\Mapper
+	 * @var \Analogue\ORM\System\Mapper
 	 */
 	protected $mapper;
 
 	/**
 	 * Query Builder Instance
-	 * @var Illuminate\Database\Query\Builder
+	 * 
+	 * @var \Illuminate\Database\Query\Builder
 	 */
 	protected $query;
 
 	/**
 	 * Entity Map Instance
-	 * @var Analogue\ORM\EntityMapInterface
+	 * 
+	 * @var \Analogue\ORM\EntityMap
 	 */
 	protected $entityMap;
 	
@@ -68,7 +70,7 @@ class Query {
 	 * Create a new Mapper query builder instance.
 	 *
 	 * @param \Illuminate\Database\Query\Builder  $query
-	 * @param \Analogue\ORM\Mapper $mapper
+	 * @param \Analogue\ORM\System\Mapper $mapper
 	 * @return void
 	 */
 	public function __construct(QueryBuilder $query, Mapper $mapper)
@@ -84,9 +86,10 @@ class Query {
 	}
 
 	/**
-	 * [get description]
-	 * @param  array  $columns [description]
-	 * @return [type]          [description]
+	 * Run the query and return the result
+	 * 
+	 * @param  array  $columns  
+	 * @return \Analogue\ORM\EntityCollection
 	 */
 	public function get($columns = array('*'))
 	{
@@ -104,6 +107,12 @@ class Query {
 		return $this->entityMap->newCollection($entities);	
 	}
 
+	/**
+	 * Cache the result set
+	 * 
+	 * @param  array  $entities
+	 * @return void
+	 */
 	protected function cacheResults(array $entities)
 	{
 		$keyName = $this->entityMap->getKeyName();
@@ -119,9 +128,9 @@ class Query {
 	/**
 	 * Find an entity by its primary key
 	 * 
-	 * @param  [type] $id      [description]
-	 * @param  array  $columns [description]
-	 * @return [type]          [description]
+	 * @param  string|integer $id 
+	 * @param  array  $columns 
+	 * @return \Analogue\ORM\Mappable         
 	 */
 	public function find($id, $columns = array('*'))
 	{
@@ -136,11 +145,11 @@ class Query {
 	}
 
 	/**
-	 * Find a entity by its primary key.
+	 * Find many entities by their primary keys.
 	 *
 	 * @param  array  $id
 	 * @param  array  $columns
-	 * @return EntityCollection|static
+	 * @return EntityCollection
 	 */
 	public function findMany($id, $columns = array('*'))
 	{
@@ -158,7 +167,7 @@ class Query {
 	 * @param  array  $columns
 	 * @return mixed|static
 	 *
-	 * @throws MappableNotFoundException
+	 * @throws \Analogue\ORM\Exception\EntityNotFoundException
 	 */
 	public function findOrFail($id, $columns = array('*'))
 	{
@@ -172,7 +181,7 @@ class Query {
 	 * Execute the query and get the first result.
 	 *
 	 * @param  array  $columns
-	 * @return \Analogue\ORM\Entity|static|null
+	 * @return \Analogue\ORM\Entity
 	 */
 	public function first($columns = array('*'))
 	{
@@ -183,9 +192,9 @@ class Query {
 	 * Execute the query and get the first result or throw an exception.
 	 *
 	 * @param  array  $columns
-	 * @return Mappable|static
+	 * @return Mappable
 	 *
-	 * @throws MappableNotFoundException
+	 * @throws EntityNotFoundException
 	 */
 	public function firstOrFail($columns = array('*'))
 	{
@@ -230,8 +239,6 @@ class Query {
 			$results = $this->forPage($page, $count)->get();
 		}
 	}
-
-
 	
 	/**
 	 * Get an array with the values of a given column.
@@ -259,7 +266,6 @@ class Query {
 
 		return $results;
 	}
-
 
 	/**
 	 * Get a paginator for the "select" statement.
@@ -342,7 +348,7 @@ class Query {
 		return $paginator->make($this->get($columns)->all(), $perPage);
 	}
 
-/**
+	/**
 	 * Add a basic where clause to the query.
 	 *
 	 * @param  string  $column
@@ -375,7 +381,7 @@ class Query {
 	 * @param  string  $column
 	 * @param  string  $operator
 	 * @param  mixed   $value
-	 * @return \Analogue\ORM\System\Query|static
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function orWhere($column, $operator = null, $value = null)
 	{
@@ -390,7 +396,7 @@ class Query {
 	 * @param  int     $count
 	 * @param  string  $boolean
 	 * @param  \Closure  $callback
-	 * @return \Analogue\ORM\System\Query|static
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
 	{
@@ -412,7 +418,7 @@ class Query {
 	 * @param  \Closure  $callback
 	 * @param  string  $operator
 	 * @param  int     $count
-	 * @return \Analogue\ORM\System\Query|static
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function whereHas($relation, Closure $callback, $operator = '>=', $count = 1)
 	{
@@ -425,7 +431,7 @@ class Query {
 	 * @param  string  $relation
 	 * @param  string  $operator
 	 * @param  int     $count
-	 * @return \Analogue\ORM\System\Query|static
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function orHas($relation, $operator = '>=', $count = 1)
 	{
@@ -439,7 +445,7 @@ class Query {
 	 * @param  \Closure  $callback
 	 * @param  string  $operator
 	 * @param  int     $count
-	 * @return \Analogue\ORM\System\Query|static
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function orWhereHas($relation, Closure $callback, $operator = '>=', $count = 1)
 	{
@@ -617,24 +623,19 @@ class Query {
 
 		if (count($lazyLoad) > 1)
 		{
-			//$entityProxy = new EntityProxy;
-			//$collectionProxy = new CollectionProxy;
-			
 			foreach($lazyLoad as $relation)
 			{
 				if (in_array($relation, $singleRelations))
 				{
-					//$proxies[$relation] = $entityProxy;
 					$proxies[$relation] = new EntityProxy;
 				}
 				if (in_array($relation, $manyRelations))
 				{	
-					//$proxies[$relation] = $collectionProxy;
 					$proxies[$relation] = new CollectionProxy;
 				}
 			}
-			
 		}
+
 		return $proxies;
 	}
 
@@ -896,7 +897,7 @@ class Query {
 	/**
 	 * Get a new query builder for the model's table.
 	 *
-	 * @return \Analogue\ORM\Query
+	 * @return \Analogue\ORM\System\Query
 	 */
 	public function newQuery()
 	{
@@ -932,7 +933,7 @@ class Query {
 	/**
 	 * Get the underlying query builder instance.
 	 *
-	 * @return \Illuminate\Database\Query\Builder|static
+	 * @return \Illuminate\Database\Query\Builder
 	 */
 	public function getQuery()
 	{

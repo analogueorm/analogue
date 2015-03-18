@@ -50,7 +50,7 @@ class Manager {
 	/**
 	 * Event dispatcher instance
 	 * 
-	 * @var Illuminate\Contracts\Events\Dispatcher
+	 * @var \Illuminate\Contracts\Events\Dispatcher
 	 */
 	protected static $eventDispatcher;
 
@@ -317,7 +317,7 @@ class Manager {
 	 * Shortcut to Mapper query
 	 * 
 	 * @param  mixed $entity
-	 * @return Analogue\System\Query
+	 * @return \Analogue\System\Query
 	 */
 	public static function query($entity)
 	{
@@ -327,8 +327,8 @@ class Manager {
 	/**
 	 * Shortcut to Mapper Global Query
 	 * 
-	 * @param  Mappable|Collection|array $entity
-	 * @return Analogue\System\Query
+	 * @param  mixed $entity
+	 * @return \Analogue\System\Query
 	 */
 	public static function globalQuery($entity)
 	{
