@@ -23,7 +23,15 @@ $analogue->store($gallery);
 
 ```
 
-Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki) for more examples.
+Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for a guided tour.
+
+## Install :
+
+```php
+composer require analogue/orm:2.1.*
+```
+
+See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ## Changelog 
 
@@ -34,6 +42,7 @@ Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki) 
 - Introducing a MappableTrait for quick implementation. 
 - Store/Delete methods now accept a array and collections as argument.
 - EntityMap are now autodected when in the same namespace as the entity.
+- Base Entity Class Supports hidden attributes
 
 ### Version 2.0
 
