@@ -1,6 +1,6 @@
 {
     "name": "analogue/orm",
-    "description": "Analogue ORM, a data mapper for the Laravel Framework",
+    "description": "An intuitive Data Mapper ORM built on top of Illuminate components",
     "keywords": ["orm", "analogue", "datamapper", "data mapper", 
     "entity", "repository", "mapper", "laravel", "l4", "l5"],
     "homepage": "http://github.com/analogueorm/analogue",
@@ -24,7 +24,7 @@
         "mockery/mockery": "~0.9"
     },
     "suggest": {
-        "analogue/laravel-auth": "Analogue authentication driver for Laravel."
+        "analogue/laravel-auth": "Analogue Authentication driver for Laravel."
     },
     "autoload": {
         "psr-4": {

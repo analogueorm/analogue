@@ -1,12 +1,42 @@
 <?php
 namespace Analogue\ORM;
 
+use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use Illuminate\Support\Collection as Collection;
 
 class EntityCollection extends Collection {
 	
+	public function __construct(array $entities = null)
+	{
+		if ($entities) $this->checkItemsAreMappable($entities);
+
+		parent::__construct($entities);
+	}
+
+	/**
+	 * Check all the items implements Mappable
+	 * 
+	 * @param  array|ArrayAccess $entities 
+	 * @return void
+	 */
+	protected function checkItemsAreMappable($entities)
+	{
+		foreach($entities as $entity)
+		{
+			$this->checkItemIsMappable($entity);
+		}
+	}
+
+	protected function checkItemIsMappable($item)
+	{
+		if (! $item instanceof Mappable)
+		{
+			throw new InvalidArgumentException('Tried to assign non-mappable item to EntityCollection');
+		}
+	}
+
 	/**
 	 * Find an entity in the collection by key.
 	 *
@@ -17,10 +47,14 @@ class EntityCollection extends Collection {
 	 */
 	public function find($key, $default = null)
 	{
+		if($key instanceof Mappable)
+		{
+			$key = $this->getEntityKey($key);
+		}
+
 		return array_first($this->items, function($itemKey, $entity) use ($key)
 		{
 			return $this->getEntityKey($entity) == $key;
-
 		}, $default);
 	}
 
@@ -45,6 +79,67 @@ class EntityCollection extends Collection {
 		$keyName = $this->getEntityKey($entity);
 
 		return $this->pull($entity->getEntityAttribute($keyName));
+	}
+
+	/**
+	 * Push an item onto the beginning of the collection.
+	 *
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function prepend($value)
+	{
+		$this->checkItemIsMappable($value);
+
+		array_unshift($this->items, $value);
+	}
+
+	/**
+	 * Push an item onto the end of the collection.
+	 *
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function push($value)
+	{
+		$this->checkItemIsMappable($value);
+
+		$this->offsetSet(null, $value);
+	}
+
+	/**
+	 * Put an item in the collection by key.
+	 *
+	 * @param  mixed  $key
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function put($key, $value)
+	{
+		$this->checkItemIsMappable($value);
+
+		$this->offsetSet($key, $value);
+	}
+
+	/**
+	 * Set the item at a given offset.
+	 *
+	 * @param  mixed  $key
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function offsetSet($key, $value)
+	{
+		$this->checkItemIsMappable($value);
+		
+		if (is_null($key))
+		{
+			$this->items[] = $value;
+		}
+		else
+		{
+			$this->items[$key] = $value;
+		}
 	}
 
 	/**
@@ -151,6 +246,8 @@ class EntityCollection extends Collection {
 	 */
 	public function merge($items)
 	{
+		$this->checkItemsAreMappable($items);
+
 		$dictionary = $this->getDictionary();
 
 		foreach ($items as $item)
@@ -265,9 +362,15 @@ class EntityCollection extends Collection {
 		return $dictionary;
 	}
 
+	public function getEntityKeys()
+	{
+		return array_keys($this->getDictionary());
+	}
+
 	protected function getEntityKey(Mappable $entity)
 	{
 		$keyName = Manager::mapper($entity)->getEntityMap()->getKeyName();
+		
 		return $entity->getEntityAttribute($keyName);
 	}
 

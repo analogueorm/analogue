@@ -25,3 +25,9 @@ function get_mapper($entity)
 {
     return get_analogue()->mapper($entity);
 }
+
+function tdd($value)
+{
+    echo var_dump($value);
+    die;
+}
