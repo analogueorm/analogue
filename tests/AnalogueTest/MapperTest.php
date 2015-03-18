@@ -36,7 +36,7 @@ class MapperTest extends PHPUnit_Framework_TestCase {
     {
         $mapper = get_mapper('Analogue\ORM\Entity');
 
-        $mapper->addCustomCommand(CustomCommand::class);
+        $mapper->addCustomCommand('AnalogueTest\App\CustomCommand');
 
         $this->assertEquals(true, $mapper->hasCustomCommand('customCommand'));
         $this->assertEquals('executed' , $mapper->customCommand($mapper->newInstance()));

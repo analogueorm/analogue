@@ -30,9 +30,9 @@ Jump to the [documentation](https://github.com/analogueorm/analogue/wiki) for mo
 ### Version 2.1
 
 - Package is now framework agnostic.
-- Now support any Class that implements Mappable interface.
+- Now support any plain object that implements Mappable interface.
 - Introducing a MappableTrait for quick implementation. 
-- Store/Delete methods now accept a Collection as argument.
+- Store/Delete methods now accept a array and collections as argument.
 - EntityMap are now autodected when in the same namespace as the entity.
 
 ### Version 2.0

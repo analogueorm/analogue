@@ -82,7 +82,7 @@ class MapInitializer {
 	{
 		$mapMethods = get_class_methods($map);
 
-		$parentsMethods = get_class_methods(EntityMap::class);
+		$parentsMethods = get_class_methods('Analogue\ORM\EntityMap');
 		
 		$guessedRelations = array_diff($mapMethods, $parentsMethods);
 
