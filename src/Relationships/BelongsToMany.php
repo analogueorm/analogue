@@ -479,8 +479,6 @@ class BelongsToMany extends Relationship {
 	 */
 	public function getRelatedIds()
 	{
-		$related = $this->getRelated();
-
 		$fullKey = $relatedMap->getQualifiedKeyName();
 
 		return $this->getQuery()->select($fullKey)->lists($this->relatedMap->getKeyName());
