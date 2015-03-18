@@ -13,7 +13,7 @@ class MorphMany extends MorphOneOrMany {
 	{	
 		$results = $this->query->get();
 
-		$this->cacheRelation($result, $relation);
+		$this->cacheRelation($results, $relation);
 
 		return $results;
 	}

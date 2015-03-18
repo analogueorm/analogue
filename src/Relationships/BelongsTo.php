@@ -38,14 +38,13 @@ class BelongsTo extends Relationship {
 	/**
 	 * Create a new belongs to relationship instance.
 	 *
-	 * @param  \Analogue\ORM\System\Query  $query
+	 * @param  \Analogue\ORM\System\Mapper $mapper
 	 * @param  Mappable  $parent
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
 	 * @param  string  $relation
-	 * @return void
 	 */
-	public function __construct(Mapper $mapper, $parent, $foreignKey, $otherKey, $relation)
+	public function __construct(Mapper $mapper, Mappable $parent, $foreignKey, $otherKey, $relation)
 	{
 		$this->otherKey = $otherKey;
 		$this->relation = $relation;
@@ -163,7 +162,7 @@ class BelongsTo extends Relationship {
 	/**
 	 * Initialize the relation on a set of models.
 	 *
-	 * @param  array   $models
+	 * @param  array   $entities
 	 * @param  string  $relation
 	 * @return array
 	 */
