@@ -19,11 +19,5 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Analogue\ORM\Repository', $repo);
         
     }
-
-    public function testMapperInit()
-    {
-        $mapper = get_mapper('Analogue\ORM\Entity');
-
-        $this->assertEquals(get_class($mapper), 'Analogue\ORM\System\Mapper');
-    }
+   
 }

@@ -227,7 +227,7 @@ class BelongsToMany extends Relationship {
 	{
 		$values = array();
 
-		$attributes = $entity->getEntityAttributes()
+		$attributes = $entity->getEntityAttributes();
 
 		foreach ($attributes as $key => $value)
 		{
