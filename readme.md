@@ -53,16 +53,16 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 
 ##Features
 
--Lazy loading
--Eager Loading
--Timestamps
--Soft Deletes
--Polymorphic Relationships
--Dynamic Relationships
--Embeddable Value Objects
--Cast Entities to Array / Json
--Flexible event system
--Extendable via Plugins
+- Lazy loading
+- Eager Loading
+- Timestamps
+- Soft Deletes
+- Polymorphic Relationships
+- Dynamic Relationships
+- Embeddable Value Objects
+- Cast Entities to Array / Json
+- Flexible event system
+- Extendable via Plugins
 
 ## Documentation
 
