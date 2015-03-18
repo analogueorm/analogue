@@ -54,4 +54,26 @@ trait MappableTrait {
         $this->attributes[$key] = $value;
     }
 
+    /**
+     * Dynamically retrieve attributes on the entity.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->getEntityAttribute($key);
+    }
+
+    /**
+     * Dynamically set attributes on the entity.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->setEntityAttribute($key, $value);
+    }
 }

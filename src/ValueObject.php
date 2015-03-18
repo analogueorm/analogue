@@ -63,7 +63,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	}
 
 	/**
-	 * Dynamically set attributes on the model.
+	 * Dynamically set attributes on the entity.
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
@@ -75,7 +75,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	}
 
 	/**
-	 * Determine if an attribute exists on the model.
+	 * Determine if an attribute exists on the entity.
 	 *
 	 * @param  string  $key
 	 * @return bool
@@ -86,7 +86,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	}
 
 	/**
-	 * Unset an attribute on the model.
+	 * Unset an attribute on the entity.
 	 *
 	 * @param  string  $key
 	 * @return void
