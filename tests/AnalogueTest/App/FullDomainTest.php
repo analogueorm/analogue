@@ -94,6 +94,20 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
     public function testLazyLoadingEntity()
     {
         $analogue = get_analogue();
+
+        $role = new Role('guest');
+
+        $user = new User('bob@example.com', $role);
+
+        $analogue->mapper($user)->store($user);
+
+        $user = null;
+        $role = null;
+
+        $bob = $analogue->query('AnalogueTest\App\User')->whereEmail('bob@example.com')->first();
+
+        $this->assertInstanceOf('AnalogueTest\App\Role', $bob->role);
+
     }
 
     public function testEntityLazyCollection()

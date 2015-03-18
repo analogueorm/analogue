@@ -376,8 +376,9 @@ abstract class Relationship {
 	 * Cache the link between parent and related
 	 * into the mapper's Entity Cache.
 	 *  
-	 * @param  [type] $results [description]
-	 * @return [type]          [description]
+	 * @param  EntityCollection|Mappable $results result of the relation query
+	 * @param  string  $relation 	Name of the relation method on the parent entity
+	 * @return void
 	 */
 	protected function cacheRelation($results, $relation)
 	{
@@ -390,15 +391,22 @@ abstract class Relationship {
 			$key = $this->getEntityHash($results);
 		}
 
-		$parentKey = $this->parentMap->getKeyName();
+		$parentKeyName = $this->parentMap->getKeyName();
 
-		$this->parent->setEntityAttribute($parentKey, $key);
-
-		$cache = [$key];
-
+		$parentKey = $this->parent->getEntityAttribute($parentKeyName);
+		
+		$cache = [];
+		$cache[$parentKey] = $key;
+		
 		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 	}
 
+	/**
+	 * Get a combo type.primaryKey
+	 * 
+	 * @param  Mappable $entity
+	 * @return string
+	 */
 	protected function getEntityHash(Mappable $entity)
 	{
 		$class = get_class($entity);
