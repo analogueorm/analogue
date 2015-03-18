@@ -1,5 +1,6 @@
 <?php namespace Analogue\ORM\Relationships;
 
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
