@@ -7,7 +7,7 @@
 
 The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
 
-Analogue can be used as a **standalone package**, or can be transparently integrated into Laravel via a dedicated ServiceProvider.
+Analogue can be used as a **standalone package**, or can be transparently *integrated *into Laravel via a dedicated *ServiceProvider*.
 
 If you're already familiar with Eloquent, a lot of the syntax is similar, so you should be up and running in no time. In fact, you may probably **gain time** as Analogue leverage some heavy DB tasks as **synchronizing complex relationships**., letting you think in term of **objects** and **collections** instead.
 
