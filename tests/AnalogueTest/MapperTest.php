@@ -42,4 +42,11 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('executed' , $mapper->customCommand($mapper->newInstance()));
     }
 
+    public function testRedirectCallsOnNewQuery()
+    {
+        $mapper = get_mapper('Analogue\ORM\Entity');
+
+        $this->assertEquals('entities', $mapper->getTable());
+    }
+
 }

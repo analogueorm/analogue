@@ -513,7 +513,7 @@ class Mapper {
 	}
 
 	/**
-	 * Dynamically handle calls to custom commands.
+	 * Dynamically handle calls to custom commands, or Redirects to query()
 	 *
 	 * @param  string  $method
 	 * @param  array   $parameters
@@ -521,24 +521,25 @@ class Mapper {
 	 */
 	public function __call($method, $parameters)
 	{
-		if(! $this->hasCustomCommand($method))
+		// Check if method is a custom command on the mapper
+		if($this->hasCustomCommand($method))
 		{
-			throw new \Exception("No Method $method on mapper");
-		}
-		if(count($parameters) == 0)
-		{
-			throw new \Exception("Mapper Command must at least have 1 argument");
+			if(count($parameters) == 0)
+			{
+				throw new \Exception("Mapper Command must at least have 1 argument");
+			}
+			if($parameters[0] instanceof Mappable || $parameters[0] instanceof Collection || is_array($parameters[0]))
+			{
+				return $this->executeCustomCommand($method, $parameters[0]);	
+			}
+			else
+			{
+				throw new \InvalidArgumentException("Mapper Command first argument must be an instance of Mappable or Collection");	
+			}
 		}
 
-		if($parameters[0] instanceof Mappable || $parameters[0] instanceof Collection || is_array($parameters[0]))
-		{
-			return $this->executeCustomCommand($method, $parameters[0]);	
-		}
-		else
-		{
-			throw new \InvalidArgumentException("Mapper Command first argument must be an instance of Mappable or Collection");	
-		}
-		
+		// Redirect call on a new query instance
+		return call_user_func_array(array($this->query(), $method), $parameters);
 	}
 	
 }

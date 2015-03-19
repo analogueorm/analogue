@@ -26,6 +26,8 @@ $analogue->store($gallery);
 
 ```
 
+If you intent to build applications following the DDD approach, **Analogue** will be a great asset for you.
+
 Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for a guided tour.
 
 ##Features
@@ -35,9 +37,9 @@ Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/S
 - Eager Loading
 - Timestamps
 - Soft Deletes
+- Value Objects
 - Polymorphic Relationships
 - Dynamic Relationships
-- Embeddable Value Objects
 - Cast Entities to Array / Json
 - Flexible event system
 - Native Multiple database connections support
