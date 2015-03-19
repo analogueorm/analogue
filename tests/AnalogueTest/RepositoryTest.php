@@ -43,7 +43,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $q = new Permission('Second');
         $repo->store([$p,$q]);
         $id = $q->id;
-        $r = $repo->firstMatch(['label' => 'Second']);
+        $r = $repo->firstMatching(['label' => 'Second']);
         $this->assertEquals('Second',$r->label);
         $this->assertEquals($id, $r->id);
     }
@@ -55,7 +55,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $p = new Permission('Third');
         $q = new Permission('Third');
         $repo->store([$p,$q]);
-        $r = $repo->allMatch(['label' => 'Third']);
+        $r = $repo->allMatching(['label' => 'Third']);
         
         $this->assertInstanceOf('Analogue\ORM\EntityCollection',$r);
         $this->assertEquals(2, $r->count());

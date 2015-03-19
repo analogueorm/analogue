@@ -65,7 +65,7 @@ class Repository {
 	 * @param  array  $attributes
 	 * @return \Analogue\ORM\Mappable|null
 	 */
-	public function firstMatch(array $attributes)
+	public function firstMatching(array $attributes)
 	{
 		return $this->mapper->where($attributes)->first();
 	}
@@ -76,7 +76,7 @@ class Repository {
 	 * @param array $attributes
 	 * @return \Analogue\ORM\EntityCollection
 	 */
-	public function allMatch(array $attributes)
+	public function allMatching(array $attributes)
 	{
 		return $this->mapper->where($attributes)->get();
 	}
