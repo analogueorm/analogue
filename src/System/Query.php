@@ -11,6 +11,8 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * Analogue Query builder.
+ *
+ * @method void mergeWheres(array $wheres, array $bindings) Merge an array of where clauses and bindings.
  */
 class Query {
 
@@ -272,7 +274,6 @@ class Query {
 		return $this->query->buildRawPaginator($paginator, $results, $perPage);
 	}
 
-
 	/**
 	 * Get a paginator for an ungrouped statement.
 	 *
@@ -296,25 +297,23 @@ class Query {
 	}
 
 	/**
-	 * Get a paginator only supporting simple next and previous links.
+	 * Paginate the given query into a simple paginator.
 	 *
-	 * This is more efficient on larger data-sets, etc.
-	 *
-	 * @param  int    $perPage
+	 * @param  int  $perPage
 	 * @param  array  $columns
-	 * @return \Illuminate\Pagination\Paginator
+	 * @return \Illuminate\Contracts\Pagination\Paginator
 	 */
-	public function simplePaginate($perPage = null, $columns = array('*'))
+	public function simplePaginate($perPage = null, $columns = ['*'])
 	{
-		$paginator = $this->query->getConnection()->getPaginator();
+		$page = Paginator::resolveCurrentPage();
 
-		$page = $paginator->getCurrentPage();
+		$perPage = $perPage ?: $this->entityMap->getPerPage();
 
-		$perPage = $perPage ?: $this->entityMapper->getPerPage();
+		$this->skip(($page - 1) * $perPage)->take($perPage + 1);
 
-		$this->query->skip(($page - 1) * $perPage)->take($perPage + 1);
-
-		return $paginator->make($this->get($columns)->all(), $perPage);
+		return new Paginator($this->get($columns)->all(), $perPage, $page, [
+			'path' => Paginator::resolveCurrentPath()
+		]);
 	}
 
 	/**
@@ -766,6 +765,8 @@ class Query {
 
 		$tmpCache = [];
 
+		$proxies = [];
+
 		$proxyLoaded = false;
 
 		foreach($results as $result)
@@ -780,7 +781,8 @@ class Query {
 			$this->hydrateValueObjects($resultArray);
 
 			// We need to set the proxy for lazy loading on 
-			// the first hydration pass. 
+			// the first hydration pass only, as they will be duplicated
+			// at next pass when cloning instance.
 			if (! $proxyLoaded)
 			{
 				$instance->setEntityAttributes($resultArray);
