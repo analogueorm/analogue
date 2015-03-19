@@ -7,7 +7,7 @@
 
 The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
 
-Analogue can be used as a **standalone package**, or can be transparently *integrated *into Laravel via a dedicated *ServiceProvider*.
+Analogue can be used as a **standalone package**, or can be transparently integrated into Laravel via a dedicated ServiceProvider.
 
 If you're already familiar with Eloquent, a lot of the syntax is similar, so you should be up and running in no time. In fact, you may probably **gain time** as Analogue leverage some heavy DB tasks as **synchronizing complex relationships**., letting you think in term of **objects** and **collections** instead.
 
@@ -22,11 +22,11 @@ foreach($files as $file)
     $gallery->addPhoto($photo);
 }
 
-$analogue->store($gallery);
+$mapper->store($gallery);
 
 ```
 
-If you intend to build applications following the DDD approach, **Analogue** can be a great asset for you.
+If you intend to build applications following the **DDD** approach, **Analogue** can be a great asset for you.
 
 Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for a guided tour.
 
@@ -55,7 +55,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 
 ##Changelog 
 
-###Version 2.1 (beta)
+###Version 2.1
 
 - Package is now framework agnostic.
 - Now support any plain object that implements Mappable interface.
@@ -64,6 +64,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 - Store/Delete methods now accept a array and collections as argument.
 - EntityMap are now autodected when in the same namespace as the entity.
 - Base Entity Class Supports hidden attributes
+- Many workflow related improvements.
 
 ###Version 2.0
 

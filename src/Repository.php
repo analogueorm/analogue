@@ -1,19 +1,34 @@
 <?php namespace Analogue\ORM;
 
+use Exception;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
+use InvalidArgumentException;
 
 class Repository {
 
+	/**
+	 * The mapper object for the corresponding entity
+	 * 
+	 * @var \Analogue\ORM\System\Mapper
+	 */
 	protected $mapper;
 
 	/**
-	 * @param Mapper|Mappable $mapper 
+	 * To build a repository, either provide :
+	 * 
+	 * - Mappable object's class name as a string
+	 * - Mappable object instance
+	 * - Instance of mapper
+	 * 
+	 * @param Mapper|Mappable|string $mapper 
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($mapper)
 	{
-		if($mapper instanceof Mappable)
+		if($mapper instanceof Mappable || is_string($mapper))
 		{
 			$this->mapper = Manager::mapper($mapper);
 		}
@@ -21,45 +36,67 @@ class Repository {
 		{
 			$this->mapper = $mapper;
 		}
-		else new \InvalidArgumentException('Repository class constuctor need a valid Mapper or Mappable object.');
+		else new InvalidArgumentException('Repository class constuctor need a valid Mapper or Mappable object.');
 	}
 
 	/**
 	 * Return all Entities from database
 	 *  
-	 * @return EntityCollection
+	 * @return \Analogue\ORM\EntityCollection
 	 */
 	public function all()
 	{
-		return $this->query()->get();
+		return $this->mapper->get();
 	}
 	
 	/**
 	 * Fetch a record from the database
 	 * @param  integer $id 
-	 * @return Entity
+	 * @return \Analogue\ORM\Mappable
 	 */
 	public function find($id)
 	{
-		return $this->query()->find($id);
+		return $this->mapper->find($id);
 	}
 
 	/**
-	 * Get the first Entity  for the given attributes.
+	 * Get the first entity matching the given attributes.
 	 *
 	 * @param  array  $attributes
-	 * @return static|null
+	 * @return \Analogue\ORM\Mappable|null
 	 */
-	public function firstByAttributes(array $attributes)
+	public function firstMatch(array $attributes)
 	{
-		return $this->where($attributes)->first();
+		return $this->mapper->where($attributes)->first();
 	}
-	
+
+	/**
+	 * Return all the entities matching the given attributes
+	 *
+	 * @param array $attributes
+	 * @return \Analogue\ORM\EntityCollection
+	 */
+	public function allMatch(array $attributes)
+	{
+		return $this->mapper->where($attributes)->get();
+	}
+
+	/**
+	 * Return a paginator instance on the EntityCollection
+	 * 
+	 * @param  int $perPage number of item per page (fallback on default setup in entity map)
+	 * @return 
+	 */
+	public function paginate($perPage = null)
+	{
+		return $this->mapper->paginate($perPage);
+	}
+
 	/**
 	 * Delete an entity or an entity collection from the database
 	 * 
 	 * @param  Mappable|Collection $entity 
-	 * @return Mappable|Collection
+	 * @return null
 	 */
 	public function delete($entity)
 	{
@@ -69,8 +106,8 @@ class Repository {
 	/**
 	 * Persist an entity or an entity collection in the database.
 	 * 
-	 * @param  Mappable|Collection $entity 
-	 * @return Mappable|Collection
+	 * @param  Mappable|Collection|array $entity 
+	 * @return Mappable|Collection|array
 	 */
 	public function store($entity)
 	{
@@ -78,32 +115,21 @@ class Repository {
 	}
 
 	/**
-	 * Get a new query instance on this entity
-	 *  
-	 * @return \Analogue\ORM\Query 	
-	 */
-	public function query()
-	{
-		return $this->mapper->getQuery();
-	}
-
-	/**
-	 * Dynamically handle calls into the query class.
-	 * 
+	 * Make custom mapper custom commands available in repository
+	 *
 	 * @param  string  $method
 	 * @param  array   $parameters
 	 * @return mixed
 	 */
 	public function __call($method, $parameters)
 	{
-		// Handle call to custom commands
-		if (in_array($method, $this->mapper->getCustomCommands() ))
-		{	
-			return $this->mapper->executeCustomCommand($method, $parameters[0]);
+		if($this->mapper->hasCustomCommand($method))
+		{
+			call_user_func_array(array($this->mapper, $method), $parameters);
 		}
-
-		$result = call_user_func_array(array($this->query(), $method), $parameters);
-
-		return $result;
+		else 
+		{
+			throw new Exception("No method $method on ".get_class($this));
+		}
 	}
 }

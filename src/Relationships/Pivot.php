@@ -14,13 +14,6 @@ class Pivot extends Entity{
 	protected $table;
 
 	/**
-	 * DB Connection 
-	 * 
-	 * @var string
-	 */
-	protected $connection;
-
-	/**
 	 * The parent entity of the relationship.
 	 *
 	 * @var object
@@ -87,8 +80,6 @@ class Pivot extends Entity{
 		$this->setEntityAttributes($attributes, true);
 
 		$this->table = $table;
-
-		$this->connection = $parentMap->getConnection();
 
 		// We store off the parent instance so we will access the timestamp column names
 		// for the model, since the pivot model timestamps aren't easily configurable

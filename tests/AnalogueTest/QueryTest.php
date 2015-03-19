@@ -23,7 +23,6 @@ class QueryTest extends PHPUnit_Framework_TestCase {
         $mapper->store($p);
         $q = $mapper->query()->get(['label']);
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $q );
-
     }
 
     public function testGetTable()

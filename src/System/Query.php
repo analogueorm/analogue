@@ -1,6 +1,7 @@
 <?php namespace Analogue\ORM\System;
 
 use Closure;
+use Exception;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
@@ -953,8 +954,7 @@ class Query {
 		
 		if(in_array($method, $this->blacklist))
 		{
-			// Method not exists is maybe more appropriate ?
-			throw new \Exception("Analogue : Write Operation not permitted on  Analogue Query Builder");
+			throw new Exception("Method $method doesn't exist");
 		}
 
 		$result = call_user_func_array(array($this->query, $method), $parameters);

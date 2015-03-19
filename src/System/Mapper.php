@@ -234,10 +234,11 @@ class Mapper {
 	}
 
 	/**
-	 * [getConnection description]
-	 * @return [type] [description]
+	 * Returns the underlying connection object
+	 * 
+	 * @return \Illuminate\Database\Connection
 	 */
-	public function getConnection()
+	protected function getConnection()
 	{
 		return $this->connection;
 	}

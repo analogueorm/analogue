@@ -13,7 +13,6 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Analogue\ORM\System\Mapper', $mapper);
         $this->assertInstanceOf('Analogue\ORM\EntityMap', $mapper->getEntityMap());
         $this->assertInstanceOf('Analogue\ORM\System\EntityCache', $mapper->getEntityCache());
-        $this->assertInstanceOf('Illuminate\Database\Connection', $mapper->getConnection());
         $this->assertInstanceOf('Analogue\ORM\System\Query', $mapper->query());
         $this->assertInstanceOf('Analogue\ORM\System\Query', $mapper->getQuery());
         $this->assertInstanceOf('Analogue\ORM\System\Query', $mapper->globalQuery());
