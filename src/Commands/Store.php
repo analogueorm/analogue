@@ -8,6 +8,7 @@ use Analogue\ORM\System\StateChecker;
 use Analogue\ORM\System\ProxyInterface;
 use Analogue\ORM\System\MapInitializer;
 use Analogue\ORM\System\CollectionProxy;
+use Analogue\ORM\Exceptions\MappingException;
 
 /**
  * Persist entities & relationships to the
@@ -268,7 +269,7 @@ class Store extends Command
 				throw new MappingException("Store : couldn't interpret the value of $".$relation);
 			}
 
-			if(is_array($cachedValue))
+			if(is_array($cachedValue) && count($cachedValue) > 0)
 			{
 				if (is_null($value))
 				{

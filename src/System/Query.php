@@ -751,6 +751,21 @@ class Query {
 	}
 
 	/**
+	 * Add the Entity primary key if not in requested columns
+	 * 
+	 * @param  array $columns 
+	 * @return array
+	 */
+	protected function enforceIdColumn($columns)
+	{
+		if(! in_array($this->entityMap->getKeyName(), $columns ))
+		{
+			$columns[] = $this->entityMap->getKeyName();
+		}
+		return $columns;
+	}
+
+	/**
 	 * Get the hydrated models without eager loading.
 	 *
 	 * @param  array  $columns
@@ -758,6 +773,12 @@ class Query {
 	 */
 	public function getEntities($columns = array('*'))
 	{
+		// As we need the primary key to feed the 
+		// entity cache, we need it loaded on each
+		// request
+		$columns = $this->enforceIdColumn($columns);
+
+		// Run the query
 		$results = $this->query->get($columns);
 
 		$entities = array();

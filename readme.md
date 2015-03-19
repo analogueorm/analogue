@@ -3,7 +3,7 @@
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-**Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain object into a SQL Database. 
+**Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
 The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
 
@@ -40,6 +40,7 @@ Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/S
 - Embeddable Value Objects
 - Cast Entities to Array / Json
 - Flexible event system
+- Native Multiple database connections support
 - Extendable via Plugins
 
 ## Install :

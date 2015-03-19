@@ -2,6 +2,7 @@
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Exceptions\MappingException;
 
 class StateChecker {
 
@@ -68,15 +69,17 @@ class StateChecker {
 		{
 			$cache = $this->mapper->getEntityCache();
 			
+			$key = $this->entityMap->getKeyName();
 			// Check if we have a cache record for the entity
 			// which have to be the case.
-			if($cache->has($this->entity->$key))
+			if($cache->has($this->entity->getEntityAttribute($key)))
 			{
 				$this->exists = true;
 			}
 			else
 			{
-				// Throw exception (EntityContradiction)
+				throw new MappingException('Entity primary key contradicts with cached Entity. 
+					You probably modified it by mistake');
 			}
 		}
 
