@@ -13,6 +13,9 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * Analogue Query builder.
  *
  * @method void mergeWheres(array $wheres, array $bindings) Merge an array of where clauses and bindings.
+ * @method select
+ * @method skip
+ * @method from
  */
 class Query {
 

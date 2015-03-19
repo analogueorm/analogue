@@ -6,6 +6,10 @@ use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
 
+/**
+ * @method where
+ * @method take
+ */
 class BelongsToMany extends Relationship {
 
 	/**
@@ -54,7 +58,6 @@ class BelongsToMany extends Relationship {
 	 * @param  string  $foreignKey
 	 * @param  string  $otherKey
 	 * @param  string  $relationName
-	 * @return void
 	 */
 	public function __construct(Mapper $mapper, $parent, $table, $foreignKey, $otherKey, $relationName = null)
 	{
@@ -543,10 +546,9 @@ class BelongsToMany extends Relationship {
 	 *
 	 * @param  mixed  $id
 	 * @param  array  $attributes
-	 * @param  bool   $touch
 	 * @return void
 	 */
-	public function updateExistingPivot($id, array $attributes, $touch = true)
+	public function updateExistingPivot($id, array $attributes)
 	{
 		if (in_array($this->updatedAt(), $this->pivotColumns))
 		{
@@ -554,8 +556,6 @@ class BelongsToMany extends Relationship {
 		}
 
 		$updated = $this->newPivotStatementForId($id)->update($attributes);
-
-		//if ($touch) $this->touchIfTouching();
 
 		return $updated;
 	}
@@ -565,16 +565,13 @@ class BelongsToMany extends Relationship {
 	 *
 	 * @param  mixed  $id
 	 * @param  array  $attributes
-	 * @param  bool   $touch
 	 * @return void
 	 */
-	public function attach($id, array $attributes = array(), $touch = true)
+	public function attach($id, array $attributes = array())
 	{
 		$query = $this->newPivotStatement();
 
 		$query->insert($this->createAttachRecords((array) $id, $attributes));
-
-		//if ($touch) $this->touchIfTouching();
 	}
 
 	/**
@@ -651,6 +648,8 @@ class BelongsToMany extends Relationship {
 	{
 		$parentKey = $this->parentMap->getKeyName();
 
+		$record = [];
+
 		$record[$this->foreignKey] = $this->parent->getEntityAttribute($parentKey);
 
 		$record[$this->otherKey] = $id;
@@ -688,17 +687,16 @@ class BelongsToMany extends Relationship {
 	{
 		$keyName = $this->relatedMap->getKeyName();
 
-		return array_map(function($m) use ($keyName){ return $m->$keyName; }, $entities->items);
+		return array_map(function($m) use ($keyName){ return $m->$keyName; }, $entities);
 	}
 
 	/**
 	 * Detach models from the relationship.
 	 *
 	 * @param  int|array  $ids
-	 * @param  bool  $touch
 	 * @return int
 	 */
-	public function detach($ids = array(), $touch = true)
+	public function detach($ids = array())
 	{
 		if ($ids instanceof EntityCollection) $ids = (array) $ids->modelKeys();
 
@@ -713,8 +711,6 @@ class BelongsToMany extends Relationship {
 		{
 			$query->whereIn($this->foreignKey, (array) $ids);
 		}
-
-		//if ($touch) $this->touchIfTouching();
 
 		// Once we have all of the conditions set on the statement, we are ready
 		// to run the delete on the pivot table. Then, if the touch parameter

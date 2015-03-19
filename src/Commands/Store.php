@@ -636,8 +636,6 @@ class Store extends Command
 	 */
 	protected function update()
 	{
-		$entity = $this->entity;
-
 		$query = $this->query;
 
 		$keyName = $this->entityMap->getKeyName();
