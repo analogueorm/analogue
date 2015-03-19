@@ -4,6 +4,8 @@ use Closure;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
@@ -231,22 +233,7 @@ class Query {
 	 */
 	public function lists($column, $key = null)
 	{
-		$results = $this->query->lists($column, $key);
-
-		// If the model has a mutator for the requested column, we will spin through
-		// the results and mutate the values so that the mutated version of these
-		// columns are returned as you would expect from these Entities.
-		if ($this->model->hasGetMutator($column))
-		{
-			foreach ($results as $key => &$value)
-			{
-				$fill = array($column => $value);
-
-				$value = $this->model->newFromBuilder($fill)->$column;
-			}
-		}
-
-		return $results;
+		return $this->query->lists($column, $key);
 	}
 
 	/**
@@ -258,16 +245,16 @@ class Query {
 	 */
 	public function paginate($perPage = null, $columns = array('*'))
 	{
-		$perPage = $perPage ?: $this->entityMap->getPerPage();
+		$total = $this->query->getCountForPagination();
 
-		$paginator = $this->query->getConnection()->getPaginator();
+		$this->query->forPage(
+			$page = Paginator::resolveCurrentPage(),
+			$perPage = $perPage ?: $this->entityMap->getPerPage()
+		);
 
-		if (isset($this->query->groups))
-		{
-			return $this->groupedPaginate($paginator, $perPage, $columns);
-		}
-
-		return $this->ungroupedPaginate($paginator, $perPage, $columns);
+		return new LengthAwarePaginator($this->get($columns)->all(), $total, $perPage, $page, [
+			'path' => Paginator::resolveCurrentPath()
+		]);
 	}
 
 	/**

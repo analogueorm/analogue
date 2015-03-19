@@ -66,7 +66,7 @@ class EntityCollection extends Collection {
 	 */
 	public function add(Mappable $entity)
 	{
-		$this->items[] = $entity;
+		$this->push($entity);
 
 		return $this;
 	}
