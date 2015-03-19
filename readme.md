@@ -26,7 +26,7 @@ $analogue->store($gallery);
 
 ```
 
-If you intent to build applications following the DDD approach, **Analogue** will be a great asset for you.
+If you intend to build applications following the DDD approach, **Analogue** can be a great asset for you.
 
 Jump to the [Simple ACL Tutorial](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for a guided tour.
 
@@ -60,6 +60,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 - Package is now framework agnostic.
 - Now support any plain object that implements Mappable interface.
 - Introducing a MappableTrait for quick implementation. 
+- Queries can now be run directly on the mapper Object. 
 - Store/Delete methods now accept a array and collections as argument.
 - EntityMap are now autodected when in the same namespace as the entity.
 - Base Entity Class Supports hidden attributes
