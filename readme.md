@@ -28,7 +28,7 @@ $mapper->store($gallery);
 
 If you intend to build applications following the **DDD** approach, **Analogue** can be a great asset for you.
 
-Check the [Documentation](https://github.com/analogueorm/analogue/wiki/Simple-ACL-Tutorial) for more details.
+Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more details.
 
 ##Features
 
