@@ -1,12 +1,30 @@
 <?php namespace Analogue\ORM\System;
 
 use Analogue\ORM\Mappable;
+use Analogue\ORM\EntityCollection;
 
 class CollectionProxy extends Proxy implements ProxyInterface {
 
+	/**
+	 * Underlying Lazyloaded collection
+	 * @var EntityCollection
+	 */
 	protected $loadedCollection;
 
-	protected $addedItems = [];
+	/**
+	 * Added Items Collection
+	 * @var EntityCollection
+	 */
+	protected $addedItems;
+
+	/**
+	 * @param string $relation 	relationship method handled by the proxy.
+	 */
+	public function __construct(Mappable $parentEntity, $relation)
+	{
+		$this->addedItems = new EntityCollection;
+		parent::__construct($parentEntity, $relation);
+	}
 
 	public function add(Mappable $entity)
 	{
@@ -16,7 +34,7 @@ class CollectionProxy extends Proxy implements ProxyInterface {
 		}
 		else
 		{
-			$this->addedItems[] = $entity;
+			$this->addedItems->add($entity);
 		}
 	}
 

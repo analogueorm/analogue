@@ -15,7 +15,9 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Analogue\ORM\System\CollectionProxy', $q->getEntityAttribute('permissions'));
         $q->permissions->add(new Permission('p33'));
         $mapper->store($q);
-
+        $pm = get_mapper('AnalogueTest\App\Permission');
+        $cc = $pm->whereLabel('p33')->first();
+        $this->assertEquals('p33', $cc->label);
         $z = $mapper->whereLabel('lazycoll')->first();
 
         $this->assertEquals(2, $z->permissions->count());
