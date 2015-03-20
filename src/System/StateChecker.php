@@ -183,7 +183,7 @@ class StateChecker {
 
 			unset($attributes[$localKey]);
 
-			$attributes = array_merge($attributes, $valueObject->toArray());
+			$attributes = array_merge($attributes, $valueObject->getEntityAttributes());
 		}
 		
 		return $attributes;

@@ -6,6 +6,8 @@ class UserMap extends EntityMap {
 
     public $timestamps = true;
 
+    protected $embeddables = ['metas' => 'AnalogueTest\App\Meta'];
+
     public function avatars(User $entity)
     {
         return $this->hasMany($entity, 'AnalogueTest\App\Avatar');

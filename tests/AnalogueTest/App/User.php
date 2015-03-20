@@ -8,6 +8,7 @@ class User extends Entity {
     {
         $this->email = $email;
         $this->role = $role;
+        $this->metas = new Meta;
     }
 
 }

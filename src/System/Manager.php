@@ -212,9 +212,19 @@ class Manager {
 	 * @param  string $valueMap    
 	 * @return void
 	 */
-	public static function registerValueObject($valueObject, $valueMap)
+	public static function registerValueObject($valueObject, $valueMap = null)
 	{
 		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+
+		if(is_null($valueMap))
+		{
+			$valueMap = $valueObject.'Map';
+		}
+
+		if(! class_exists($valueMap))
+		{
+			throw new MappingException("$valueMap doesn't exists");
+		}
 
 		static::$valueClasses[$valueObject] = $valueMap;
 	}
@@ -227,6 +237,10 @@ class Manager {
 	 */
 	public static function getValueMap($valueObject)
 	{
+		if(! array_key_exists($valueObject, static::$valueClasses))
+		{
+			static::registerValueObject($valueObject);
+		}
 		$valueMap = new static::$valueClasses[$valueObject];
 
 		$valueMap->setClass($valueObject);

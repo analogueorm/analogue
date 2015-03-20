@@ -848,7 +848,7 @@ class Query {
 
 		foreach($embeddedAttributes as $key)
 		{
-			$valueObject->$key = $attributes[$key];
+			$valueObject->setEntityAttribute($key, $attributes[$key]);
 			
 			unset($attributes[$key]);
 		}
