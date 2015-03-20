@@ -3,6 +3,7 @@
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Entity;
 use AnalogueTest\App\CustomCommand;
+use AnalogueTest\App\Resource;
 
 class MapperTest extends PHPUnit_Framework_TestCase {
 
@@ -48,4 +49,45 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('entities', $mapper->getTable());
     }
 
+    public function testStoreAndHydrateAllColumnTypes()
+    {
+        $r = new Resource('columns');
+        $string = ' test ';
+        $boolean = true;
+        $integer = 10;
+        $date = \Carbon\Carbon::now();
+        $dateTime = \Carbon\Carbon::now();
+        $time = \Carbon\Carbon::now();
+        $decimal = 12345.12;
+        $double = 1234512.12345;
+        $enum = 'a';
+        $float = 0.12345;
+        $json = json_encode(['a' => '1', 'b' => '2']);
+        $r->foo_string = $string;
+        $r->foo_boolean= $boolean;
+        $r->foo_integer =$integer;
+        $r->foo_date = $date;
+        $r->foo_dateTime = $dateTime;
+        $r->foo_time = $time;
+        $r->foo_decimal = $decimal;
+        $r->foo_double = $double;
+        $r->foo_enum = $enum;
+        $r->foo_float = $float;
+        $r->foo_json = $json;
+        $m=get_mapper($r);
+        $m->store($r);
+        $q=$m->whereName('columns')->first();
+        
+        $this->assertEquals($string, $q->foo_string);
+        $this->assertEquals($boolean, $q->foo_boolean);
+        $this->assertEquals($integer, $q->foo_integer);
+        $this->assertEquals($date, $q->foo_date);
+        $this->assertEquals($dateTime, $q->foo_dateTime);
+        $this->assertEquals($time, $q->foo_time);
+        $this->assertEquals($decimal, $q->foo_decimal);
+        $this->assertEquals($double, $q->foo_double);
+        $this->assertEquals($enum, $q->foo_enum);
+        $this->assertEquals($float, $q->foo_float);
+        $this->assertEquals($json, $q->foo_json);
+    }
 }

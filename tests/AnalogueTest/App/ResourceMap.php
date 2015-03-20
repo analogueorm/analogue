@@ -16,6 +16,8 @@ class ResourceMap extends EntityMap {
 
     protected $deletedAtColumn = 'custom_deleted_at';    
 
+    protected $embeddables = ['value' => 'AnalogueTest\App\V'];
+
     public function roles(Resource $resource)
     {
         return $this->morphedByMany($resource, 'AnalogueTest\App\Role', 'resource_owner');
