@@ -155,7 +155,6 @@ abstract class HasOneOrMany extends Relationship {
 
 		// As our cache will hold polymorphic relations, we'll key
 		// them by entity.key as a standard.
-		$foreignClass = $this->relatedMap->getClass();
 		$foreignKey = $this->relatedMap->getKeyName();
 
 		// Once we have the dictionary we can simply spin through the parent models to

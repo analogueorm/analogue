@@ -2,7 +2,7 @@
 
 use ArrayAccess;
 use JsonSerializable;
-use Analogue\ORM\System\ProxyInterface;
+use Analogue\ORM\System\EntityProxy;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -13,15 +13,15 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 	 * @param  string $key 
 	 * @return mixed
 	 */
-	public function getEntityAttribute($key)
+	public function __get($key)
 	{
 		if (! array_key_exists($key, $this->attributes))
 		{
 			return null;
 		}
-		if ($this->attributes[$key] instanceof ProxyInterface)
+		if ($this->attributes[$key] instanceof EntityProxy)
 		{
-			$this->attributes[$key] = $this->attributes[$key]->load($this);
+			$this->attributes[$key] = $this->attributes[$key]->load();
 		}
 		return $this->attributes[$key];
 	}
@@ -31,7 +31,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 	 * 
 	 * @return array
 	 */
-	protected function attributesToArray()
+	public function toArray()
 	{	
 		$attributes = [];
 
@@ -48,7 +48,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 			$attributes[$key] = $attribute;
 		}
 
-		return $attributes;
+		return parent::toArray($attributes);
 	}
 
 }

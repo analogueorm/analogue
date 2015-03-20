@@ -212,7 +212,7 @@ class Store extends Command
 	 * Run a store command on an entity which doesn't exist.
 	 * 
 	 * @param  mixed $entity 
-	 * @return void        
+	 * @return boolean      
 	 */
 	protected function createEntityIfNotExists($entity)
 	{
@@ -224,7 +224,9 @@ class Store extends Command
 		{
 			$store = new Store($entity, $mapper, $this->query->newQuery());
 			$store->execute();
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -277,6 +279,16 @@ class Store extends Command
 					
 					continue;
 				}
+				// If the collection is a proxy we have to check if it has been lazy loaded
+				// then we need to retrieve the underlying collection
+				if ($value instanceof CollectionProxy && $value->isLoaded() )
+				{
+					$value = $value->getUnderlyingCollection();
+				}
+				if ($value instanceof CollectionProxy && ! $value->isLoaded() )
+				{
+					continue;
+				}
 				if ($value instanceof EntityCollection)
 				{
 					$hashes = $value->getEntityHashes();
@@ -284,6 +296,8 @@ class Store extends Command
 					$missing = array_diff($cachedValue, $hashes);
 
 					$this->entityMap->$relation($this->entity)->detachMany($missing);
+
+					continue;
 				}
 				throw new MappingException("Store : couldn't interpret the value of $".$relation);
 			}
@@ -511,19 +525,32 @@ class Store extends Command
 
 			if ($value == null) continue;
 
-			if ($value instanceof ProxyInterface) continue;
+			if ($value instanceof EntityProxy) continue;
 
-			/*
-			if ($value instanceof CollectionProxy)
+			if ($value instanceof CollectionProxy && $value->isLoaded())
 			{
-				// Implements partial updating
-			}*/
+				$value = $value->getUnderlyingCollection();
+			}
+			if ($value instanceof CollectionProxy && ! $value->isLoaded())
+			{
+				foreach($value->getAddedItems() as $entity)
+				{
+					if (! $this->createEntityIfNotExists($entity))
+					{
+						$this->updateEntityIfDirty($entity);
+					}
+				}
+				continue;
+			}
 
 			if ($value instanceof EntityCollection)
 			{
 				foreach($value as $entity)
 				{
-					$this->updateEntityIfDirty($entity);
+					if (! $this->createEntityIfNotExists($entity))
+					{
+						$this->updateEntityIfDirty($entity);
+					}
 				}
 				continue;
 			}
@@ -614,11 +641,11 @@ class Store extends Command
 			{
 				if (in_array($relation, $singleRelations))
 				{
-					$proxies[$relation] = new EntityProxy($relation);
+					$proxies[$relation] = new EntityProxy($entity, $relation);
 				}
 				if (in_array($relation, $manyRelations))
 				{	
-					$proxies[$relation] = new CollectionProxy($relation);
+					$proxies[$relation] = new CollectionProxy($entity, $relation);
 				}
 			}
 		}

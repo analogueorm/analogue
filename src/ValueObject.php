@@ -23,7 +23,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 
 	/**
 	 * Get the raw object's values.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getEntityAttributes()
@@ -48,7 +48,11 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	 */
 	public function getEntityAttribute($key)
 	{
-		return $this->attributes[$key];
+		if(array_key_exists($key, $this->attributes))
+		{
+			return $this->attributes[$key];
+		}
+		else return null;
 	}
 
 	/**
@@ -59,7 +63,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	 */
 	public function __get($key)
 	{
-		return $this->getEntityAttribute($key);
+		return $this->attributes[$key];
 	}
 
 	/**
@@ -71,7 +75,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	 */
 	public function __set($key, $value)
 	{
-		$this->setEntityAttribute($key, $value);
+		$this->attributes[$key] = $value;
 	}
 
 	/**
@@ -170,16 +174,6 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 	 */
 	public function toArray()
 	{
-		return $this->attributesToArray();
-	}
-
-	/**
-	 * Convert every attributes to value / arrays
-	 * 
-	 * @return array
-	 */
-	protected function attributesToArray()
-	{	
 		$attributes = [];
 
 		foreach($this->attributes as $key => $attribute)
@@ -193,7 +187,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 			}
 			$attributes[$key] = $attribute;
 		}
-
 		return $attributes;
 	}
+
 }

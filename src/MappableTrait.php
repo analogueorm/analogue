@@ -13,14 +13,6 @@ trait MappableTrait {
      */
     public function getEntityAttribute($key)
     {
-        if (! array_key_exists($key, $this->attributes))
-        {
-            return null;
-        }
-        if ($this->attributes[$key] instanceof ProxyInterface)
-        {
-            $this->attributes[$key] = $this->attributes[$key]->load($this,$key);
-        }
         return $this->attributes[$key];
     }
 
@@ -62,7 +54,15 @@ trait MappableTrait {
      */
     public function __get($key)
     {
-        return $this->getEntityAttribute($key);
+        if (! array_key_exists($key, $this->attributes))
+        {
+            return null;
+        }
+        if ($this->attributes[$key] instanceof ProxyInterface)
+        {
+            $this->attributes[$key] = $this->attributes[$key]->load();
+        }
+        return $this->attributes[$key];
     }
 
     /**
@@ -74,6 +74,6 @@ trait MappableTrait {
      */
     public function __set($key, $value)
     {
-        $this->setEntityAttribute($key, $value);
+        $this->attributes[$key] = $value;
     }
 }

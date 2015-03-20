@@ -4,7 +4,7 @@ use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
 use Analogue\ORM\EntityCollection;
 
-class FullDomainTest extends PHPUnit_Framework_TestCase {
+class DomainTest extends PHPUnit_Framework_TestCase {
 
     public function testStoreRoleUser()
     {
@@ -132,7 +132,7 @@ class FullDomainTest extends PHPUnit_Framework_TestCase {
         $rawAttributes = $ur->getEntityAttributes();
         
         $this->assertInstanceOf('Analogue\ORM\System\CollectionProxy', $rawAttributes['permissions']);
-        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $ur->permissions);
+        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']->load());
         $this->assertEquals($perms->lists('label'), $ur->permissions->lists('label')); 
     }
 

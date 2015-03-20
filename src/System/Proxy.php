@@ -12,25 +12,29 @@ abstract class Proxy {
 	protected $relation;
 
 	/**
+	 * Reference to parent entity object
+	 *
+	 * @var Mappable
+	 */
+	protected $entity;
+
+	/**
 	 * @param string $relation 	relationship method handled by the proxy.
 	 */
-	public function __construct($relation)
+	public function __construct(Mappable $parentEntity, $relation)
 	{
+		$this->entity = $parentEntity;
 		$this->relation = $relation;
 	}
 
 	/**
 	 * Call the relationship method on the underlying entity map
 	 * 
-	 * @param  Mappable $entity  the entity object
-	 * @param  $relation 
 	 * @return Mappable|EntityCollection
 	 */
-	public function load(Mappable $entity)
+	public function load()
 	{
-		$relation = $this->relation;
-
-		return $this->query($entity, $relation)->getResults($relation);
+		return $this->query($this->entity, $this->relation)->getResults($this->relation);
 	}
 
 	/**

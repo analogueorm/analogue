@@ -76,7 +76,7 @@ class Manager {
 	/**
 	 * Create a mapper for a given entity
 	 * 
-	 * @param  Entity|String $entity
+	 * @param  \Analogue\ORM\Mappable|string $entity
 	 * @return Mapper
 	 */
 	public static function mapper($entity)
@@ -108,7 +108,7 @@ class Manager {
 	/**
 	 * Get the Repository instance for the given Entity 
 	 * 
-	 * @param  Entity|String $entity 
+	 * @param  \Analogue\ORM\Mappable|string $entity 
 	 * @return \Analogue\ORM\Repository
 	 */
 	public static function repository($entity)
