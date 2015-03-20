@@ -21,7 +21,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 		}
 		if ($this->attributes[$key] instanceof ProxyInterface)
 		{
-			$this->attributes[$key] = $this->attributes[$key]->load($this,$key);
+			$this->attributes[$key] = $this->attributes[$key]->load($this);
 		}
 		return $this->attributes[$key];
 	}

@@ -599,11 +599,11 @@ class Query {
 			{
 				if (in_array($relation, $singleRelations))
 				{
-					$proxies[$relation] = new EntityProxy;
+					$proxies[$relation] = new EntityProxy($relation);
 				}
 				if (in_array($relation, $manyRelations))
 				{	
-					$proxies[$relation] = new CollectionProxy;
+					$proxies[$relation] = new CollectionProxy($relation);
 				}
 			}
 		}
