@@ -38,7 +38,7 @@ abstract class Proxy {
 	 * 
 	 * @param  Mappable  $entity   
 	 * @param  string    $relation 
-	 * @return Mappable|EntityCollection
+	 * @return Query
 	 */
 	protected function query(Mappable $entity, $relation)
 	{
