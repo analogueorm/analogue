@@ -55,7 +55,7 @@ class StateChecker {
 	}	
 
 	/**
-	 * Check for entity existence if cache
+	 * Check for entity existence in the EntityCache
 	 * 
 	 * @return boolean
 	 */
@@ -86,6 +86,11 @@ class StateChecker {
 		return $this->exists;
 	}
 
+	/**
+	 * Check if the primary key entity attribute is set
+	 * 
+	 * @return boolean 
+	 */
 	protected function hasPrimaryKeyDefined()
 	{
 		$entityAttributes = $this->entity->getEntityAttributes();
@@ -97,7 +102,7 @@ class StateChecker {
 	 * Chech relations for existence / dirtyness
 	 * 
 	 * @param  array $relations 
-	 * @return 
+	 * @return array non-existing relationships
 	 */
 	public function checkExistingRelations($relations)
 	{
@@ -137,14 +142,25 @@ class StateChecker {
 		return $nonExisting;
 	}
 
-	protected function checkEntityForExistence($entity)
+	/**
+	 * Check if an entity exist in the Entity Cache
+	 * 
+	 * @param  Mappable $entity 
+	 * @return boolean
+	 */
+	protected function checkEntityForExistence(Mappable $entity)
 	{
 		$checker = $this->newStateChecker($entity);
 
 		return $checker->exists();
 	}
 	
-	
+	/**
+	 * Get the attributes that have been modified since
+	 * the entity have been fetched from the database
+	 * 
+	 * @return array
+	 */
 	public function getDirtyAttributes()
 	{
 		$attributes = $this->flattenEmbeddables($this->entity->getEntityAttributes());
@@ -173,7 +189,13 @@ class StateChecker {
 		return $dirty;
 	}
 
-	protected function flattenEmbeddables($attributes)
+	/**
+	 * Merge any Value Object's attribute with entity's attribute
+	 * 
+	 * @param  array
+	 * @return array
+	 */
+	protected function flattenEmbeddables(array $attributes)
 	{
 		$embeddables = $this->entityMap->getEmbeddables();
 		
@@ -192,7 +214,7 @@ class StateChecker {
 	/**
 	 * Determine if the new and old values for a given key are numerically equivalent.
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
 	protected function originalIsNumericallyEquivalent($current, $original)
 	{
@@ -200,6 +222,12 @@ class StateChecker {
 	}
 
 
+	/**
+	 * Determine if an entity attribute is a relationship.
+	 * 
+	 * @param  strin $key 
+	 * @return boolean      
+	 */
 	protected function isRelation($key)
 	{
 		return in_array($key, $this->entityMap->getRelationships());
