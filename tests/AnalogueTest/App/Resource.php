@@ -4,6 +4,8 @@ use Analogue\ORM\Entity;
 
 class Resource extends Entity {
 
+    protected $hiddenAttributes = ['value_object_1', 'value_object_2'];
+
     public function __construct($name, V $value = null)
     {
         $this->name = $name;

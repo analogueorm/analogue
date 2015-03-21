@@ -6,7 +6,8 @@ use Analogue\ORM\System\EntityProxy;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+	use MappableTrait;
 
 	/**
 	 * Return the entity's attribute 
@@ -37,6 +38,8 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 
 		foreach($this->attributes as $key => $attribute)
 		{
+			if (in_array($key, $this->hiddenAttributes )) continue;
+			
 			if ($attribute instanceof ProxyInterface) continue;
 
 			if ($attribute instanceof Entity || $attribute instanceof EntityCollection
@@ -48,7 +51,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 			$attributes[$key] = $attribute;
 		}
 
-		return parent::toArray($attributes);
+		return $attributes;
 	}
 
 }

@@ -25,7 +25,10 @@ class EntityTest extends PHPUnit_Framework_TestCase {
 
     public function testHiddenAttributes() 
     {
-
+        $res = new Resource('name');
+        $array = $res->toArray();
+        $this->assertFalse(array_key_exists('value_object_1', $array));
+        $this->assertFalse(array_key_exists('value_object_2', $array));
     }
 
 }

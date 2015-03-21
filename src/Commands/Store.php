@@ -499,6 +499,7 @@ class Store extends Command
 
 				foreach($pivots as $pivot)
 				{
+					
 					// We need to store pivot data in the parent cache
 					// not in the related entity cache as it's the
 					// case now.
