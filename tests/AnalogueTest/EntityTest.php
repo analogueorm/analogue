@@ -49,9 +49,14 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('mutated_momo_mutated', $res->string);
     }
 
-    public function testSetMutators()
+    public function testMutatorsToArray()
     {
+        $res = new Resource('name');
+        $res->string = 'momo';
         
+        $array = $res->toArray();
+
+        $this->assertEquals('mutated_momo_mutated', $array['string']);
     }
 
     public function testParsingLazyLoadedCollections()

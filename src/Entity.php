@@ -54,7 +54,7 @@ class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Array
     	if($this->hasSetMutator($key))
     	{
     		$method = 'set'.$this->getMutatorMethod($key);
-    		
+
     		$this->$method($value);
     	}
         else $this->attributes[$key] = $value;
@@ -104,6 +104,11 @@ class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Array
 			if(in_array($key, $this->hidden))
 			{
 				unset($attributes[$key]);
+			}
+			if($this->hasGetMutator($key))
+			{
+				$method = 'get'.$this->getMutatorMethod($key);
+				$attributes[$key] = $this->$method($attribute);
 			}
 		}
 		return $attributes;
