@@ -78,16 +78,16 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $m->store($r);
         $q=$m->whereName('columns')->first();
         
-        $this->assertEquals($string, $q->foo_string);
-        $this->assertEquals($boolean, $q->foo_boolean);
-        $this->assertEquals($integer, $q->foo_integer);
-        $this->assertEquals($date, $q->foo_date);
-        $this->assertEquals($dateTime, $q->foo_dateTime);
-        $this->assertEquals($time, $q->foo_time);
-        $this->assertEquals($decimal, $q->foo_decimal);
-        $this->assertEquals($double, $q->foo_double);
-        $this->assertEquals($enum, $q->foo_enum);
-        $this->assertEquals($float, $q->foo_float);
-        $this->assertEquals($json, $q->foo_json);
+        $this->assertEquals($string, $q->getEntityAttribute('foo_string'));
+        $this->assertEquals($boolean, $q->getEntityAttribute('foo_boolean'));
+        $this->assertEquals($integer, $q->getEntityAttribute('foo_integer'));
+        $this->assertEquals($date, $q->getEntityAttribute('foo_date'));
+        $this->assertEquals($dateTime, $q->getEntityAttribute('foo_dateTime'));
+        $this->assertEquals($time, $q->getEntityAttribute('foo_time'));
+        $this->assertEquals($decimal, $q->getEntityAttribute('foo_decimal'));
+        $this->assertEquals($double, $q->getEntityAttribute('foo_double'));
+        $this->assertEquals($enum, $q->getEntityAttribute('foo_enum'));
+        $this->assertEquals($float, $q->getEntityAttribute('foo_float'));
+        $this->assertEquals($json, $q->getEntityAttribute('foo_json'));
     }
 }

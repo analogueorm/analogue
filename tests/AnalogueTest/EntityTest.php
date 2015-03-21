@@ -23,12 +23,39 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $z->permissions->count());
     }
 
+    public function testFlattenValueObject()
+    {
+        $res = new Resource('name');
+        
+        $array = $res->toArray();
+        $this->assertTrue(array_key_exists('v_field_2', $array));
+        $this->assertFalse(array_key_exists('v', $array));
+    }
+
     public function testHiddenAttributes() 
     {
         $res = new Resource('name');
         $array = $res->toArray();
-        $this->assertFalse(array_key_exists('value_object_1', $array));
-        $this->assertFalse(array_key_exists('value_object_2', $array));
+        
+        $this->assertFalse(array_key_exists('name', $array));
+        $this->assertFalse(array_key_exists('v_field_1', $array));
+        $this->assertTrue(array_key_exists('v_field_2', $array));
     }
 
+    public function testMutators()
+    {
+        $res = new Resource('name');
+        $res->string = 'momo';
+        $this->assertEquals('mutated_momo_mutated', $res->string);
+    }
+
+    public function testSetMutators()
+    {
+        
+    }
+
+    public function testParsingLazyLoadedCollections()
+    {
+
+    }
 }

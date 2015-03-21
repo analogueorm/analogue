@@ -339,11 +339,25 @@ class Store extends Command
 		
 		foreach($embeddables as $localKey => $embed)
 		{
+			// Retrieve the value object from the entity's attributes
 			$valueObject = $attributes[$localKey];
 
+			// Unset the corresponding key
 			unset($attributes[$localKey]);
 
-			$attributes = array_merge($attributes, $valueObject->getEntityAttributes());
+			$valueObjectAttributes = $valueObject->getEntityAttributes();
+
+			// Now (if setup in the entity map) we prefix the value object's
+			// attributes with the snake_case name of the embedded class.
+			$prefix = snake_case(class_basename($embed));
+
+			foreach($valueObjectAttributes as $key=>$value)
+			{
+				$valueObjectAttributes[$prefix.'_'.$key] = $value;
+				unset($valueObjectAttributes[$key]);
+			}
+
+			$attributes = array_merge($attributes, $valueObjectAttributes);
 		}
 		
 		return $attributes;

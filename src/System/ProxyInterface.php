@@ -11,4 +11,11 @@ interface ProxyInterface {
      */
 	public function load();
 
+    /**
+     * Return true if the underlying relation has been lazy loaded
+     * 
+     * @return boolean
+     */
+    public function isLoaded();
+    
 }

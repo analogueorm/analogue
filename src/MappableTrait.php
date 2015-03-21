@@ -4,12 +4,19 @@ use Analogue\ORM\System\ProxyInterface;
 
 trait MappableTrait {
 
+    /**
+     * The Entity's Attributes
+     * @var array
+     */
     protected $attributes = [];
 
     /**
-     * Set the object attribute raw values (hydration)
+     * Method used by the mapper to set the object 
+     * attribute raw values (hydration)
      * 
      * @param array $attributes 
+     *
+     * @return void
      */
     public function setEntityAttributes(array $attributes)
     {
@@ -17,7 +24,8 @@ trait MappableTrait {
     }
 
     /**
-     * Get the raw object's values.
+     * Method used by the mapper to get the 
+     * raw object's values.
      *
      * @return array
      */
@@ -27,9 +35,13 @@ trait MappableTrait {
     }
 
     /**
-     * Set the raw entity attributes
+     * Method used by the mapper to set raw
+     * key-value pair
+     * 
      * @param string $key  
      * @param string $value
+     *
+     * @return void
      */
     public function setEntityAttribute($key, $value)
     {
@@ -37,9 +49,11 @@ trait MappableTrait {
     }
 
     /**
-     * Return the entity's attribute 
+     * Method used by the mapper to get single
+     * key-value pair
+     * 
      * @param  string $key 
-     * @return mixed
+     * @return mixed|null
      */
     public function getEntityAttribute($key)
     {
@@ -162,24 +176,54 @@ trait MappableTrait {
         return json_encode($this->toArray(), $options);
     }
 
+    
     /**
-     * Transform the Mappable object to array/json, 
+     * Convert Mappable object to array;
+     * @return [type] [description]
+     */
+    public function toArray()
+    {
+        return $this->attributesToArray($this->attributes);
+    }
+
+     /**
+     * Transform the Object to array/json, 
      * (recursive)
      * 
      * @return array
      */
-    public function toArray(array $filters = null)
+    protected function attributesToArray(array $sourceAttributes)
     {
         $attributes = [];
 
-        foreach($this->attributes as $key => $attribute)
+        foreach($sourceAttributes as $key => $attribute)
         {
-            if ($attribute instanceof Mappable)
+            if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) continue;
+
+            // We want to ValueObject attributes into the parent
+            // entity object.
+            if ($attribute instanceof ValueObject)
             {
-                $attributes[$key] = $attribute->toArray();
+                $valueObjectAttributes = $attribute->toArray();
+
+                $prefix=snake_case(class_basename($attribute)).'_';
+
+                foreach($valueObjectAttributes as  $voKey => $voAttribute);
+                {
+                    $attributes[$prefix.$voKey] = $voAttribute;
+                }
                 continue;
             }
-            $attributes[$key] = $attribute;
+
+            if ($attribute instanceof Mappable || $attribute instanceof Collection 
+                || $attribute instanceof CollectionProxy )
+            {
+                $attributes[$key] = $attribute->toArray();
+            }
+            else 
+            {
+                $attributes[$key] = $attribute;
+            }
         }
         return $attributes;
     }

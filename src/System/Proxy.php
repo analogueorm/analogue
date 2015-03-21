@@ -2,7 +2,7 @@
 
 use Analogue\ORM\Mappable;
 
-abstract class Proxy {
+abstract class Proxy implements ProxyInterface{
 
 	/**
 	 * The name of the relationship method handled by the proxy.
@@ -17,6 +17,13 @@ abstract class Proxy {
 	 * @var Mappable
 	 */
 	protected $entity;
+
+	/**
+	 * Lazy loaded relation flag
+	 * 
+	 * @var boolean
+	 */
+	protected $loaded = false;
 
 	/**
 	 * @param string $relation 	relationship method handled by the proxy.
@@ -34,7 +41,21 @@ abstract class Proxy {
 	 */
 	public function load()
 	{
-		return $this->query($this->entity, $this->relation)->getResults($this->relation);
+		$entities = $this->query($this->entity, $this->relation)->getResults($this->relation);
+		
+		$this->loaded = true;
+
+		return $entities;
+	}
+
+	/**
+     * Return true if the underlying relation has been lazy loaded
+     * 
+     * @return boolean
+     */
+	public function isLoaded()
+	{
+		return $this->loaded;
 	}
 
 	/**

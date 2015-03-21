@@ -4,7 +4,7 @@ use Analogue\ORM\Entity;
 
 class Resource extends Entity {
 
-    protected $hiddenAttributes = ['value_object_1', 'value_object_2'];
+    protected $hidden = ['name', 'v_field_1'];
 
     public function __construct($name, V $value = null)
     {
@@ -15,5 +15,15 @@ class Resource extends Entity {
             $this->value = new V('a','b');
         }
         else $this->value = $value;
+    }
+
+    public function setStringAttribute($value)
+    {
+        $this->attributes['string'] = $value.'_mutated';
+    }
+
+    public function getStringAttribute($value)
+    {
+        return 'mutated_'.$value;   
     }
 }
