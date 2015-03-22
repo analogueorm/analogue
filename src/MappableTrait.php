@@ -2,6 +2,10 @@
 
 use Analogue\ORM\System\ProxyInterface;
 
+/**
+ * Share behaviour of Entities/ValueObjects and allow
+ * implementing mapping for custom classes 
+ */
 trait MappableTrait {
 
     /**
@@ -179,7 +183,8 @@ trait MappableTrait {
     
     /**
      * Convert Mappable object to array;
-     * @return [type] [description]
+     * 
+     * @return array
      */
     public function toArray()
     {
@@ -188,8 +193,7 @@ trait MappableTrait {
 
      /**
      * Transform the Object to array/json, 
-     * (recursive)
-     * 
+     *  
      * @return array
      */
     protected function attributesToArray(array $sourceAttributes)
@@ -198,32 +202,49 @@ trait MappableTrait {
 
         foreach($sourceAttributes as $key => $attribute)
         {
+            // If the attribute is a proxy, and hasn't be loaded, we discard
+            // it from the returned set.
             if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) continue;
 
-            // We want to ValueObject attributes into the parent
-            // entity object.
-            if ($attribute instanceof ValueObject)
-            {
-                $valueObjectAttributes = $attribute->toArray();
-
-                $prefix=snake_case(class_basename($attribute)).'_';
-
-                foreach($valueObjectAttributes as  $voKey => $voAttribute);
-                {
-                    $attributes[$prefix.$voKey] = $voAttribute;
-                }
-                continue;
-            }
-
-            if ($attribute instanceof Mappable || $attribute instanceof Collection 
-                || $attribute instanceof CollectionProxy )
+            if ($attribute instanceof Arrayable)
             {
                 $attributes[$key] = $attribute->toArray();
             }
-            else 
+            else
             {
                 $attributes[$key] = $attribute;
             }
+            // Edit, this is maybe not a good idea after all,
+            // as if we pass the data to an JS client
+            // something like user.address.city
+            // is far more elegant and easier to memorize
+            // than user.address_city
+            // 
+            // 
+            // In that case we may want
+            // if ($attribute instanceof ValueObject)
+            // {
+            //     $valueObjectAttributes = $attribute->toArray();
+
+            //     $prefix=snake_case(class_basename($attribute)).'_';
+
+            //     foreach($valueObjectAttributes as  $voKey => $voAttribute);
+            //     {
+            //         $attributes[$prefix.$voKey] = $voAttribute;
+            //     }
+            //     continue;
+            // }
+
+            // if ($attribute instanceof Mappable || $attribute instanceof Collection 
+            //     || $attribute instanceof CollectionProxy )
+            // {
+            //     $attributes[$key] = $attribute->toArray();
+            // }
+            // else 
+            // {
+            //     $attributes[$key] = $attribute;
+            // }
+            
         }
         return $attributes;
     }

@@ -68,7 +68,6 @@ class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Array
      */
     protected function hasGetMutator($key)
     {
-    	$method = $this->getMutatorMethod($key);
     	return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
     }
 
@@ -80,9 +79,7 @@ class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Array
      */
     protected function hasSetMutator($key)
     {
-		$method = $this->getMutatorMethod($key);
     	return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
-
     }
 
     protected function getMutatorMethod($key)
@@ -97,6 +94,8 @@ class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Array
 	 */
 	public function toArray()
 	{	
+        // First, call the trait method before filtering
+        // with Entity specific methods
 		$attributes = $this->attributesToArray($this->attributes);
 		
 		foreach($this->attributes as $key => $attribute)

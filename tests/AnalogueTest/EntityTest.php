@@ -1,6 +1,8 @@
 <?php namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
+use Illuminate\Support\Collection;
+use Analogue\ORM\EntityCollection;
 
 class EntityTest extends PHPUnit_Framework_TestCase {
 
@@ -23,23 +25,11 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $z->permissions->count());
     }
 
-    public function testFlattenValueObject()
-    {
-        $res = new Resource('name');
-        
-        $array = $res->toArray();
-        $this->assertTrue(array_key_exists('v_field_2', $array));
-        $this->assertFalse(array_key_exists('v', $array));
-    }
-
     public function testHiddenAttributes() 
     {
         $res = new Resource('name');
         $array = $res->toArray();
-        
         $this->assertFalse(array_key_exists('name', $array));
-        $this->assertFalse(array_key_exists('v_field_1', $array));
-        $this->assertTrue(array_key_exists('v_field_2', $array));
     }
 
     public function testMutators()
@@ -61,6 +51,22 @@ class EntityTest extends PHPUnit_Framework_TestCase {
 
     public function testParsingLazyLoadedCollections()
     {
-
+        $role = new Role('lazyparser');
+        $p1 = new Permission('l1');
+        $p2 = new Permission('l1');
+        // Doesn't work. Should consider using array as allowed value ????
+        //$role->permissions = [$p1, $p2];    
+        // Doesn't work. We definitely should consider support them !!
+        //$perms = new Collection([$p1,$p2]);
+        $perms = new EntityCollection([$p1,$p2]);
+        $role->permissions = $perms;
+        $roleMapper = get_mapper($role);
+        $roleMapper->store($role);
+        $r=$roleMapper->whereLabel('lazyparser')->first();
+        foreach($r->permissions as $perm)
+        {
+             $this->assertEquals('l1',$perm->label);
+        }
+       
     }
 }

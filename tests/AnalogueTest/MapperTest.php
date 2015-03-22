@@ -1,9 +1,8 @@
-<?php namespace AnalogueTest;
+<?php namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Entity;
-use AnalogueTest\App\CustomCommand;
-use AnalogueTest\App\Resource;
+
 
 class MapperTest extends PHPUnit_Framework_TestCase {
 
@@ -31,6 +30,39 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $entity = $mapper->newInstance($attributes);
         $this->assertEquals($entity->getEntityAttributes(), $attributes);
     }
+
+    public function testCreateOnSecondConnections()
+    {
+        $u = new User('gege', new Role('azdplzdaplzda'));
+        $ext = new External('e1');
+        $ext->user = $u;
+        $eM = get_mapper($ext);
+        $eM->store($ext);
+        $this->assertGreaterThan(0, $ext->id);
+    }
+
+    public function testCrossConnectionEagerLoadingWithBelongsTo()
+    {
+        $u = new User('gege44', new Role('zadaazdplzdaplzda'));
+        $ext = new External('e33');
+        $ext->user = $u;
+        $eM = get_mapper($ext);
+        $eM->store($ext);
+        $q = $eM->whereName('e33')->with('user')->first();
+        $this->assertEquals('gege44',$q->user->email);
+    }    
+
+    public function testCrossConnectionEagerLoadingWithHasMany()
+    {
+        $u = new User('gege555', new Role('zadaazdplzdaplzda'));
+        $ext = new External('e555');
+        $ext->user = $u;
+        $eM = get_mapper($ext);
+        $eM->store($ext);
+        $uM = get_mapper($u);
+        $q = $uM->whereEmail('gege555')->with('externals')->first();
+        $this->assertEquals('e555',$q->externals[0]->name);
+    }    
 
     public function testCustomCommand()
     {

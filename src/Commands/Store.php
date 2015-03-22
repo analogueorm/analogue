@@ -210,6 +210,11 @@ class Store extends Command
 				$value = $value->getAddedItems();
 			}
 
+			// If the relation's attribute is an array or a collection
+			// let's assume the user intent is to store them as a many
+			// relation, so we turn the array into an EntityCollection
+			// if($value instanceof Collection || is_array($value) )
+
 			if($value instanceof EntityCollection)
 			{
 				foreach ($value as $entity)
@@ -233,9 +238,10 @@ class Store extends Command
 		$checker = new StateChecker($entity, $mapper);
 
 		if(! $checker->exists())
-		{
-			$store = new Store($entity, $mapper, $this->query->newQuery());
-			return $store->execute();
+		{	
+			return $mapper->store($entity);
+			//$store = new Store($entity, $mapper, $this->query->newQuery());
+			//return $store->execute();
 		}
 	}
 
