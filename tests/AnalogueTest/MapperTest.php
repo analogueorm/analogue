@@ -42,6 +42,24 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertGreaterThan(0, $ext->id);
     }
 
+    public function testUpdateOnAdditionnalConnection()
+    {
+        $u = new User('polo', new Role('role'));
+        $ext = new External('e1');
+        $ext->user = $u;
+        $eM = get_mapper($ext);
+        $eM->store($ext);
+
+        $q = $eM->whereName('e1')->first();
+        
+        $q->user->email = 'echanged';
+        
+        $eM->store($q);
+        $z = $eM->find($q->id);
+
+        $this->assertEquals('echanged', $z->user->email);
+    }
+
     public function testCrossConnectionEagerLoadingWithBelongsTo()
     {
         $u = new User('gege44', new Role('zadaazdplzdaplzda'));

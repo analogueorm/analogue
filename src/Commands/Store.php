@@ -240,8 +240,6 @@ class Store extends Command
 		if(! $checker->exists())
 		{	
 			return $mapper->store($entity);
-			//$store = new Store($entity, $mapper, $this->query->newQuery());
-			//return $store->execute();
 		}
 	}
 
@@ -261,9 +259,15 @@ class Store extends Command
 
 		foreach ($relationships as $relation)
 		{
+			// If the key doesn't exist in the cache, it mean the relationship hasn't
+			// be loaded either by eager or lazy loading.
 			if(! array_key_exists($relation, $cachedAttributes)) continue;
 
 			$value = $attributes[$relation];
+
+			// Check if lazyloading proxy has been loaded.
+			if($value instanceof ProxyInterface && ! $value->isLoaded()) continue;
+
 			$cachedValue = $cachedAttributes[$relation];
 
 			if(is_string($cachedValue))
@@ -301,10 +305,7 @@ class Store extends Command
 				{
 					$value = $value->getUnderlyingCollection();
 				}
-				if ($value instanceof CollectionProxy && ! $value->isLoaded() )
-				{
-					continue;
-				}
+				
 				if ($value instanceof EntityCollection)
 				{
 					$hashes = $value->getEntityHashes();
@@ -619,8 +620,7 @@ class Store extends Command
 
 		if(count($dirtyAttributes) > 0)
 		{
-			$store = new Store($entity, $mapper, $this->query->newQuery());
-			$store->execute();
+			$mapper->store($entity);
 		}
 	}
 
