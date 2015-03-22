@@ -6,11 +6,23 @@ class UserMap extends EntityMap {
 
     public $timestamps = true;
 
+    protected $connection = 'default';
+
     protected $embeddables = ['metas' => 'AnalogueTest\App\Meta'];
 
     public function avatars(User $entity)
     {
         return $this->hasMany($entity, 'AnalogueTest\App\Avatar');
+    }
+
+    public function externals(User $entity)
+    {
+        return $this->hasMany($entity, 'AnalogueTest\App\External');
+    }
+
+    public function externalpivots(User $entity)
+    {
+        return $this->belongsToMany($entity, 'AnalogueTest\App\External', 'user_external');
     }
 
     public function role(User $entity)

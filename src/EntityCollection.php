@@ -74,7 +74,7 @@ class EntityCollection extends Collection {
 	/**
 	 * Remove an entity from the collection
 	 */
-	public function remove(Mappable $entity)
+	public function remove($entity)
 	{
 		$keyName = $this->getEntityKey($entity);
 

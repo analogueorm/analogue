@@ -6,10 +6,16 @@ interface ProxyInterface {
 
     /**
      * Convert a proxy into the underlying related Object
-     * @param  Mappable $entity   
-     * @param  $relation
+     *
      * @return Mappable|EntityCollection
      */
-	public function load(Mappable $entity);
+	public function load();
 
+    /**
+     * Return true if the underlying relation has been lazy loaded
+     * 
+     * @return boolean
+     */
+    public function isLoaded();
+    
 }

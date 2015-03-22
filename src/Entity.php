@@ -2,52 +2,114 @@
 
 use ArrayAccess;
 use JsonSerializable;
-use Analogue\ORM\System\ProxyInterface;
+use Analogue\ORM\System\EntityProxy;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
+	use MappableTrait;
+
+	/**
+	 * Entities Hidden Attributes, that will be discarded when converting
+	 * the entity to Array/Json 
+	 * (can include any embedded object's attribute)
+	 * 
+	 * @var array
+	 */
+	protected $hidden;
 
 	/**
 	 * Return the entity's attribute 
 	 * @param  string $key 
 	 * @return mixed
 	 */
-	public function getEntityAttribute($key)
+	public function __get($key)
 	{
 		if (! array_key_exists($key, $this->attributes))
 		{
 			return null;
 		}
-		if ($this->attributes[$key] instanceof ProxyInterface)
+		if ($this->hasGetMutator($key))
 		{
-			$this->attributes[$key] = $this->attributes[$key]->load($this);
+			$method = 'get'.$this->getMutatorMethod($key);
+
+			return $this->$method($this->attributes[$key]);
+		}
+		if ($this->attributes[$key] instanceof EntityProxy)
+		{
+			$this->attributes[$key] = $this->attributes[$key]->load();
 		}
 		return $this->attributes[$key];
 	}
+
+	/**
+     * Dynamically set attributes on the entity.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+    	if($this->hasSetMutator($key))
+    	{
+    		$method = 'set'.$this->getMutatorMethod($key);
+
+    		$this->$method($value);
+    	}
+        else $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Is a getter method defined ?
+     * 
+     * @param  string  $key
+     * @return boolean     
+     */
+    protected function hasGetMutator($key)
+    {
+    	return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+    }
+
+    /**
+     * Is a setter method defined ?
+     * 
+     * @param  string  $key
+     * @return boolean     
+     */
+    protected function hasSetMutator($key)
+    {
+    	return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+    }
+
+    protected function getMutatorMethod($key)
+    {
+    	return ucfirst($key).'Attribute';
+    }
 
 	/**
 	 * Convert every attributes to value / arrays
 	 * 
 	 * @return array
 	 */
-	protected function attributesToArray()
+	public function toArray()
 	{	
-		$attributes = [];
-
+        // First, call the trait method before filtering
+        // with Entity specific methods
+		$attributes = $this->attributesToArray($this->attributes);
+		
 		foreach($this->attributes as $key => $attribute)
 		{
-			if ($attribute instanceof ProxyInterface) continue;
-
-			if ($attribute instanceof Entity || $attribute instanceof EntityCollection
-			|| $attribute instanceof ValueObject)
+			if(in_array($key, $this->hidden))
 			{
-				$attributes[$key] = $attribute->toArray();
-				continue;
+				unset($attributes[$key]);
 			}
-			$attributes[$key] = $attribute;
+			if($this->hasGetMutator($key))
+			{
+				$method = 'get'.$this->getMutatorMethod($key);
+				$attributes[$key] = $this->$method($attribute);
+			}
 		}
-
 		return $attributes;
 	}
 

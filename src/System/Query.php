@@ -599,11 +599,11 @@ class Query {
 			{
 				if (in_array($relation, $singleRelations))
 				{
-					$proxies[$relation] = new EntityProxy($relation);
+					$proxies[$relation] = new EntityProxy($entity, $relation);
 				}
 				if (in_array($relation, $manyRelations))
 				{	
-					$proxies[$relation] = new CollectionProxy($relation);
+					$proxies[$relation] = new CollectionProxy($entity, $relation);
 				}
 			}
 		}
@@ -848,9 +848,11 @@ class Query {
 
 		foreach($embeddedAttributes as $key)
 		{
-			$valueObject->setEntityAttribute($key, $attributes[$key]);
+			$prefix = snake_case(class_basename($valueClass)).'_';
+
+			$valueObject->setEntityAttribute($key, $attributes[$prefix.$key]);
 			
-			unset($attributes[$key]);
+			unset($attributes[$prefix.$key]);
 		}
 		
 		$attributes[$localKey] = $valueObject;

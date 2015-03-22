@@ -192,12 +192,29 @@ class Store extends Command
 
 			if($value instanceof EntityProxy) continue;
 
-			if($value instanceof CollectionProxy) continue;
-
 			if($value instanceof Mappable)
 			{
 				$this->createEntityIfNotExists($value);
 			}
+			
+			// If the relation is a proxy, we test is the relation
+			// has been lazy loaded, otherwise we'll just treat
+			// the subset of newly added items.
+			if ($value instanceof CollectionProxy && $value->isLoaded() )
+			{
+				$value = $value->getUnderlyingCollection();
+			}
+
+			if ($value instanceof CollectionProxy && ! $value->isLoaded() )
+			{
+				$value = $value->getAddedItems();
+			}
+
+			// If the relation's attribute is an array or a collection
+			// let's assume the user intent is to store them as a many
+			// relation, so we turn the array into an EntityCollection
+			// if($value instanceof Collection || is_array($value) )
+
 			if($value instanceof EntityCollection)
 			{
 				foreach ($value as $entity)
@@ -212,7 +229,7 @@ class Store extends Command
 	 * Run a store command on an entity which doesn't exist.
 	 * 
 	 * @param  mixed $entity 
-	 * @return void        
+	 * @return Mappable|null
 	 */
 	protected function createEntityIfNotExists($entity)
 	{
@@ -221,9 +238,10 @@ class Store extends Command
 		$checker = new StateChecker($entity, $mapper);
 
 		if(! $checker->exists())
-		{
-			$store = new Store($entity, $mapper, $this->query->newQuery());
-			$store->execute();
+		{	
+			return $mapper->store($entity);
+			//$store = new Store($entity, $mapper, $this->query->newQuery());
+			//return $store->execute();
 		}
 	}
 
@@ -277,6 +295,16 @@ class Store extends Command
 					
 					continue;
 				}
+				// If the collection is a proxy we have to check if it has been lazy loaded
+				// then we need to retrieve the underlying collection
+				if ($value instanceof CollectionProxy && $value->isLoaded() )
+				{
+					$value = $value->getUnderlyingCollection();
+				}
+				if ($value instanceof CollectionProxy && ! $value->isLoaded() )
+				{
+					continue;
+				}
 				if ($value instanceof EntityCollection)
 				{
 					$hashes = $value->getEntityHashes();
@@ -284,6 +312,8 @@ class Store extends Command
 					$missing = array_diff($cachedValue, $hashes);
 
 					$this->entityMap->$relation($this->entity)->detachMany($missing);
+
+					continue;
 				}
 				throw new MappingException("Store : couldn't interpret the value of $".$relation);
 			}
@@ -315,11 +345,25 @@ class Store extends Command
 		
 		foreach($embeddables as $localKey => $embed)
 		{
+			// Retrieve the value object from the entity's attributes
 			$valueObject = $attributes[$localKey];
 
+			// Unset the corresponding key
 			unset($attributes[$localKey]);
 
-			$attributes = array_merge($attributes, $valueObject->getEntityAttributes());
+			$valueObjectAttributes = $valueObject->getEntityAttributes();
+
+			// Now (if setup in the entity map) we prefix the value object's
+			// attributes with the snake_case name of the embedded class.
+			$prefix = snake_case(class_basename($embed));
+
+			foreach($valueObjectAttributes as $key=>$value)
+			{
+				$valueObjectAttributes[$prefix.'_'.$key] = $value;
+				unset($valueObjectAttributes[$key]);
+			}
+
+			$attributes = array_merge($attributes, $valueObjectAttributes);
 		}
 		
 		return $attributes;
@@ -426,13 +470,28 @@ class Store extends Command
 
 			if (is_null($attributes[$relation])) continue;
 
-			if ($attributes[$relation] instanceof ProxyInterface) continue;
+			if ($attributes[$relation] instanceof CollectionProxy)
+			{
+				// If the collection is loaded we'll load the whole
+				// underlying collection, if not, we'll only load
+				// the freshly added Entities.
+				if($attributes[$relation]->isLoaded() )
+				{
+					$value = $attributes[$relation]->getUnderlyingCollection();
+				}
+				else
+				{
+					$value = $attributes[$relation]->getAddedItems();
+				}
+			}
+			else
+			{
+				$value = $attributes[$relation];
+			}
 
 			// We need to parse the related entities and compare
 			// them to the key array we have in cache,which will
 			// determine if we need to create a new pivot record
-			$value = $attributes[$relation];
-
 			$hashes = $value->getEntityHashes();
 			
 			if (array_key_exists($relation, $cachedAttributes))
@@ -447,8 +506,6 @@ class Store extends Command
 				$new = $hashes;
 			}
 
-			// Note : this is were the partial update when using collection 
-			// proxy will be implemented
 			if(count($new) > 0)
 			{
 				$pivots = $value->getSubsetByHashes($new);
@@ -462,6 +519,7 @@ class Store extends Command
 
 				foreach($pivots as $pivot)
 				{
+					
 					// We need to store pivot data in the parent cache
 					// not in the related entity cache as it's the
 					// case now.
@@ -511,19 +569,29 @@ class Store extends Command
 
 			if ($value == null) continue;
 
-			if ($value instanceof ProxyInterface) continue;
+			if ($value instanceof EntityProxy) continue;
 
-			/*
-			if ($value instanceof CollectionProxy)
+			if ($value instanceof CollectionProxy && $value->isLoaded())
 			{
-				// Implements partial updating
-			}*/
+				$value = $value->getUnderlyingCollection();
+			}
+			if ($value instanceof CollectionProxy && ! $value->isLoaded())
+			{
+				foreach($value->getAddedItems() as $entity)
+				{
+					$this->updateEntityIfDirty($entity);
+				}
+				continue;
+			}
 
 			if ($value instanceof EntityCollection)
 			{
 				foreach($value as $entity)
 				{
-					$this->updateEntityIfDirty($entity);
+					if (! $this->createEntityIfNotExists($entity))
+					{
+						$this->updateEntityIfDirty($entity);
+					}
 				}
 				continue;
 			}
@@ -614,11 +682,11 @@ class Store extends Command
 			{
 				if (in_array($relation, $singleRelations))
 				{
-					$proxies[$relation] = new EntityProxy($relation);
+					$proxies[$relation] = new EntityProxy($entity, $relation);
 				}
 				if (in_array($relation, $manyRelations))
 				{	
-					$proxies[$relation] = new CollectionProxy($relation);
+					$proxies[$relation] = new CollectionProxy($entity, $relation);
 				}
 			}
 		}

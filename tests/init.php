@@ -11,7 +11,8 @@ date_default_timezone_set('Europe/Berlin');
 
 // Copy DB Template to a temp db
 copy(__DIR__.'/test.sqlite', __DIR__.'/temp.sqlite');
-
+// Copy DB On second file for testing multiple connections
+copy(__DIR__.'/test.sqlite', __DIR__.'/external.sqlite');
 
 use Analogue\ORM\Plugins\Timestamps\TimestampsPlugin;
 use Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin;
@@ -25,7 +26,16 @@ function get_analogue()
         'prefix'   => '',
     ];
 
+    $externalDb = [
+        'driver'   => 'sqlite',
+        'database' => __DIR__.'/external.sqlite',
+        'prefix'   => '',
+    ];
+
+
     $analogue = new Analogue\ORM\Analogue($testDb);
+
+    $analogue->addConnection($externalDb, 'external');
 
     $analogue->registerPlugin(new TimestampsPlugin);
     $analogue->registerPlugin(new SoftDeletesPlugin);
