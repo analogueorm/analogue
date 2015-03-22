@@ -2,6 +2,7 @@
 
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Entity;
+use Analogue\ORM\EntityCollection;
 
 
 class MapperTest extends PHPUnit_Framework_TestCase {
@@ -64,6 +65,22 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('e555',$q->externals[0]->name);
     }    
 
+
+    public function testCrossConnectionRelationshipPivot()
+    {
+        $u = new User('gege666', new Role('zadaazdplzdaplzda'));
+        $ext1 = new External('piv');
+        $ext1->user_id = 0;
+        $ext2 = new External('piv');
+        $ext1->user_id = 0;
+        $ext3 = new External('piv');
+        $ext1->user_id = 0;
+        $u->externalpivots = new EntityCollection([$ext1,$ext2,$ext3]);
+        $uM = get_mapper($u);
+        $uM->store($u);
+
+    }    
+
     public function testCustomCommand()
     {
         $mapper = get_mapper('Analogue\ORM\Entity');
@@ -73,6 +90,8 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $mapper->hasCustomCommand('customCommand'));
         $this->assertEquals('executed' , $mapper->customCommand($mapper->newInstance()));
     }
+
+
 
     public function testRedirectCallsOnNewQuery()
     {

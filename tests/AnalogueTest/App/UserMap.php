@@ -22,7 +22,7 @@ class UserMap extends EntityMap {
 
     public function externalpivots(User $entity)
     {
-        return $this->belongsToMany($entity, 'AnalogueTest\App\External');
+        return $this->belongsToMany($entity, 'AnalogueTest\App\External', 'user_external');
     }
 
     public function role(User $entity)
