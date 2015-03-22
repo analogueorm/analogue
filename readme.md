@@ -40,9 +40,9 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 - Value Objects
 - Polymorphic Relationships
 - Dynamic Relationships
-- Cast Entities to Array / Json
+- Cast entities to Array / Json
 - Flexible event system
-- Native Multiple database connections support
+- Native multiple database connections support
 - Extendable via Plugins
 
 ## Install :
@@ -55,6 +55,10 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 
 ##Changelog 
 
+####Version 2.1.3
+- Mutator feature in base Entity class
+- Ability to add entities to a proxy collection without lazyloading it.
+
 ###Version 2.1
 
 - Package is now framework agnostic.
@@ -63,7 +67,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 - Queries can now be run directly on the mapper Object. 
 - Store/Delete methods now accept a array and collections as argument.
 - EntityMap are now autodected when in the same namespace as the entity.
-- Base Entity Class Supports hidden attributes
+- Base Entity class Supports hidden attributes
 - Many workflow related improvements.
 
 ###Version 2.0
