@@ -6,8 +6,7 @@ use Analogue\ORM\System\EntityProxy;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Entity implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
-	use MappableTrait;
+class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
 	/**
 	 * Entities Hidden Attributes, that will be discarded when converting
