@@ -2,6 +2,7 @@
 
 use Exception;
 use Analogue\ORM\Mappable;
+use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 use InvalidArgumentException;
@@ -23,14 +24,15 @@ class Repository {
 	 * - Instance of mapper
 	 * 
 	 * @param Mapper|Mappable|string $mapper 
-	 *
+	 * @param EntityMap 			 $entityMap (optionnal)
+	 * 
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct($mapper)
+	public function __construct($mapper, EntityMap $entityMap = null)
 	{
 		if($mapper instanceof Mappable || is_string($mapper))
 		{
-			$this->mapper = Manager::mapper($mapper);
+			$this->mapper = Manager::mapper($mapper, $entityMap);
 		}
 		else if($mapper instanceof Mapper)
 		{

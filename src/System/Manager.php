@@ -76,10 +76,11 @@ class Manager {
 	/**
 	 * Create a mapper for a given entity
 	 * 
-	 * @param  \Analogue\ORM\Mappable|string $entity
+	 * @param \Analogue\ORM\Mappable|string $entity
+	 * @param mixed $entityMap 
 	 * @return Mapper
 	 */
-	public static function mapper($entity)
+	public static function mapper($entity, $entityMap = null)
 	{
 		if(! is_string($entity)) $entity = get_class($entity);
 
@@ -88,6 +89,8 @@ class Manager {
 		{
 			return static::$mappers[$entity];
 		}
+
+		if(! is_null($entityMap)) static::register($entity, $entityMap);
 
 		$entityMap = static::getEntityMapInstanceFor($entity);
 
