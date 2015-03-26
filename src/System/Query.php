@@ -792,8 +792,6 @@ class Query {
 
 		$proxies = [];
 
-		$proxyLoaded = false;
-
 		foreach($results as $result)
 		{
 			$instance = clone $prototype;
@@ -805,17 +803,11 @@ class Query {
 			// Hydrate any embedded Value Object
 			$this->hydrateValueObjects($resultArray);
 
-			// We need to set the proxy for lazy loading on 
-			// the first hydration pass only, as they will be duplicated
-			// at next pass when cloning instance.
-			if (! $proxyLoaded)
-			{
-				$instance->setEntityAttributes($resultArray);
-				$proxies = $this->getLazyLoadingProxies($instance);
-				$instance->setEntityAttributes($resultArray + $proxies);
-				$proxyLoaded = true;
-			}
-			else
+			$instance->setEntityAttributes($resultArray);
+
+			$proxies = $this->getLazyLoadingProxies($instance);
+
+			if (count($proxies) > 0)
 			{
 				$instance->setEntityAttributes($resultArray + $proxies);
 			}
