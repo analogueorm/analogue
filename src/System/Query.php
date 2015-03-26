@@ -8,7 +8,8 @@ use Analogue\ORM\Exceptions\EntityNotFoundException;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Analogue\ORM\Drivers\DBAdapter;
+use Analogue\ORM\Drivers\QueryAdapter;
 
 /**
  * Analogue Query builder.
@@ -28,9 +29,16 @@ class Query {
 	protected $mapper;
 
 	/**
+	 * DB Adatper
+	 * 
+	 * @var \Analogue\ORM\Drivers\DBAdapter
+	 */
+	protected $adapter;
+
+	/**
 	 * Query Builder Instance
 	 * 
-	 * @var \Illuminate\Database\Query\Builder
+	 * @var \Analogue\ORM\Drivers\QueryAdapter
 	 */
 	protected $query;
 
@@ -75,20 +83,22 @@ class Query {
 	];
 
 	/**
-	 * Create a new Mapper query builder instance.
+	 * Create a new Analogue Query Builder instance.
 	 *
-	 * @param \Illuminate\Database\Query\Builder  $query
+	 * @param \Analogue\ORM\Drivers\QueryAdapter  $query
 	 * @param \Analogue\ORM\System\Mapper $mapper
 	 * @return void
 	 */
-	public function __construct(QueryBuilder $query, Mapper $mapper)
+	public function __construct(Mapper $mapper, DBAdapter $adapter)
 	{
 		$this->mapper = $mapper;
+
+		$this->adapter = $adapter;
 
 		$this->entityMap = $mapper->getEntityMap();
 
 		// Specify the table to work on
-		$this->query = $query->from($this->entityMap->getTable());
+		$this->query = $adapter->getQuery()->from($this->entityMap->getTable());
 
 		$this->with($this->entityMap->getEagerloadedRelationships() );
 	}
@@ -899,27 +909,13 @@ class Query {
 	 */
 	public function newQuery()
 	{
-		$builder = new Query($this->newBaseQueryBuilder(), $this->mapper);
+		$builder = new Query($this->mapper, $this->adapter);
 
 		return $this->applyGlobalScopes($builder);
 	}
 
 	/**
-	 * Get a new query builder instance for the connection.
-	 *
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	protected function newBaseQueryBuilder()
-	{
-		$conn = $this->getConnection();
-
-		$grammar = $conn->getQueryGrammar();
-
-		return new QueryBuilder($conn, $grammar, $conn->getPostProcessor());
-	}
-
-	/**
-	 * Get the Mapper instance for this query
+	 * Get the Mapper instance for this Query Builder
 	 * 
 	 * @return \Analogue\ORM\System\Mapper
 	 */
@@ -929,9 +925,12 @@ class Query {
 	}
 
 	/**
-	 * Get the underlying query builder instance.
+	 * Get the underlying query adapter
 	 *
-	 * @return \Illuminate\Database\Query\Builder
+	 * (REFACTOR: this method should move out, we need to provide the client classes
+	 * with the adapter instead.)
+	 *
+	 * @return \Analogue\ORM\Drivers\QueryAdapter
 	 */
 	public function getQuery()
 	{

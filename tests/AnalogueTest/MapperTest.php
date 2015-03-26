@@ -159,4 +159,22 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($float, $q->getEntityAttribute('foo_float'));
         $this->assertEquals($json, $q->getEntityAttribute('foo_json'));
     }
+
+    public function testGetMapperWithInstances()
+    {
+        $analogue = get_analogue();
+
+        $permissionMapper = $analogue->mapper(new Permission('PFH'), new PermissionMap);
+
+        $this->assertInstanceOf('Analogue\ORM\System\Mapper', $permissionMapper);
+    }
+
+    public function testGetMapperWithStrings()
+    {
+        $analogue = get_analogue();
+
+        $permissionMapper = $analogue->mapper('AnalogueTest\App\Permission', 'AnalogueTest\App\PermissionMap');
+
+        $this->assertInstanceOf('Analogue\ORM\System\Mapper', $permissionMapper);
+    }
 }

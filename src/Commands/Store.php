@@ -666,7 +666,7 @@ class Store extends Command
 	{
 		if(! $this->entityMap->relationsParsed() )
 		{
-			$initializer = new MapInitializer($this->mapper);
+			$initializer = new MapInitializer($this->mapper->getEntityMap());
 			$initializer->splitRelationsTypes($entity);
 		}
 

@@ -19,6 +19,11 @@ use Analogue\ORM\Relationships\MorphToMany;
 class EntityMap {
 
 	/**
+ 	 * The mapping driver to use with this entity
+	 */
+	protected $driver = 'illuminate';
+
+	/**
 	 * The Database Connection name for the model.
 	 *
 	 * @var string
@@ -170,6 +175,26 @@ class EntityMap {
 	public function getDateFormat()
 	{
 		return $this->dateFormat;
+	}
+
+	/**
+	 * Set the Driver for this mapping
+	 * 
+	 * @param string $driver
+	 */
+	public function setDriver($driver)
+	{
+		$this->driver = $driver;
+	}
+
+	/**
+	 * Get the Driver for this mapping.
+	 * 
+	 * @return string
+	 */
+	public function getDriver()
+	{
+		return $this->driver;
 	}
 
 	/**

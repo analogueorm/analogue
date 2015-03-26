@@ -6,28 +6,31 @@ use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
 use Analogue\ORM\System\Mapper;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\DatabaseManager;
+use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Plugins\AnaloguePluginInterface;
 
+/**
+ * This class keeps track of instanciated mappers, and entity <-> entityMap associations
+ */
 class Manager {
 
 	/**
-	 * Database Manager
+	 * Driver Manager
 	 * 
-	 * @var DatabaseManager|Analogue
+	 * @var \Analogue\ORM\Drivers\Manager
 	 */
-	protected static $db;
+	protected static $drivers;
 
 	/**
-	 * Key value store of entity classes and corresponding maps.
+	 * Registered entity classes and corresponding map objects.
 	 * 
 	 * @var array
 	 */
 	protected static $entityClasses = [];
 
 	/**
-	 * Key value store of Value Classes and corresponding maps
+	 * Key value store of ValueObject Classes and corresponding map classes
 	 * 
 	 * @var array
 	 */
@@ -63,12 +66,12 @@ class Manager {
 		'creating', 'created', 'updating', 'updated', 'deleting', 'deleted' ];
 
 	/**
-	 * @param DatabaseManager|Analogue $connectionProvider       
+	 * @param \Analogue\ORM\Drivers\Manager $driverManager       
 	 * @param Dispatcher $event 
 	 */
-	public function __construct($connectionProvider, Dispatcher $event)
+	public function __construct(DriverManager $driverManager, Dispatcher $event)
 	{
-		static::$db = $connectionProvider;
+		static::$drivers = $driverManager;
 
 		static::$eventDispatcher = $event;
 	}
@@ -90,20 +93,16 @@ class Manager {
 			return static::$mappers[$entity];
 		}
 
-		if(! is_null($entityMap)) static::register($entity, $entityMap);
-
-		$entityMap = static::getEntityMapInstanceFor($entity);
-
-		// Check if the entity map is set on a different connection
-		// than the default one.
-		if ( ($connection = $entityMap->getConnection() ) != null) 
+		if(! static::isRegisteredEntity($entity)) 
 		{
-			static::$mappers[$entity] = new Mapper($entityMap, static::$db->connection($connection), static::$eventDispatcher);
+			static::register($entity, $entityMap);
 		}
-		else
-		{
-			static::$mappers[$entity] = new Mapper($entityMap, static::$db->connection(), static::$eventDispatcher);
-		}
+
+		$entityMap = static::$entityClasses[$entity];
+
+		$factory = new MapperFactory(static::$drivers, static::$eventDispatcher);
+
+		static::$mappers[$entity] = $factory->make($entity, $entityMap);
 
 		return static::$mappers[$entity];
 	}
@@ -130,74 +129,15 @@ class Manager {
 	}
 
 	/**
-	 * Get the entity map instance for a custom entity
-	 * 
-	 * @param  string|object $entity 
-	 * @return Mappable
-	 */
-	protected static function getEntityMapInstanceFor($entity)
-	{
-		if(! is_string($entity))
-		{
-			$entity = get_class($entity);
-		}
-
-		// If the entity class doesn't exist in the entity array
-		// we register it.
-		if(! array_key_exists($entity, static::$entityClasses))
-		{
-			static::register($entity);
-		}
-		
-		$map = static::$entityClasses[$entity];
-
-		if(is_null($map))
-		{
-			// Check if an EntityMap exist in the same namespace
-			// as the entity.
-			if (class_exists($entity.'Map'))
-			{
-				$map = $entity.'Map';
-			}
-			else 
-			{
-				// Generate an EntityMap obeject
-				$map = static::generateBlankMap();
-			}
-		}
-
-		if(is_string($map))
-		{
-			$map = new $map;
-		}
-		
-		$map->setClass($entity);
-		
-		static::$entityClasses[$entity] = $map;
-
-		return $map;
-
-	}	
-
-	/**
-	 * Dynamically create an entity map for a custom entity class
-	 * 
-	 * @return EntityMap         
-	 */
-	protected static function generateBlankMap()
-	{
-		return new EntityMap;
-	}
-
-	/**
 	 * Register an entity 
 	 * 
 	 * @param  string|Mappable $entity    entity's class name
-	 * @param  string $entityMap map's class name
+	 * @param  string|EntityMap $entityMap map's class name
 	 * @return void
 	 */
 	public static function register($entity, $entityMap = null)
 	{
+		// If an object is provider, get the class name from it
 		if(! is_string($entity) ) $entity = get_class($entity);
 
 		if (static::isRegisteredEntity($entity))
@@ -205,8 +145,57 @@ class Manager {
 			throw new MappingException("Entity $entity is already registered.");
 		}
 
+		if(is_null($entityMap) ) 
+		{
+			$entityMap = static::getEntityMapInstanceFor($entity);
+		}
+
+		if(is_string($entityMap)) 
+		{
+			$entityMap = new $entityMap;
+		}
+
+		if(! $entityMap instanceof EntityMap)
+		{
+			throw new MappingException(get_class($entityMap)." must be an instance of EntityMap.");
+		}
+
+		$entityMap->setClass($entity);
+		
 		static::$entityClasses[$entity] = $entityMap;
 	}
+
+	/**
+     * Get the entity map instance for a custom entity
+     * 
+     * @param  string   	$entity 
+     * @return Mappable
+     */
+    protected static function getEntityMapInstanceFor($entity)
+    {
+        if (class_exists($entity.'Map'))
+        {
+            $map = $entity.'Map';
+            $map = new $map;
+        }
+        else 
+        {
+            // Generate an EntityMap obeject
+            $map = static::getNewEntityMap();
+        }
+        
+        return $map;
+    }  
+
+    /**
+     * Dynamically create an entity map for a custom entity class
+     * 
+     * @return EntityMap         
+     */
+    protected static function getNewEntityMap()
+    {
+        return new EntityMap;
+    }
 
 	/**
 	 * Register a Value Object

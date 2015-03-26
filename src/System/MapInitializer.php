@@ -2,7 +2,7 @@
 
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Relationships\Relationship;
-use ReflectionClass, ReflectionMethod;
+use ReflectionClass;
 
 /**
  * This class register some edm behaviour specified by
@@ -17,16 +17,16 @@ class MapInitializer {
 
 	protected $singleClasses = ['BelongsTo', 'HasOne', 'MorphOne','MorphTo'];
 
-	protected $mapper;
+	protected $entityMap;
 
-	public function __construct($mapper)
+	public function __construct(EntityMap $entityMap)
 	{
-		$this->mapper = $mapper;
+		$this->entityMap = $entityMap;
 	}
 
 	public function init()
 	{
-		$map = $this->mapper->getEntityMap();
+		$map = $this->entityMap;
 
 		$userMethods = $this->getCustomMethods($map);
 
@@ -86,12 +86,13 @@ class MapInitializer {
 
 	/**
 	 * Parse the EntityMap and split single vs multi relations
-	 * @param  EntityMap $map 
+	 * 
+	 * @param  Mappable $map 
 	 * @return void
 	 */
 	public function splitRelationsTypes($entity)
 	{
-		$map = $this->mapper->getEntityMap();
+		$map = $this->entityMap;
 		
 		// Add dynamic relationships to the game
 		$relations = $map->getRelationships() + $map->getDynamicRelationships();
