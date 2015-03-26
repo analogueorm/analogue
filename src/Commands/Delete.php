@@ -4,6 +4,11 @@ use Analogue\ORM\Exceptions\MappingException;
 
 class Delete extends Command {
 	
+	/**
+	 * Execute the Delete Statement
+	 * 
+	 * @return void
+	 */
 	public function execute()
 	{
 		$entity = $this->entity;

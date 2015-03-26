@@ -177,4 +177,26 @@ class MapperTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('Analogue\ORM\System\Mapper', $permissionMapper);
     }
+
+    public function testLazyLoadingOnCollection()
+    {
+        $userMapper = get_mapper('AnalogueTest\App\User');
+
+        $u1 = new User('michel', new Role('lr1'));
+        $u2 = new User('bono', new Role('lr2'));
+
+        $userMapper->store([$u1,$u2]);
+
+        $id1 = $u1->id;
+        $id2 = $u2->id;
+
+        $this->assertFalse($id1 == $id2);
+
+        $q = $userMapper->whereEmail('michel')->orWhere('email','=','bono')->orderBy('email')->get();
+        $this->assertEquals(2, $q->count());
+        
+        $this->assertEquals('lr2', $q[0]->role->label);
+        $this->assertEquals('lr1', $q[1]->role->label);
+
+    }
 }

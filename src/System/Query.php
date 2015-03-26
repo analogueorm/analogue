@@ -580,48 +580,6 @@ class Query {
 	}
 
 	/**
-	 * Build an array with lazy loading proxies for the current query
-	 *
-	 * @return array           
-	 */
-	protected function getLazyLoadingProxies($entity)
-	{
-		if(! $this->entityMap->relationsParsed() )
-		{
-			$initializer = new MapInitializer($this->mapper);
-			$initializer->splitRelationsTypes($entity);
-		}
-
-		$singleRelations = $this->entityMap->getSingleRelationships();
-		$manyRelations = $this->entityMap->getManyRelationships();
-
-		$eagerLoads = array_keys($this->getEagerLoads());
-
-		$allRelations = array_merge($manyRelations,$singleRelations);
-
-		$lazyLoad = array_diff($allRelations, $eagerLoads);
-
-		$proxies = [];
-
-		if (count($lazyLoad) > 0)
-		{
-			foreach($lazyLoad as $relation)
-			{
-				if (in_array($relation, $singleRelations))
-				{
-					$proxies[$relation] = new EntityProxy($entity, $relation);
-				}
-				if (in_array($relation, $manyRelations))
-				{	
-					$proxies[$relation] = new CollectionProxy($entity, $relation);
-				}
-			}
-		}
-
-		return $proxies;
-	}
-
-	/**
 	 * Get the relationships being eagerly loaded.
 	 *
 	 * @return array
@@ -792,80 +750,9 @@ class Query {
 		// Run the query
 		$results = $this->query->get($columns);
 
-		$entities = array();
+		$builder = new EntityBuilder($this->mapper, $this->getEagerLoads());
 
-		$prototype = $this->getEntityInstance();
-
-		$keyName = $this->entityMap->getKeyName();
-
-		$tmpCache = [];
-
-		$proxies = [];
-
-		$proxyLoaded = false;
-
-		foreach($results as $result)
-		{
-			$instance = clone $prototype;
-			
-			$resultArray = (array) $result;
-
-			$tmpCache[$resultArray[$keyName] ] = $resultArray;
-
-			// Hydrate any embedded Value Object
-			$this->hydrateValueObjects($resultArray);
-
-			// We need to set the proxy for lazy loading on 
-			// the first hydration pass only, as they will be duplicated
-			// at next pass when cloning instance.
-			if (! $proxyLoaded)
-			{
-				$instance->setEntityAttributes($resultArray);
-				$proxies = $this->getLazyLoadingProxies($instance);
-				$instance->setEntityAttributes($resultArray + $proxies);
-				$proxyLoaded = true;
-			}
-			else
-			{
-				$instance->setEntityAttributes($resultArray + $proxies);
-			}
-			
-			$entities[] = $instance;
-		}
-
-		$this->mapper->getEntityCache()->add($tmpCache);
-
-		return $entities;
-	}
-
-	protected function hydrateValueObjects(& $attributes)
-	{
-		foreach($this->entityMap->getEmbeddables() as $localKey => $valueClass)
-		{
-			$this->hydrateValueObject($attributes, $localKey, $valueClass);
-		}	
-	}
-
-	protected function hydrateValueObject(& $attributes, $localKey, $valueClass)
-	{
-		$map = Manager::getValueMap($valueClass);
-
-		$embeddedAttributes = $map->getAttributes();
-
-		//$nestedValueObjects = $map->getEmbeddables();
-
-		$valueObject = Manager::getValueObjectInstance($valueClass);
-
-		foreach($embeddedAttributes as $key)
-		{
-			$prefix = snake_case(class_basename($valueClass)).'_';
-
-			$valueObject->setEntityAttribute($key, $attributes[$prefix.$key]);
-			
-			unset($attributes[$prefix.$key]);
-		}
-		
-		$attributes[$localKey] = $valueObject;
+		return $builder->build($results);
 	}
 
 	/**
