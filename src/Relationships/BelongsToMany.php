@@ -161,7 +161,7 @@ class BelongsToMany extends Relationship {
 	 * @param  array  $columns
 	 * @return Mappable|static
 	 *
-	 * @throws MappableNotFoundException
+	 * @throws Mappable|EntityNotFoundException
 	 */
 	public function firstOrFail($columns = array('*'))
 	{

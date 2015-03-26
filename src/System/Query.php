@@ -593,7 +593,7 @@ class Query {
 
 		$proxies = [];
 
-		if (count($lazyLoad) > 1)
+		if (count($lazyLoad) > 0)
 		{
 			foreach($lazyLoad as $relation)
 			{
