@@ -21,7 +21,7 @@ class Mapper {
 	/**
 	 * The Manager instance
 	 * 
-	 * @var Analogue\ORM\System\Manager
+	 * @var \Analogue\ORM\System\Manager
 	 */
 	protected $manager;
 
@@ -72,6 +72,7 @@ class Mapper {
 	 * @param EntityMap 	$entityMapper 
 	 * @param DBAdapter     $adapter 
 	 * @param Dispatcher 	$dispatcher  
+	 * @param Manager  		$manager
 	 */
 	public function __construct(EntityMap $entityMap, DBAdapter $adapter, Dispatcher $dispatcher, Manager $manager)
 	{

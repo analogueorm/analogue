@@ -745,7 +745,7 @@ class Query {
 		// Run the query
 		$results = $this->query->get($columns);
 
-		$builder = new EntityBuilder($this->mapper, $this->getEagerLoads());
+		$builder = new EntityBuilder($this->mapper, array_keys($this->getEagerLoads()));
 
 		return $builder->build($results);
 	}

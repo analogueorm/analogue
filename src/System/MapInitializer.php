@@ -87,7 +87,7 @@ class MapInitializer {
 	/**
 	 * Parse the EntityMap and split single vs multi relations
 	 * 
-	 * @param  Mappable $map 
+	 * @param  Mappable $entity
 	 * @return void
 	 */
 	public function splitRelationsTypes($entity)

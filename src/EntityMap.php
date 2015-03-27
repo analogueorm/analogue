@@ -903,7 +903,7 @@ class EntityMap {
 	 */
 	public function activator()
 	{
-		//
+		return null;
 	}
 
 	/**

@@ -199,4 +199,18 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('lr1', $q[1]->role->label);
 
     }
+
+    public function testStoreAndHydrateLargeSets()
+    {
+        $pM = get_mapper('AnalogueTest\App\Permission');
+        $perms =[];
+        for($x=0;$x<1000;$x++)
+        {
+            $perms[] = new Permission('large');
+        }
+        $pM->store($perms);
+        $q = $pM->whereLabel('large')->get();
+        $this->assertEquals(1000, $q->count());
+
+    }
 }
