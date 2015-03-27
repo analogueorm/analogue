@@ -233,7 +233,7 @@ class Store extends Command
 	 */
 	protected function createEntityIfNotExists($entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$checker = new StateChecker($entity, $mapper);
 
@@ -323,7 +323,7 @@ class Store extends Command
 
 	protected function getEntityHash(Mappable $entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$key = $mapper->getEntityMap()->getKeyName();
 
@@ -612,7 +612,7 @@ class Store extends Command
 	 */
 	protected function updateEntityIfDirty($entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$checker = new StateChecker($entity, $mapper);
 
@@ -718,6 +718,4 @@ class Store extends Command
 			$query->update($dirtyAttributes);
 		}
 	}
-
-	
 }

@@ -160,7 +160,7 @@ class MorphTo extends BelongsTo {
 	 */
 	protected function getResultsByType($type)
 	{
-		$mapper = Manager::mapper($type);
+		$mapper = $this->relatedMapper->getManager()->mapper($type);
 
 		$map = $mapper->getEntityMap();
 

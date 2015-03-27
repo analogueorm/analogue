@@ -51,9 +51,9 @@ class HasManyThrough extends Relationship {
 		$this->secondKey = $secondKey;
 		$this->farParent = $farParent;
 
-		$this->farParentMap = Manager::mapper($farParent)->getEntityMap();
+		$this->farParentMap = $this->relatedMapper->getManager()->mapper($farParent)->getEntityMap();
 
-		$parentInstance = Manager::mapper($parentMap->getClass())->newInstance();
+		$parentInstance = $this->relatedMapper->getManager()->mapper($parentMap->getClass())->newInstance();
 
 		parent::__construct($mapper, $parentInstance);
 	}

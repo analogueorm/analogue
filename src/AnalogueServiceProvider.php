@@ -6,8 +6,6 @@ use Analogue\ORM\System\Manager;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\IlluminateConnectionProvider;
-use Analogue\ORM\Plugins\Timestamps\TimestampsPlugin;
-use Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin;
 
 /**
  * Integrate Analogue into Laravel
@@ -25,8 +23,8 @@ class AnalogueServiceProvider extends ServiceProvider {
 	{
 		$manager = $this->app->make('analogue');
 
-		$manager->registerPlugin(new TimestampsPlugin);
-		$manager->registerPlugin(new SoftDeletesPlugin);
+		$manager->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
+		$manager->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
 	}
 
 	/**

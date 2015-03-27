@@ -188,7 +188,25 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         
     }
 
-   
-    
+    public function testSoftDeleteAndRestore()
+    {
+        $resource = new Resource('softdelete');
+        $rMap = get_mapper($resource);
+        $rMap->store($resource);
+        //tdd($rMap);
+        $id = $resource->custom_id;
+        $rMap->delete($resource);
+        $q = $rMap->find($id);
+        $this->assertNull($q);
+        $q= $rMap->withTrashed()->whereName('softdelete')->first();
+        $this->assertEquals($id, $q->custom_id);
+        $q= $rMap->onlyTrashed()->whereName('softdelete')->first();
+        $this->assertEquals($id, $q->custom_id);
+        $q= $rMap->globalQuery()->find($id);
+        $this->assertEquals($id, $q->custom_id);
+        $rMap->restore($q);
+        $q = $rMap->find($id);
+        $this->assertEquals($id, $q->custom_id);
+    }
 
 }

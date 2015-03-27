@@ -19,19 +19,19 @@ use Analogue\ORM\Exceptions\MappingException;
 class Mapper {
 
 	/**
+	 * The Manager instance
+	 * 
+	 * @var Analogue\ORM\System\Manager
+	 */
+	protected $manager;
+
+	/**
 	 * Instance of EntityMapper Obect
 	 * 
 	 * @var \Analogue\ORM\EntityMap
 	 */
 	protected $entityMap;
 
-	// *
-	//  * The Database Connection
-	//  * 
-	//  * @var \Illuminate\Database\Connection
-	 
-	// protected $connection;
-	
 	/**
 	 * The instance of db adapter
 	 * 
@@ -73,13 +73,15 @@ class Mapper {
 	 * @param DBAdapter     $adapter 
 	 * @param Dispatcher 	$dispatcher  
 	 */
-	public function __construct(EntityMap $entityMap, DBAdapter $adapter, Dispatcher $dispatcher)
+	public function __construct(EntityMap $entityMap, DBAdapter $adapter, Dispatcher $dispatcher, Manager $manager)
 	{
 		$this->entityMap = $entityMap;
 
 		$this->adapter = $adapter;
 
 		$this->dispatcher = $dispatcher;
+
+		$this->manager = $manager;
 
 		$this->cache = new EntityCache($entityMap);
 	}
@@ -103,11 +105,23 @@ class Mapper {
 		throw new InvalidArgumentException("Store Command first argument must be an instance of Mappable array, or Collection");
 	}
 
+	/**
+	 * Check if an object implements the Mappable interface
+	 * 
+	 * @param  mixed  $item 
+	 * @return boolean      
+	 */
 	protected function isMappable($item)
 	{
 		return $item instanceof Mappable;
 	}
 
+	/**
+	 * Return true if an object is an array or collection
+	 * 
+	 * @param  mixed  $argument 
+	 * @return boolean          
+	 */
 	protected function isArrayOrCollection($argument)
 	{
 		return ($argument instanceof Collection || is_array($argument)) ? true : false;
@@ -497,6 +511,16 @@ class Mapper {
 	protected function newQueryBuilder()
 	{
 		return $this->adapter->getQuery();
+	}
+
+	/**
+	 * Return the manager instance
+	 * 
+	 * @return \Analogue\ORM\System\Manager
+	 */
+	public function getManager()
+	{
+		return $this->manager;
 	}
 
 	/**

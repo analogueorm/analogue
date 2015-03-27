@@ -32,7 +32,7 @@ class Repository {
 	{
 		if($mapper instanceof Mappable || is_string($mapper))
 		{
-			$this->mapper = Manager::mapper($mapper, $entityMap);
+			$this->mapper = Manager::getMapper($mapper, $entityMap);
 		}
 		else if($mapper instanceof Mapper)
 		{

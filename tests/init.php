@@ -14,9 +14,6 @@ copy(__DIR__.'/test.sqlite', __DIR__.'/temp.sqlite');
 // Copy DB On second file for testing multiple connections
 copy(__DIR__.'/test.sqlite', __DIR__.'/external.sqlite');
 
-use Analogue\ORM\Plugins\Timestamps\TimestampsPlugin;
-use Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin;
-
 // Some shortcut function
 function get_analogue()
 {
@@ -37,8 +34,8 @@ function get_analogue()
 
     $analogue->addConnection($externalDb, 'external');
 
-    $analogue->registerPlugin(new TimestampsPlugin);
-    $analogue->registerPlugin(new SoftDeletesPlugin);
+    $analogue->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
+    $analogue->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
 
     return $analogue;
 }

@@ -5,19 +5,14 @@ use Exception;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+use Analogue\ORM\Drivers\DBAdapter;
+use Analogue\ORM\Drivers\QueryAdapter;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Expression;
-use Analogue\ORM\Drivers\DBAdapter;
-use Analogue\ORM\Drivers\QueryAdapter;
 
 /**
  * Analogue Query builder.
- *
- * @method void mergeWheres(array $wheres, array $bindings) Merge an array of where clauses and bindings.
- * @method select
- * @method skip
- * @method from
  */
 class Query {
 
@@ -849,6 +844,5 @@ class Query {
 
 		return in_array($method, $this->passthru) ? $result : $this;
 	}
-
 	
 }

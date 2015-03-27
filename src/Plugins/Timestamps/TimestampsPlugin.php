@@ -4,18 +4,21 @@ use Carbon\Carbon;
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\Manager;
-use Analogue\ORM\Plugins\AnaloguePluginInterface;
+use Analogue\ORM\Plugins\AnaloguePlugin;
 
 /**
  * Implements the Timestamps support on Analogue Entities
  */
-class TimestampsPlugin implements AnaloguePluginInterface {
+class TimestampsPlugin extends AnaloguePlugin {
 
-	protected $entityMap;
-
+	/**
+	 * Register the plugin
+	 * 
+	 * @return void
+	 */
 	public function register()
 	{
-		Manager::registerGlobalEvent('initialized', function ($mapper)
+		$this->manager->registerGlobalEvent('initialized', function ($mapper)
 		{
 			$entityMap = $mapper->getEntityMap();
 
@@ -47,4 +50,13 @@ class TimestampsPlugin implements AnaloguePluginInterface {
 
 	}
 
+  	/**
+     * Get custom events provided by the plugin
+     *
+     * @return array
+     */
+    public function getCustomEvents()
+    {
+    	return [];
+    }
 }

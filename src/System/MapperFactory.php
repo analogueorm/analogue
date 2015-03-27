@@ -11,15 +11,34 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
  */
 class MapperFactory {
 
+    /**
+     * Manager instance
+     * 
+     * @var \Analogue\ORM\System\Manager
+     */
+    protected $manager;
+
+    /**
+     * DriverManager instance
+     * 
+     * @var \Analogue\ORM\Drivers\Manager
+     */
     protected $drivers;
 
+    /**
+     * Event dispatcher instance
+     * 
+     * @var \Illuminate\Contracts\Events\Dispatcher
+     */
     protected $dispatcher;
 
-    public function __construct(DriverManager $drivers, Dispatcher $dispatcher)
+    public function __construct(DriverManager $drivers, Dispatcher $dispatcher, Manager $manager)
     {
         $this->drivers = $drivers;
 
         $this->dispatcher = $dispatcher;
+
+        $this->manager = $manager;
     }
 
     /**
@@ -37,7 +56,7 @@ class MapperFactory {
         $adapter = $this->drivers->getAdapter($driver, $connection);
         $entityMap->setDateFormat($adapter->getDateFormat());
 
-        $mapper = new Mapper($entityMap, $adapter, $this->dispatcher);
+        $mapper = new Mapper($entityMap, $adapter, $this->dispatcher, $this->manager);
 
         // Fire Initializing Event
         $mapper->fireEvent('initializing', $mapper);

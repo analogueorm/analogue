@@ -36,8 +36,6 @@ class EntityBuilder {
 
         $tmpCache = [];
 
-        $proxies = [];
-
         foreach($results as $result)
         {
             $instance = clone $prototype;
@@ -53,8 +51,10 @@ class EntityBuilder {
 
             $proxies = $this->getLazyLoadingProxies($instance);
 
-            $instance->setEntityAttributes($resultArray + $proxies);
-
+            if(count($proxies) > 0)
+            {
+                $instance->setEntityAttributes($resultArray + $proxies);
+            }
 
             $entities[] = $instance;
         }
@@ -74,13 +74,13 @@ class EntityBuilder {
 
     protected function hydrateValueObject(& $attributes, $localKey, $valueClass)
     {
-        $map = Manager::getValueMap($valueClass);
+        $map = $this->mapper->getManager()->getValueMap($valueClass);
 
         $embeddedAttributes = $map->getAttributes();
 
         //$nestedValueObjects = $map->getEmbeddables();
 
-        $valueObject = Manager::getValueObjectInstance($valueClass);
+        $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
 
         foreach($embeddedAttributes as $key)
         {

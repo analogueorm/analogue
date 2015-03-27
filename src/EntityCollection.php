@@ -205,7 +205,7 @@ class EntityCollection extends Collection {
 		{ 
 			$class = get_class($entity);
 
-			$mapper = Manager::mapper($class);
+			$mapper = Manager::getMapper($class);
 			
 			$keyName = $mapper->getEntityMap()->getKeyName();
 			
@@ -228,7 +228,7 @@ class EntityCollection extends Collection {
 		{
 			$class = get_class($item);
 
-			$mapper = Manager::mapper($class);
+			$mapper = Manager::getMapper($class);
 			
 			$keyName = $mapper->getEntityMap()->getKeyName();
 
@@ -369,7 +369,7 @@ class EntityCollection extends Collection {
 
 	protected function getEntityKey(Mappable $entity)
 	{
-		$keyName = Manager::mapper($entity)->getEntityMap()->getKeyName();
+		$keyName = Manager::getMapper($entity)->getEntityMap()->getKeyName();
 		
 		return $entity->getEntityAttribute($keyName);
 	}
