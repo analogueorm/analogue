@@ -209,4 +209,18 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($id, $q->custom_id);
     }
 
+    public function testStoreManyToManyTwice()
+    {
+        $role = new Role('twice');
+        $perm = new Permission('one_perm');
+        $role->permissions->add($perm);
+        $rm = get_mapper($role);
+        $rm->store($role);
+        $role->permissions->add(new Permission('two_perm'));
+        $rm->store($role);
+        $id = $role->id;
+        $q = $rm->find($id);
+        $this->assertEquals(2,$role->permissions->count());
+        
+    }
 }
