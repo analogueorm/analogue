@@ -15,7 +15,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 	 * 
 	 * @var array
 	 */
-	protected $hidden;
+	protected $hidden = [];
 
 	/**
 	 * Return the entity's attribute 
@@ -99,7 +99,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 		
 		foreach($this->attributes as $key => $attribute)
 		{
-			if(in_array($key, $this->hidden))
+            if(in_array($key, $this->hidden))
 			{
 				unset($attributes[$key]);
 			}

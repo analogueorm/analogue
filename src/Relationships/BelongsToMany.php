@@ -709,7 +709,7 @@ class BelongsToMany extends Relationship {
 
 		if (count($ids) > 0)
 		{
-			$query->whereIn($this->foreignKey, (array) $ids);
+			$query->whereIn($this->otherKey, (array) $ids);
 		}
 
 		// Once we have all of the conditions set on the statement, we are ready
@@ -731,7 +731,7 @@ class BelongsToMany extends Relationship {
 
 		$parentKey = $this->parentMap->getKeyName();
 
-		return $query->where($this->otherKey, $this->parent->getEntityAttribute($parentKey));
+		return $query->where($this->foreignKey, $this->parent->getEntityAttribute($parentKey));
 	}
 
 	/**

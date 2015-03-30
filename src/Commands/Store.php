@@ -312,7 +312,10 @@ class Store extends Command
 
 					$missing = array_diff($cachedValue, $hashes);
 
-					$this->entityMap->$relation($this->entity)->detachMany($missing);
+					if(count($missing) > 0)
+					{
+						$this->entityMap->$relation($this->entity)->detachMany($missing);
+					}
 
 					continue;
 				}

@@ -221,6 +221,10 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $id = $role->id;
         $q = $rm->find($id);
         $this->assertEquals(2,$role->permissions->count());
-        
+        // Replace
+        $q->permissions = new EntityCollection([new Permission('three_perm')]);
+        $rm->store($q);
+        $z = $rm->find($id);
+        $this->assertEquals(1,$z->permissions->count());
     }
 }

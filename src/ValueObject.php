@@ -2,6 +2,7 @@
 
 use ArrayAccess;
 use JsonSerializable;
+use Analogue\ORM\System\ProxyInterface;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 
