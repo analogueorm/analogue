@@ -80,6 +80,6 @@ abstract class Proxy implements ProxyInterface{
 	 */
 	protected function getMapper(Mappable $entity)
 	{
-		return Manager::mapper($entity);
+		return Manager::getMapper($entity);
 	}
 }

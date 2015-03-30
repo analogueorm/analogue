@@ -3,9 +3,12 @@
 use Analogue\ORM\System\Manager;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Analogue\ORM\Drivers\Manager as DriverManager;
+use Analogue\ORM\Drivers\IlluminateDriver;
+use Analogue\ORM\Drivers\CapsuleConnectionProvider;
 
 /**
- * This class is a proxy to the Manager class, it  allows 
+ * This class is a proxy to the Manager class, which allows 
  * using Analogue outside of the Laravel framework.
  */
 class Analogue {
@@ -30,6 +33,11 @@ class Analogue {
         }
     }
 
+    /**
+     * Boot Analogue
+     * 
+     * @return Analogue
+     */
     public function boot()
     {
         if (static::$booted)
@@ -39,7 +47,15 @@ class Analogue {
 
         $dispatcher = new Dispatcher;
 
-        static::$manager = new Manager($this, $dispatcher);
+        $connectionProvider = new CapsuleConnectionProvider(static::$capsule);
+
+        $illuminate = new IlluminateDriver($connectionProvider);
+
+        $driverManager = new DriverManager;
+
+        $driverManager->addDriver($illuminate);
+
+        static::$manager = new Manager($driverManager, $dispatcher);
         
         static::$instance = $this;
 
@@ -48,6 +64,12 @@ class Analogue {
         return $this;
     }
 
+    /**
+     * Add a connection array to Capsule
+     * 
+     * @param array     $config 
+     * @param string    $name   
+     */
     public function addConnection($config, $name = 'default')
     {
         return static::$capsule->addConnection($config, $name);

@@ -128,7 +128,7 @@ class EntityCache {
 	{
 		$class = get_class($entity);
 
-		$mapper = Manager::mapper($class);
+		$mapper = Manager::getMapper($class);
 
 		$keyName = $mapper->getEntityMap()->getKeyName();
 
@@ -149,7 +149,7 @@ class EntityCache {
 			if ($value instanceof Mappable)
 			{
 				$class = get_class($value);
-				$mapper = Manager::mapper($class);
+				$mapper = Manager::getMapper($class);
 				$keyName = $mapper->getEntityMap()->getKeyName();
 				$cache[$key] = $class.'.'.$value->$keyName;
 				continue;

@@ -5,18 +5,14 @@ use Exception;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+use Analogue\ORM\Drivers\DBAdapter;
+use Analogue\ORM\Drivers\QueryAdapter;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * Analogue Query builder.
- *
- * @method void mergeWheres(array $wheres, array $bindings) Merge an array of where clauses and bindings.
- * @method select
- * @method skip
- * @method from
  */
 class Query {
 
@@ -28,9 +24,16 @@ class Query {
 	protected $mapper;
 
 	/**
+	 * DB Adatper
+	 * 
+	 * @var \Analogue\ORM\Drivers\DBAdapter
+	 */
+	protected $adapter;
+
+	/**
 	 * Query Builder Instance
 	 * 
-	 * @var \Illuminate\Database\Query\Builder
+	 * @var \Analogue\ORM\Drivers\QueryAdapter
 	 */
 	protected $query;
 
@@ -75,20 +78,22 @@ class Query {
 	];
 
 	/**
-	 * Create a new Mapper query builder instance.
+	 * Create a new Analogue Query Builder instance.
 	 *
-	 * @param \Illuminate\Database\Query\Builder  $query
+	 * @param \Analogue\ORM\Drivers\QueryAdapter  $query
 	 * @param \Analogue\ORM\System\Mapper $mapper
 	 * @return void
 	 */
-	public function __construct(QueryBuilder $query, Mapper $mapper)
+	public function __construct(Mapper $mapper, DBAdapter $adapter)
 	{
 		$this->mapper = $mapper;
+
+		$this->adapter = $adapter;
 
 		$this->entityMap = $mapper->getEntityMap();
 
 		// Specify the table to work on
-		$this->query = $query->from($this->entityMap->getTable());
+		$this->query = $adapter->getQuery()->from($this->entityMap->getTable());
 
 		$this->with($this->entityMap->getEagerloadedRelationships() );
 	}
@@ -570,48 +575,6 @@ class Query {
 	}
 
 	/**
-	 * Build an array with lazy loading proxies for the current query
-	 *
-	 * @return array           
-	 */
-	protected function getLazyLoadingProxies($entity)
-	{
-		if(! $this->entityMap->relationsParsed() )
-		{
-			$initializer = new MapInitializer($this->mapper);
-			$initializer->splitRelationsTypes($entity);
-		}
-
-		$singleRelations = $this->entityMap->getSingleRelationships();
-		$manyRelations = $this->entityMap->getManyRelationships();
-
-		$eagerLoads = array_keys($this->getEagerLoads());
-
-		$allRelations = array_merge($manyRelations,$singleRelations);
-
-		$lazyLoad = array_diff($allRelations, $eagerLoads);
-
-		$proxies = [];
-
-		if (count($lazyLoad) > 0)
-		{
-			foreach($lazyLoad as $relation)
-			{
-				if (in_array($relation, $singleRelations))
-				{
-					$proxies[$relation] = new EntityProxy($entity, $relation);
-				}
-				if (in_array($relation, $manyRelations))
-				{	
-					$proxies[$relation] = new CollectionProxy($entity, $relation);
-				}
-			}
-		}
-
-		return $proxies;
-	}
-
-	/**
 	 * Get the relationships being eagerly loaded.
 	 *
 	 * @return array
@@ -782,72 +745,9 @@ class Query {
 		// Run the query
 		$results = $this->query->get($columns);
 
-		$entities = array();
+		$builder = new EntityBuilder($this->mapper, array_keys($this->getEagerLoads()));
 
-		$prototype = $this->getEntityInstance();
-
-		$keyName = $this->entityMap->getKeyName();
-
-		$tmpCache = [];
-
-		$proxies = [];
-
-		foreach($results as $result)
-		{
-			$instance = clone $prototype;
-			
-			$resultArray = (array) $result;
-
-			$tmpCache[$resultArray[$keyName] ] = $resultArray;
-
-			// Hydrate any embedded Value Object
-			$this->hydrateValueObjects($resultArray);
-
-			$instance->setEntityAttributes($resultArray);
-
-			$proxies = $this->getLazyLoadingProxies($instance);
-
-			if (count($proxies) > 0)
-			{
-				$instance->setEntityAttributes($resultArray + $proxies);
-			}
-			
-			$entities[] = $instance;
-		}
-
-		$this->mapper->getEntityCache()->add($tmpCache);
-
-		return $entities;
-	}
-
-	protected function hydrateValueObjects(& $attributes)
-	{
-		foreach($this->entityMap->getEmbeddables() as $localKey => $valueClass)
-		{
-			$this->hydrateValueObject($attributes, $localKey, $valueClass);
-		}	
-	}
-
-	protected function hydrateValueObject(& $attributes, $localKey, $valueClass)
-	{
-		$map = Manager::getValueMap($valueClass);
-
-		$embeddedAttributes = $map->getAttributes();
-
-		//$nestedValueObjects = $map->getEmbeddables();
-
-		$valueObject = Manager::getValueObjectInstance($valueClass);
-
-		foreach($embeddedAttributes as $key)
-		{
-			$prefix = snake_case(class_basename($valueClass)).'_';
-
-			$valueObject->setEntityAttribute($key, $attributes[$prefix.$key]);
-			
-			unset($attributes[$prefix.$key]);
-		}
-		
-		$attributes[$localKey] = $valueObject;
+		return $builder->build($results);
 	}
 
 	/**
@@ -891,27 +791,13 @@ class Query {
 	 */
 	public function newQuery()
 	{
-		$builder = new Query($this->newBaseQueryBuilder(), $this->mapper);
+		$builder = new Query($this->mapper, $this->adapter);
 
 		return $this->applyGlobalScopes($builder);
 	}
 
 	/**
-	 * Get a new query builder instance for the connection.
-	 *
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	protected function newBaseQueryBuilder()
-	{
-		$conn = $this->getConnection();
-
-		$grammar = $conn->getQueryGrammar();
-
-		return new QueryBuilder($conn, $grammar, $conn->getPostProcessor());
-	}
-
-	/**
-	 * Get the Mapper instance for this query
+	 * Get the Mapper instance for this Query Builder
 	 * 
 	 * @return \Analogue\ORM\System\Mapper
 	 */
@@ -921,9 +807,12 @@ class Query {
 	}
 
 	/**
-	 * Get the underlying query builder instance.
+	 * Get the underlying query adapter
 	 *
-	 * @return \Illuminate\Database\Query\Builder
+	 * (REFACTOR: this method should move out, we need to provide the client classes
+	 * with the adapter instead.)
+	 *
+	 * @return \Analogue\ORM\Drivers\QueryAdapter
 	 */
 	public function getQuery()
 	{
@@ -955,6 +844,5 @@ class Query {
 
 		return in_array($method, $this->passthru) ? $result : $this;
 	}
-
 	
 }

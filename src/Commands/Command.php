@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\StateChecker;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Analogue\ORM\Drivers\QueryAdapter;
 
 abstract class Command {
 
@@ -43,7 +43,7 @@ abstract class Command {
 	 */
 	protected $query;
 
-	public function __construct(Mappable $entity, Mapper $mapper, QueryBuilder $query)
+	public function __construct(Mappable $entity, Mapper $mapper, QueryAdapter $query)
 	{
 		$this->entity = $entity;
 

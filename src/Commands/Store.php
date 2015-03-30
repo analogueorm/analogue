@@ -233,7 +233,7 @@ class Store extends Command
 	 */
 	protected function createEntityIfNotExists($entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$checker = new StateChecker($entity, $mapper);
 
@@ -312,7 +312,10 @@ class Store extends Command
 
 					$missing = array_diff($cachedValue, $hashes);
 
-					$this->entityMap->$relation($this->entity)->detachMany($missing);
+					if(count($missing) > 0)
+					{
+						$this->entityMap->$relation($this->entity)->detachMany($missing);
+					}
 
 					continue;
 				}
@@ -323,7 +326,7 @@ class Store extends Command
 
 	protected function getEntityHash(Mappable $entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$key = $mapper->getEntityMap()->getKeyName();
 
@@ -612,7 +615,7 @@ class Store extends Command
 	 */
 	protected function updateEntityIfDirty($entity)
 	{
-		$mapper = Manager::mapper($entity);
+		$mapper = Manager::getMapper($entity);
 
 		$checker = new StateChecker($entity, $mapper);
 
@@ -666,7 +669,7 @@ class Store extends Command
 	{
 		if(! $this->entityMap->relationsParsed() )
 		{
-			$initializer = new MapInitializer($this->mapper);
+			$initializer = new MapInitializer($this->mapper->getEntityMap());
 			$initializer->splitRelationsTypes($entity);
 		}
 
@@ -718,6 +721,4 @@ class Store extends Command
 			$query->update($dirtyAttributes);
 		}
 	}
-
-	
 }

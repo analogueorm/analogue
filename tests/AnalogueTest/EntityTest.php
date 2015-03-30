@@ -69,4 +69,18 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         }
        
     }
+
+    public function testSimpleEntityToArray()
+    {
+        // Before Store
+        $role = new Role('toArray');
+        $p1 = new Permission('l1');
+        $p2 = new Permission('l1');
+        $role->permissions->add($p1);
+        $role->permissions->add($p2);
+        $role->toArray();
+        $rm = get_mapper($role);
+        $rm->store($role);
+        $role->toArray();
+    }
 }

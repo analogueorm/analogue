@@ -1,5 +1,6 @@
 <?php namespace Analogue\ORM;
 
+use Exception;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\Relationships\BelongsTo;
@@ -17,6 +18,11 @@ use Analogue\ORM\Relationships\MorphToMany;
  * including relationships.
  */
 class EntityMap {
+
+	/**
+ 	 * The mapping driver to use with this entity
+	 */
+	protected $driver = 'illuminate';
 
 	/**
 	 * The Database Connection name for the model.
@@ -153,6 +159,23 @@ class EntityMap {
 	protected $dateFormat;
 
 	/**
+	 * The Analogue's manager instance.
+	 * 
+	 * @var \Analogue\ORM\System\Manager
+	 */
+	private $manager;
+
+	/**
+	 * Set the Manager that will be used for relationship's mapper instantiations.
+	 * 
+	 * @param Manager $manager 
+	 */
+	public function setManager(Manager $manager)
+	{
+		$this->manager = $manager;
+	}
+
+	/**
 	 * Set the date format to use with the current database connection
 	 * 
 	 * @param string $format 
@@ -170,6 +193,26 @@ class EntityMap {
 	public function getDateFormat()
 	{
 		return $this->dateFormat;
+	}
+
+	/**
+	 * Set the Driver for this mapping
+	 * 
+	 * @param string $driver
+	 */
+	public function setDriver($driver)
+	{
+		$this->driver = $driver;
+	}
+
+	/**
+	 * Get the Driver for this mapping.
+	 * 
+	 * @return string
+	 */
+	public function getDriver()
+	{
+		return $this->driver;
 	}
 
 	/**
@@ -486,7 +529,7 @@ class EntityMap {
 	{
 		$foreignKey = $foreignKey ?: $this->getForeignKey();
 
-		$relatedMapper = Manager::mapper($relatedClass);
+		$relatedMapper = $this->manager->mapper($relatedClass);
 
 		$relatedMap = $relatedMapper->getEntityMap();
 
@@ -511,7 +554,7 @@ class EntityMap {
 
 		$localKey = $localKey ?: $this->getKeyName();
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$table = $relatedMapper->getEntityMap()->getTable();
 		
@@ -547,7 +590,7 @@ class EntityMap {
 			$foreignKey = snake_case($relation).'_id';
 		}
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getKeyName();
 
@@ -576,7 +619,7 @@ class EntityMap {
 
 		list($type, $id) = $this->getMorphs($name, $type, $id);
 		
-		$mapper = Manager::mapper(get_class($entity));
+		$mapper = $this->manager->mapper(get_class($entity));
 
 		// If the type value is null it is probably safe to assume we're eager loading
 		// the relationship. When that is the case we will pass in a dummy query as
@@ -593,7 +636,7 @@ class EntityMap {
 		// we will pass in the appropriate values so that it behaves as expected.
 		else
 		{
-			$relatedMapper = Manager::mapper($class);
+			$relatedMapper = $this->manager->mapper($class);
 
 			$foreignKey = $relatedMapper->getEntityMap()->getKeyName();
 
@@ -615,7 +658,7 @@ class EntityMap {
 	{
 		$foreignKey = $foreignKey ?: $this->getForeignKey();
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$table = $relatedMapper->getEntityMap()->getTable().'.'.$foreignKey;
 
@@ -635,9 +678,9 @@ class EntityMap {
 	 */
 	public function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
 	{
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
-		$throughMapper = Manager::mapper($through);
+		$throughMapper = $this->manager->mapper($through);
 
 
 		$firstKey = $firstKey ?: $this->getForeignKey();
@@ -666,7 +709,7 @@ class EntityMap {
 		// get the table and create the relationship instances for the developers.
 		list($type, $id) = $this->getMorphs($name, $type, $id);
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$table = $relatedMapper->getEntityMap()->getTable();
 
@@ -700,7 +743,7 @@ class EntityMap {
 		// instances as well as the relationship instances we need for this.
 		$foreignKey = $foreignKey ?: $this->getForeignKey();
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$relatedMap = $relatedMapper->getEntityMap();
 
@@ -737,7 +780,7 @@ class EntityMap {
 		// instances, as well as the relationship instances we need for these.
 		$foreignKey = $foreignKey ?: $name.'_id';
 
-		$relatedMapper = Manager::mapper($related);
+		$relatedMapper = $this->manager->mapper($related);
 
 		$otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getForeignKey();
 
@@ -860,11 +903,11 @@ class EntityMap {
 	 */
 	public function activator()
 	{
-		//
+		return null;
 	}
 
 	/**
-	 * Call dynamic relation ship, if any
+	 * Call dynamic relationship, if it exists
 	 * 
 	 * @param  string  $method
 	 * @param  array   $parameters
@@ -874,7 +917,7 @@ class EntityMap {
 	{
 		if(! array_key_exists($method, $this->dynamicRelationships))
 		{
-			// Throw missing method exception
+			throw new Exception(get_class($this)." has no method $method");
 		}
 
 		// Add $this to parameters so the closure can call relationship method on the map.

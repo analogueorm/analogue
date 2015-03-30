@@ -188,7 +188,43 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         
     }
 
-   
-    
+    public function testSoftDeleteAndRestore()
+    {
+        $resource = new Resource('softdelete');
+        $rMap = get_mapper($resource);
+        $rMap->store($resource);
+        //tdd($rMap);
+        $id = $resource->custom_id;
+        $rMap->delete($resource);
+        $q = $rMap->find($id);
+        $this->assertNull($q);
+        $q= $rMap->withTrashed()->whereName('softdelete')->first();
+        $this->assertEquals($id, $q->custom_id);
+        $q= $rMap->onlyTrashed()->whereName('softdelete')->first();
+        $this->assertEquals($id, $q->custom_id);
+        $q= $rMap->globalQuery()->find($id);
+        $this->assertEquals($id, $q->custom_id);
+        $rMap->restore($q);
+        $q = $rMap->find($id);
+        $this->assertEquals($id, $q->custom_id);
+    }
 
+    public function testStoreManyToManyTwice()
+    {
+        $role = new Role('twice');
+        $perm = new Permission('one_perm');
+        $role->permissions->add($perm);
+        $rm = get_mapper($role);
+        $rm->store($role);
+        $role->permissions->add(new Permission('two_perm'));
+        $rm->store($role);
+        $id = $role->id;
+        $q = $rm->find($id);
+        $this->assertEquals(2,$role->permissions->count());
+        // Replace
+        $q->permissions = new EntityCollection([new Permission('three_perm')]);
+        $rm->store($q);
+        $z = $rm->find($id);
+        $this->assertEquals(1,$z->permissions->count());
+    }
 }

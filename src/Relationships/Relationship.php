@@ -94,7 +94,7 @@ abstract class Relationship {
 
 		$this->parent = $parent;
 
-		$this->parentMapper = Manager::mapper($parent);
+		$this->parentMapper = $mapper->getManager()->getMapper($parent);
 
 		$this->parentMap = $this->parentMapper->getEntityMap();
 
@@ -190,18 +190,6 @@ abstract class Relationship {
 	{
 		return $this->get();
 	}
-
-	// /**
-	//  * Touch all of the related models for the relationship.
-	//  *
-	//  * @return void
-	//  */
-	// public function touch()
-	// {
-	// 	$column = $this->getRelated()->getUpdatedAtColumn();
-
-	// 	$this->rawUpdate(array($column => $this->getRelated()->freshTimestampString()));
-	// }
 
 	/**
 	 * Add the constraints for a relationship count query.
@@ -411,7 +399,7 @@ abstract class Relationship {
 	{
 		$class = get_class($entity);
 		
-		$keyName = Manager::mapper($class)->getEntityMap()->getKeyName();
+		$keyName = $this->relatedMapper->getManager()->mapper($class)->getEntityMap()->getKeyName();
 		
 		$hash = $class.'.'.$entity->getEntityAttribute($keyName);
 

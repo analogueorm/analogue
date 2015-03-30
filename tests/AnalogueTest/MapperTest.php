@@ -159,4 +159,58 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($float, $q->getEntityAttribute('foo_float'));
         $this->assertEquals($json, $q->getEntityAttribute('foo_json'));
     }
+
+    public function testGetMapperWithInstances()
+    {
+        $analogue = get_analogue();
+
+        $permissionMapper = $analogue->mapper(new Permission('PFH'), new PermissionMap);
+
+        $this->assertInstanceOf('Analogue\ORM\System\Mapper', $permissionMapper);
+    }
+
+    public function testGetMapperWithStrings()
+    {
+        $analogue = get_analogue();
+
+        $permissionMapper = $analogue->mapper('AnalogueTest\App\Permission', 'AnalogueTest\App\PermissionMap');
+
+        $this->assertInstanceOf('Analogue\ORM\System\Mapper', $permissionMapper);
+    }
+
+    public function testLazyLoadingOnCollection()
+    {
+        $userMapper = get_mapper('AnalogueTest\App\User');
+
+        $u1 = new User('michel', new Role('lr1'));
+        $u2 = new User('bono', new Role('lr2'));
+
+        $userMapper->store([$u1,$u2]);
+
+        $id1 = $u1->id;
+        $id2 = $u2->id;
+
+        $this->assertFalse($id1 == $id2);
+
+        $q = $userMapper->whereEmail('michel')->orWhere('email','=','bono')->orderBy('email')->get();
+        $this->assertEquals(2, $q->count());
+        
+        $this->assertEquals('lr2', $q[0]->role->label);
+        $this->assertEquals('lr1', $q[1]->role->label);
+
+    }
+
+    public function testStoreAndHydrateLargeSets()
+    {
+        $pM = get_mapper('AnalogueTest\App\Permission');
+        $perms =[];
+        for($x=0;$x<1000;$x++)
+        {
+            $perms[] = new Permission('large');
+        }
+        $pM->store($perms);
+        $q = $pM->whereLabel('large')->get();
+        $this->assertEquals(1000, $q->count());
+
+    }
 }

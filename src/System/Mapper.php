@@ -5,11 +5,10 @@ use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Commands\Store;
 use Analogue\ORM\Commands\Delete;
-use Illuminate\Events\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use Analogue\ORM\Commands\Command;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\Exceptions\MappingException;
 
 /*
@@ -20,6 +19,13 @@ use Analogue\ORM\Exceptions\MappingException;
 class Mapper {
 
 	/**
+	 * The Manager instance
+	 * 
+	 * @var \Analogue\ORM\System\Manager
+	 */
+	protected $manager;
+
+	/**
 	 * Instance of EntityMapper Obect
 	 * 
 	 * @var \Analogue\ORM\EntityMap
@@ -27,16 +33,17 @@ class Mapper {
 	protected $entityMap;
 
 	/**
-	 * The Database Connection
+	 * The instance of db adapter
 	 * 
-	 * @var \Illuminate\Database\Connection
+	 * @var \Analogue\ORM\Drivers\DBAdapter
 	 */
-	protected $connection;
+	protected $adapter; 
+
 
 	/**
 	 * Event dispatcher instance
 	 *
-	 * @var \Illuminate\Events\Dispatcher
+	 * @var \Illuminate\Contracts\Events\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -62,31 +69,22 @@ class Mapper {
 	protected $customCommands = [];
 
 	/**
-	 * @param EntityMap $entityMapper 
-	 * @param ConnectionInterace    $connection   
+	 * @param EntityMap 	$entityMapper 
+	 * @param DBAdapter     $adapter 
+	 * @param Dispatcher 	$dispatcher  
+	 * @param Manager  		$manager
 	 */
-	public function __construct(EntityMap $entityMap, Connection $connection, Dispatcher $dispatcher)
+	public function __construct(EntityMap $entityMap, DBAdapter $adapter, Dispatcher $dispatcher, Manager $manager)
 	{
 		$this->entityMap = $entityMap;
 
-		$this->connection = $connection;
+		$this->adapter = $adapter;
 
 		$this->dispatcher = $dispatcher;
 
-		$this->entityMap->setDateFormat($connection->getQueryGrammar()->getDateFormat());
+		$this->manager = $manager;
 
 		$this->cache = new EntityCache($entityMap);
-
-		// Fire Initializing Event
-		$this->fireEvent('initializing', $this);
-
-		$mapInitializer = new MapInitializer($this);
-		
-		$mapInitializer->init();
-
-		// Fire Initialized Event
-		$this->fireEvent('initialized', $this);
-	
 	}
 
 	/**
@@ -108,11 +106,23 @@ class Mapper {
 		throw new InvalidArgumentException("Store Command first argument must be an instance of Mappable array, or Collection");
 	}
 
+	/**
+	 * Check if an object implements the Mappable interface
+	 * 
+	 * @param  mixed  $item 
+	 * @return boolean      
+	 */
 	protected function isMappable($item)
 	{
 		return $item instanceof Mappable;
 	}
 
+	/**
+	 * Return true if an object is an array or collection
+	 * 
+	 * @param  mixed  $argument 
+	 * @return boolean          
+	 */
 	protected function isArrayOrCollection($argument)
 	{
 		return ($argument instanceof Collection || is_array($argument)) ? true : false;
@@ -139,7 +149,7 @@ class Mapper {
 	 */
 	protected function storeCollection($entities)
 	{
-		$this->connection->beginTransaction();
+		$this->adapter->beginTransaction();
 
 		foreach($entities as $entity)
 		{
@@ -153,7 +163,7 @@ class Mapper {
 			}
 		}
 
-		$this->connection->commit();
+		$this->adapter->commit();
 
 		return $entities;
 	}
@@ -198,7 +208,7 @@ class Mapper {
 	 */
 	protected function deleteCollection($entities)
 	{
-		$this->connection->beginTransaction();
+		$this->adapter->beginTransaction();
 
 		foreach($entities as $entity)
 		{	
@@ -208,7 +218,7 @@ class Mapper {
 			}
 		}
 
-		$this->connection->commit();
+		$this->adapter->commit();
 		
 		return $entities;
 	}
@@ -226,21 +236,11 @@ class Mapper {
 	/**
 	 * Get the entity cache for the current mapper
 	 * 
-	 * @return [type] [description]
+	 * @return EntityCache 	$entityCache
 	 */
 	public function getEntityCache()
 	{
 		return $this->cache;
-	}
-
-	/**
-	 * Returns the underlying connection object
-	 * 
-	 * @return \Illuminate\Database\Connection
-	 */
-	protected function getConnection()
-	{
-		return $this->connection;
 	}
 
 	/**
@@ -413,6 +413,11 @@ class Mapper {
 		return array_keys($this->customCommands);
 	}
 
+	/**
+	 * Check if this mapper supports this command
+	 * @param  string  $command 
+	 * @return boolean          
+	 */
 	public function hasCustomCommand($command)
 	{
 		return in_array($command, $this->getCustomCommands());
@@ -474,7 +479,7 @@ class Mapper {
 	 */
 	public function getQuery()
 	{
-		$query = new Query($this->newQueryBuilder(), $this);
+		$query = new Query($this, $this->adapter);
 
 		return $this->applyGlobalScopes($query);
 	}
@@ -500,17 +505,23 @@ class Mapper {
 	}
 
 	/**
-	 * Get a new Illuminate QueryBuilder instance for the current connection.
+	 * Get a the Underlying QueryAdapter.
 	 *
-	 * @return \Illuminate\Database\Query\Builder
+	 * @return \Analogue\ORM\Drivers\QueryAdapter
 	 */
 	protected function newQueryBuilder()
 	{
-		$connection = $this->getConnection();
+		return $this->adapter->getQuery();
+	}
 
-		$grammar = $connection->getQueryGrammar();
-
-		return new QueryBuilder($connection, $grammar, $connection->getPostProcessor() );
+	/**
+	 * Return the manager instance
+	 * 
+	 * @return \Analogue\ORM\System\Manager
+	 */
+	public function getManager()
+	{
+		return $this->manager;
 	}
 
 	/**

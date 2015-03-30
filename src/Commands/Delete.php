@@ -4,6 +4,11 @@ use Analogue\ORM\Exceptions\MappingException;
 
 class Delete extends Command {
 	
+	/**
+	 * Execute the Delete Statement
+	 * 
+	 * @return void
+	 */
 	public function execute()
 	{
 		$entity = $this->entity;
@@ -27,8 +32,7 @@ class Delete extends Command {
 
 		$mapper->fireEvent('deleted', $entity, false);
 
-		// Once the Entity is successfully deleted, we'll just set the key column
-		// to null.
+		// Once the Entity is successfully deleted, we'll just set the primary key to null.
 		$entity->setEntityAttribute($keyName, null);
 	}
 
