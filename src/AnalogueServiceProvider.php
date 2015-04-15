@@ -36,7 +36,7 @@ class AnalogueServiceProvider extends ServiceProvider {
 	{
 		$this->app->bindShared('analogue', function ($app) {
 
-			$db = new DatabaseManager($app, $app['db.factory']);
+			$db = $app['db'];
 
 			$connectionProvider = new IlluminateConnectionProvider($db);
 

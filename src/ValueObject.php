@@ -9,7 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 	use MappableTrait;
 
-        /**
+    /**
      * Dynamically retrieve attributes on the entity.
      *
      * @param  string  $key
