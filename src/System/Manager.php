@@ -304,7 +304,7 @@ class Manager {
 	{
 		if (! is_string($entity)) $entity = get_class($entity);
 
-		return in_array($entity, $this->entityClasses) ? true: false;
+		return array_key_exists($entity, $this->entityClasses);
 	}
 
 	/**
