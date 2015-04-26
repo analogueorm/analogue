@@ -161,9 +161,14 @@ class Manager {
 		// If an object is provider, get the class name from it
 		if(! is_string($entity) ) $entity = get_class($entity);
 
-		if ($this->isRegisteredEntity($entity))
+		if($this->isRegisteredEntity($entity))
 		{
 			throw new MappingException("Entity $entity is already registered.");
+		}
+
+		if(! class_exists($entity))
+		{
+			throw new MappingException("Class $entity does not exists");
 		}
 
 		if(is_null($entityMap) ) 
