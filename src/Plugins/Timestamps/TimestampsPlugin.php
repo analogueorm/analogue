@@ -22,7 +22,7 @@ class TimestampsPlugin extends AnaloguePlugin {
 		{
 			$entityMap = $mapper->getEntityMap();
 
-			if($entityMap->usesTimestamps() )
+            if($entityMap->usesTimestamps() )
 			{
 				$mapper->registerEvent('creating', function($entity) use($entityMap) {
 					

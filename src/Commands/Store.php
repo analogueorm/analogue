@@ -501,8 +501,8 @@ class Store extends Command
 			if (array_key_exists($relation, $cachedAttributes))
 			{
 				// Compare the two
-				$new = array_diff($hashes, $cachedAttributes[$relation]);
-				$existing = array_intersect($hashes, $cachedAttributes[$relation]); 
+				$new = array_diff($hashes, array_keys($cachedAttributes[$relation]));
+				$existing = array_intersect($hashes, array_keys($cachedAttributes[$relation])); 
 			}
 			else
 			{
@@ -520,14 +520,10 @@ class Store extends Command
 			if(count($existing) > 0)
 			{
 				$pivots = $value->getSubsetByHashes($existing);
-
+				
 				foreach($pivots as $pivot)
 				{
-					
-					// We need to store pivot data in the parent cache
-					// not in the related entity cache as it's the
-					// case now.
-					//$this->updatePivotIfDirty($pivot, $relation);
+					$this->updatePivotIfDirty($pivot, $relation);
 				}
 			}
 
@@ -544,14 +540,22 @@ class Store extends Command
 	 */
 	protected function updatePivotIfDirty($entity, $relation)
 	{
-		$key = $entity->getEntityKey();
+		// tdd($entity);
+		// $key = $entity->getEntityKey();
 
-		$original = $this->entity->getOriginalRelationships()[$relation]->find($key);
+		// $original = $this->entity->getOriginalRelationships()[$relation]->find($key);
 
-		if($entity->getPivotEntity()->getAttributes() !== $original->getPivotEntity()->getAttributes() )
+		// if($entity->getPivotEntity()->getAttributes() !== $original->getPivotEntity()->getAttributes() )
+		// {
+		// 	$this->entityMap->$relation($this->entity)->updatePivot($entity);
+		// }	
+		
+		$attributes = $entity->getEntityAttributes();
+
+		if(array_key_exists('pivot', $attributes))
 		{
 			$this->entityMap->$relation($this->entity)->updatePivot($entity);
-		}	
+		}
 	}
 
 	/**
@@ -702,7 +706,7 @@ class Store extends Command
 	}
 
 	/**
-	 * Run an update statement onthe entity
+	 * Run an update statement on the entity
 	 * 
 	 * @return void
 	 */

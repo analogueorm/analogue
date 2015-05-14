@@ -364,30 +364,27 @@ abstract class Relationship {
 	 * Cache the link between parent and related
 	 * into the mapper's Entity Cache.
 	 *  
-	 * @param  EntityCollection|Mappable $results result of the relation query
-	 * @param  string  $relation 	Name of the relation method on the parent entity
+	 * @param  EntityCollection|Mappable $results 	result of the relation query
+	 * @param  string  $relation 					Name of the relation method on the parent entity
+	 * 
 	 * @return void
 	 */
 	protected function cacheRelation($results, $relation)
 	{
-		if($results instanceof EntityCollection)
-		{
-			$key = $results->getEntityHashes();
-		}
-		if($results instanceof Mappable)
-		{
-			$key = $this->getEntityHash($results);
-		}
+		$cache = $this->parentMapper->getEntityCache();
 
-		$parentKeyName = $this->parentMap->getKeyName();
-
-		$parentKey = $this->parent->getEntityAttribute($parentKeyName);
-		
-		$cache = [];
-		$cache[$parentKey] = $key;
-		
-		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
+		$cache->cacheLoadedRelationResult($this->parent, $relation, $results, $this);
 	}
+
+	/**
+	 * Return Pivot attributes when available on a relationship
+	 * 
+	 * @return array
+	 */
+	public function getPivotAttributes()
+	{
+		return [];
+	}	
 
 	/**
 	 * Get a combo type.primaryKey

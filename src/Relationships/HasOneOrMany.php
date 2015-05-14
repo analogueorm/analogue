@@ -151,7 +151,7 @@ abstract class HasOneOrMany extends Relationship {
 	{
 		$dictionary = $this->buildDictionary($results);
 
-		$cache = [];
+		$cache = $this->parentMapper->getEntityCache();
 
 		// As our cache will hold polymorphic relations, we'll key
 		// them by entity.key as a standard.
@@ -170,18 +170,9 @@ abstract class HasOneOrMany extends Relationship {
 
 				$entity->setEntityAttribute($relation, $value);
 
-				if($value instanceof EntityCollection)
-				{
-					$cache[$key] = $value->getEntityHashes();
-				}
-				else
-				{
-					$cache[$key] = get_class($value).'.'.$value->getEntityAttribute($foreignKey);
-				}
+				$cache->cacheLoadedRelationResult($entity, $relation, $value, $this);
 			}
 		}
-
-		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 
 		return $entities;
 	}

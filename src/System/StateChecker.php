@@ -2,6 +2,7 @@
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\Exceptions\MappingException;
 
 class StateChecker {
@@ -173,9 +174,9 @@ class StateChecker {
 
 		foreach($attributes as $key => $value)
 		{
-			if ($this->isRelation($key)) continue;
+			if ($this->isRelation($key) || $key == 'pivot') continue;
 
-			if ( ! array_key_exists($key, $cachedAttributes))
+			if ( ! array_key_exists($key, $cachedAttributes) && ! $value instanceof Pivot)
 			{
 				$dirty[$key] = $value;
 			}
