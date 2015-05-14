@@ -246,4 +246,16 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $roleReload = $rm->find($id);
         $this->assertEquals(true, $roleReload->permissions->first()->pivot->active);
     }
+
+    public function testSelfGeneratedPrimaryKey()
+    {
+        $uuid = new Uuid('test', 'testlabel');
+        $um = get_mapper($uuid);
+        $um->store($uuid);
+
+        $uuid = $um->where('uuid', '=', 'test')->first();
+
+        $this->assertEquals('testlabel', $uuid->label);
+
+    }
 }

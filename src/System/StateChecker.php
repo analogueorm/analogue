@@ -79,8 +79,7 @@ class StateChecker {
 			}
 			else
 			{
-				throw new MappingException('Entity primary key contradicts with cached Entity. 
-					You probably modified it by mistake');
+				$this->exists = false;
 			}
 		}
 
