@@ -642,11 +642,19 @@ class Store extends Command
 
 		$attributes = $this->getRawAttributes();
 		
-		$id = $this->query->insertGetId($attributes);
-
 		$keyName = $this->entityMap->getKeyName();
-		
-		$entity->setEntityAttribute($keyName, $id);
+
+		// Check if the primary key is defined in the attributes
+		if(array_key_exists($keyName, $attributes))
+		{
+			$this->query->insert($attributes);
+		}	
+		else
+		{
+			$id = $this->query->insertGetId($attributes);
+
+			$entity->setEntityAttribute($keyName, $id);
+		}
 	}
 
 	/**

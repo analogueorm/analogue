@@ -252,9 +252,9 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $uuid = new Uuid('test', 'testlabel');
         $um = get_mapper($uuid);
         $um->store($uuid);
-
+        $this->assertEquals('test', $uuid->uuid);
         $uuid = $um->where('uuid', '=', 'test')->first();
-
+        $this->assertEquals('test', $uuid->uuid);
         $this->assertEquals('testlabel', $uuid->label);
 
     }
