@@ -150,7 +150,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
 
             if ($attribute instanceof Carbon) 
             {
-                $attributes[$key] = $attribute->toString();
+                $attributes[$key] = $attribute->__toString();
                 continue;
             }
 
