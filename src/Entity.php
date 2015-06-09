@@ -8,22 +8,22 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 
-	/**
-	 * Entities Hidden Attributes, that will be discarded when converting
-	 * the entity to Array/Json 
-	 * (can include any embedded object's attribute)
-	 * 
-	 * @var array
-	 */
-	protected $hidden = [];
+    /**
+     * Entities Hidden Attributes, that will be discarded when converting
+     * the entity to Array/Json 
+     * (can include any embedded object's attribute)
+     * 
+     * @var array
+     */
+    protected $hidden = [];
 
-	/**
-	 * Return the entity's attribute 
-	 * @param  string $key 
-	 * @return mixed
-	 */
-	public function __get($key)
-	{
+    /**
+     * Return the entity's attribute 
+     * @param  string $key 
+     * @return mixed
+     */
+    public function __get($key)
+    {
         if ($this->hasGetMutator($key))
         {
             $method = 'get'.$this->getMutatorMethod($key);
@@ -57,9 +57,9 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
             $this->attributes[$key] = $this->attributes[$key]->load();
         }
         return $this->attributes[$key];
-	}
+    }
 
-	/**
+    /**
      * Dynamically set attributes on the entity.
      *
      * @param  string  $key
@@ -68,7 +68,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
      */
     public function __set($key, $value)
     {
-    	if($this->hasSetMutator($key))
+        if($this->hasSetMutator($key))
         {
             $method = 'set'.$this->getMutatorMethod($key);
 
@@ -106,7 +106,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
      */
     protected function hasGetMutator($key)
     {
-    	return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
     }
 
     /**
@@ -117,38 +117,38 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
      */
     protected function hasSetMutator($key)
     {
-    	return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
     }
 
     protected function getMutatorMethod($key)
     {
-    	return ucfirst($key).'Attribute';
+        return ucfirst($key).'Attribute';
     }
 
-	/**
-	 * Convert every attributes to value / arrays
-	 * 
-	 * @return array
-	 */
-	public function toArray()
-	{	
+    /**
+     * Convert every attributes to value / arrays
+     * 
+     * @return array
+     */
+    public function toArray()
+    {   
         // First, call the trait method before filtering
         // with Entity specific methods
-		$attributes = $this->attributesToArray($this->attributes);
-		
-		foreach($this->attributes as $key => $attribute)
-		{
+        $attributes = $this->attributesToArray($this->attributes);
+        
+        foreach($this->attributes as $key => $attribute)
+        {
             if(in_array($key, $this->hidden))
-			{
-				unset($attributes[$key]);
-			}
-			if($this->hasGetMutator($key))
-			{
-				$method = 'get'.$this->getMutatorMethod($key);
-				$attributes[$key] = $this->$method($attribute);
-			}
-		}
-		return $attributes;
-	}
+            {
+                unset($attributes[$key]);
+            }
+            if($this->hasGetMutator($key))
+            {
+                $method = 'get'.$this->getMutatorMethod($key);
+                $attributes[$key] = $this->$method($attribute);
+            }
+        }
+        return $attributes;
+    }
 
 }
