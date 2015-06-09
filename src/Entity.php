@@ -76,27 +76,51 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 
             return;
         }
-
-        if (isset($this->attributes[$key]))
+        if (! isset($this->attributes[$key]))
         {
-            $this->attributes[$key] = $value;
+            foreach($this->attributes as $attribute)
+            {
+                if ($attribute instanceof ValueObject)
+                {
+                    if (isset($attribute->$key))
+                    {
+                        $attribute->$key = $value;
+                        
+                        return;
+                    }
+                }
+            }
+        }
+        $this->attributes[$key] = $value;
+    }
 
-            return;
+    /**
+     * Determine if an attribute exists on the entity.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        if (array_key_exists($key, $this->attributes))
+        {
+            return true;
         }
 
         foreach($this->attributes as $attribute)
         {
             if ($attribute instanceof ValueObject)
             {
-                if ($attribute->$key)
+                if (isset($attribute->$key))
                 {
-                    $attribute->$key = $value;
-                    
-                    return;
+                    return true;
                 }
             }
         }
+
+        return false;
     }
+
 
     /**
      * Is a getter method defined ?
