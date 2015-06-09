@@ -187,6 +187,8 @@ class Manager {
 		}
 
 		$entityMap->setClass($entity);
+        
+        	$entityMap->setManager($this);
 		
 		$this->entityClasses[$entity] = $entityMap;
 	}
@@ -209,8 +211,6 @@ class Manager {
             // Generate an EntityMap obeject
             $map = $this->getNewEntityMap();
         }
-        
-        $map->setManager($this);
 
         return $map;
     }  
