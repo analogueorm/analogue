@@ -307,13 +307,28 @@ class EntityCollection extends Collection {
 	/**
 	 * Return only unique items from the collection.
 	 *
+	 * @param  string $key
 	 * @return static
 	 */
-	public function unique()
+	public function unique($key = null)
 	{
-		$dictionary = $this->getDictionary();
+		if (is_null($key)) {
+			$dictionary = $this->getDictionary();
 
-		return new static(array_values($dictionary));
+			return new static(array_values($dictionary));
+		}
+
+		$key = $this->valueRetriever($key);
+
+		$exists = [];
+
+		return $this->reject(function ($item) use ($key, &$exists) {
+			if (in_array($id = $key($item), $exists)) {
+				return true;
+			}
+
+			$exists[] = $id;
+		});
 	}
 
 	/**
