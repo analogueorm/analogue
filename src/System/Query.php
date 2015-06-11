@@ -338,11 +338,13 @@ class Query {
 	{
 		if ($column instanceof Closure)
 		{
-			$query = $this->newQueryWithoutScopes();
+			$query = $this->query->newQuery();
+
+			$query->from($this->query->from);
 
 			call_user_func($column, $query);
 
-			$this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+			$this->query->addNestedWhereQuery($query, $boolean);
 		}
 		else
 		{
