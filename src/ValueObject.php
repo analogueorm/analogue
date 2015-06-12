@@ -10,6 +10,8 @@ use Carbon\Carbon;
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 	use MappableTrait;
 
+    protected $watcher;
+
     /**
      * Dynamically retrieve attributes on the entity.
      *
@@ -171,5 +173,10 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
             }
         }
         return $attributes;
+    }
+
+    public function setWatcher($watcher)
+    {
+        $this->watcher = $watcher;
     }
 }
