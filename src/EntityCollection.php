@@ -381,6 +381,6 @@ class EntityCollection extends Collection {
 	 */
 	public function toBase()
 	{
-		return new BaseCollection($this->items);
+		return new Collection($this->items);
 	}
 }
