@@ -102,6 +102,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
             if(in_array($key, $this->hidden))
 			{
 				unset($attributes[$key]);
+				continue;
 			}
 			if($this->hasGetMutator($key))
 			{
