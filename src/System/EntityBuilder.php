@@ -72,7 +72,7 @@ class EntityBuilder {
             $tmpCache[$resultArray[$keyName] ] = $resultArray;
 
             // Hydrate any embedded Value Object
-            $this->hydrateValueObjects($resultArray);
+            $this->hydrateValueObjects($resultArray, $instance);
 
             $instance->setEntityAttributes($resultArray);
 
@@ -97,11 +97,12 @@ class EntityBuilder {
      * @param  array $attributes 
      * @return void
      */
-    protected function hydrateValueObjects(& $attributes)
+    protected function hydrateValueObjects(& $attributes, $entity)
     {
         foreach($this->entityMap->getEmbeddables() as $localKey => $valueClass)
         {
             $this->hydrateValueObject($attributes, $localKey, $valueClass);
+            $attributes[$localKey]->setWatcher($entity);
         }   
     }
 

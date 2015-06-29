@@ -10,6 +10,8 @@ use Carbon\Carbon;
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 	use MappableTrait;
 
+    protected $watcher;
+
     /**
      * Dynamically retrieve attributes on the entity.
      *
@@ -31,6 +33,13 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     public function __set($key, $value)
     {
         $this->attributes[$key] = $value;
+
+        $class = class_basename($this);
+
+        if (method_exists($this->watcher, camel_case($class).'Changed'))
+        {
+            $this->watcher->{camel_case($class).'Changed'}($this);
+        }
     }
 
     /**
@@ -164,5 +173,10 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
             }
         }
         return $attributes;
+    }
+
+    public function setWatcher($watcher)
+    {
+        $this->watcher = $watcher;
     }
 }
