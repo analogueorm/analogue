@@ -170,7 +170,7 @@ class EntityCollection extends Collection {
 	 * @param  string  $key
 	 * @return mixed
 	 */
-	public function max($key)
+	public function max($key = null)
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
@@ -185,7 +185,7 @@ class EntityCollection extends Collection {
 	 * @param  string  $key
 	 * @return mixed
 	 */
-	public function min($key)
+	public function min($key = null)
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
@@ -307,28 +307,14 @@ class EntityCollection extends Collection {
 	/**
 	 * Return only unique items from the collection.
 	 *
-	 * @param  string $key
+	 * @param null $key
 	 * @return static
 	 */
 	public function unique($key = null)
 	{
-		if (is_null($key)) {
-			$dictionary = $this->getDictionary();
+		$dictionary = $this->getDictionary();
 
-			return new static(array_values($dictionary));
-		}
-
-		$key = $this->valueRetriever($key);
-
-		$exists = [];
-
-		return $this->reject(function ($item) use ($key, &$exists) {
-			if (in_array($id = $key($item), $exists)) {
-				return true;
-			}
-
-			$exists[] = $id;
-		});
+		return new static(array_values($dictionary));
 	}
 
 	/**
