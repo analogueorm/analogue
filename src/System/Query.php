@@ -796,6 +796,11 @@ class Query {
 		return $this->applyGlobalScopes($builder);
 	}
 
+	public function newQueryWithoutScopes()
+	{
+		return new Query($this->mapper, $this->adapter);
+	}
+
 	/**
 	 * Get the Mapper instance for this Query Builder
 	 * 
