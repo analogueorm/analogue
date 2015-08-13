@@ -5,6 +5,7 @@ use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use Illuminate\Support\Collection as Collection;
+use Illuminate\Support\Arr;
 
 class EntityCollection extends Collection {
 	
@@ -80,6 +81,18 @@ class EntityCollection extends Collection {
 
 		return $this->pull($entity->getEntityAttribute($keyName));
 	}
+
+    /**
+     * Get an array with the values of a given key.
+     *
+     * @param  string  $value
+     * @param  string  $key
+     * @return static
+     */
+    public function pluck($value, $key = null)
+    {
+        return new Collection(Arr::pluck($this->items, $value, $key));
+    }
 
 	/**
 	 * Push an item onto the beginning of the collection.
@@ -170,7 +183,7 @@ class EntityCollection extends Collection {
 	 * @param  string  $key
 	 * @return mixed
 	 */
-	public function max($key)
+	public function max($key = null)
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
@@ -185,7 +198,7 @@ class EntityCollection extends Collection {
 	 * @param  string  $key
 	 * @return mixed
 	 */
-	public function min($key)
+	public function min($key = null)
 	{
 		return $this->reduce(function($result, $item) use ($key)
 		{
@@ -309,7 +322,7 @@ class EntityCollection extends Collection {
 	 *
 	 * @return static
 	 */
-	public function unique()
+	public function unique($key = null)
 	{
 		$dictionary = $this->getDictionary();
 

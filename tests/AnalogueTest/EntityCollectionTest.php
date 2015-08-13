@@ -2,6 +2,7 @@
 
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityCollection as Collection;
+use Illuminate\Support\Collection as IlluminateCollection;
 use PHPUnit_Framework_TestCase;
 
 class EntityCollectionTest extends PHPUnit_Framework_TestCase {
@@ -191,8 +192,8 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $e2->name = 'bar';
 
         $data = new Collection([$e1,$e2]);
-        $this->assertEquals(['f' => 'foo', 'b' => 'bar'], $data->lists('name', 'uid'));
-        $this->assertEquals(['foo', 'bar'], $data->lists('name'));
+        $this->assertEquals(new IlluminateCollection(['f' => 'foo', 'b' => 'bar']), $data->lists('name', 'uid'));
+        $this->assertEquals(new IlluminateCollection(['foo', 'bar']), $data->lists('name'));
     }
 
     
