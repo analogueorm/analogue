@@ -146,6 +146,22 @@ class QueryTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $r->count());
     }
 
+    public function testWhereBlock()
+    {
+        $mapper = get_mapper('AnalogueTest\App\Permission');
+        $p1 = new Permission('michael');
+        $p2 = new Permission('jackson');
+        $c = new EntityCollection([$p1,$p2]);
+        $mapper->store($c);
+
+        $r = $mapper->query()->where(function ($query) {
+            $query->where('label', 'jackson')
+                  ->orWhere('label', 'norris');
+        })->get();
+
+        $this->assertEquals(3, $r->count());
+    }
+
     public function testHas()
     {
         $mapper = get_mapper('AnalogueTest\App\Role');
