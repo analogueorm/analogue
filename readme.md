@@ -3,6 +3,8 @@
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
+> **IMPORTANT** : In a matter of simplification, Analogue ORM versions have been pushed to mirror the corresponding Illuminate dependency. Please update your composer.json accordingly. 
+
 **Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
 The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
@@ -48,12 +50,15 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 ## Install :
 
 ```
-composer require analogue/orm:2.1.*
+composer require analogue/orm:5.0.*
 ```
 
 See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ##Changelog 
+
+####Version 5.0
+- Analogue version now mirrors illuminate version. 
 
 ####Version 2.1.3
 - Mutator feature in base Entity class
