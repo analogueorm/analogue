@@ -244,4 +244,20 @@ class QueryTest extends PHPUnit_Framework_TestCase {
         $paginator = $mapper->query()->simplePaginate(5);
         $this->assertEquals(5, count($paginator));
     }
+
+    public function testWhereBlock()
+    {
+        $mapper = get_mapper('AnalogueTest\App\Permission');
+        $p1 = new Permission('ozzy');
+        $p2 = new Permission('osbourne');
+        $c = new EntityCollection([$p1,$p2]);
+        $mapper->store($c);
+
+        $r = $mapper->query()->where(function ($query) {
+            $query->where('label', 'ozzy')
+                  ->orWhere('label', 'osbourne');
+        })->get();
+
+        $this->assertEquals(2, $r->count());
+    }
 }
