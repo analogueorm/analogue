@@ -86,6 +86,16 @@ class Manager {
 	}
 
 	/**
+	 * Return the Driver Manager's instance
+	 * 
+	 * @return \Analogue\ORM\Drivers\Manager 
+	 */
+	public function getDriverManager()
+	{
+		return $this->drivers;
+	}
+
+	/**
 	 * Create a mapper for a given entity
 	 * 
 	 * @param \Analogue\ORM\Mappable|string $entity
