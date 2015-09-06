@@ -797,6 +797,16 @@ class Query {
 	}
 
 	/**
+	 * Get a new query builder without any scope applied.
+	 * 
+	 * @return \Analogue\ORM\System\Query
+	 */
+	public function newQueryWithoutScopes()
+	{
+		return new Query($this->mapper, $this->adapter);
+	}
+
+	/**
 	 * Get the Mapper instance for this Query Builder
 	 * 
 	 * @return \Analogue\ORM\System\Mapper
