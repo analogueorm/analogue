@@ -50,12 +50,15 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 ## Install :
 
 ```
-composer require analogue/orm:5.0.*
+composer require analogue/orm:5.1.*
 ```
 
 See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ##Changelog 
+
+####Version 5.1
+- Illuminate 5.1 Compatibility. 
 
 ####Version 5.0
 - Analogue version now mirrors illuminate version. 
