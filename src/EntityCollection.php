@@ -1,4 +1,5 @@
 <?php
+
 namespace Analogue\ORM;
 
 use InvalidArgumentException;
