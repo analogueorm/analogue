@@ -2,6 +2,7 @@
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\Exceptions\MappingException;
 
 class StateChecker {
@@ -78,8 +79,7 @@ class StateChecker {
 			}
 			else
 			{
-				throw new MappingException('Entity primary key contradicts with cached Entity. 
-					You probably modified it by mistake');
+				$this->exists = false;
 			}
 		}
 
@@ -173,9 +173,9 @@ class StateChecker {
 
 		foreach($attributes as $key => $value)
 		{
-			if ($this->isRelation($key)) continue;
+			if ($this->isRelation($key) || $key == 'pivot') continue;
 
-			if ( ! array_key_exists($key, $cachedAttributes))
+			if ( ! array_key_exists($key, $cachedAttributes) && ! $value instanceof Pivot)
 			{
 				$dirty[$key] = $value;
 			}

@@ -227,4 +227,35 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $z = $rm->find($id);
         $this->assertEquals(1,$z->permissions->count());
     }
+
+    public function testPivotAttributes()
+    {
+        $role = new Role('pivot_role');
+        $perm = new Permission('pivot_perm');
+        $role->permissions->add($perm);
+        $rm = get_mapper($role);
+        $rm->store($role);
+        $id = $role->id;
+        $role = $rm->with('permissions')->find($id);
+        $this->assertEquals('pivot_role', $role->label);
+        $this->assertEquals(1, $role->permissions->count());
+        $this->assertEquals('pivot_perm', $role->permissions->first()->label);
+        $role->permissions->first()->pivot->active = true;
+        $attributes = $role->permissions->first()->getEntityAttributes();
+        $rm->store($role);
+        $roleReload = $rm->find($id);
+        $this->assertEquals(true, $roleReload->permissions->first()->pivot->active);
+    }
+
+    public function testSelfGeneratedPrimaryKey()
+    {
+        $uuid = new Uuid('test', 'testlabel');
+        $um = get_mapper($uuid);
+        $um->store($uuid);
+        $this->assertEquals('test', $uuid->uuid);
+        $uuid = $um->where('uuid', '=', 'test')->first();
+        $this->assertEquals('test', $uuid->uuid);
+        $this->assertEquals('testlabel', $uuid->label);
+
+    }
 }

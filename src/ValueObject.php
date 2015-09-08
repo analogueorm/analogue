@@ -5,11 +5,12 @@ use JsonSerializable;
 use Analogue\ORM\System\ProxyInterface;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Carbon\Carbon;
 
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 	use MappableTrait;
 
-        /**
+    /**
      * Dynamically retrieve attributes on the entity.
      *
      * @param  string  $key
@@ -146,6 +147,12 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
             // If the attribute is a proxy, and hasn't be loaded, we discard
             // it from the returned set.
             if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) continue;
+
+            if ($attribute instanceof Carbon) 
+            {
+                $attributes[$key] = $attribute->__toString();
+                continue;
+            }
 
             if ($attribute instanceof Arrayable)
             {

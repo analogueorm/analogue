@@ -143,6 +143,16 @@ class BelongsToMany extends Relationship {
 	}
 
 	/**
+	 * Return Pivot attributes when available on a relationship
+	 * 
+	 * @return array
+	 */
+	public function getPivotAttributes()
+	{
+		return $this->pivotColumns;
+	}	
+
+	/**
 	 * Execute the query and get the first result.
 	 *
 	 * @param  array   $columns
@@ -430,7 +440,7 @@ class BelongsToMany extends Relationship {
 
 		$keyName = $this->relatedMap->getKeyName();
 
-		$cache = [];
+		$cache = $this->parentMapper->getEntityCache();
 
 		// Once we have an array dictionary of child objects we can easily match the
 		// children back to their parent using the dictionary and the keys on the
@@ -443,11 +453,9 @@ class BelongsToMany extends Relationship {
 
 				$entity->setEntityAttribute($relation, $collection);
 
-				$cache[$key] = $collection->getEntityHashes();
+				$cache->cacheLoadedRelationResult($entity, $relation, $collection, $this);
 			}
 		}
-
-		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 
 		return $entities;
 	}

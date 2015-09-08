@@ -140,6 +140,16 @@ class MorphToMany extends BelongsToMany {
 	}
 
 	/**
+	 * Return Pivot attributes when available on a relationship
+	 * 
+	 * @return array
+	 */
+	public function getPivotAttributes()
+	{
+		return $this->pivotColumns;
+	}	
+
+	/**
 	 * Get the foreign key "type" name.
 	 *
 	 * @return string

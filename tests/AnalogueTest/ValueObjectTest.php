@@ -28,9 +28,13 @@ class ValueObjectTest extends PHPUnit_Framework_TestCase {
         $v= new V('v1','v2');
         $resource->value = $v;
         $rMapper->store($resource);
+        $id = $resource->custom_id;
         $q = $rMapper->whereName('res')->first();
         $this->assertEquals('v1', $q->value->field_1);
         $this->assertEquals('v2', $q->value->field_2);
+        // Add test for updating
+        $z = $rMapper->find($id);
+        $rMapper->store($z);
     }
 
 }

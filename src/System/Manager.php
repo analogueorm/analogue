@@ -86,6 +86,16 @@ class Manager {
 	}
 
 	/**
+	 * Return the Driver Manager's instance
+	 * 
+	 * @return \Analogue\ORM\Drivers\Manager 
+	 */
+	public function getDriverManager()
+	{
+		return $this->drivers;
+	}
+
+	/**
 	 * Create a mapper for a given entity
 	 * 
 	 * @param \Analogue\ORM\Mappable|string $entity
@@ -161,9 +171,14 @@ class Manager {
 		// If an object is provider, get the class name from it
 		if(! is_string($entity) ) $entity = get_class($entity);
 
-		if ($this->isRegisteredEntity($entity))
+		if($this->isRegisteredEntity($entity))
 		{
 			throw new MappingException("Entity $entity is already registered.");
+		}
+
+		if(! class_exists($entity))
+		{
+			throw new MappingException("Class $entity does not exists");
 		}
 
 		if(is_null($entityMap) ) 
@@ -304,7 +319,7 @@ class Manager {
 	{
 		if (! is_string($entity)) $entity = get_class($entity);
 
-		return in_array($entity, $this->entityClasses) ? true: false;
+		return array_key_exists($entity, $this->entityClasses);
 	}
 
 	/**

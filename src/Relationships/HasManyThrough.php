@@ -167,9 +167,7 @@ class HasManyThrough extends Relationship {
 
 		$relatedKey = $this->relatedMap->getKeyName();
 
-		$cache = [];
-
-		$parentKey = $this->parentMap->getKeyName();
+		$cache = $this->parentMapper->getEntityCache();
 
 		// Once we have the dictionary we can simply spin through the parent entities to
 		// link them up with their children using the keyed dictionary to make the
@@ -184,11 +182,9 @@ class HasManyThrough extends Relationship {
 
 				$entity->setEntityAttribute($relation, $value);
 
-				$cache[$entity->getEntityAttribute($parentKey)] = $value->getEntityHashes();
+				$cache->cacheLoadedRelationResult($entity, $relation, $value, $this);
 			}
 		}
-
-		$this->parentMapper->getEntityCache()->cacheLoadedRelation($relation, $cache);
 
 		return $entities;
 	}

@@ -45,8 +45,27 @@ function get_mapper($entity)
     return get_analogue()->mapper($entity);
 }
 
+
+$globalDebug = true;
+
+function setDebugOn()
+{
+    global $globalDebug;
+    $globalDebug = true;
+}
+
+function setDebugOff()
+{
+    global $globalDebug;
+    $globalDebug = false;
+}
+
 function tdd($value)
 {
-    echo var_dump($value);
-    die;
+    global $globalDebug;
+    if($globalDebug)
+    {
+        echo var_dump($value);
+        die;
+    }
 }
