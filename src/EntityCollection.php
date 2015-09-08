@@ -4,8 +4,8 @@ namespace Analogue\ORM;
 use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
-use Illuminate\Support\Collection as Collection;
-use Illuminate\Support\Arr;
+use Analogue\Support\EntityCollection as Collection;
+use Illuminate\Support\Collection as BaseCollection;
 
 class EntityCollection extends Collection {
 	
@@ -166,36 +166,6 @@ class EntityCollection extends Collection {
 	}
 
 	/**
-	 * Get the max value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function max($key = null)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) > $result) ? 
-				$item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
-	 * Get the min value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function min($key = null)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) < $result) 
-				? $item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
 	 * Generic function for returning class.key value pairs
 	 * 
 	 * @return string
@@ -306,18 +276,6 @@ class EntityCollection extends Collection {
 	}
 
 	/**
-	 * Return only unique items from the collection.
-	 *
-	 * @return static
-	 */
-	public function unique($key = null)
-	{
-		$dictionary = $this->getDictionary();
-
-		return new static(array_values($dictionary));
-	}
-
-	/**
 	 * Returns only the models from the collection with the specified keys.
 	 *
 	 * @param  mixed  $keys
@@ -329,18 +287,6 @@ class EntityCollection extends Collection {
 
 		return new static(array_values($dictionary));
 	}
-
-	/**
-     * Get an array with the values of a given key.
-     *
-     * @param  string  $value
-     * @param  string  $key
-     * @return static
-     */
-    public function pluck($value, $key = null)
-    {
-        return new Collection(Arr::pluck($this->items, $value, $key));
-    }
 
 	/**
 	 * Returns all models in the collection except the models with specified keys.
