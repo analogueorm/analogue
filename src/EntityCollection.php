@@ -4,7 +4,8 @@ namespace Analogue\ORM;
 use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
-use Illuminate\Support\Collection as Collection;
+use Analogue\Support\EntityCollection as Collection;
+use Illuminate\Support\Collection as BaseCollection;
 
 class EntityCollection extends Collection {
 	
@@ -165,36 +166,6 @@ class EntityCollection extends Collection {
 	}
 
 	/**
-	 * Get the max value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function max($key)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) > $result) ? 
-				$item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
-	 * Get the min value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function min($key)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) < $result) 
-				? $item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
 	 * Generic function for returning class.key value pairs
 	 * 
 	 * @return string
@@ -302,18 +273,6 @@ class EntityCollection extends Collection {
 		}
 
 		return $intersect;
-	}
-
-	/**
-	 * Return only unique items from the collection.
-	 *
-	 * @return static
-	 */
-	public function unique()
-	{
-		$dictionary = $this->getDictionary();
-
-		return new static(array_values($dictionary));
 	}
 
 	/**
