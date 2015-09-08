@@ -651,7 +651,9 @@ class Store extends Command
 		}	
 		else
 		{
-			$id = $this->query->insertGetId($attributes);
+			$sequence = $this->entityMap->getSequence();
+
+			$id = $this->query->insertGetId($attributes, $sequence);
 
 			$entity->setEntityAttribute($keyName, $id);
 		}
