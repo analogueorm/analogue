@@ -4,8 +4,8 @@ namespace Analogue\ORM;
 use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
-use Analogue\Support\EntityCollection as Collection;
-use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 class EntityCollection extends Collection {
 	
@@ -334,12 +334,78 @@ class EntityCollection extends Collection {
 	}
 
 	/**
+	 * Get the max value of a given key.
+	 *
+	 * @param  string  $key
+	 * @return mixed
+	 */
+	public function max($key = null)
+	{
+		return $this->reduce(function($result, $item) use ($key)
+		{
+			return (is_null($result) || $item->getEntityAttribute($key) > $result) ? 
+				$item->getEntityAttribute($key) : $result;
+		});
+	}
+
+	/**
+	 * Get the min value of a given key.
+	 *
+	 * @param  string  $key
+	 * @return mixed
+	 */
+	public function min($key = null)
+	{
+		return $this->reduce(function($result, $item) use ($key)
+		{
+			return (is_null($result) || $item->getEntityAttribute($key) < $result) 
+				? $item->getEntityAttribute($key) : $result;
+		});
+	}
+
+	/**
+     * Get an array with the values of a given key.
+     *
+     * @param  string  $value
+     * @param  string  $key
+     * @return static
+     */
+    public function pluck($value, $key = null)
+    {
+    	return new Collection(Arr::pluck($this->items, $value, $key));
+    }
+
+    /**
+     * Alias for the "pluck" method.
+     *
+     * @param  string  $value
+     * @param  string  $key
+     * @return static
+     */
+    public function lists($value, $key = null)
+    {
+        return $this->pluck($value, $key);
+    }
+
+	/**
+	 * Return only unique items from the collection.
+	 *
+	 * @return static
+	 */
+	public function unique($key = null)
+	{
+		$dictionary = $this->getDictionary();
+
+		return new static(array_values($dictionary));
+	}
+
+	/**
 	 * Get a base Support collection instance from this collection.
 	 *
 	 * @return \Illuminate\Support\Collection
 	 */
 	public function toBase()
 	{
-		return new BaseCollection($this->items);
+		return new Collection($this->items);
 	}
 }
