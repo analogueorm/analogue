@@ -1,5 +1,6 @@
 # Analogue ORM 
 [![Build Status](https://travis-ci.org/analogueorm/analogue.svg)](https://travis-ci.org/analogueorm/analogue)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.1)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.1)
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
