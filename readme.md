@@ -1,7 +1,10 @@
 # Analogue ORM 
 [![Build Status](https://travis-ci.org/analogueorm/analogue.svg)](https://travis-ci.org/analogueorm/analogue)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.1)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.1)
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
+> **IMPORTANT** : In a matter of simplification, Analogue ORM versions have been pushed to mirror the corresponding Illuminate dependency. Please update your composer.json accordingly. 
 
 **Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
@@ -48,12 +51,18 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 ## Install :
 
 ```
-composer require analogue/orm:2.1.*
+composer require analogue/orm:5.1.*
 ```
 
 See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ##Changelog 
+
+####Version 5.1
+- Illuminate 5.1 Compatibility. 
+
+####Version 5.0
+- Analogue version now mirrors illuminate version. 
 
 ####Version 2.1.3
 - Mutator feature in base Entity class
