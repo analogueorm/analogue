@@ -110,6 +110,14 @@ class EntityMap {
 	protected $morphClass;
 
 	/**
+	 * Sequence name, to be used with postgreSql
+	 * defaults to %table_name%_id_seq
+	 *
+	 * @var string
+	 */
+	protected $sequence = null;
+
+	/**
 	 * Indicates if the entity should be timestamped.
 	 *
 	 * @var bool
@@ -255,6 +263,23 @@ class EntityMap {
 	public function setTable($table)
 	{
 		$this->table = $table;
+	}
+
+	/**
+	 * Get the pgSql sequence name
+	 * 
+	 * @return string
+	 */
+	public function getSequence()
+	{
+		if (! is_null($this->sequence))
+		{
+			return $this->sequence;
+		}
+		else
+		{
+			return $this->getTable().'_id_seq';
+		}
 	}
 
 	/**
