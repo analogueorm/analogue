@@ -25,6 +25,7 @@ class AnalogueServiceProvider extends ServiceProvider {
 
 		$manager->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
 		$manager->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
+		$manager->registerPlugin('Analogue\ORM\Plugins\CascadingDeletes\CascadingDeletesPlugin');
 	}
 
 	/**
