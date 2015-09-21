@@ -10,6 +10,8 @@ class UserMap extends EntityMap {
 
     protected $embeddables = ['metas' => 'AnalogueTest\App\Meta'];
 
+    protected $cascadeDeletesOn = ['avatars', 'role', 'resources'];
+
     public function avatars(User $entity)
     {
         return $this->hasMany($entity, 'AnalogueTest\App\Avatar');
