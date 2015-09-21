@@ -24,15 +24,15 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 	 */
 	public function __get($key)
 	{
-		if (! array_key_exists($key, $this->attributes))
-		{
-			return null;
-		}
 		if ($this->hasGetMutator($key))
 		{
 			$method = 'get'.$this->getMutatorMethod($key);
 
 			return $this->$method($this->attributes[$key]);
+		}
+		if (! array_key_exists($key, $this->attributes))
+		{
+			return null;
 		}
 		if ($this->attributes[$key] instanceof EntityProxy)
 		{
