@@ -153,6 +153,13 @@ class EntityMap {
 	protected $deletedAtColumn = 'deleted_at';
 
 	/**
+	 * The relations to cascade deletes on.
+	 * 
+	 * @var array
+	 */
+	protected $cascadeDeletesOn = [];
+
+	/**
 	 * The many to many relationship methods.
 	 *
 	 * @var array
@@ -529,6 +536,16 @@ class EntityMap {
 	public function getQualifiedDeletedAtColumn()
 	{
 		return $this->deletedAtColumn;
+	}
+
+	/**
+	 * Get the relations to cascade deletes on
+	 * 
+	 * @return array
+	 */
+	public function getCascadeDeletesOn()
+	{
+		return $this->cascadeDeletesOn;
 	}
 
 	/**
