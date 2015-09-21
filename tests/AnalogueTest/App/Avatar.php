@@ -9,4 +9,9 @@ class Avatar extends Entity {
         $this->name = $name;
         $this->user = $user;
     }
+
+    public function getPathAttribute()
+    {
+        return $this->image->path;
+    }
 }
