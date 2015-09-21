@@ -24,21 +24,39 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 	 */
 	public function __get($key)
 	{
-		if (! array_key_exists($key, $this->attributes))
-		{
-			return null;
-		}
-		if ($this->hasGetMutator($key))
-		{
-			$method = 'get'.$this->getMutatorMethod($key);
+        if ($this->hasGetMutator($key))
+        {
+            $method = 'get'.$this->getMutatorMethod($key);
 
-			return $this->$method($this->attributes[$key]);
-		}
-		if ($this->attributes[$key] instanceof EntityProxy)
-		{
-			$this->attributes[$key] = $this->attributes[$key]->load();
-		}
-		return $this->attributes[$key];
+            $value = null;
+
+            if (isset($this->attributes[$key]))
+            {
+                $value = $this->attributes[$key];
+            }
+
+            return $this->$method($value);
+        }
+        if (! array_key_exists($key, $this->attributes))
+        {
+            foreach($this->attributes as $attribute)
+            {
+                if ($attribute instanceof ValueObject)
+                {
+                    if ($value = $attribute->$key)
+                    {
+                        return $value;
+                    }
+                }
+            }
+
+            return null;
+        }
+        if ($this->attributes[$key] instanceof EntityProxy)
+        {
+            $this->attributes[$key] = $this->attributes[$key]->load();
+        }
+        return $this->attributes[$key];
 	}
 
 	/**
@@ -50,13 +68,57 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
      */
     public function __set($key, $value)
     {
-    	if($this->hasSetMutator($key))
-    	{
-    		$method = 'set'.$this->getMutatorMethod($key);
+        if($this->hasSetMutator($key))
+        {
+            $method = 'set'.$this->getMutatorMethod($key);
 
-    		$this->$method($value);
-    	}
-        else $this->attributes[$key] = $value;
+            $this->$method($value);
+
+            return;
+        }
+        if (! isset($this->attributes[$key]))
+        {
+            foreach($this->attributes as $attribute)
+            {
+                if ($attribute instanceof ValueObject)
+                {
+                    if (isset($attribute->$key))
+                    {
+                        $attribute->$key = $value;
+                        
+                        return;
+                    }
+                }
+            }
+        }
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Determine if an attribute exists on the entity.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        if (array_key_exists($key, $this->attributes))
+        {
+            return true;
+        }
+
+        foreach($this->attributes as $attribute)
+        {
+            if ($attribute instanceof ValueObject)
+            {
+                if (isset($attribute->$key))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
