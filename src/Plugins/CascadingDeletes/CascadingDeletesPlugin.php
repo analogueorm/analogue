@@ -22,26 +22,50 @@ class CascadingDeletesPlugin extends AnaloguePlugin {
         {
             $entityMap = $mapper->getEntityMap();
 
-            $mapper->registerEvent('deleting', function(Entity $entity) use ($entityMap) {
+            $mapper->registerEvent('deleting', function(Entity $entity) use ($entityMap, $mapper) {
                 
                 $relationsToCascade = $entityMap->getCascadeDeletesOn();
                 
                 foreach($relationsToCascade as $relation) {
 
                     if ($relation instanceof BelongsTo) {
-                        // TODO: check if this was the last entity left, if so, delete related entity
+                        $primaryKey = $entityMap->getKeyName();
+                        $foreignKey = $relation->getForeignKey();
+
+                        $noOthersLeft = !$mapper
+                                        ->where($foreignKey, '=', $entity->$foreignKey)
+                                        ->where($primaryKey, '<>', $entity->$primaryKey)
+                                        ->exists();
+
+                        if ($noOthersLeft) {
+                            $relatedMapper = $relation->getRelatedMapper();
+
+                            $relatedMapper->delete($entity->$relation);
+                        }
                     }
 
                     if ($relation instanceof BelongsToMany) {
-                        // TODO: check if this was the last entity left, if so, delete all related entities
+                        $relatedMapper = $relation->getRelatedMapper();
+                        $foreignKey = $relation->getForeignKey();
+                        $primaryKey = $entityMap->getKeyName();
+                        $otherKey = $relation->getOtherKey();
+
+                        foreach($entity->$relation as $related) {
+                            $noOthersLeft = !$relation->newPivotStatement()
+                                            ->where($otherKey, '=', $related->$otherKey)
+                                            ->where($foreignKey, '<>', $entity->$primaryKey)
+                                            ->exists();
+
+                            if ($noOthersLeft) {
+                                $relatedMapper->delete($entity->$related);
+                            }
+                        }
                     }
 
                     if ($relation instanceof HasOneOrMany) {
-                        // TODO: delete all related entities
-                    }
+                        $relatedMapper = $relation->getRelatedMapper();
 
-                    if ($relation instanceof MorphOneOrMany) {
-                        // TODO: check if this was the last entity left, if so, delete related entities
+                        foreach($entity->$relation as $related) $relatedMapper->delete($related);
                     }
 
                 }
