@@ -12,11 +12,11 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
         $role = new Role('admin');
 
-        $user = new User('alice@example.com', $role);
-
-        $analogue->mapper($user)->store($user);
-
+        $analogue->mapper($role)->store($role);
         $this->assertGreaterThan(0, $role->id);
+   
+        $user = new User('alice@example.com', $role);
+        $analogue->mapper($user)->store($user);
         $this->assertGreaterThan(0, $user->id);
     }
 
@@ -107,7 +107,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $bob = $analogue->query('AnalogueTest\App\User')->whereEmail('bob@example.com')->first();
         
         $rawAttributes = $bob->getEntityAttributes();
-        $this->assertInstanceOf('Analogue\ORM\System\EntityProxy', $rawAttributes['role']);
+        $this->assertInstanceOf('Analogue\ORM\System\Proxies\EntityProxy', $rawAttributes['role']);
         $this->assertInstanceOf('AnalogueTest\App\Role', $bob->role);
         $this->assertEquals('guest', $bob->role->label);        
     }
@@ -131,7 +131,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         
         $rawAttributes = $ur->getEntityAttributes();
         
-        $this->assertInstanceOf('Analogue\ORM\System\CollectionProxy', $rawAttributes['permissions']);
+        $this->assertInstanceOf('Analogue\ORM\System\Proxies\CollectionProxy', $rawAttributes['permissions']);
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']->load());
         $this->assertEquals($perms->lists('label'), $ur->permissions->lists('label')); 
     }
@@ -141,6 +141,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $analogue = get_analogue();
 
         $ur=$analogue->query('AnalogueTest\App\Role')->with(['users','permissions'])->whereLabel('user')->first();
+        //tdd($ur);
         $rawAttributes = $ur->getEntityAttributes();
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']);
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['users']);
@@ -160,7 +161,11 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $image2 = new Image('i2');
         $resource->images = new EntityCollection([$image1,$image2]);
 
+        //setDebugOn();
+
         $analogue->mapper($resource)->store($resource);
+
+        //setDebugOff();
 
         $this->assertGreaterThan(0, $resource->custom_id);
         
@@ -174,7 +179,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $mapper = get_mapper('AnalogueTest\App\Permission');
 
         $permissions = $mapper->query()->get();
-
+       
         $mapper->delete($permissions);
 
         $roleMapper = get_mapper('AnalogueTest\App\Role');
@@ -193,7 +198,6 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $resource = new Resource('softdelete');
         $rMap = get_mapper($resource);
         $rMap->store($resource);
-        //tdd($rMap);
         $id = $resource->custom_id;
         $rMap->delete($resource);
         $q = $rMap->find($id);

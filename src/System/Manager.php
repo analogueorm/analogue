@@ -111,7 +111,22 @@ class Manager {
 		{
 			return $this->mappers[$entity];
 		}
+		else {
+			return $this->buildMapper($entity, $entityMap);
+		}
+	}
 
+	/**
+	 * Build a new Mapper instance for a given Entity
+	 * 
+	 * @param  mixed|string $entity    
+	 * @param  $entityMap 
+	 * @return Mapper     
+	 */
+	protected function buildMapper($entity, $entityMap)
+	{
+		// If an EntityMap hasn't been manually registered by the user 
+		// register it at runtime.
 		if(! $this->isRegisteredEntity($entity)) 
 		{
 			$this->register($entity, $entityMap);
@@ -121,9 +136,16 @@ class Manager {
 
 		$factory = new MapperFactory($this->drivers, $this->eventDispatcher, $this);
 
-		$this->mappers[$entity] = $factory->make($entity, $entityMap);
+		$mapper = $factory->make($entity, $entityMap);
 
-		return $this->mappers[$entity];
+		$this->mappers[$entity] = $mapper; 
+
+		// At this point we can safely call the boot() method on the entityMap as
+		// the mapper is now instanciated & registered within the manager.
+		
+		$mapper->getEntityMap()->boot(); 
+		
+		return $mapper;
 	}
 
 	/**

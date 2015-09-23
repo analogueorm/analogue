@@ -107,14 +107,23 @@ class Mapper {
 	}
 
 	/**
-	 * Check if an object implements the Mappable interface
+	 * Check if an object can be proccessed by the current Mapper
 	 * 
-	 * @param  mixed  $item 
+	 * @param  mixed  $objet 
 	 * @return boolean      
 	 */
-	protected function isMappable($item)
+	protected function isMappable($object)
 	{
-		return $item instanceof Mappable;
+		$objectClass = get_class($object);
+
+		$mapperClass = $this->entityMap->getClass();
+
+		if ($objectClass === $mapperClass)
+		{
+			return true;
+		}
+
+		throw new InvalidArgumentException("Tried to use $objectClass with Mapper for $mapperClass");
 	}
 
 	/**
@@ -134,11 +143,16 @@ class Mapper {
 	 * @param  Mappable $entity
 	 * @return Entity
 	 */
-	protected function storeEntity(Mappable $entity)
+	protected function storeEntity($entity)
 	{
-		$store = new Store($entity, $this, $this->newQueryBuilder() );
+		if($this->isMappable($entity))
+		{
+			$aggregate = new Aggregate($entity);
 
-		return $store->execute();
+			$store = new Store($aggregate, $this->newQueryBuilder() );
+
+			return $store->execute();
+		}
 	}
 
 	/**
@@ -191,13 +205,16 @@ class Mapper {
 	 * Delete a single entity from the database.
 	 * 
 	 * @param  Mappable $entity
-	 * @return Mappable
+	 * @return void
 	 */
-	protected function deleteEntity(Mappable $entity)
+	protected function deleteEntity($entity)
 	{
-		$delete = new Delete($entity, $this, $this->newQueryBuilder() );
+		if ($this->isMappable($entity))
+		{
+			$delete = new Delete($entity, $this, $this->newQueryBuilder() );
 
-		return $delete->execute();
+			$delete->execute();
+		}
 	}
 
 	/**
@@ -253,6 +270,11 @@ class Mapper {
 	 */
 	public function fireEvent($event, $entity, $halt = true)
 	{
+		if($entity instanceof Wrapper)
+		{
+			throw new InvalidArgumentException("Fired Event with invalid Entity Object");
+		}
+
 		$event = "analogue.{$event}.".$this->entityMap->getClass();
 
 		$method = $halt ? 'until' : 'fire';
@@ -509,7 +531,7 @@ class Mapper {
 	 *
 	 * @return \Analogue\ORM\Drivers\QueryAdapter
 	 */
-	protected function newQueryBuilder()
+	public function newQueryBuilder()
 	{
 		return $this->adapter->getQuery();
 	}

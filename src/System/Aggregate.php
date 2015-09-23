@@ -1,0 +1,763 @@
+<?php namespace Analogue\ORM\System;
+
+use Illuminate\Support\Collection;
+use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\Proxies\EntityProxy;
+use Analogue\ORM\System\Proxies\CollectionProxy;
+use Analogue\ORM\Exceptions\MappingException;
+
+/**
+ * This class is aimed to facilitate the handling of
+ * complex root aggregate scenarios. 
+ */
+class Aggregate implements InternallyMappable {
+
+    /**
+     * The Root Entity
+     * 
+     * @var Analogue\ORM\System\Wrappers\Wrapper
+     */
+    protected $wrappedEntity;
+
+    /**
+     * Parent Root Aggregate
+     * 
+     * @var Analogue\ORM\System\Aggregate
+     */
+    protected $parent;
+
+    /**
+     * Parent's relationship method
+     * 
+     * @var string
+     */
+    protected $parentRelationship;
+
+    /**
+     * Root Entity
+     * 
+     * @var Analogue\ORM\System\Aggregate
+     */
+    protected $root;
+
+    /**
+     * An associative array containing entity's 
+     * relationships converted to Aggregates
+     * 
+     * @var array
+     */
+    protected $relationships;
+
+    /**
+     * Mapper
+     *
+     * @var Analogue\ORM\System\Mapper;
+     */
+    protected $mapper;
+
+    /**
+     * Entity Map
+     *
+     * @var Analogue\ORM\EntityMap;
+     */
+    protected $entityMap;
+
+
+    public function __construct($entity, Aggregate $parent = null, $parentRelationship = null, Aggregate $root = null)
+    {
+        $factory = new Factory;
+
+        $this->wrappedEntity = $factory->make($entity);
+
+        $this->parent = $parent;
+
+        $this->parentRelationship = $parentRelationship;
+
+        $this->root = $root;
+
+        $this->mapper = Manager::getMapper($entity);
+
+        $this->entityMap = $this->mapper->getEntityMap();
+
+        $this->parseRelationships();
+    }
+
+    /**
+     * Parse Every relationships defined on the entity
+     * 
+     * @return void
+     */
+    protected function parseRelationships()
+    {
+        foreach($this->entityMap->getRelationships() as $relation)
+        {
+            $this->parse($relation);
+        }
+    }
+
+    /**
+     * Parse one of the relationships for related entities
+     * and tranform them into an array of RootAggregate objects
+     * 
+     * @param  string $relationship 
+     * @return void
+     */
+    protected function parse($relationship)
+    {
+        // If no attribute exists for this relationships
+        // we'll simply skip it
+        if(! $this->wrappedEntity->hasAttribute($relationship))
+        {
+            return true;
+        }
+
+        $attribute = $this->wrappedEntity->getEntityAttribute($relationship);
+
+        if( is_null($attribute) )
+        {
+            $this->relationships[$relationship] = null;
+
+            return true;
+        }
+
+        if( $attribute instanceof EntityProxy)
+        {
+            // If we set null here, that could be interpreted as a detached relationship.
+            // So we simply ignore it.
+            // 
+            return true;
+        }
+
+        // If the relation is a proxy, we test is the relation
+        // has been lazy loaded, otherwise we'll just treat
+        // the subset of newly added items.
+        // 
+        if ($attribute instanceof CollectionProxy && $attribute->isLoaded() )
+        {
+            $attribute = $attribute->getUnderlyingCollection();
+        }
+
+        if ($attribute instanceof CollectionProxy && ! $attribute->isLoaded() )
+        {
+            $attribute = $attribute->getAddedItems();
+        }
+
+        if(is_array($attribute) || $attribute instanceof Collection)
+        {
+            if(! in_array($relationship, $this->entityMap->getManyRelationships() ))
+            {
+                throw new MappingException("Expecting object in '$relationship', found array() or Collection");
+            }
+
+            $this->relationships[$relationship] = $this->createSubAggregates($attribute, $relationship);
+
+            return true;
+        }
+
+        // If the related entity is the same Class as the Parent or the Root
+        // we'll skip them, to avoid looping through ancestors
+        $attributeClass = get_class($attribute);
+
+        if($attributeClass == $this->parent->getEntityClass() ) return true;
+        if($attributeClass == $this->root->getEntityClass() ) return true;
+
+
+        // At this point, we can assume the attribute is an Entity instance
+        // so we'll treat it as such. Note that we'll store it as an array
+        // just for consistency with other relationships 
+        $this->relationships[$relationship] = [$this->createSubAggregate($attribute, $relationship)];
+        
+        return true;
+    }
+
+    /**
+     * [createSubAggregates description]
+     * @param  array|collection $entities
+     * @return 
+     */
+    protected function createSubAggregates($entities, $relation)
+    {
+        $aggregates = [];
+
+        foreach($entities as $entity)
+        {
+            $aggregates[] = $this->createSubAggregate($entity, $relation);
+        }
+
+        return $aggregates;
+    }
+
+    /**
+     * Create a related subAggregate
+     * 
+     * @param  mixed $entity 
+     * @return \Analogue\ORM\System\RootAggregate;
+     */
+    protected function createSubAggregate($entity)
+    {   
+        // If root isn't defined, then we are Root :) 
+        if(is_null($this->root))
+        {
+            $root = $this;
+        }
+
+        $aggregate = new Aggregate($entity, $this, $relation, $root);
+
+        return $aggregate;
+    }
+
+    /**
+     * Get the Entity's primary key attribute
+     * 
+     * @return string|integer
+     */
+    public function getEntityId()
+    {
+        return $this->wrappedEntity->getEntityAttribute($this->entityMap->getKeyName() );
+    }
+
+    /**
+     * Get the name of the primary key
+     * 
+     * @return string
+     */
+    public function getEntityKey()
+    {
+        return $this->entityMap->getKeyName();
+    }
+
+    /**
+     * Return the entity map for the current entity
+     * 
+     * @return \Analogue\ORM\EntityMap
+     */
+    public function getEntityMap()
+    {
+        return $this->entityMap;
+    }
+
+    /**
+     * Return the Entity's hash $class.$id
+     *
+     * @return string
+     */
+    public function getEntityHash()
+    {
+        return $this->wrappedEntity->getEntityClass().'.'.$this->getEntityId();
+    }
+
+    /**
+     * Return the Mapper's entity cache
+     *
+     * @return \Analogue\ORM\System\EntityCache
+     */
+    protected function getEntityCache()
+    {
+        return $this->mapper->getEntityCache();
+    }
+
+    /**
+     * Get Non existing related entities from several relationships
+     * 
+     * @param  array  $relationships 
+     * @return array
+     */
+    public function getNonExistingRelated(array $relationships)
+    {
+        $nonExisting = [];
+
+        foreach($relationships as $relation)
+        {
+            if($this->hasAttribute($relation))
+            {
+                $nonExisting = array_merge($nonExisting,$this->getNonExistingFromRelation($relation));
+            }
+        }
+
+        return $nonExisting;
+    }
+
+    /**
+     * Get Non existing related entities from a single relation
+     * 
+     * @param  string $relation
+     * @return array
+     */
+    protected function getNonExistingFromRelation($relation)
+    {
+        $nonExisting = [];
+
+        foreach($this->relationships[$relation] as $aggregate)
+        {
+            if (! $aggregate->exists() )
+            {
+                $nonExisting[] = $aggregate;
+            }
+        }   
+
+        return $nonExisting;
+    }
+
+    /**
+     * Check in the cache for missing relationship
+     * 
+     * @return array
+     */
+    public function getDetachedRelationships()
+    {
+
+    }
+
+    
+    /**
+     * Compare the object's raw attributes with the record in cache
+     * 
+     * @return boolean 
+     */
+    public function isDirty()
+    {
+        if (count($this->getDirtyRawAttributes()) > 0)
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    /**
+     * Get Raw Entity's attributes, as they are represented
+     * in the database, including value objects & foreign keys
+     * 
+     * @return array
+     */
+    public function getRawAttributes()
+    {
+        $attributes = $this->wrappedEntity->getEntityAttributes();
+
+        foreach($this->entityMap->getRelationships() as $relation)
+        {
+            unset($attributes[$relation]);
+        }
+
+        $attributes = $this->flattenEmbeddables($attributes);
+
+        $foreignKeys = $this->getForeignKeyAttributes();
+
+        return $attributes + $foreignKeys;
+    }
+
+    /**
+     * Convert Value Objects to raw db attributes
+     * 
+     * @param  array $attributes 
+     * @return array
+     */
+    protected function flattenEmbeddables($attributes)
+    {
+        $embeddables = $this->entityMap->getEmbeddables();
+        
+        foreach($embeddables as $localKey => $embed)
+        {
+            // Retrieve the value object from the entity's attributes
+            $valueObject = $attributes[$localKey];
+
+            // Unset the corresponding key
+            unset($attributes[$localKey]);
+
+            // TODO Make wrapper object compatible with value objects
+            $valueObjectAttributes = $valueObject->getEntityAttributes();
+
+            // Now (if setup in the entity map) we prefix the value object's
+            // attributes with the snake_case name of the embedded class.
+            $prefix = snake_case(class_basename($embed));
+
+            foreach($valueObjectAttributes as $key=>$value)
+            {
+                $valueObjectAttributes[$prefix.'_'.$key] = $value;
+                unset($valueObjectAttributes[$key]);
+            }
+
+            $attributes = array_merge($attributes, $valueObjectAttributes);
+        }
+        
+        return $attributes;
+    }
+
+    /**
+     * Return's entity raw attributes in the state they were at last
+     * query. 
+     * 
+     * @return array
+     */
+    protected function getCachedRawAttributes(array $columns = null)
+    {
+        $cachedAttributes = $this->getCache()->get($this->getEntityId());
+
+        if(is_null($columns) )
+        {   
+            return $cachedAttributes;
+        }   
+        else
+        {
+            return array_only($cachedAttributes, $columns);
+        }
+    }
+
+    /**
+     * Convert related Entity's attributes to foreign keys
+     * 
+     * @return array
+     */
+    protected function getForeignKeyAttributes()
+    {
+        $foreignKeys = [];
+
+        foreach($this->entityMap->getLocalRelationships() as $relation)
+        {
+            // check if relationship has been parsed, meaning it has an actual object 
+            // in the entity's attributes
+            if ($this->isActualRelationships($relation))
+            {
+                $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromRelation($relation);
+            }
+        }
+
+        if(! is_null ($this->parent))
+        {
+            $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
+        }
+
+        return $foreignKeys;
+    }
+
+    /**
+     * Return an associative array containing the key-value pair(s) from
+     * the related entity.
+     * 
+     * @param  string $relation 
+     * @return array
+     */
+    protected function getForeignKeyAttributesFromRelation($relation)
+    {
+        $localRelations = $this->entityMap->getLocalRelationships();
+
+        if(in_array($localRelations))
+        {
+            // Call Relationship's method 
+            $relationship = $this->entityMap->$relation($this->getEntityObject() );
+
+            return $relationship->getForeignKeyValuePair();
+        }
+        else return [];
+    }
+
+    /**
+     * Get foreign key attribute(s) from a parent entity in this
+     * aggregate context
+     * 
+     * @param  string $relation 
+     * @return array
+     */
+    protected function getForeignKeyAttributesFromParent()
+    {
+        $parentMap = $this->parent->getEntityMap();
+
+        $parentForeignRelations = $parentMap->getForeignRelationships();
+        $parentPivotRelations = $parentMap->getPivotRelationships();
+
+        $parentRelation = $this->parentRelationship;
+
+        if (in_array($parentRelation, $parentForeignRelations)
+            && ! in_array($parentRelation, $parentPivotRelations))
+        {
+            $parentObject = $this->parent->getEntityObject();
+
+            // Call Relationship's method on parent map
+            $relationship = $parentMap->$parentRelation($parentObject);
+
+            return $relationship->getForeignKeyValuePair();
+        }
+        else
+        {
+            return [];
+        }
+    }
+
+    /**
+     * Update Pivot records on loaded relationships, by comparing the
+     * values from the Entity Cache to the actual relationship inside
+     * the aggregated entity.
+     * 
+     * @return void
+     */
+    public function updatePivotRecords()
+    {
+        $pivots = $this->entityMap->getPivotRelationships();
+
+        foreach($pivots as $pivot)
+        {
+            if(array_key_exists($pivot, $this->relationships)) $this->updatePivotRelation($pivot);
+        }
+    }
+
+    /**
+     * Update Single pivot relationship
+     * 
+     * @param  string $relation 
+     * @return void
+     */
+    protected function updatePivotRelation($relation)
+    {   
+        $hashes = $this->getEntityHashesFromRelation($relation);
+
+        $cachedAttributes = $this->getCachedRawAttributes();
+
+        if (array_key_exists($relation, $cachedAttributes))
+        {
+            // Compare the two array of hashes to find out existing
+            // pivot records, and the one toibe created.
+            $new = array_diff($hashes, array_keys($cachedAttributes[$relation]));
+            $existing = array_intersect($hashes, array_keys($cachedAttributes[$relation])); 
+        }
+        else
+        {
+            $existing = [];
+            $new = $hashes;
+        }
+
+        if(count($new) > 0)
+        {
+            $relatedCollection = $this->getEntityAttribute($relation);
+            $pivots = $relatedCollection->getSubsetByHashes($new);
+            $this->entityMap->$relation($this->entity->getObject() )->createPivots($pivots);
+        }
+
+        if(count($existing) > 0)
+        {
+            foreach($existing as $pivotHash)
+            {
+                $this->updatePivotIfDirty($pivotHash, $relation);
+            }
+        }
+    }
+
+    /**
+     * Compare existing pivot record in cache and update it 
+     * if the pivot attributes are dirty
+     * 
+     * @param  string $pivotHash 
+     * @param  string $relation  
+     * @return void
+     */
+    protected function updatePivotIfDirty($pivotHash, $relation)
+    {
+        $aggregate = $this->getRelatedAggregateFromHash($pivotHas, $relation);
+
+        if($aggregate->hasAttribute('pivot'))
+        {
+            $pivotAttribute = $aggregate->getEntityAttribute($pivot);
+            $cachedPivot = $this->getPivotAttributesFromCache($pivotHash, $relation);
+
+            
+        }
+    }
+
+
+    /**
+     * 
+     * @param  string $pivotHash 
+     * @param  string $relation  
+     * @return array
+     */
+    protected function getPivotAttributesFromCache($pivotHash, $relation)
+    {
+        $cachedAttributes = $this->getCachedRawAttributes();
+
+        $cachedRelations = $cachedAttributes[$relation];
+
+        foreach($cachedRelations as $cachedRelation)
+        {
+            if($cachedRelation == $pivotHash)
+            {
+                return $cachedRelation->getPivotAttributes();
+            }
+        }
+
+    }
+
+    /**
+     * 
+     * @param  [type] $hash [description]
+     * @return [type]       [description]
+     */
+    protected function getRelatedAggregateFromHash($hash, $relation)
+    {
+        foreach($this->relationships[$relation] as $aggregate)
+        {
+            if ($aggregate->getEntityHash() == $hash)
+            {
+                return $aggregate;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return an array of Entity Hashes from a specific relation
+     * 
+     * @param  string $relation 
+     * @return array
+     */
+    protected function getEntityHashesFromRelation($relation)
+    {
+        return array_map(function($aggregate) {
+            return $aggregate->getEntityHash();
+        }, $this->relationships[$relation]);
+    }
+
+    /**
+     * Get 
+     * @return [type] [description]
+     */
+    protected function isActualRelationships($relation)
+    {
+        return array_key_exists($relation, $this->relationships);
+    }
+
+    /**
+     * Return cache instance for the current entity type
+     * 
+     * @return \Analogue\ORM\System\EntityCache
+     */
+    protected function getCache()
+    {
+        return $this->mapper->getEntityCache();
+    }
+
+    /**
+     * Get Only Raw Entiy's attributes which have been modified
+     * since last query
+     * 
+     * @return array
+     */
+    public function getDirtyRawAttributes()
+    {
+        $attributes = $this->getRawAttributes();
+        $cachedAttributes = $this->getCachedRawAttributes(array_keys($attributes));
+
+        $dirty = [];
+
+        foreach($attributes as $key => $value)
+        {
+            if ($this->isRelation($key) || $key == 'pivot') continue;
+
+            if ( ! array_key_exists($key, $cachedAttributes) && ! $value instanceof Pivot)
+            {
+                $dirty[$key] = $value;
+            }
+            elseif ($value !== $cachedAttributes[$key] && 
+                ! $this->originalIsNumericallyEquivalent($value, $cachedAttributes[$key]))
+            {
+                $dirty[$key] = $value;
+            }
+        }
+
+        return $dirty;
+    }
+
+    protected function isRelation($key)
+    {
+        return in_array($key, $this->entityMap->getRelationships() );
+    }
+
+    /**
+     * Determine if the new and old values for a given key are numerically equivalent.
+     *
+     * @return boolean
+     */
+    protected function originalIsNumericallyEquivalent($current, $original)
+    {
+        return is_numeric($current) && is_numeric($original) && strcmp((string) $current, (string) $original) === 0;
+    }
+
+    /**
+     * Get the underlying entity object
+     * 
+     * @return mixed
+     */
+    public function getEntityObject()
+    {
+        return $this->wrappedEntity->getObject();
+    }
+
+    /**
+     * Return the Mapper instance for the current Entity Type
+     *
+     * @return \Analogue\ORM\System\Mapper
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * Does the entity already exists in the database ?
+     * 
+     * @return boolean
+     */
+    public function exists()
+    {
+        return $this->getCache()->has($this->getEntityId() );
+    }
+
+    /**
+     * Set the object attribute raw values (hydration)
+     * 
+     * @param array $attributes 
+     */
+    public function setEntityAttributes(array $attributes)
+    {
+        $this->wrappedEntity->setEntityAttributes($attributes);
+    }
+
+    /**
+     * Get the raw object's values.
+     * 
+     * @return array
+     */
+    public function getEntityAttributes()
+    {
+        return $this->wrappedEntity->getEntityAttributes();
+    }
+
+    /**
+     * Set the raw entity attributes
+     * @param string $key  
+     * @param string $value
+     */
+    public function setEntityAttribute($key, $value)
+    {
+        $this->wrappedEntity->setEntityAttribute($key, $value);
+    }
+
+    /**
+     * Return the entity's attribute 
+     * @param  string $key 
+     * @return mixed
+     */
+    public function getEntityAttribute($key)
+    {
+        return $this->wrappedEntity->getEntityAttributes($key);
+    }
+
+    /**
+     * Does the attribute exists on the entity
+     * 
+     * @param  string  $key
+     * @return boolean     
+     */
+    public function hasAttribute($key)
+    {
+        return $this->wrappedEntity->hasAttribute($key);
+    }
+
+}

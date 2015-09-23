@@ -25,7 +25,7 @@ class Delete extends Command {
 
 		if (is_null($id) )
 		{
-			throw new MappingException('Executed a delete command on an entity with a null primary key');
+			throw new MappingException("Executed a delete command on an entity with 'null' as primary key");
 		}
 
 		$this->query->where($keyName, '=', $id)->delete();

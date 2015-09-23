@@ -1,6 +1,6 @@
 <?php namespace Analogue\ORM\System;
 
-use Analogue\ORM\Mappable;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\Exceptions\MappingException;
@@ -44,10 +44,10 @@ class StateChecker {
 		
 	/**
 	 * 
-	 * @param \Analogue\ORM\Mappable $entity 
+	 * @param \Analogue\ORM\System\InternallyMappable $entity 
 	 * @param \Analogue\ORM\System\Mapper $mapper 
 	 */
-	public function __construct(Mappable $entity, Mapper $mapper)
+	public function __construct(InternallyMappable $entity, Mapper $mapper)
 	{
 		$this->entity = $entity;
 		$this->mapper = $mapper;
@@ -148,7 +148,7 @@ class StateChecker {
 	 * @param  Mappable $entity 
 	 * @return boolean
 	 */
-	protected function checkEntityForExistence(Mappable $entity)
+	protected function checkEntityForExistence(InternallyMappable $entity)
 	{
 		$checker = $this->newStateChecker($entity);
 
@@ -221,7 +221,6 @@ class StateChecker {
 		return is_numeric($current) && is_numeric($original) && strcmp((string) $current, (string) $original) === 0;
 	}
 
-
 	/**
 	 * Determine if an entity attribute is a relationship.
 	 * 
@@ -233,5 +232,5 @@ class StateChecker {
 		return in_array($key, $this->entityMap->getRelationships());
 	}
 
-	
+
 }

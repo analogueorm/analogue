@@ -1,6 +1,7 @@
-<?php namespace Analogue\ORM\System;
+<?php namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Manager;
 
 abstract class Proxy implements ProxyInterface{
 
@@ -14,9 +15,9 @@ abstract class Proxy implements ProxyInterface{
 	/**
 	 * Reference to parent entity object
 	 *
-	 * @var Mappable
+	 * @var InternallyMappable
 	 */
-	protected $entity;
+	protected $parentEntity;
 
 	/**
 	 * Lazy loaded relation flag
@@ -26,11 +27,13 @@ abstract class Proxy implements ProxyInterface{
 	protected $loaded = false;
 
 	/**
+	 * @param mixed  $parentEntity 
 	 * @param string $relation 	relationship method handled by the proxy.
 	 */
-	public function __construct(Mappable $parentEntity, $relation)
+	public function __construct($parentEntity, $relation)
 	{
-		$this->entity = $parentEntity;
+		$this->parentEntity = $parentEntity;
+
 		$this->relation = $relation;
 	}
 
@@ -41,7 +44,7 @@ abstract class Proxy implements ProxyInterface{
 	 */
 	public function load()
 	{
-		$entities = $this->query($this->entity, $this->relation)->getResults($this->relation);
+		$entities = $this->query($this->parentEntity, $this->relation)->getResults($this->relation);
 		
 		$this->loaded = true;
 
@@ -61,11 +64,11 @@ abstract class Proxy implements ProxyInterface{
 	/**
 	 * Return the Query Builder on the relation
 	 * 
-	 * @param  Mappable  $entity   
+	 * @param  mixed 	$entity   
 	 * @param  string    $relation 
 	 * @return Query
 	 */
-	protected function query(Mappable $entity, $relation)
+	protected function query($entity, $relation)
 	{
 		$entityMap = $this->getMapper($entity)->getEntityMap();
 
@@ -75,10 +78,10 @@ abstract class Proxy implements ProxyInterface{
 	/**
 	 * Get the mapper instance for the entity
 	 * 
-	 * @param  Mappable $entity 
+	 * @param  mixed $entity 
 	 * @return \Analogue\ORM\System\Mapper
 	 */
-	protected function getMapper(Mappable $entity)
+	protected function getMapper($entity)
 	{
 		return Manager::getMapper($entity);
 	}

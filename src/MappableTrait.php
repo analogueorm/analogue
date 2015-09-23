@@ -1,7 +1,5 @@
 <?php namespace Analogue\ORM;
 
-use Analogue\ORM\System\ProxyInterface;
-
 /**
  * Share behaviour of Entities/ValueObjects and allow
  * implementing mapping for custom classes 

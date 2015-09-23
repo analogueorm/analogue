@@ -1,9 +1,12 @@
 <?php namespace Analogue\ORM\System;
 
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\Proxies\EntityProxy;
+use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
- * This class Build a mappable object from a result set.
+ * This class builds an Entity object from a result set.
  */
 class EntityBuilder {
 
@@ -34,6 +37,12 @@ class EntityBuilder {
      */
     protected $lazyLoads;
 
+    /**
+     * Entity Wrapper Factory
+     * @var \Analogue\ORM\System\Wrappers\Factory
+     */
+    protected $factory;
+
     public function __construct(Mapper $mapper, array $eagerLoads)
     {
         $this->mapper = $mapper;
@@ -45,19 +54,23 @@ class EntityBuilder {
         $this->lazyLoads = $this->prepareLazyLoading();
 
         $this->entityMap = $mapper->getEntityMap();
+
+        $this->factory = new Factory;
     }
 
     /**
-     * Build the Entity(ies)
+     * Convert a result set into an array of entities
      * 
      * @param  array  $results 
-     * @return Mappable|EntityCollection
+     * 
+     * @return array
      */
     public function build(array $results)
     {
         $entities = array();
 
-        $prototype = $this->mapper->newInstance();
+        //$prototype = $this->getWrapperPrototype();
+        //$prototype = $this->mapper->newInstance();
 
         $keyName = $this->entityMap->getKeyName();
 
@@ -65,7 +78,8 @@ class EntityBuilder {
 
         foreach($results as $result)
         {
-            $instance = clone $prototype;
+            //$instance = clone $prototype;
+            $instance = $this->getWrapperInstance();
 
             $resultArray = (array) $result;
 
@@ -83,12 +97,23 @@ class EntityBuilder {
                 $instance->setEntityAttributes($resultArray + $proxies);
             }
 
-            $entities[] = $instance;
+            // Directly Unwrap the entity now that it has been hydrated
+            $entities[] = $instance->getObject();
         }
 
         $this->mapper->getEntityCache()->add($tmpCache);
 
         return $entities;
+    }
+
+    /**
+     * Get the correct wrapper prototype corresponding to the object type
+     * 
+     * @return mixed
+     */
+    protected function getWrapperInstance()
+    {
+        return $this->factory->make( $this->mapper->newInstance() );
     }
 
     /**
@@ -142,20 +167,9 @@ class EntityBuilder {
      */
     protected function prepareLazyLoading()
     {
-        $entityMap = $this->entityMap;
-
-        if(! $entityMap->relationsParsed() )
-        {
-            $initializer = new MapInitializer($entityMap);
-            $initializer->splitRelationsTypes($this->mapper->newInstance());
-        }
-
-        $singleRelations = $entityMap->getSingleRelationships();
-        $manyRelations = $entityMap->getManyRelationships();
-
-        $allRelations = array_merge($manyRelations,$singleRelations);
+        $relations = $this->entityMap->getRelationships();
        
-        return array_diff($allRelations, $this->eagerLoads);
+        return array_diff($relations, $this->eagerLoads);
     }
 
     /**
@@ -165,7 +179,7 @@ class EntityBuilder {
      * 
      * @return array           
      */
-    protected function getLazyLoadingProxies(Mappable $entity)
+    protected function getLazyLoadingProxies(InternallyMappable $entity)
     {
         $proxies = [];
 
@@ -176,11 +190,11 @@ class EntityBuilder {
         {
             if (in_array($relation, $singleRelations))
             {
-                $proxies[$relation] = new EntityProxy($entity, $relation);
+                $proxies[$relation] = new EntityProxy($entity->getObject(), $relation);
             }
             if (in_array($relation, $manyRelations))
             {   
-                $proxies[$relation] = new CollectionProxy($entity, $relation);
+                $proxies[$relation] = new CollectionProxy($entity->getObject(), $relation);
             }
         }
         

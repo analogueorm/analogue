@@ -7,6 +7,7 @@ use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Database\Query\Expression;
 
 abstract class Relationship {
@@ -28,7 +29,7 @@ abstract class Relationship {
 	/**
 	 * The parent entity proxy instance.
 	 *
-	 * @var object
+	 * @var \Analogue\ORM\System\InternallyMappable
 	 */
 	protected $parent;
 
@@ -80,6 +81,13 @@ abstract class Relationship {
 	protected static $constraints = true;
 
 	/**
+	 * Wrapper factory 
+	 * 
+	 * @var \Analogue\ORM\System\Wrappers\Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Create a new relation instance.
 	 *
 	 * @param  \Analogue\ORM\System\Mapper  $mapper
@@ -92,7 +100,9 @@ abstract class Relationship {
 
 		$this->query = $mapper->getQuery();
 
-		$this->parent = $parent;
+		$this->factory = new Factory;
+
+		$this->parent = $this->factory->make($parent);
 
 		$this->parentMapper = $mapper->getManager()->getMapper($parent);
 

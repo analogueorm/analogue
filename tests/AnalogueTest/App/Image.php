@@ -7,6 +7,5 @@ class Image extends Entity {
     public function __construct($path)
     {
         $this->path = $path;
-        
     }
 }

@@ -1,6 +1,7 @@
 <?php namespace Analogue\ORM;
 
 use Exception;
+use ReflectionClass;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\Relationships\BelongsTo;
@@ -46,6 +47,14 @@ class EntityMap {
 	protected $primaryKey = 'id';
 
 	/**
+	 * Array containing a list of class attributes. Mandatory if the
+	 * mapped entity is a Plain PHP Object.
+	 *
+	 * @var array
+	 */
+	protected $attributes = [];
+
+	/**
 	 * The Custom Domain Class to use with this mapping
 	 * 
 	 * @var string
@@ -65,28 +74,42 @@ class EntityMap {
 	 * 
 	 * @var array
 	 */
-	private $relationships = null;
+	private $relationships = [];
 
 	/**
 	 * Relationships that should be treated as collection.
 	 * 
 	 * @var array
 	 */
-	private $manyRelations = null;
+	private $manyRelations = [];
 
 	/**
 	 * Relationships that should be treated as single entity.
 	 * 
 	 * @var array
 	 */
-	private $singleRelations = null;
+	private $singleRelations = [];
 
 	/**
-	 * Runtime added relationships
+	 * Relationships for which the key is stored in the Entity itself
 	 * 
 	 * @var array
 	 */
-	protected $dynamicRelationships = [];
+	private $localRelations = [];
+
+	/**
+	 * Relationships for which the key is stored in the Related Entity
+	 * 
+	 * @var array
+	 */
+	private $foreignRelations = [];
+
+	/**
+	 * Dynamic relationships
+	 * 
+	 * @var array
+	 */
+	private $dynamicRelationships = [];
 
 	/**
 	 * The number of models to return for pagination.
@@ -157,7 +180,46 @@ class EntityMap {
 	 *
 	 * @var array
 	 */
-	public static $manyMethods = array('belongsToMany', 'morphToMany', 'morphedByMany');
+	protected static $manyMethods = ['belongsToMany', 'morphToMany', 'morphedByMany'];
+
+	/**
+	 * The 'Many' relationships classes, which related Entity attribute should be 
+	 * an array/entityCollection
+	 * 
+	 * @var array
+	 */
+	protected static $manyClasses = ['BelongsToMany', 'HasMany', 'HasManyThrough', 
+		'MorphMany', 'MorphToMany'];
+
+	/**
+	 * The 'Single' relationships classes, which related Entity attribute should be
+	 * another Entity.
+	 * 
+	 * @var array
+	 */
+	protected static $singleClasses = ['BelongsTo', 'HasOne', 'MorphOne','MorphTo'];
+
+	/**
+	 * Relationships with a pivot record
+	 * 
+	 * @var array
+	 */
+	protected static $pivotClasses = ['BelongsToMany', 'MorphToMany'];
+
+	/**
+	 * Relationships on which key is stored in the Entity itself
+	 * 
+	 * @var array
+	 */
+	protected static $localClasses = ['BelongsTo', 'MorphTo'];
+
+	/**
+	 * Relationships on which key is stored in the related Entity record or in a pivot record
+	 * 
+	 * @var array
+	 */
+	protected static $foreignClasses = ['BelongsToMany', 'HasMany', 'HasManyThrough', 
+		'MorphMany', 'MorphToMany', 'HasOne', 'MorphOne'];
 
 	/**
 	 * The date format to use with the current database connection
@@ -181,6 +243,44 @@ class EntityMap {
 	public function setManager(Manager $manager)
 	{
 		$this->manager = $manager;
+	}
+
+	/**
+	 * Return Domain class attributes, useful when mapping to a Plain PHP Object
+	 * 
+	 * @return array
+	 */
+	public function getAttributes()
+	{
+		return $this->attributes;
+	}
+
+	/**
+	 * Set the domain class attributes
+	 * 
+	 * @param array $attributeNames 
+	 */
+	public function setAttributes(array $attributeNames)
+	{
+		$this->attributes = $attributeNames;
+	}
+
+	/**
+	 * Get all the attribute names for the class, including relationships, embeddables and primary key.
+	 * 
+	 * @return [type] [description]
+	 */
+	public function getCompiledAttributes()
+	{
+		$key = $this->getKeyName();
+		
+		$embeddables = array_keys( $this->getEmbeddables() );
+
+		$relationships = $this->getRelationships();
+
+		$attributes = $this->getAttributes();
+
+		return array_merge([$key], $embeddables, $relationships, $attributes);
 	}
 
 	/**
@@ -336,27 +436,6 @@ class EntityMap {
 	}
 
 	/**
-	 * Set the relationships method that are used on 
-	 * the entity map
-	 * 
-	 * @return void
-	 */
-	public function setRelationships($relationships)
-	{
-		$this->relationships = $relationships;
-	}
-
-	/**
-	 * Set Relationships of the Entity type
-	 * 
-	 * @return array
-	 */
-	public function setSingleRelationships(array $singleRelations)
-	{
-		$this->singleRelations = $singleRelations;
-	}
-
-	/**
 	 * Relationships of the Entity type
 	 * 
 	 * @return array
@@ -364,16 +443,6 @@ class EntityMap {
 	public function getSingleRelationships()
 	{
 		return $this->singleRelations;
-	}
-
-	/**
-	 * Set Relationships of type Collection
-	 * 
-	 * @param array $manyRelations 
-	 */
-	public function setManyRelationships(array $manyRelations)
-	{
-		$this->manyRelations = $manyRelations;
 	}
 
 	/**
@@ -387,17 +456,38 @@ class EntityMap {
 	}
 
 	/**
-	 * Are the relations method been parsed?
+	 * Relationships with foreign key in the mapped entity record.
 	 * 
-	 * @return boolean
+	 * @return array
 	 */
-	public function relationsParsed()
+	public function getLocalRelationships()
 	{
-		return ! is_null($this->singleRelations);
+		return $this->localRelations;
+	}	
+
+	/**
+	 * Relationships with foreign key in the related Entity record
+	 * 
+	 * @return array
+	 */
+	public function getForeignRelationships()
+	{
+		return $this->foreignRelations;
+	}	
+
+	/**
+	 * Relationships which keys are stored in a pivot record
+	 * 
+	 * @return array
+	 */
+	public function getPivotRelationships()
+	{
+		return $this->pivotRelations;
 	}
 
 	/**
-	 * Add a Relationship method at runtime.
+	 * Add a Dynamic Relationship method at runtime. This has to be done
+	 * by hooking the 'initializing' event, before entityMap is initialized.
 	 * 
 	 * @param string  $name         Relation name
 	 * @param Closure $relationship 
@@ -664,7 +754,7 @@ class EntityMap {
 			$relatedMapper = $this->manager->mapper($class);
 
 			$foreignKey = $relatedMapper->getEntityMap()->getKeyName();
-
+			
 			return new MorphTo(
 				$mapper, $entity, $id, $foreignKey, $type, $name
 			);
@@ -919,6 +1009,138 @@ class EntityMap {
 	public function newCollection(array $entities = array())
 	{
 		return new EntityCollection($entities, $this);
+	}
+
+	/**
+	 * Process EntityMap parsing at initialization time
+	 * 
+	 * @return void
+	 */
+	public function initialize()
+	{
+		$userMethods = $this->getCustomMethods();
+
+		// Parse EntityMap for method based relationship
+		if(count($userMethods) > 0)
+		{
+			$this->relationships = $this->parseMethodsForRelationship($userMethods);
+		}
+
+		// Parse EntityMap for dynamic relationships
+		if(count($this->dynamicRelationships) > 0)
+		{
+			$this->relationships = $this->relationships + $this->getDynamicRelationships();
+		}
+	}
+
+	/**
+	 * Parse every relationships on the EntityMap and sort
+	 * them by type. 
+	 * 
+	 * @return void
+	 */
+	public function boot()
+	{
+		if(count($this->relationships > 0))
+		{
+			$this->sortRelationshipsByType();
+		}
+	}
+
+	/**
+	 * Get Methods that has been added in the child class.
+	 * 
+	 * @return array
+	 */
+	protected function getCustomMethods()
+	{
+		$mapMethods = get_class_methods($this);
+
+		$parentsMethods = get_class_methods('Analogue\ORM\EntityMap');
+		
+		return array_diff($mapMethods, $parentsMethods);
+	}
+
+	/**
+	 * Parse user's class methods for relationships 
+	 * 
+	 * @param  array  $customMethods 
+	 * @return 
+	 */
+	protected function parseMethodsForRelationship(array $customMethods)
+	{
+		$relationships = [];
+
+		$class = new ReflectionClass(get_class($this));
+
+		// Get the mapped Entity class, as we will detect relationships
+		// methods by testing that the first argument is type-hinted to
+		// the same class as the mapped Entity.
+		$entityClass = $this->getClass();
+
+		foreach($customMethods as $methodName)
+		{
+			$method = $class->getMethod($methodName);
+
+			if($method->getNumberOfParameters() > 0) 
+			{
+				$params = $method->getParameters();
+
+				if ($params[0]->getClass()->name == $entityClass)
+				{
+					$relationships[] = $methodName;
+				}
+			}
+		}
+
+		return $relationships;
+	}
+
+	/**
+	 * Sort Relationships methods by type
+	 * 
+	 * @return void
+	 */
+	protected function sortRelationshipsByType()
+	{
+		$entityClass = $this->getClass();
+
+		// Instantiate a dummy entity which we will pass to relationship methods.
+		$entity = unserialize(sprintf('O:%d:"%s":0:{}', strlen($entityClass), $entityClass));
+		
+		foreach($this->relationships as $relation)
+		{
+			$relationObject = $this->$relation($entity);
+
+			$class = class_basename(get_class($relationObject));
+
+			if (in_array($class, static::$singleClasses)) 
+			{
+				$this->singleRelations[] = $relation;
+			}
+
+			if (in_array($class, static::$manyClasses)) 
+			{
+				$this->manyRelations[] = $relation;
+			}
+
+			if (in_array($class, static::$localClasses)) 
+			{
+				$this->localRelations[] = $relation;
+			}
+
+			if (in_array($class, static::$foreignClasses)) 
+			{
+				$this->foreignRelations[] = $relation;
+			}
+
+			if (in_array($class, static::$pivotClasses)) 
+			{
+				$this->pivotRelations[] = $relation;
+			}
+
+		}
+		
 	}
 
 	/**

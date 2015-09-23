@@ -1,4 +1,4 @@
-<?php namespace Analogue\ORM\System;
+<?php namespace Analogue\ORM\System\Proxies;
 
 use ArrayAccess;
 use Countable;
@@ -6,8 +6,8 @@ use JsonSerializable;
 use IteratorAggregate;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
-use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Mappable;
 
 class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable{
 
@@ -29,10 +29,11 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 	public function __construct(Mappable $parentEntity, $relation)
 	{
 		$this->addedItems = new EntityCollection;
+
 		parent::__construct($parentEntity, $relation);
 	}
 
-	public function add(Mappable $entity)
+	public function add($entity)
 	{
 		if($this->isLoaded() )
 		{

@@ -1,6 +1,5 @@
 <?php namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
@@ -45,7 +44,7 @@ class BelongsTo extends Relationship {
 	 * @param  string  $otherKey
 	 * @param  string  $relation
 	 */
-	public function __construct(Mapper $mapper, Mappable $parent, $foreignKey, $otherKey, $relation)
+	public function __construct(Mapper $mapper, $parent, $foreignKey, $otherKey, $relation)
 	{
 		$this->otherKey = $otherKey;
 		$this->relation = $relation;
@@ -223,7 +222,15 @@ class BelongsTo extends Relationship {
 	 */
 	public function associate($entity)
 	{
-		$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
+		// The Mapper will retrieve this association within the object model, we won't be using
+		// the foreign key attribute inside the parent Entity.
+		// 
+		//$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
+		//
+		// Instead, we'll just add the object to the Entity's attribute
+		
+		$this->parent->setEntityAttribute($this->relation, $entity);
+
 	}
 
 	/**
@@ -233,7 +240,12 @@ class BelongsTo extends Relationship {
 	 */
 	public function dissociate()
 	{
-		$this->parent->setEntityAttribute($this->foreignKey, null);
+		// The Mapper will retrieve this association within the object model, we won't be using
+		// the foreign key attribute inside the parent Entity.
+		// 
+		//$this->parent->setEntityAttribute($this->foreignKey, null);
+				
+		$this->parent->setEntityAttribute($this->relation, null);
 	}
 
 	/**
@@ -244,6 +256,31 @@ class BelongsTo extends Relationship {
 	public function getForeignKey()
 	{
 		return $this->foreignKey;
+	}
+
+	/**
+	 * Get the foreign key value pair for a related object
+	 *
+	 * @var mixed $related 
+	 *
+	 * @return array
+	 */
+	public function getForeignKeyValuePair($related)
+	{
+		$foreignKey = $this->getForeignKey();
+
+		if ($related)
+		{
+			$wrapper = $this->factory->make($related);
+
+			$relatedKey = $this->relatedMap->getKeyName();
+
+			return [$foreignKey => $wrapper->getEntityAttribute($relatedKey)];
+		}
+		else
+		{
+			return [$foreignKey => null];
+		}
 	}
 
 	/**

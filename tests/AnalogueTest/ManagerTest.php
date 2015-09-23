@@ -30,6 +30,12 @@ class ManagerTest extends PHPUnit_Framework_TestCase {
         $analogue->register('AnalogueTest\App\NonExisting');
     }
 
+    public function testAutoDetectEntityMap()
+    {
+        $mapper = get_mapper('AnalogueTest\App\User');
+        $this->assertEquals('AnalogueTest\App\UserMap', get_class($mapper->getEntityMap()));
+    }
+
 
 
 }

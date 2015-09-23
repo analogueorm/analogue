@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\Plugins\AnaloguePlugin;
+use Analogue\ORM\System\InternallyMappable;
 
 class SoftDeletesPlugin extends AnaloguePlugin {
 
@@ -46,7 +47,7 @@ class SoftDeletesPlugin extends AnaloguePlugin {
 		$host = $this;
 
 		// Register 'deleting' events
-		$mapper->registerEvent('deleting', function($entity) use($entityMap, $host) {
+		$mapper->registerEvent('deleting', function(InternallyMappable $entity) use($entityMap, $host) {
 					
 			$deletedAtField = $entityMap->getQualifiedDeletedAtColumn();
 			
@@ -57,10 +58,13 @@ class SoftDeletesPlugin extends AnaloguePlugin {
 			else
 			{
 				$time= new Carbon;
-				$entity->$deletedAtField = $time;
+
+				$entity->setEntityAttribute($deletedAtField, $time);
 
 				// Launch an update instead
-				$host->manager->mapper(get_class($entity))->store($entity);
+				$plainObject = $entity->getObject();
+
+				$host->manager->mapper(get_class($plainObject))->store($plainObject);
 
 				return false;
 			}

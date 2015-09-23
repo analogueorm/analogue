@@ -56,7 +56,13 @@ abstract class HasOneOrMany extends Relationship {
 
 	public function attachOne($entity)
 	{
-		$entity->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
+		$wrapper = $this->factory->make($entity);
+
+		// Ok, we need to guess the inverse of the relation from there. 
+		// Let's assume the inverse of the relation method is the name of 
+		// the entity. 
+
+		$wrapper->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
 	}
 
 	public function attachMany(EntityCollection $entities)
@@ -267,4 +273,13 @@ abstract class HasOneOrMany extends Relationship {
 		return $this->parentMap->getTable().'.'.$this->localKey;
 	}
 
+	/**
+	 * Get the foreign key as value pair for this relation
+	 * 
+	 * @return array
+	 */
+	public function getForeignKeyValuePair()
+	{
+		return [$this->foreignKey => $this->getParentKey()];
+	}
 }

@@ -1,10 +1,10 @@
 <?php namespace Analogue\ORM\Commands;
 
 use Carbon\Carbon;
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\StateChecker;
 use Analogue\ORM\Drivers\QueryAdapter;
+use Analogue\ORM\System\Wrappers\Factory;
 
 abstract class Command {
 
@@ -43,13 +43,23 @@ abstract class Command {
 	 */
 	protected $query;
 
-	public function __construct(Mappable $entity, Mapper $mapper, QueryAdapter $query)
+	/**
+	 * Entity Wrapper factory 
+	 * 
+	 * @var \Analogue\ORM\System\Wrappers\Factory
+	 */
+	protected $wrapperFactory;
+
+
+	public function __construct($entity, Mapper $mapper, QueryAdapter $query)
 	{
-		$this->entity = $entity;
+		$this->wrapperFactory = new Factory;
+
+		$this->entity = $this->wrapperFactory->make($entity);
 
 		$this->mapper = $mapper;
 
-		$this->entityState = new StateChecker($entity, $mapper);
+		$this->entityState = new StateChecker($this->entity, $mapper);
 		
 		$this->entityMap = $mapper->getEntityMap();
 
