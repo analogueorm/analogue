@@ -809,7 +809,7 @@ class EntityMap {
 
 		$otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getForeignKey();
 
-		$table = $table ?: str_plural($name);
+		$table = $table ?: $this->joiningTable(str_plural($name));
 
 		return new MorphToMany(
 			$relatedMapper, $entity, $name, $table, $foreignKey,
@@ -871,7 +871,7 @@ class EntityMap {
 		// just sort the models and join them together to get the table name.
 		$base = $this->getTable();
 
-		$related = $relatedMap->getTable();
+		$related = is_string($relatedMap) ? $relatedMap : $relatedMap->getTable();
 
 		$tables = array($related, $base);
 
