@@ -260,6 +260,28 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $uuid = $um->where('uuid', '=', 'test')->first();
         $this->assertEquals('test', $uuid->uuid);
         $this->assertEquals('testlabel', $uuid->label);
+    }
 
+    public function testDetachMissingRelationships()
+    {
+        $user = new User('testmissing', new Role('missingRole'));
+        $userMapper = get_mapper($user);
+        $avatar1 = new Avatar('avatar1', $user);
+        $avatar2 = new Avatar('avatar2', $user);
+        $user->avatars = [$avatar1, $avatar2];
+        $userMapper->store($user);
+
+        $userId = $user->id;
+        $avatar1id = $avatar1->id;
+        $avatar2id = $avatar2->id;
+        $this->assertGreaterThan(0, $avatar1id);
+        $this->assertGreaterThan(0, $avatar2id);
+
+        $user->avatars = null;
+        $userMapper->store($user);
+
+        $user = $userMapper->with('avatars')->whereId($user->id)->first();
+
+        $this->assertEquals(0, $user->avatars->count());
     }
 }

@@ -1,14 +1,16 @@
 <?php
+
 namespace Analogue\ORM\System;
 
 use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\Drivers\Manager as DriverManager;
+use Analogue\ORM\System\Wrappers\Wrapper;
+use Illuminate\Contracts\Events\Dispatcher;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Plugins\AnaloguePluginInterface;
-use Illuminate\Contracts\Events\Dispatcher;
+use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
  * This class keeps track of instanciated mappers, and entity <-> entityMap associations
@@ -104,6 +106,11 @@ class Manager {
 	 */
 	public function mapper($entity, $entityMap = null)
 	{
+		if($entity instanceof Wrapper)
+		{
+			throw new MappingException('Tried to instantiate mapper on wrapped Entity');
+		}
+
 		if(! is_string($entity)) $entity = get_class($entity);
 
 		// Return existing mapper instance if exists.

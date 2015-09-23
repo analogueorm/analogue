@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\Commands;
+<?php 
+
+namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
@@ -17,28 +19,8 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  * Persist entities & relationships to the
  * database.
  */
-class Store 
+class Store extends Command
 {
-	/**
-	 * Aggregated Entity
-	 * 
-	 * @var Analogue\ORM\System\Aggregate
-	 */
-	protected $aggregate;
-
-	/**
-	 * Query Builder
-	 * 
-	 * @var Analogue\ORM\Drivers\QueryAdapter
-	 */
-	protected $query;
-
-	public function __construct(Aggregate $aggregate, QueryAdapter $query)
-	{
-		$this->aggregate = $aggregate;
-
-		$this->query = $query->from($aggregate->getEntityMap()->getTable());
-	}
 
 	/**
 	 * Persist the entity in the database
@@ -152,23 +134,30 @@ class Store
 	 */
 	protected function postStoreProcess()
 	{
+		$aggregate = $this->aggregate;
+
 		// Create any related object that doesn't exist in the database.
-		$foreignRelationships = $this->aggregate->getEntityMap()->getForeignRelationships();
+		$foreignRelationships = $aggregate->getEntityMap()->getForeignRelationships();
 		$this->createRelatedEntities($foreignRelationships);
 
 		// Update any pivot tables that has been modified.
-		$this->aggregate->updatePivotRecords();
+		$aggregate->updatePivotRecords();
 
-		// Update any dirty relationship
-		$this->updateDirtyRelated();
+		// Update any dirty relationship. This include relationships that already exists, have 
+		// dirty attributes / newly created related entities / dirty related entities.
+		$dirtyRelatedAggregates = $aggregate->getDirtyRelationships();
 
-		if(count($this->entityMap->getRelationships()) >0)
+		foreach($dirtyRelatedAggregates as $related)
 		{
-			$this->setProxies($this->entity);
+			$this->createStoreCommand($related)->execute();
 		}
 
+		// This should be move to the wrapper class
+		// so it's the same code for the entity builder
+		$aggregate->setProxies();
+		
 		// Update Entity Cache
-		$this->aggregate->getMapper()->getEntityCache()->refresh($this->entity);
+		$aggregate->getMapper()->getEntityCache()->refresh($aggregate);
 	}
 
 	/**
@@ -422,22 +411,7 @@ class Store
 		}
 	}
 
-	/*/**
-	 * Get a stateChecker object instance
-	 * 
-	 * @param  mixed $entity 
-	 * @return \Analogue\ORM\System\StateChecker
-	 */
-	/*protected function getStateChecker($entity)
-	{
-		$mapper = Manager::getMapper($entity);
 
-		$wrappedEntity = $this->wrapperFactory->make($entity);
-
-		$checker = new StateChecker($wrappedEntity, $mapper);
-
-		return $checker;
-	}*/
 
 	/**
 	 * Execute a store command on a dirty entity
@@ -485,41 +459,6 @@ class Store
 
 			$aggregate->setEntityAttribute($keyName, $id);
 		}
-	}
-
-	/**
-	 * Set the proxies attribute on a freshly stored entity
-	 * 
-	 * @param InternallyMappable $entity
-	 */
-	protected function setProxies(InternallyMappable $entity)
-	{
-		$attributes = $entity->getEntityAttributes();
-		$singleRelations = $this->entityMap->getSingleRelationships();
-		$manyRelations = $this->entityMap->getManyRelationships();
-
-		$proxies = [];
-
-		foreach($this->entityMap->getRelationships() as $relation)
-		{
-			if(! array_key_exists($relation, $attributes) || is_null($attributes[$relation]))
-			{
-				if (in_array($relation, $singleRelations))
-				{
-					$proxies[$relation] = new EntityProxy($entity->getObject(), $relation);
-				}
-				if (in_array($relation, $manyRelations))
-				{	
-					$proxies[$relation] = new CollectionProxy($entity->getObject(), $relation);
-				}
-			}
-		}
-
-		foreach($proxies as $key => $value)
-		{	
-			$entity->setEntityAttribute($key, $value);
-		}
-
 	}
 
 	/**

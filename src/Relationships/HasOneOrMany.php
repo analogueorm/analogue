@@ -280,6 +280,6 @@ abstract class HasOneOrMany extends Relationship {
 	 */
 	public function getForeignKeyValuePair()
 	{
-		return [$this->foreignKey => $this->getParentKey()];
+		return [$this->getPlainForeignKey() => $this->getParentKey()];
 	}
 }

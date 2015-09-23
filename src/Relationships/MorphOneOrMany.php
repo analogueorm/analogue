@@ -123,6 +123,9 @@ abstract class MorphOneOrMany extends HasOneOrMany {
 	 */
 	public function getForeignKeyValuePair()
 	{
-		return [$this->foreignKey => $this->getParentKey(), $this->morphType => $this->morphClass];
+		return [
+			$this->getPlainForeignKey() => $this->getParentKey(), 
+			$this->getPlainMorphType() => $this->morphClass,
+		];
 	}
 }

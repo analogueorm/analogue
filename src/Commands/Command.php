@@ -1,40 +1,18 @@
-<?php namespace Analogue\ORM\Commands;
+<?php 
 
-use Carbon\Carbon;
-use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\StateChecker;
+namespace Analogue\ORM\Commands;
+
+use Analogue\ORM\System\Aggregate;
 use Analogue\ORM\Drivers\QueryAdapter;
-use Analogue\ORM\System\Wrappers\Factory;
 
 abstract class Command {
 
 	/**
-	 * The entity on which the command is executed
+	 * The aggregated entity on which the command is executed
 	 * 
-	 * @var mixed
+	 * @var \Analogue\ORM\System\Aggregate
 	 */
-	protected $entity;
-
-	/**
-	 * Mapper instance
-	 * 
-	 * @var \Analogue\ORM\System\Mapper
-	 */
-	protected $mapper;
-
-	/**
-	 * Entity Map Instance
-	 * 
-	 * @var \Analogue\ORM\EntityMap
-	 */
-	protected $entityMap;
-
-	/**
-	 * Entity State Instance
-	 * 
-	 * @var \Analogue\ORM\System\StateChecker
-	 */
-	protected $entityState;
+	protected $aggregate;
 
 	/**
 	 * Query Builder instance
@@ -43,27 +21,11 @@ abstract class Command {
 	 */
 	protected $query;
 
-	/**
-	 * Entity Wrapper factory 
-	 * 
-	 * @var \Analogue\ORM\System\Wrappers\Factory
-	 */
-	protected $wrapperFactory;
-
-
-	public function __construct($entity, Mapper $mapper, QueryAdapter $query)
+	public function __construct(Aggregate $aggregate, QueryAdapter $query)
 	{
-		$this->wrapperFactory = new Factory;
+		$this->aggregate = $aggregate;
 
-		$this->entity = $this->wrapperFactory->make($entity);
-
-		$this->mapper = $mapper;
-
-		$this->entityState = new StateChecker($this->entity, $mapper);
-		
-		$this->entityMap = $mapper->getEntityMap();
-
-		$this->query = $query->from($this->entityMap->getTable());
+		$this->query = $query->from($aggregate->getEntityMap()->getTable());
 	}
 
 	abstract public function execute();

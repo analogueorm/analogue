@@ -618,7 +618,7 @@ class BelongsToMany extends Relationship {
 	protected function attacher($key, $value, $attributes, $timed)
 	{
 		list($id, $extra) = $this->getAttachId($key, $value, $attributes);
-
+		
 		// To create the attachment records, we will simply spin through the IDs given
 		// and create a new record to insert for each ID. Each ID may actually be a
 		// key in the array, with extra attributes to be placed in other columns.

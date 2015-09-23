@@ -105,6 +105,13 @@ class EntityMap {
 	private $foreignRelations = [];
 
 	/**
+	 * Relationships which use a pivot record.
+	 * 
+	 * @var array
+	 */
+	private $pivotRelations = [];
+
+	/**
 	 * Dynamic relationships
 	 * 
 	 * @var array

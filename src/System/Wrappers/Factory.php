@@ -13,15 +13,14 @@ class Factory {
      */
     public function make($object)
     {
+        $entityMap = Manager::getMapper($object)->getEntityMap();
+
         if ($object instanceof Mappable) 
         {
-            return new EntityWrapper($object);
+            return new EntityWrapper($object, $entityMap);
         }
         else
         {
-            // We have to retrive the attribute list from the entity map
-            $entityMap = Manager::getMapper($object)->getEntityMap();
-
             return new PlainObjectWrapper($object, $entityMap);
         }
     }

@@ -1,18 +1,23 @@
 <?php namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\Mappable;
+use Analogue\ORM\EntityMap;
 
 /**
  * Simple Wrapper for Mappable objects
  */
 class EntityWrapper extends Wrapper {
    
+    protected $entityMap;
+
     /**
      * @param Mappable $entity 
      */
-    public function __construct(Mappable $entity)
+    public function __construct(Mappable $entity, EntityMap $entityMap)
     {
         $this->entity = $entity;
+
+        $this->entityMap = $entityMap;
     }  
 
      /**
