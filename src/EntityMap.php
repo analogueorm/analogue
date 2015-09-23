@@ -573,7 +573,7 @@ class EntityMap {
 	 * @param  string  $localKey
 	 * @return \Analogue\ORM\Relationships\MorphOne
 	 */
-	public function morphOne($entity, $related, $name, $type = null, $id = null, $localKey = null)
+	public function morphOne($entity, $related, $name = 'entity', $type = null, $id = null, $localKey = null)
 	{
 		list($type, $id) = $this->getMorphs($name, $type, $id);
 
@@ -727,7 +727,7 @@ class EntityMap {
 	 * @param  string  $localKey
 	 * @return \Analogue\ORM\Relationships\MorphMany
 	 */
-	public function morphMany($entity, $related, $name, $type = null, $id = null, $localKey = null)
+	public function morphMany($entity, $related, $name = 'entity', $type = null, $id = null, $localKey = null)
 	{
 		// Here we will gather up the morph type and ID for the relationship so that we
 		// can properly query the intermediate table of a relation. Finally, we will
@@ -796,7 +796,7 @@ class EntityMap {
 	 * @param  bool    $inverse
 	 * @return \Analogue\ORM\Relationships\MorphToMany
 	 */
-	public function morphToMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
+	public function morphToMany($entity, $related, $name = 'entity', $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
 	{
 		$caller = $this->getBelongsToManyCaller();
 
@@ -827,7 +827,7 @@ class EntityMap {
 	 * @param  string  $otherKey
 	 * @return \Analogue\ORM\Relationships\MorphToMany
 	 */
-	public function morphedByMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null)
+	public function morphedByMany($entity, $related, $name = 'entity', $table = null, $foreignKey = null, $otherKey = null)
 	{
 		$foreignKey = $foreignKey ?: $this->getForeignKey();
 
