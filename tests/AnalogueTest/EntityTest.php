@@ -83,4 +83,14 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $rm->store($role);
         $role->toArray();
     }
+
+    public function testGetMethodsForNonExistingAttributes()
+    {
+        $user = new User('John', new Role('Admin'));
+        $avatar = new Avatar('Picture', $user);
+        $image = new Image('my-picture.jpg');
+        $avatar->image = $image;
+
+        $this->assertEquals($avatar->path, 'my-picture.jpg');
+    }
 }
