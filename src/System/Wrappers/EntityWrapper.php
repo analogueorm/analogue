@@ -8,19 +8,7 @@ use Analogue\ORM\EntityMap;
  */
 class EntityWrapper extends Wrapper {
    
-    protected $entityMap;
-
     /**
-     * @param Mappable $entity 
-     */
-    public function __construct(Mappable $entity, EntityMap $entityMap)
-    {
-        $this->entity = $entity;
-
-        $this->entityMap = $entityMap;
-    }  
-
-     /**
      * Method used by the mapper to set the object 
      * attribute raw values (hydration)
      * 

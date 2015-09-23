@@ -406,7 +406,7 @@ abstract class Relationship {
 	{
 		$class = get_class($entity);
 		
-		$keyName = $this->relatedMapper->getManager()->mapper($class)->getEntityMap()->getKeyName();
+		$keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
 		
 		$hash = $class.'.'.$entity->getEntityAttribute($keyName);
 

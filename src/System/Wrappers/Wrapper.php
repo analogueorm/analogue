@@ -14,7 +14,25 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 abstract Class Wrapper implements InternallyMappable {
   
+    /**
+     * Original Entity Object
+     * 
+     * @var mixed
+     */
     protected $entity;
+
+    /**
+     * Corresponding EntityMap
+     * 
+     * @var \Analogue\ORM\EntityMap
+     */
+    protected $entityMap;
+
+    public function __construct($entity, $entityMap)
+    {
+        $this->entity = $entity;
+        $this->entityMap = $entityMap;
+    }
 
     /**
      * Return the wrapped entity class

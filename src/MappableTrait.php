@@ -45,10 +45,10 @@ trait MappableTrait {
      *
      * @return void
      */
-    public function setEntityAttribute($key, $value)
+    /*public function setEntityAttribute($key, $value)
     {
         $this->attributes[$key] = $value;
-    }
+    }*/
 
     /**
      * Method used by the mapper to get single
@@ -57,13 +57,13 @@ trait MappableTrait {
      * @param  string $key 
      * @return mixed|null
      */
-    public function getEntityAttribute($key)
+    /*public function getEntityAttribute($key)
     {
         if(array_key_exists($key, $this->attributes))
         {
             return $this->attributes[$key];
         }
         else return null;
-    }
+    }*/
    
 }

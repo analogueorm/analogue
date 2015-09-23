@@ -21,13 +21,13 @@ interface Mappable {
      * @param string $key  
      * @param string $value
      */
-    public function setEntityAttribute($key, $value);
+    //public function setEntityAttribute($key, $value);
 
     /**
      * Return the entity's attribute 
      * @param  string $key 
      * @return mixed
      */
-    public function getEntityAttribute($key);
+    //public function getEntityAttribute($key);
 
 }

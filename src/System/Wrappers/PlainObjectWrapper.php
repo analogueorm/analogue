@@ -35,6 +35,8 @@ class PlainObjectWrapper extends Wrapper {
         $this->reflection = new ReflectionClass($popoEntity);
 
         $this->attributeList = $this->getAttributeList();
+
+        parent::__construct($popoEntity, $entityMap);
     }
 
     /**
