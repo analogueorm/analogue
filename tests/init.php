@@ -36,6 +36,7 @@ function get_analogue()
 
     $analogue->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
     $analogue->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
+    $analogue->registerPlugin('Analogue\ORM\Plugins\CascadingDeletes\CascadingDeletesPlugin');
 
     return $analogue;
 }
