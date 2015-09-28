@@ -58,6 +58,8 @@ class MapInitializer {
 
 			$params = $method->getParameters();
 
+			if($params[0]->getClass() == null) continue;
+
 			if ($params[0]->getClass()->implementsInterface('Analogue\ORM\Mappable'))
 			{
 				$relationships[] = $methodName;
