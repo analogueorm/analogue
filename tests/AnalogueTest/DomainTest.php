@@ -223,8 +223,11 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $role->permissions->add(new Permission('two_perm'));
         $rm->store($role);
         $id = $role->id;
+
         $q = $rm->find($id);
+
         $this->assertEquals(2,$role->permissions->count());
+
         // Replace
         $q->permissions = new EntityCollection([new Permission('three_perm')]);
         $rm->store($q);
@@ -283,5 +286,26 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $user = $userMapper->with('avatars')->whereId($user->id)->first();
 
         $this->assertEquals(0, $user->avatars->count());
+    }
+
+    public function testRelationResetOnHasMany()
+    {
+        $user = new User('relationsync', new Role('relationsSync'));
+        $userMapper = get_mapper($user);
+        $avatar1 = new Avatar('before-avatar-1', $user);
+        $avatar2 = new Avatar('before-avatar-2', $user);
+        $user->avatars = [$avatar1, $avatar2];
+        $userMapper->store($user);
+
+        // Make a find() operation on user, which will reset the cache
+        $q = $userMapper->find($user->id);
+        $this->assertInstanceOf('Analogue\ORM\System\Proxies\ProxyInterface', $q->avatars);
+        $avatar3 = new Avatar('after-avatar-1', $q);
+        $q->avatars = [$avatar3];
+        $userMapper->store($q);
+
+        // Make a find() operation on user, which will reset the cache
+        $q = $userMapper->with('avatars')->find($user->id);
+        $this->assertEquals(1, $q->avatars->count());
     }
 }

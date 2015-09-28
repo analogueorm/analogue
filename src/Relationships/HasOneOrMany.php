@@ -91,7 +91,7 @@ abstract class HasOneOrMany extends Relationship {
 		$query = $this->query->getQuery()->from($this->relatedMap->getTable() );
 
 		$query->whereIn($this->relatedMap->getKeyName(), $keys)
-			->update([$this->foreignKey => null]);
+			->update([$this->getPlainForeignKey() => null]);
 	}
 
 	/**
@@ -168,6 +168,8 @@ abstract class HasOneOrMany extends Relationship {
 		// matching very convenient and easy work. Then we'll just return them.
 		foreach ($entities as $entity)
 		{
+			$entity = $this->factory->make($entity);
+
 			$key = $entity->getEntityAttribute($this->localKey);
 
 			if (isset($dictionary[$key]))

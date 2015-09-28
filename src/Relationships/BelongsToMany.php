@@ -4,7 +4,9 @@ use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+
 
 /**
  * @method where
@@ -47,6 +49,11 @@ class BelongsToMany extends Relationship {
 	 */
 	protected $pivotColumns = array();
 
+	/**
+	 * This relationship has pivot attributes
+	 * 
+	 * @var boolean
+	 */
 	protected static $hasPivot = true;
 
 	/**
@@ -224,9 +231,11 @@ class BelongsToMany extends Relationship {
 		
 		foreach ($entities as $entity)
 		{
-			$pivot = $this->newExistingPivot($this->cleanPivotAttributes($entity));
+			$entityWrapper = $this->factory->make($entity);
 
-			$entity->setEntityAttribute('pivot',$pivot);
+			$pivot = $this->newExistingPivot($this->cleanPivotAttributes($entityWrapper));
+
+			$entityWrapper->setEntityAttribute('pivot',$pivot);
 		}
 	}
 
@@ -236,7 +245,7 @@ class BelongsToMany extends Relationship {
 	 * @param  $entity
 	 * @return array
 	 */
-	protected function cleanPivotAttributes($entity)
+	protected function cleanPivotAttributes(InternallyMappable $entity)
 	{
 		$values = array();
 
@@ -420,6 +429,8 @@ class BelongsToMany extends Relationship {
 	{
 		foreach ($entities as $entity)
 		{
+			$entity = $this->factory->make($entity);
+
 			$entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
 		}
 
@@ -447,11 +458,13 @@ class BelongsToMany extends Relationship {
 		// the parent models. Then we will return the hydrated models back out.
 		foreach ($entities as $entity)
 		{
-			if (isset($dictionary[$key = $entity->getEntityAttribute($keyName)]))
+			$wrapper = $this->factory->make($entity);
+
+			if (isset($dictionary[$key = $wrapper->getEntityAttribute($keyName)]))
 			{
 				$collection = $this->relatedMap->newCollection($dictionary[$key]);
 
-				$entity->setEntityAttribute($relation, $collection);
+				$wrapper->setEntityAttribute($relation, $collection);
 
 				$cache->cacheLoadedRelationResult($entity, $relation, $collection, $this);
 			}
@@ -477,7 +490,9 @@ class BelongsToMany extends Relationship {
 
 		foreach ($results as $entity)
 		{
-			$dictionary[$entity->getEntityAttribute('pivot')->$foreign][] = $entity;
+			$wrapper = $this->factory->make($entity);
+
+			$dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
 		}
 
 		return $dictionary;

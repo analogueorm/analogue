@@ -29,7 +29,9 @@ class HasMany extends HasOneOrMany {
 	{
 		foreach ($entities as $entity)
 		{
-			$entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
+			$entityWrapper = $this->factory->make($entity);
+
+			$entityWrapper->setEntityAttribute($relation, $this->relatedMap->newCollection());
 		}
 
 		return $entities;

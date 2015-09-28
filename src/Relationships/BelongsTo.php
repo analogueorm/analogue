@@ -144,6 +144,8 @@ class BelongsTo extends Relationship {
         // execute a "where in" statement to gather up all of those related records.
         foreach ($entities as $entity)
         {
+            $entity = $this->factory->make($entity);
+
             if ( ! is_null($value = $entity->getEntityAttribute($this->foreignKey)))
             {
                 $keys[] = $value;
@@ -172,6 +174,7 @@ class BelongsTo extends Relationship {
     {
         foreach ($entities as $entity)
         {
+            $entity = $this->factory->make($entity);
             $entity->setEntityAttribute($relation, null);
         }
 
@@ -199,7 +202,8 @@ class BelongsTo extends Relationship {
 
         foreach ($results as $result)
         {
-            $dictionary[$result->getEntityAttribute($other)] = $result;
+            $result = $this->factory->make($result);
+            $dictionary[$result->getEntityAttribute($other)] = $result->getObject();
         }
 
         // Once we have the dictionary constructed, we can loop through all the parents
@@ -207,6 +211,8 @@ class BelongsTo extends Relationship {
         // the primary key of the children to map them onto the correct instances.
         foreach ($entities as $entity)
         {
+            $entity = $this->factory->make($entity);
+
             if (isset($dictionary[$entity->getEntityAttribute($foreign)]))
             {
                 $entity->setEntityAttribute($relation, $dictionary[$entity->getEntityAttribute($foreign)]);

@@ -26,12 +26,13 @@ class PlainObjectWrapper extends Wrapper {
      */
     protected $reflection;
 
-    public function __construct($popoEntity, EntityMap $entityMap)
+    /**
+     * 
+     * @param [type] $popoEntity [description]
+     * @param [type] $entityMap  [description]
+     */
+    public function __construct($popoEntity, $entityMap)
     {
-        $this->entity = $popoEntity;
-
-        $this->entityMap = $entityMap;
-
         $this->reflection = new ReflectionClass($popoEntity);
 
         $this->attributeList = $this->getAttributeList();

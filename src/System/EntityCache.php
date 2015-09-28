@@ -112,9 +112,12 @@ class EntityCache {
 		{
 			if(array_key_exists($key, $this->cache))
 			{
+				/*
 				$existingValue = $this->cache[$key];
 
-				$this->cache[$key] = $entity + $existingValue;
+				$this->cache[$key] = $entity + $existingValue;*/
+
+				$this->cache[$key] = $entity;
 			}
 			else
 			{
@@ -126,7 +129,7 @@ class EntityCache {
 	/**
 	 * Cache Relation's query result for an entity
 	 * 
-	 * @param  mixed $parent   
+	 * @param  mixed 	$parent   
 	 * @param  string   $relation name of the relation
 	 * @param  mixed 	$results  results of the relationship's query
 	 *
@@ -136,7 +139,10 @@ class EntityCache {
 	{
 		$keyName = $this->entityMap->getKeyName();
 
-		//$wrappedParent = $this->factory->make($parent);
+		if (! $parent instanceof InternallyMappable)
+		{
+			$parent = $this->factory->make($parent);
+		}
 
 		$key = $parent->getEntityAttribute($keyName);
 		
@@ -180,7 +186,11 @@ class EntityCache {
 			$pivotAttributes = [];
 			foreach($pivotColumns as $column)
 			{
-				$pivotAttributes[$column] = $wrapper->getEntityAttribute('pivot')->getEntityAttribute($column);
+				$pivot = $wrapper->getEntityAttribute('pivot');
+
+				$pivotWrapper = $this->factory->make($pivot);
+
+				$pivotAttributes[$column] = $pivotWrapper->getEntityAttribute($column);
 			}
 
 			$cachedRelationship = new CachedRelationship($hash, $pivotAttributes);
@@ -248,7 +258,7 @@ class EntityCache {
 	}
 
 	/**
-	 * Refresh the cache record for an aggregated entity
+	 * Refresh the cache record for an aggregated entity after a write operation
 	 * 
 	 * @param  InternallyMappable $entity [description]
 	 * @return [type]                     [description]
@@ -256,12 +266,6 @@ class EntityCache {
 	public function refresh(Aggregate $entity)
 	{
 		$this->cache[$entity->getEntityId()] = $this->transform($entity);
-	}
-
-
-	protected function getSingleCachedRelationship(Aggregate $aggregate, $relation, $attributes)
-	{
-
 	}
 
 	/**

@@ -6,7 +6,7 @@ use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
- * This class builds an Entity object from a result set.
+ * This class builds an array of Entity object(s) from a result set.
  */
 class EntityBuilder {
 
@@ -152,7 +152,9 @@ class EntityBuilder {
         {
             $prefix = snake_case(class_basename($valueClass)).'_';
 
-            $valueObject->setEntityAttribute($key, $attributes[$prefix.$key]);
+            $voWrapper = $this->factory->make($valueObject);
+
+            $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
             
             unset($attributes[$prefix.$key]);
         }

@@ -8,9 +8,7 @@ use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
- * The Wrapper Class intend to access several Entity types
- * with the same interface.
- * 
+ * The Wrapper Class provides a single interface access several Entity types
  */
 abstract Class Wrapper implements InternallyMappable {
   

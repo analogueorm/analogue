@@ -289,6 +289,19 @@ class Manager {
 	}
 
 	/**
+	 * Return true is the object is registered as value object
+	 * 
+	 * @param  mixed  $object
+	 * @return boolean       
+	 */
+	public function isValueObject($object)
+	{
+		if(! is_string($object) ) $object = get_class($object);
+
+		return array_key_exists($object, $this->valueClasses);
+	}
+
+	/**
 	 * Get the Value Map for a given Value Object Class
 	 * 
 	 * @param  string $valueObject 
@@ -296,6 +309,8 @@ class Manager {
 	 */
 	public function getValueMap($valueObject)
 	{
+		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+
 		if(! array_key_exists($valueObject, $this->valueClasses))
 		{
 			$this->registerValueObject($valueObject);
@@ -412,4 +427,16 @@ class Manager {
 		return $this->mapper($entity)->globalQuery();
 	}
 	
+	/**
+     * Return the Singleton instance of the manager
+     * 
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        return static::$instance;
+    }
+
 }

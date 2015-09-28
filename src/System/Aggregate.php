@@ -15,14 +15,14 @@ class Aggregate implements InternallyMappable {
     /**
      * The Root Entity
      * 
-     * @var Analogue\ORM\System\Wrappers\Wrapper
+     * @var \Analogue\ORM\System\Wrappers\Wrapper
      */
     protected $wrappedEntity;
 
     /**
      * Parent Root Aggregate
      * 
-     * @var Analogue\ORM\System\Aggregate
+     * @var \Analogue\ORM\System\Aggregate
      */
     protected $parent;
 
@@ -36,7 +36,7 @@ class Aggregate implements InternallyMappable {
     /**
      * Root Entity
      * 
-     * @var Analogue\ORM\System\Aggregate
+     * @var \Analogue\ORM\System\Aggregate
      */
     protected $root;
 
@@ -51,18 +51,25 @@ class Aggregate implements InternallyMappable {
     /**
      * Mapper
      *
-     * @var Analogue\ORM\System\Mapper;
+     * @var \Analogue\ORM\System\Mapper;
      */
     protected $mapper;
 
     /**
      * Entity Map
      *
-     * @var Analogue\ORM\EntityMap;
+     * @var \Analogue\ORM\EntityMap;
      */
     protected $entityMap;
 
-
+    /**
+     * Create a new Aggregated Entity instance
+     *
+     * @param mixed          $entity             [description]
+     * @param Aggregate|null $parent             [description]
+     * @param string         $parentRelationship [description]
+     * @param Aggregate|null $root               [description]
+     */
     public function __construct($entity, Aggregate $parent = null, $parentRelationship = null, Aggregate $root = null)
     {
         $factory = new Factory;
@@ -135,14 +142,16 @@ class Aggregate implements InternallyMappable {
         // 
         if ($attribute instanceof CollectionProxy && $attribute->isLoaded() )
         {
-            $attribute = $attribute->getUnderlyingCollection();
+            $underlying = $attribute->getUnderlyingCollection();
+            $added = $attribute->getAddedItems();
+            $attribute = $underlying->merge($added);
         }
 
         if ($attribute instanceof CollectionProxy && ! $attribute->isLoaded() )
         {
             $attribute = $attribute->getAddedItems();
         }
-
+        if($relationship == 'permissions') tdd($attribute);
         if(is_array($attribute) || $attribute instanceof Collection)
         {
             if(! in_array($relationship, $this->entityMap->getManyRelationships() ))
@@ -155,8 +164,9 @@ class Aggregate implements InternallyMappable {
             return true;
         }
 
-        // If the related entity is the same Class as the Parent or the Root
-        // we'll skip them, to avoid looping through ancestors
+        
+        //$attributeWrapper = $this->factory->make($attribute);
+
         $attributeClass = get_class($attribute);
 
         if($this->parent != null && $attributeClass == $this->parent->getEntityClass() ) return true;
@@ -166,8 +176,18 @@ class Aggregate implements InternallyMappable {
         // At this point, we can assume the attribute is an Entity instance
         // so we'll treat it as such. Note that we'll store it as an array
         // just for consistency with other relationships 
-        $this->relationships[$relationship] = [$this->createSubAggregate($attribute, $relationship)];
+        $subAggregate = $this->createSubAggregate($attribute, $relationship);
         
+        // If the related entity is the same Hash as the Parent or the Root
+        // we'll skip them, to avoid looping through ancestors. 
+        /*$hash = $subAggregate->getEntityHash();
+
+        if($this->parent != null && $this->parent->getEntityHash() == $hash) return true;
+        if($this->root != null && $this->root->getEntityHash() == $hash) return true;*/
+        
+
+        $this->relationships[$relationship] = [$subAggregate];
+
         return true;
     }
 
@@ -316,7 +336,7 @@ class Aggregate implements InternallyMappable {
     }
 
     /**
-     * Get Non existing related entities from a single relation
+     * Get non-existing related entities from a single relation
      * 
      * @param  string $relation
      * @return array
@@ -337,15 +357,51 @@ class Aggregate implements InternallyMappable {
     }
 
     /**
+     * Returns an array of Missing related Entities for the 
+     * given $relation
+     * 
+     * @param  string $relation
+     * @return array
+     */
+    public function getMissingEntities($relation)
+    {
+        $cachedRelations = $this->getCachedAttribute($relation);
+
+        if (! is_null($cachedRelations))
+        {
+            $missing = [];
+
+            foreach($cachedRelations as $hash)
+            {
+                if (! $this->getRelatedAggregateFromHash($hash, $relation))
+                {
+                    $missing[] = $hash;
+                }
+            }
+
+            return $missing;
+        }
+        else return [];
+    }
+
+    /**
      * Check in the cache for missing relationship
      * 
      * @return array
      */
-    public function getDetachedRelationships()
+    public function detachMissingRelationships()
     {
+        foreach($this->entityMap->getForeignRelationships() as $relation)
+        {
+            $missingRelationships = $this->getMissingEntities($relation);
 
+            if(count($missingRelationships) > 0)
+            {
+                 $this->entityMap->$relation($this->getEntityObject() )->detachMany($missingRelationships);
+            }
+        }
     }
-
+       
     /**
      * Get Relationships who have dirty attributes / dirty relationships
      * 
@@ -470,6 +526,22 @@ class Aggregate implements InternallyMappable {
         {
             return array_only($cachedAttributes, $columns);
         }
+    }
+
+    /**
+     * Return a single attribute from the cache
+     * @param  string $key 
+     * @return mixed      
+     */
+    protected function getCachedAttribute($key)
+    {
+        $cachedAttributes = $this->getCache()->get($this->getEntityId());
+
+        if(! array_key_exists($key, $cachedAttributes))
+        {
+            return null;
+        }
+        else return $cachedAttributes[$key];
     }
 
     /**
@@ -681,6 +753,7 @@ class Aggregate implements InternallyMappable {
      * Get related aggregate from its hash
      * 
      * @param  string $hash
+     * @param  string $relation
      * @return \Analogue\ORM\System\Aggregate | null
      */
     protected function getRelatedAggregateFromHash($hash, $relation)

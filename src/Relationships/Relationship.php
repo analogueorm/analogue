@@ -251,9 +251,13 @@ abstract class Relationship {
 			$key = $this->relatedMap->getKeyName();
 		}
 
-		return array_unique(array_values(array_map(function($value) use ($key)
+		$host = $this;
+
+		return array_unique(array_values(array_map(function($value) use ($key, $host)
 		{
-			return $value->getEntityAttribute($key);
+			$valueWrapper = $host->factory->make($value);
+
+			return $valueWrapper->getEntityAttribute($key);
 
 		}, $entities)));
 	}

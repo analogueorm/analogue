@@ -13,7 +13,16 @@ class Factory {
      */
     public function make($object)
     {
-        $entityMap = Manager::getMapper($object)->getEntityMap();
+        $manager = Manager::getInstance();
+
+        if($manager->isValueObject($object))
+        {
+            $entityMap = $manager->getValueMap($object);
+        }
+        else
+        {
+            $entityMap = $manager->mapper($object)->getEntityMap();
+        }
 
         if ($object instanceof Mappable) 
         {
