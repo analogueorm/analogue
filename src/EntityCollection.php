@@ -78,9 +78,9 @@ class EntityCollection extends Collection {
 	 */
 	public function remove($entity)
 	{
-		$keyName = $this->getEntityKey($entity);
+		$key = $this->getEntityKey($entity);
 
-		return $this->pull($entity->getEntityAttribute($keyName));
+		return $this->pull($key);
 	}
 
 	/**
