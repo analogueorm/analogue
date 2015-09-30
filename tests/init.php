@@ -69,3 +69,12 @@ function tdd($value)
         die;
     }
 }
+
+function tdump($value)
+{
+    global $globalDebug;
+    if($globalDebug)
+    {
+        echo var_dump($value);
+    }
+}

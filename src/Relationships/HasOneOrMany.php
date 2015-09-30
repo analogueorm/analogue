@@ -78,6 +78,33 @@ abstract class HasOneOrMany extends Relationship {
 		$this->detachMany([$entityHash]);
 	}
 
+	/**
+	 * Attach ids that are passed as arguments, and detach any other
+	 * @param  mixed  $entities 
+	 * @return void
+	 */
+	public function sync(array $entities)
+	{
+		$this->detachExcept($entities);
+	}
+
+	protected function detachExcept($entities)
+	{
+		$query = $this->query->getQuery()->from($this->relatedMap->getTable() );
+
+		if(count($entities) > 0)
+		{
+			$keys = $this->getKeys($entities);
+			$query->whereNotIn($this->relatedMap->getKeyName(), $keys);
+		}
+
+		$parentKey = $this->parentMap->getKeyName();
+
+		$query->where($this->getPlainForeignKey(), '=', $this->parent->getEntityAttribute($parentKey))
+			->update([$this->getPlainForeignKey() => null]);
+	}
+
+
 	public function detachMany(array $entityHashes)
 	{
 		$keys = [];

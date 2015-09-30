@@ -7,6 +7,7 @@ use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Database\Query\Expression;
 
@@ -255,9 +256,12 @@ abstract class Relationship {
 
 		return array_unique(array_values(array_map(function($value) use ($key, $host)
 		{
-			$valueWrapper = $host->factory->make($value);
+			if(! $value instanceof InternallyMappable)
+			{
+				$value = $host->factory->make($value);
+			}
 
-			return $valueWrapper->getEntityAttribute($key);
+			return $value->getEntityAttribute($key);
 
 		}, $entities)));
 	}
@@ -415,6 +419,18 @@ abstract class Relationship {
 		$hash = $class.'.'.$entity->getEntityAttribute($keyName);
 
 		return $hash;
+	}
+
+	/**
+	 * Run synchronization content if needed by the
+	 * relation type. 
+	 * 
+	 * @param  array  $actualContent 
+	 * @return void
+	 */
+	public function sync(array $actualContent)
+	{
+		//
 	}
 
 	/**

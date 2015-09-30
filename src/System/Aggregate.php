@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\Proxies\ProxyInterface;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\Exceptions\MappingException;
@@ -49,6 +50,13 @@ class Aggregate implements InternallyMappable {
     protected $relationships = [];
 
     /**
+     * Relationship that need post-command synchronization
+     * 
+     * @var array
+     */
+    protected $needSync = [];
+
+    /**
      * Mapper
      *
      * @var \Analogue\ORM\System\Mapper;
@@ -85,8 +93,9 @@ class Aggregate implements InternallyMappable {
         $this->mapper = Manager::getMapper($entity);
 
         $this->entityMap = $this->mapper->getEntityMap();
-
+             
         $this->parseRelationships();
+
     }
 
     /**
@@ -96,99 +105,184 @@ class Aggregate implements InternallyMappable {
      */
     protected function parseRelationships()
     {
-        foreach($this->entityMap->getRelationships() as $relation)
+        foreach($this->entityMap->getSingleRelationships() as $relation)
         {
-            $this->parse($relation);
+            $this->parseSingleRelationship($relation);
+        }
+
+        foreach($this->entityMap->getManyRelationships() as $relation)
+        {
+            $this->parseManyRelationship($relation);
         }
     }
 
     /**
-     * Parse one of the relationships for related entities
-     * and tranform them into an array of RootAggregate objects
+     * Parse for values common to single & many relations
      * 
-     * @param  string $relationship 
-     * @return void
+     * @param  string    $relation
+     * @return mixed|boolean
      */
-    protected function parse($relationship)
+    protected function parseForCommonValues($relation)
     {
-        // If no attribute exists for this relationships
-        // we'll make it a simple empty array. This will
-        // save us from constantly checking for the attributes
-        // actual existence. 
+        if(! $this->hasAttribute($relation))
+        {
+            // If no attribute exists for this relationships
+            // we'll make it a simple empty array. This will
+            // save us from constantly checking for the attributes
+            // actual existence. 
+            $this->relationships[$relation] = [];
+            return false;
+        }
+
+        $value = $this->getRelationshipValue($relation);
+
+        if( is_null($value))
+        {
+            $this->relationships[$relation] = [];
+
+            // If the relationship's content is the null value
+            // and the Entity's exist in DB, we'll interpret this
+            // as the need to detach all related Entities, 
+            // therefore a sync operation is needed.
+            $this->needSync[] = $relation;
+            return false;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Parse a 'single' relationship 
+     * 
+     * @param  string $relation
+     * @return void|boolean
+     */
+    protected function parseSingleRelationship($relation)
+    {
+
+        if (! $value = $this->parseForCommonValues($relation))
+        {
+            return true;
+        }
         
-        if(! $this->wrappedEntity->hasAttribute($relationship))
+        if($value instanceof Collection || is_array($value) || $value instanceof CollectionProxy)
         {
-            $this->relationships[$relationship] = [];
+            throw new MappingException("Entity's attribute $relation should not be array, or collection");
+        }
+
+        if($value instanceof EntityProxy && ! $value->isLoaded())
+        {
+            $this->relationships[$relation] = [];
             return true;
         }
 
-        $attribute = $this->wrappedEntity->getEntityAttribute($relationship);
-
-        if( is_null($attribute) )
+        // If the attribute is a loaded proxy, swap it for its
+        // loaded entity.
+        if($value instanceof EntityProxy && $value->isLoaded())
         {
-            $this->relationships[$relationship] = [];
+            $value = $value->getUnderlyingObject();
+        }
+
+        if($this->isParentOrRoot($value))
+        {
+            $this->relationships[$relation] = [];
             return true;
         }
 
-        if( $attribute instanceof EntityProxy)
+        // At this point, we can assume the attribute is an Entity instance
+        // so we'll treat it as such. 
+        $subAggregate = $this->createSubAggregate($value, $relation);
+       
+        // Even if it's a single entity, we'll store it as an array
+        // just for consistency with other relationships 
+        $this->relationships[$relation] = [$subAggregate];
+ 
+        return true;
+    }
+
+    /**
+     * Check if value isn't parent or root in the aggregate
+     * 
+     * @param  mixed
+     * @return boolean        
+     */
+    protected function isParentOrRoot($value)
+    {
+        if(! is_null($this->root))
         {
-            $this->relationships[$relationship] = [];
+            $rootClass = get_class($this->root->getEntityObject());
+            if($rootClass == get_class($value)) return true;
+        }
+
+
+        if(! is_null($this->parent))
+        {
+            $parentClass = get_class($this->parent->getEntityObject());
+            if($parentClass == get_class($value)) return true;
+        }
+    }
+
+    /**
+     * Parse a 'many' relationship
+     * 
+     * @param  string $relation 
+     * @return boolean
+     */
+    protected function parseManyRelationship($relation)
+    {
+
+        if (! $value = $this->parseForCommonValues($relation))
+        {
             return true;
         }
 
+        if(is_array($value) || $value instanceof Collection)
+        {
+            $this->needSync[] = $relation;   
+        }
         // If the relation is a proxy, we test is the relation
         // has been lazy loaded, otherwise we'll just treat
         // the subset of newly added items.
-        // 
-        if ($attribute instanceof CollectionProxy && $attribute->isLoaded() )
+        if ($value instanceof CollectionProxy && $value->isLoaded() )
         {
-            $underlying = $attribute->getUnderlyingCollection();
-            $added = $attribute->getAddedItems();
-            $attribute = $underlying->merge($added);
+            $this->needSync[] = $relation;   
+            $value = $value->getUnderlyingCollection();
         }
 
-        if ($attribute instanceof CollectionProxy && ! $attribute->isLoaded() )
+        if ($value instanceof CollectionProxy && ! $value->isLoaded() )
         {
-            $attribute = $attribute->getAddedItems();
-        }
-        if($relationship == 'permissions') tdd($attribute);
-        if(is_array($attribute) || $attribute instanceof Collection)
-        {
-            if(! in_array($relationship, $this->entityMap->getManyRelationships() ))
-            {
-                throw new MappingException("Expecting object in '$relationship', found array() or Collection");
-            }
-
-            $this->relationships[$relationship] = $this->createSubAggregates($attribute, $relationship);
-
-            return true;
+            $value = $value->getAddedItems();
         }
 
+        // At this point $value should be either an array or an instance
+        // of a collection class.
+        if(! is_array($value) && ! $value instanceof Collection)
+        {
+            throw new MappingException("'$relation' attribute should be array() or Collection");
+        }
+
+        $this->relationships[$relation] = $this->createSubAggregates($value, $relation);
         
-        //$attributeWrapper = $this->factory->make($attribute);
-
-        $attributeClass = get_class($attribute);
-
-        if($this->parent != null && $attributeClass == $this->parent->getEntityClass() ) return true;
-        if($this->root != null && $attributeClass == $this->root->getEntityClass() ) return true;
-
-
-        // At this point, we can assume the attribute is an Entity instance
-        // so we'll treat it as such. Note that we'll store it as an array
-        // just for consistency with other relationships 
-        $subAggregate = $this->createSubAggregate($attribute, $relationship);
-        
-        // If the related entity is the same Hash as the Parent or the Root
-        // we'll skip them, to avoid looping through ancestors. 
-        /*$hash = $subAggregate->getEntityHash();
-
-        if($this->parent != null && $this->parent->getEntityHash() == $hash) return true;
-        if($this->root != null && $this->root->getEntityHash() == $hash) return true;*/
-        
-
-        $this->relationships[$relationship] = [$subAggregate];
-
         return true;
+    }
+
+    /**
+     * Return Entity's relationship attribute
+     * 
+     * @param  string $relation 
+     * @return mixed
+     * @throws \Analogue\ORM\Exceptions\MappingException
+     */
+    protected function getRelationshipValue($relation)
+    {
+        $value = $this->getEntityAttribute($relation);
+
+        if(is_bool($value) || is_float($value) || is_int($value) || is_string($value))
+        {
+            throw new MappingException("Entity's attribute $relation should be array, object, collection or null");
+        }
+
+        return $value;
     }
 
     /**
@@ -357,6 +451,35 @@ class Aggregate implements InternallyMappable {
     }
 
     /**
+     * Synchronize relationships if needed
+     * 
+     * @return 
+     */
+    public function syncRelationships()
+    {
+        if($this->exists())
+        {
+            foreach ($this->needSync as $relation)
+            {
+                $this->synchronize($relation);
+            }
+        }
+
+    }
+
+    /**
+     * Synchronize a relationship attribute
+     * 
+     * @return void
+     */
+    protected function synchronize($relation)
+    {
+        $actualContent = $this->relationships[$relation];
+
+        $this->entityMap->$relation($this->getEntityObject())->sync($actualContent);
+    }
+
+    /**
      * Returns an array of Missing related Entities for the 
      * given $relation
      * 
@@ -382,24 +505,6 @@ class Aggregate implements InternallyMappable {
             return $missing;
         }
         else return [];
-    }
-
-    /**
-     * Check in the cache for missing relationship
-     * 
-     * @return array
-     */
-    public function detachMissingRelationships()
-    {
-        foreach($this->entityMap->getForeignRelationships() as $relation)
-        {
-            $missingRelationships = $this->getMissingEntities($relation);
-
-            if(count($missingRelationships) > 0)
-            {
-                 $this->entityMap->$relation($this->getEntityObject() )->detachMany($missingRelationships);
-            }
-        }
     }
        
     /**
@@ -870,7 +975,8 @@ class Aggregate implements InternallyMappable {
     }
 
     /**
-     * Does the entity already exists in the database ?
+     * Check that the entity already exists in the database, by checking
+     * if it has an EntityCache record
      * 
      * @return boolean
      */

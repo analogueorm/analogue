@@ -28,6 +28,7 @@ class Store extends Command
 	 */
 	public function execute()
 	{
+		
 		$entity = $this->aggregate->getEntityObject();
 
 		$mapper = $this->aggregate->getMapper();
@@ -90,9 +91,6 @@ class Store extends Command
 		
 		$this->createRelatedEntities($localRelationships);
 
-		// As storing the entity will reset the original relationships in the EntityCache
-		// we must parse for removed relations before storing it.
-		$this->detachMissingRelations();
 	}
 
 	/**
@@ -151,23 +149,16 @@ class Store extends Command
 			$this->createStoreCommand($related)->execute();
 		}
 
+		if($this->aggregate->exists())
+		{
+			$this->aggregate->syncRelationships();
+		}
 		// This should be move to the wrapper class
 		// so it's the same code for the entity builder
 		$aggregate->setProxies();
 		
 		// Update Entity Cache
 		$aggregate->getMapper()->getEntityCache()->refresh($aggregate);
-	}
-
-	/**
-	 * Check the cache for missing relationships and run necessary
-	 * operations if needed. 
-	 * 
-	 * @return void
-	 */
-	protected function detachMissingRelations()
-	{
-		$this->aggregate->detachMissingRelationships();
 	}
 
 	/**

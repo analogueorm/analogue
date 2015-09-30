@@ -136,7 +136,9 @@ class Mapper {
      */
     protected function aggregate($entity)
     {
-        return new Aggregate($entity);
+        $aggregate = new Aggregate($entity);
+
+        return $aggregate;
     }
 
     /**
@@ -146,7 +148,7 @@ class Mapper {
      * @return Collection
      */
     protected function storeCollection($entities)
-    {
+    {  
         $this->adapter->beginTransaction();
 
         foreach($entities as $entity)
