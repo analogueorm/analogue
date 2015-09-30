@@ -3,9 +3,9 @@
 use Exception;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
+use InvalidArgumentException;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
-use InvalidArgumentException;
 
 class Repository {
 

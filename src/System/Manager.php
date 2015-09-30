@@ -1,14 +1,16 @@
 <?php
+
 namespace Analogue\ORM\System;
 
 use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\Drivers\Manager as DriverManager;
+use Analogue\ORM\System\Wrappers\Wrapper;
+use Illuminate\Contracts\Events\Dispatcher;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Plugins\AnaloguePluginInterface;
-use Illuminate\Contracts\Events\Dispatcher;
+use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
  * This class keeps track of instanciated mappers, and entity <-> entityMap associations
@@ -104,6 +106,11 @@ class Manager {
 	 */
 	public function mapper($entity, $entityMap = null)
 	{
+		if($entity instanceof Wrapper)
+		{
+			throw new MappingException('Tried to instantiate mapper on wrapped Entity');
+		}
+
 		if(! is_string($entity)) $entity = get_class($entity);
 
 		// Return existing mapper instance if exists.
@@ -111,7 +118,22 @@ class Manager {
 		{
 			return $this->mappers[$entity];
 		}
+		else {
+			return $this->buildMapper($entity, $entityMap);
+		}
+	}
 
+	/**
+	 * Build a new Mapper instance for a given Entity
+	 * 
+	 * @param  mixed|string $entity    
+	 * @param  $entityMap 
+	 * @return Mapper     
+	 */
+	protected function buildMapper($entity, $entityMap)
+	{
+		// If an EntityMap hasn't been manually registered by the user 
+		// register it at runtime.
 		if(! $this->isRegisteredEntity($entity)) 
 		{
 			$this->register($entity, $entityMap);
@@ -121,9 +143,16 @@ class Manager {
 
 		$factory = new MapperFactory($this->drivers, $this->eventDispatcher, $this);
 
-		$this->mappers[$entity] = $factory->make($entity, $entityMap);
+		$mapper = $factory->make($entity, $entityMap);
 
-		return $this->mappers[$entity];
+		$this->mappers[$entity] = $mapper; 
+
+		// At this point we can safely call the boot() method on the entityMap as
+		// the mapper is now instanciated & registered within the manager.
+		
+		$mapper->getEntityMap()->boot(); 
+		
+		return $mapper;
 	}
 
 	/**
@@ -260,6 +289,19 @@ class Manager {
 	}
 
 	/**
+	 * Return true is the object is registered as value object
+	 * 
+	 * @param  mixed  $object
+	 * @return boolean       
+	 */
+	public function isValueObject($object)
+	{
+		if(! is_string($object) ) $object = get_class($object);
+
+		return array_key_exists($object, $this->valueClasses);
+	}
+
+	/**
 	 * Get the Value Map for a given Value Object Class
 	 * 
 	 * @param  string $valueObject 
@@ -267,6 +309,8 @@ class Manager {
 	 */
 	public function getValueMap($valueObject)
 	{
+		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+
 		if(! array_key_exists($valueObject, $this->valueClasses))
 		{
 			$this->registerValueObject($valueObject);
@@ -383,4 +427,16 @@ class Manager {
 		return $this->mapper($entity)->globalQuery();
 	}
 	
+	/**
+     * Return the Singleton instance of the manager
+     * 
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        return static::$instance;
+    }
+
 }

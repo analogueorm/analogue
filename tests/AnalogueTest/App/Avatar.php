@@ -4,7 +4,7 @@ use Analogue\ORM\Entity;
 
 class Avatar extends Entity {
 
-    public function __construct($name, User $user)
+    public function __construct($name, User $user = null)
     {
         $this->name = $name;
         $this->user = $user;

@@ -29,6 +29,8 @@ class MorphMany extends MorphOneOrMany {
 	{
 		foreach ($entities as $entity)
 		{
+			$entity = $this->factory->make($entity);
+
 			$entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
 		}
 

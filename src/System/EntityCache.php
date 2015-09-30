@@ -1,15 +1,41 @@
-<?php namespace Analogue\ORM\System;
+<?php 
+
+namespace Analogue\ORM\System;
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\Relationships\Relationship;
+use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\System\Proxies\ProxyInterface;
 
+/**
+ * The EntityCache class is responsible for tracking entity's attribute states
+ * between request. 
+ */
 class EntityCache {
 
+	/**
+	 * Entity's raw attributes/relationships
+	 * 
+	 * @var array
+	 */
 	protected $cache = [];
 
+	/**
+	 * Entity Map for the current Entity Type
+	 * @var [type]
+	 */
 	protected $entityMap;
+
+	/**
+	 * Wrapper factory
+	 * 
+	 * @var \Analogue\ORM\System\Wrappers\Factory
+	 */
+	protected $factory;
 
 	/**
 	 * Associative array containing list of pivot attributes per relationship
@@ -22,6 +48,8 @@ class EntityCache {
 	public function __construct(EntityMap $entityMap)
 	{
 		$this->entityMap = $entityMap;
+
+		$this->factory = new Factory;
 	}
 
 	/**
@@ -84,9 +112,12 @@ class EntityCache {
 		{
 			if(array_key_exists($key, $this->cache))
 			{
+				/*
 				$existingValue = $this->cache[$key];
 
-				$this->cache[$key] = $entity + $existingValue;
+				$this->cache[$key] = $entity + $existingValue;*/
+
+				$this->cache[$key] = $entity;
 			}
 			else
 			{
@@ -98,7 +129,7 @@ class EntityCache {
 	/**
 	 * Cache Relation's query result for an entity
 	 * 
-	 * @param  Mappable $parent   
+	 * @param  mixed 	$parent   
 	 * @param  string   $relation name of the relation
 	 * @param  mixed 	$results  results of the relationship's query
 	 *
@@ -108,16 +139,23 @@ class EntityCache {
 	{
 		$keyName = $this->entityMap->getKeyName();
 
-		$key = $parent->getEntityAttribute($keyName);
-
-		if ($results instanceof Mappable)
+		if (! $parent instanceof InternallyMappable)
 		{
-			$this->cacheSingleRelationResult($key, $relation, $results, $relationship);
+			$parent = $this->factory->make($parent);
 		}
+
+		$key = $parent->getEntityAttribute($keyName);
 		
 		if ($results instanceof EntityCollection)
 		{
 			$this->cacheManyRelationResults($key, $relation, $results, $relationship);
+		}
+
+		// POPO : Maybe this check isn't needed, or we have to check for stdClass
+		// instead
+		if ($results instanceof Mappable)
+		{
+			$this->cacheSingleRelationResult($key, $relation, $results, $relationship);
 		}
 	}
 
@@ -139,14 +177,20 @@ class EntityCache {
 			$this->pivotAttributes[$relation] = $pivotColumns;
 		}
 
-		$hash = $this->getEntityHash($result);
+		$wrapper = $this->factory->make($result);
+
+		$hash = $this->getEntityHash($wrapper);
 
 		if(count($pivotColumns) > 0)
 		{
 			$pivotAttributes = [];
 			foreach($pivotColumns as $column)
 			{
-				$pivotAttributes[$column] = $result->getEntityAttribute('pivot')->getEntityAttribute($column);
+				$pivot = $wrapper->getEntityAttribute('pivot');
+
+				$pivotWrapper = $this->factory->make($pivot);
+
+				$pivotAttributes[$column] = $pivotWrapper->getEntityAttribute($column);
 			}
 
 			$cachedRelationship = new CachedRelationship($hash, $pivotAttributes);
@@ -199,13 +243,12 @@ class EntityCache {
 	/**
 	 * Get Entity's Hash
 	 * 
-	 * @param  Mappable $entity 
-	 * 
+	 * @param  $entity 
 	 * @return string
 	 */
-	protected function getEntityHash(Mappable $entity)
+	protected function getEntityHash(InternallyMappable $entity)
 	{
-		$class = get_class($entity);
+		$class = get_class($entity->getObject() );
 
 		$mapper = Manager::getMapper($class);
 
@@ -214,103 +257,73 @@ class EntityCache {
 		return $class.'.'.$entity->getEntityAttribute($keyName);
 	}
 
+	/**
+	 * Refresh the cache record for an aggregated entity after a write operation
+	 * 
+	 * @param  InternallyMappable $entity [description]
+	 * @return [type]                     [description]
+	 */
+	public function refresh(Aggregate $entity)
+	{
+		$this->cache[$entity->getEntityId()] = $this->transform($entity);
+	}
 
 	/**
-	 * Cache the results of a relation query (DEPRECATED)
+	 * Transform an Aggregated Entity into a cache record
 	 * 
-	 * @param  [type] $relation [description]
-	 * @param  array  $keys     [description]
-	 * @return [type]           [description]
+	 * @param  Aggregate $entity 
+	 * @return array
 	 */
-	// public function cacheLoadedRelation($relation, array $keys)
-	// {
+	protected function transform(Aggregate $aggregatedEntity)
+	{
+		$baseAttributes = $aggregatedEntity->getRawAttributes();
+
+		$relationAttributes = [];
+
+		// First we'll handle each relationships that are a one to one
+		// relation, and which will be saved as a CachedRelationship
+		// object inside the cache.
 		
-	// 	// The resulting key will be different regarding the relationship
-	// 	// 
-	// 	// Single : EntityKey -> RelatedKey
-	// 	// Many : EntityKey -> (array) RelatedKey
-	// 	// MorphSingle : EntityKey -> (RelatedType, RelatedKey)
-	// 	// MorphMany : EntityKey -> (array) (RelatedType, RelatedKey)
-	// 	// 
-	// 	foreach($keys as $key => $value)		
-	// 	{
-	// 		$cachedEntity = $this->cache[$key];
-	// 		if(array_key_exists($relation, $cachedEntity))
-	// 		{
-	// 			if(is_array($cachedEntity[$relation]) )
-	// 			{
-	// 				$oldValue = $this->cache[$key][$relation] ;
-	// 				$this->cache[$key][$relation] = $value + $oldValue;
-	// 			}
-	// 			else
-	// 			{	
-	// 				$this->cache[$key][$relation] = $value;	
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			$this->cache[$key][$relation] = $value;
-	// 		}
-	// 	}
-	// }
+		// NOTE : storing localRelationships maybe useless has we store
+		// the foreign key in the attributes already.
 
-	public function refresh(Mappable $entity)
-	{
-		$class = get_class($entity);
-
-		$mapper = Manager::getMapper($class);
-
-		$keyName = $mapper->getEntityMap()->getKeyName();
-
-		$this->cache[$entity->getEntityAttribute($keyName)] = $this->cachedArray($entity);
-	}
-
-	
-	protected function cachedArray(Mappable $entity)
-	{
-		// Flatten Value Objects as attributes
-		$attributes = $this->flattenEmbeddables($entity->getEntityAttributes());
-
-		$cache = [];
-
-		foreach($attributes as $key => $value)
+		foreach($this->entityMap->getSingleRelationships() as $relation)
 		{
-			if ($value instanceof ProxyInterface) continue;
-
-			if ($value instanceof Mappable)
+			$aggregates = $aggregatedEntity->getRelationship($relation);
+			
+			if (count($aggregates) == 1)
 			{
-				$class = get_class($value);
-				
-				$mapper = Manager::getMapper($class);
-				
-				$keyName = $mapper->getEntityMap()->getKeyName();
-				
-				$cache[$key] = new CachedRelationship($class.'.'.$value->$keyName, $this->getPivotValues($key, $value));
-				
-				continue;
+				$related = $aggregates[0];
+				$relationAttributes[$relation] = new CachedRelationship($related->getEntityHash());
 			}
-
-			if ($value instanceof EntityCollection)
+			if (count($aggregates) > 1)
 			{
-				$cache[$key] = [];
-
-				foreach($value as $relatedEntity)
-				{
-					$hash = $this->getEntityHash($relatedEntity);
-
-					$cache[$key][$hash] = new CachedRelationship($hash, $this->getPivotValues($key, $relatedEntity));
-				}
-				
-				continue;
+				throw new MappingException("Single Relationship '$relation' contains several related entities");
 			}
-
-			$cache[$key] = $value;
 		}
-		
-		return $cache;
-	}
 
-	protected function getPivotValues($relation, $entity)
+		// Then we'll handle the 'many' relationships and store them as 
+		// an array of CachedRelationship objects.
+
+		foreach($this->entityMap->getManyRelationships() as $relation)
+		{
+			$aggregates = $aggregatedEntity->getRelationship($relation);
+
+			$relationAttributes[$relation] = [];
+
+			foreach($aggregates as $aggregate)
+			{
+				$relationAttributes[$relation][] = new CachedRelationship(
+					$aggregate->getEntityHash(), 
+					$aggregate->getPivotAttributes()
+				);
+			}
+		}
+
+		return $baseAttributes + $relationAttributes;
+	}
+		
+	protected function getPivotValues($relation, InternallyMappable $entity)
 	{
 		$values = [];
 
@@ -330,19 +343,4 @@ class EntityCache {
 		return $values;
 	}
 
-	protected function flattenEmbeddables($attributes)
-	{
-		$embeddables = $this->entityMap->getEmbeddables();
-		
-		foreach($embeddables as $localKey => $embed)
-		{
-			$valueObject = $attributes[$localKey];
-
-			unset($attributes[$localKey]);
-
-			$attributes = array_merge($attributes, $valueObject->getEntityAttributes());
-		}
-		
-		return $attributes;
-	}
 }

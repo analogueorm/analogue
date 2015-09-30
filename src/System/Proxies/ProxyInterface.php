@@ -1,4 +1,4 @@
-<?php namespace Analogue\ORM\System;
+<?php namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\Mappable;
 

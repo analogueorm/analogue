@@ -101,21 +101,6 @@ class MorphTo extends BelongsTo {
 		return $entities;
 	}
 
-	/**
-	 * Associate the model instance to the given parent.
-	 *
-	 * @param  $entity
-	 * @return 
-	 */
-	public function associate($entity)
-	{
-		$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityKey());
-
-		$this->parent->setEntityAttribute($this->morphType, $entity->getMorphClass());
-
-		return $this->parent->setEntityAttribute($this->relation, $entity);
-	}
-
 	/*
 	 * Get the results of the relationship.
 	 *
@@ -188,6 +173,60 @@ class MorphTo extends BelongsTo {
 			return head($entities)->{$foreign};
 
 		})->unique();
+	}
+
+	/**
+	 * Get the foreign key of the relationship.
+	 *
+	 * @return string
+	 */
+	/*public function getForeignKey()
+	{
+		return $this->foreignKey;
+	}*/
+
+	/**
+	 * Associate the model instance to the given parent.
+	 *
+	 * @param  mixed $entity
+	 * @return void
+	 */
+	public function associate($entity)
+	{
+		// The Mapper will retrieve this association within the object model, we won't be using
+		// the foreign key attribute inside the parent Entity.
+		// 
+		//$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
+		//
+		// Instead, we'll just add the object to the Entity's attribute
+		
+		$this->parent->setEntityAttribute($this->relation, $entity);
+
+	}
+
+	/**
+	 * Get the foreign key value pair for a related object
+	 *
+	 * @var mixed $related 
+	 *
+	 * @return array
+	 */
+	public function getForeignKeyValuePair($related)
+	{
+		$foreignKey = $this->getForeignKey();
+
+		if ($related)
+		{
+			$wrapper = $this->factory->make($related);
+
+			$relatedKey = $this->relatedMap->getKeyName();
+
+			return [$foreignKey => $wrapper->getEntityAttribute($relatedKey)];
+		}
+		else
+		{
+			return [$foreignKey => null];
+		}
 	}
 
 	/**

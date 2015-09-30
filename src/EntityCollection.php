@@ -5,366 +5,348 @@ namespace Analogue\ORM;
 use InvalidArgumentException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 
 class EntityCollection extends Collection {
-	
-	public function __construct(array $entities = null)
-	{
-		if ($entities) $this->checkItemsAreMappable($entities);
+   
+    /**
+     * Wrapper Factory
+     * 
+     * @var \Analogue\ORM\System\Wrappers\Factory
+     */
+    protected $factory;
 
-		parent::__construct($entities);
-	}
+    public function __construct(array $entities = null)
+    {
+        $this->factory = new Factory;
 
-	/**
-	 * Check all the items implements Mappable
-	 * 
-	 * @param  array|ArrayAccess $entities 
-	 * @return void
-	 */
-	protected function checkItemsAreMappable($entities)
-	{
-		foreach($entities as $entity)
-		{
-			$this->checkItemIsMappable($entity);
-		}
-	}
+        parent::__construct($entities);
+    }
 
-	protected function checkItemIsMappable($item)
-	{
-		if (! $item instanceof Mappable)
-		{
-			throw new InvalidArgumentException('Tried to assign non-mappable item to EntityCollection');
-		}
-	}
+    /**
+     * Find an entity in the collection by key.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $default
+     * 
+     * @return \Analogue\ORM\Entity
+     */
+    public function find($key, $default = null)
+    {
+        if($key instanceof Mappable)
+        {
+            $key = $this->getEntityKey($key);
+        }
 
-	/**
-	 * Find an entity in the collection by key.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $default
-	 * 
-	 * @return \Analogue\ORM\Entity
-	 */
-	public function find($key, $default = null)
-	{
-		if($key instanceof Mappable)
-		{
-			$key = $this->getEntityKey($key);
-		}
+        return array_first($this->items, function($itemKey, $entity) use ($key)
+        {
+            return $this->getEntityKey($entity) == $key;
+        }, $default);
+    }
 
-		return array_first($this->items, function($itemKey, $entity) use ($key)
-		{
-			return $this->getEntityKey($entity) == $key;
-		}, $default);
-	}
+    /**
+     * Add an entity to the collection.
+     *
+     * @param  Mappable  $entity
+     * @return $this
+     */
+    public function add($entity)
+    {
+        $this->push($entity);
 
-	/**
-	 * Add an entity to the collection.
-	 *
-	 * @param  Mappable  $entity
-	 * @return $this
-	 */
-	public function add(Mappable $entity)
-	{
-		$this->push($entity);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Remove an entity from the collection
+     */
+    public function remove($entity)
+    {
+        $key = $this->getEntityKey($entity);
 
-	/**
-	 * Remove an entity from the collection
-	 */
-	public function remove($entity)
-	{
-		$key = $this->getEntityKey($entity);
+        return $this->pull($key);
+    }
 
-		return $this->pull($key);
-	}
+    /**
+     * Push an item onto the beginning of the collection.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function prepend($value)
+    {
+        array_unshift($this->items, $value);
+    }
 
-	/**
-	 * Push an item onto the beginning of the collection.
-	 *
-	 * @param  mixed  $value
-	 * @return void
-	 */
-	public function prepend($value)
-	{
-		$this->checkItemIsMappable($value);
+    /**
+     * Push an item onto the end of the collection.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function push($value)
+    {
+        $this->offsetSet(null, $value);
+    }
 
-		array_unshift($this->items, $value);
-	}
+    /**
+     * Put an item in the collection by key.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function put($key, $value)
+    {
+        $this->offsetSet($key, $value);
+    }
 
-	/**
-	 * Push an item onto the end of the collection.
-	 *
-	 * @param  mixed  $value
-	 * @return void
-	 */
-	public function push($value)
-	{
-		$this->checkItemIsMappable($value);
+    /**
+     * Set the item at a given offset.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+        if (is_null($key))
+        {
+            $this->items[] = $value;
+        }
+        else
+        {
+            $this->items[$key] = $value;
+        }
+    }
 
-		$this->offsetSet(null, $value);
-	}
+    /**
+     * Determine if a key exists in the collection.
+     *
+     * @param  mixed  $key
+     * @return bool
+     */
+    public function contains($key, $value = null)
+    {
+        return ! is_null($this->find($key));
+    }
 
-	/**
-	 * Put an item in the collection by key.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $value
-	 * @return void
-	 */
-	public function put($key, $value)
-	{
-		$this->checkItemIsMappable($value);
+    /**
+     * Fetch a nested element of the collection.
+     *
+     * @param  string  $key
+     * @return static
+     */
+    public function fetch($key)
+    {
+        return new static(array_fetch($this->toArray(), $key));
+    }
 
-		$this->offsetSet($key, $value);
-	}
+    /**
+     * Generic function for returning class.key value pairs
+     * 
+     * @return string
+     */
+    public function getEntityHashes()
+    {
+        return array_map(function($entity) 
+        { 
+            $class = get_class($entity);
 
-	/**
-	 * Set the item at a given offset.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $value
-	 * @return void
-	 */
-	public function offsetSet($key, $value)
-	{
-		$this->checkItemIsMappable($value);
-		
-		if (is_null($key))
-		{
-			$this->items[] = $value;
-		}
-		else
-		{
-			$this->items[$key] = $value;
-		}
-	}
+            $mapper = Manager::getMapper($class);
+            
+            $keyName = $mapper->getEntityMap()->getKeyName();
+            
+            return $class.'.'.$entity->getEntityAttribute($keyName); 
+        }, 
+        $this->items);
+    }
 
-	/**
-	 * Determine if a key exists in the collection.
-	 *
-	 * @param  mixed  $key
-	 * @return bool
-	 */
-	public function contains($key, $value = null)
-	{
-		return ! is_null($this->find($key));
-	}
+    /**
+     * Get a subset of the collection from entity hashes
+     * 
+     * @param  array  $hashes 
+     * @return 
+     */
+    public function getSubsetByHashes(array $hashes)
+    {
+        $subset = [];
 
-	/**
-	 * Fetch a nested element of the collection.
-	 *
-	 * @param  string  $key
-	 * @return static
-	 */
-	public function fetch($key)
-	{
-		return new static(array_fetch($this->toArray(), $key));
-	}
+        foreach($this->items as $item)
+        {
+            $class = get_class($item);
 
-	/**
-	 * Generic function for returning class.key value pairs
-	 * 
-	 * @return string
-	 */
-	public function getEntityHashes()
-	{
-		return array_map(function($entity) 
-		{ 
-			$class = get_class($entity);
+            $mapper = Manager::getMapper($class);
+            
+            $keyName = $mapper->getEntityMap()->getKeyName();
 
-			$mapper = Manager::getMapper($class);
-			
-			$keyName = $mapper->getEntityMap()->getKeyName();
-			
-			return $class.'.'.$entity->getEntityAttribute($keyName); 
-		}, 
-		$this->items);
-	}
+            if(in_array($class.'.'.$item->$keyName, $hashes)) $subset[] = $item; 
+        }
 
-	/**
-	 * Get a subset of the collection from entity hashes
-	 * 
-	 * @param  array  $hashes 
-	 * @return 
-	 */
-	public function getSubsetByHashes(array $hashes)
-	{
-		$subset = [];
+        return $subset;
+    }
 
-		foreach($this->items as $item)
-		{
-			$class = get_class($item);
+    /**
+     * Merge the collection with the given items.
+     *
+     * @param  array  $items
+     * @return static
+     */
+    public function merge($items)
+    {
+        $dictionary = $this->getDictionary();
 
-			$mapper = Manager::getMapper($class);
-			
-			$keyName = $mapper->getEntityMap()->getKeyName();
+        foreach ($items as $item)
+        {
+            $dictionary[$this->getEntityKey($item)] = $item;
+        }
 
-			if(in_array($class.'.'.$item->$keyName, $hashes)) $subset[] = $item; 
-		}
+        return new static(array_values($dictionary));
+    }
 
-		return $subset;
-	}
+    /**
+     * Diff the collection with the given items.
+     *
+     * @param  \ArrayAccess|array  $items
+     * @return static
+     */
+    public function diff($items)
+    {
+        $diff = new static;
 
-	/**
-	 * Merge the collection with the given items.
-	 *
-	 * @param  array  $items
-	 * @return static
-	 */
-	public function merge($items)
-	{
-		$this->checkItemsAreMappable($items);
+        $dictionary = $this->getDictionary($items);
 
-		$dictionary = $this->getDictionary();
+        foreach ($this->items as $item)
+        {
+            if ( ! isset($dictionary[$this->getEntityKey($item)]))
+            {
+                $diff->add($item);
+            }
+        }
 
-		foreach ($items as $item)
-		{
-			$dictionary[$this->getEntityKey($item)] = $item;
-		}
+        return $diff;
+    }
 
-		return new static(array_values($dictionary));
-	}
+    /**
+     * Intersect the collection with the given items.
+     *
+     * @param  \ArrayAccess|array  $items
+     * @return static
+     */
+    public function intersect($items)
+    {
+        $intersect = new static;
 
-	/**
-	 * Diff the collection with the given items.
-	 *
-	 * @param  \ArrayAccess|array  $items
-	 * @return static
-	 */
-	public function diff($items)
-	{
-		$diff = new static;
+        $dictionary = $this->getDictionary($items);
 
-		$dictionary = $this->getDictionary($items);
+        foreach ($this->items as $item)
+        {
+            if (isset($dictionary[$this->getEntityKey($item)]))
+            {
+                $intersect->add($item);
+            }
+        }
 
-		foreach ($this->items as $item)
-		{
-			if ( ! isset($dictionary[$this->getEntityKey($item)]))
-			{
-				$diff->add($item);
-			}
-		}
+        return $intersect;
+    }
 
-		return $diff;
-	}
+    /**
+     * Returns only the models from the collection with the specified keys.
+     *
+     * @param  mixed  $keys
+     * @return static
+     */
+    public function only($keys)
+    {
+        $dictionary = array_only($this->getDictionary(), $keys);
 
-	/**
-	 * Intersect the collection with the given items.
-	 *
- 	 * @param  \ArrayAccess|array  $items
-	 * @return static
-	 */
-	public function intersect($items)
-	{
-		$intersect = new static;
+        return new static(array_values($dictionary));
+    }
 
-		$dictionary = $this->getDictionary($items);
+    /**
+     * Returns all models in the collection except the models with specified keys.
+     *
+     * @param  mixed  $keys
+     * @return static
+     */
+    public function except($keys)
+    {
+        $dictionary = array_except($this->getDictionary(), $keys);
 
-		foreach ($this->items as $item)
-		{
-			if (isset($dictionary[$this->getEntityKey($item)]))
-			{
-				$intersect->add($item);
-			}
-		}
+        return new static(array_values($dictionary));
+    }
 
-		return $intersect;
-	}
+    /**
+     * Get a dictionary keyed by primary keys.
+     *
+     * @param  \ArrayAccess|array  $items
+     * @return array
+     */
+    public function getDictionary($items = null)
+    {
+        $items = is_null($items) ? $this->items : $items;
 
-	/**
-	 * Returns only the models from the collection with the specified keys.
-	 *
-	 * @param  mixed  $keys
-	 * @return static
-	 */
-	public function only($keys)
-	{
-		$dictionary = array_only($this->getDictionary(), $keys);
+        $dictionary = array();
 
-		return new static(array_values($dictionary));
-	}
+        foreach ($items as $value)
+        {
+            $dictionary[$this->getEntityKey($value)] = $value;
+        }
 
-	/**
-	 * Returns all models in the collection except the models with specified keys.
-	 *
-	 * @param  mixed  $keys
-	 * @return static
-	 */
-	public function except($keys)
-	{
-		$dictionary = array_except($this->getDictionary(), $keys);
+        return $dictionary;
+    }
 
-		return new static(array_values($dictionary));
-	}
+    public function getEntityKeys()
+    {
+        return array_keys($this->getDictionary());
+    }
 
-	/**
-	 * Get a dictionary keyed by primary keys.
-	 *
-	 * @param  \ArrayAccess|array  $items
-	 * @return array
-	 */
-	public function getDictionary($items = null)
-	{
-		$items = is_null($items) ? $this->items : $items;
+    protected function getEntityKey($entity)
+    {
+        $keyName = Manager::getMapper($entity)->getEntityMap()->getKeyName();
+        
+        $wrapper = $this->factory->make($entity);
 
-		$dictionary = array();
+        return $wrapper->getEntityAttribute($keyName);
+    }
 
-		foreach ($items as $value)
-		{
-			$dictionary[$this->getEntityKey($value)] = $value;
-		}
+    /**
+     * Get the max value of a given key.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function max($key = null)
+    {
+        return $this->reduce(function($result, $item) use ($key)
+        {
+            $wrapper = $this->factory->make($item);
 
-		return $dictionary;
-	}
+            return (is_null($result) || $wrapper->getEntityAttribute($key) > $result) ? 
+                $wrapper->getEntityAttribute($key) : $result;
+        });
+    }
 
-	public function getEntityKeys()
-	{
-		return array_keys($this->getDictionary());
-	}
+    /**
+     * Get the min value of a given key.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function min($key = null)
+    {
+        return $this->reduce(function($result, $item) use ($key)
+        {
+            $wrapper = $this->factory->make($item);
 
-	protected function getEntityKey(Mappable $entity)
-	{
-		$keyName = Manager::getMapper($entity)->getEntityMap()->getKeyName();
-		
-		return $entity->getEntityAttribute($keyName);
-	}
+            return (is_null($result) || $wrapper->getEntityAttribute($key) < $result) 
+                ? $wrapper->getEntityAttribute($key) : $result;
+        });
+    }
 
-	/**
-	 * Get the max value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function max($key = null)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) > $result) ? 
-				$item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
-	 * Get the min value of a given key.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function min($key = null)
-	{
-		return $this->reduce(function($result, $item) use ($key)
-		{
-			return (is_null($result) || $item->getEntityAttribute($key) < $result) 
-				? $item->getEntityAttribute($key) : $result;
-		});
-	}
-
-	/**
+    /**
      * Get an array with the values of a given key.
      *
      * @param  string  $value
@@ -373,7 +355,7 @@ class EntityCollection extends Collection {
      */
     public function pluck($value, $key = null)
     {
-    	return new Collection(Arr::pluck($this->items, $value, $key));
+        return new Collection(Arr::pluck($this->items, $value, $key));
     }
 
     /**
@@ -388,25 +370,25 @@ class EntityCollection extends Collection {
         return $this->pluck($value, $key);
     }
 
-	/**
-	 * Return only unique items from the collection.
-	 *
-	 * @return static
-	 */
-	public function unique($key = null)
-	{
-		$dictionary = $this->getDictionary();
+    /**
+     * Return only unique items from the collection.
+     *
+     * @return static
+     */
+    public function unique($key = null)
+    {
+        $dictionary = $this->getDictionary();
 
-		return new static(array_values($dictionary));
-	}
+        return new static(array_values($dictionary));
+    }
 
-	/**
-	 * Get a base Support collection instance from this collection.
-	 *
-	 * @return \Illuminate\Support\Collection
-	 */
-	public function toBase()
-	{
-		return new Collection($this->items);
-	}
+    /**
+     * Get a base Support collection instance from this collection.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function toBase()
+    {
+        return new Collection($this->items);
+    }
 }

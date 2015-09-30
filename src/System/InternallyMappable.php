@@ -1,6 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php namespace Analogue\ORM\System;
 
-interface Mappable {
+interface InternallyMappable {
 
     /**
      * Set the object attribute raw values (hydration)
@@ -21,13 +21,19 @@ interface Mappable {
      * @param string $key  
      * @param string $value
      */
-    //public function setEntityAttribute($key, $value);
+    public function setEntityAttribute($key, $value);
 
     /**
      * Return the entity's attribute 
      * @param  string $key 
      * @return mixed
      */
-    //public function getEntityAttribute($key);
+    public function getEntityAttribute($key);
 
+    /**
+     * Does the entity posses the given attribute
+     * @param  string  $key 
+     * @return boolean      
+     */
+    public function hasAttribute($key);
 }
