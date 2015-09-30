@@ -600,10 +600,9 @@ class BelongsToMany extends Relationship {
     }
 
     /**
-     *  
+     * Synchronize Relationship
      * 
      * @param  mixed $entities      
-     * @param  array  $attributes [description]
      * @return [type]             [description]
      */
     public function sync(array $entities)
@@ -614,12 +613,12 @@ class BelongsToMany extends Relationship {
     /**
      * Detach related entities that are not in $id
      * 
-     * @param  array $id
+     * @param  array $entities
      * @return void
      */
     protected function detachExcept(array $entities = array())
     {
-        
+
         $query = $this->newPivotQuery();
 
         // If id is empty, we'll simply skip that statement.

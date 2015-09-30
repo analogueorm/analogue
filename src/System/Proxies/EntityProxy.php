@@ -32,6 +32,33 @@ class EntityProxy extends Proxy {
     }
 
     /**
+     * Transparently passes get operation to underlying entity
+     *
+     * @param  string $attribute 
+     * @return mixed
+     */
+    public function __get($attribute)
+    {
+        if (! $this->isLoaded() ) $this->loadOnce();
+
+        return $this->entity->$attribute;
+    }
+
+    /**
+     * Transparently passes set operation to underlying entity
+     *
+     * @param  string $attribute [description]
+     * @param  mixed
+     * @return void
+     */
+    public function __set($attribute, $value)
+    {
+        if (! $this->isLoaded() ) $this->loadOnce();
+
+        $this->entity->$attribute = $value;
+    }
+
+    /**
      * Transparently Redirect non overrided calls to the lazy loaded Entity
      *  
      * @param  string $method     

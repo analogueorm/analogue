@@ -41,7 +41,7 @@ abstract class Proxy implements ProxyInterface{
     /**
      * Call the relationship method on the underlying entity map
      * 
-     * @return Mappable|EntityCollection
+     * @return mixed
      */
     public function load()
     {

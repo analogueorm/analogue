@@ -8,4 +8,9 @@ class Image extends Entity {
     {
         $this->path = $path;
     }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
 }

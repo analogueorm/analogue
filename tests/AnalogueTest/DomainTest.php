@@ -318,5 +318,109 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $avatar = new Avatar('avatar-xyz', $user);
         $user->avatars = [$avatar];
         $userMapper->store($user);
+        $this->assertGreaterThan(0, $user->id);
     }
+
+    public function testUpdatingDirtyRelationships()
+    {
+        $user = new User('dirtyrelated', new Role('dirtyrole'));
+        $userMapper = get_mapper($user);
+        $avatar = new Avatar('avatar-initial', $user);
+        $user->avatars = new Collection([$avatar]);
+        $userMapper->store($user);
+        $this->assertGreaterThan(0, $user->id);
+        $id = $user->id;
+        $user->avatars->first()->name = 'avatar-modified';
+        $userMapper->store($user);
+        $q = $userMapper->find($id);
+        $this->assertEquals('avatar-modified', $user->avatars->first()->name);
+    }
+
+    public function testLazyLoadingOnHasMany()
+    {
+        $user = new User('test-lazy-has-many', new Role('lazy-has-many'));
+        $userMapper = get_mapper($user);
+        $avatar1 = new Avatar('avat1');
+        $avatar2 = new Avatar('avat2');
+        $user->avatars =new EntityCollection([$avatar1, $avatar2]);
+        $userMapper->store($user);
+        $userId = $user->id;
+        $avatarId1 = $avatar1->id;
+        $avatarId2 = $avatar2->id;
+        $this->assertGreaterThan(0, $userId);
+        $this->assertGreaterThan(0, $avatarId1);
+        $this->assertGreaterThan(0, $avatarId2);
+        $q = $userMapper->find($userId);
+        $this->assertEquals(2, $q->avatars->count());
+    }
+
+    public function testLazyLoadingOnMorphMany()
+    {
+        $resource = new Resource('lazy-morph-many');
+        $image1 = new Image('Image1');
+        $image2 = new Image('Image2');
+        $resource->images = new Collection([$image1,$image2]);
+        $resourceMapper = get_mapper($resource);
+        $resourceMapper->store($resource);
+        $this->assertGreaterThan(0, $resource->custom_id);
+        $this->assertGreaterThan(0, $image1->id);
+        $q = $resourceMapper->find($resource->custom_id);
+        $this->assertEquals(2, $q->images->count());
+    }
+
+    public function testLazyLoadingOnMorphOne()
+    {
+        $avatar = new Avatar('lazyloadingavatar');
+        $avatar->image = new Image('avatar-image-lazy');
+        $mapper = get_mapper($avatar);
+        $mapper->store($avatar);
+        $id = $avatar->id;
+        $imageId = $avatar->image->id;
+        $this->assertGreaterThan(0, $id);
+        $this->assertGreaterThan(0, $imageId);
+        $avatar = $mapper->find($id);
+        $image = $avatar->image;
+        $this->assertEquals($imageId, $image->id);
+    }
+
+
+    public function testRecursiveRelationships()
+    {
+        $user = new User('recursions', new Role('recursion'));
+        $userMapper = get_mapper($user);
+        $avatar = new Avatar('avatar-with-image', $user);
+        $avatar->image = new Image('avatar-image');
+        $user->avatars = new Collection([$avatar]);
+        $userMapper->store($user);
+        $id = $user->id;
+        $this->assertGreaterThan(0, $user->id);
+        $this->assertGreaterThan(0, $user->avatars->first()->id);
+        $this->assertGreaterThan(0, $user->avatars->first()->image->id);
+
+        $imageId = $user->avatars->first()->image->id;
+        $imageMapper=get_mapper(new Image('ezfzefj'));
+        $imageObject = $imageMapper->find($imageId);
+       
+        // Update image path (2 level deep relationship)z
+        $q = $userMapper->find($id);
+        $avatar = $q->avatars->first();
+        $avatarId = $avatar->id;
+
+        $avatarMapper = get_mapper($avatar);
+
+        $a = $avatarMapper->with('image')->find($avatarId);
+        $this->assertInstanceOf('AnalogueTest\App\Image', $a->image);
+               
+
+        $q->avatars->first()->image->setPath("new-path");
+        $image = $q->avatars->first()->image;
+
+        $image->setPath("new-path");
+        $userMapper->store($q);
+
+        $q = $userMapper->find($id);
+
+        $this->assertEquals('new-path', $q->avatars->first()->image->path);
+    }
+
 }

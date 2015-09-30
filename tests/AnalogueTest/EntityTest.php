@@ -15,9 +15,6 @@ class EntityTest extends PHPUnit_Framework_TestCase {
 
         $q = $mapper->whereLabel('lazycoll')->first();
         // Check cache record for $q->id
-        //setDebugOn();
-        tdd(spl_object_hash($q));
-        tdd($mapper->getEntityCache()->get($q->id));
         $this->assertInstanceOf('Analogue\ORM\System\Proxies\CollectionProxy', $q->permissions);
         $this->assertEquals(1, $q->permissions->count());
         $q->permissions->add(new Permission('p33'));

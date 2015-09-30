@@ -46,7 +46,7 @@ function get_mapper($entity)
 }
 
 
-$globalDebug = false;
+$globalDebug = true;
 
 function setDebugOn()
 {

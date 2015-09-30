@@ -6,13 +6,6 @@ use Analogue\ORM\EntityMap;
 class PlainObjectWrapper extends Wrapper {
     
     /**
-     * The entity Map for the current managed entity
-     * 
-     * @var \Analogue\ORM\EntityMap
-     */
-    protected $entityMap;
-
-    /**
      * The list of attributes for the managed entity
      * 
      * @var array

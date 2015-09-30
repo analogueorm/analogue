@@ -288,7 +288,7 @@ class Aggregate implements InternallyMappable {
     /**
      * Create a child, aggregated entity
      * 
-     * @param  array|collection $entities
+     * @param  mixed $entities
      * @return 
      */
     protected function createSubAggregates($entities, $relation)
@@ -520,7 +520,7 @@ class Aggregate implements InternallyMappable {
         {
             foreach($relation as $aggregate)
             {
-                if($aggregate->isDirty() || $aggregate->hasDirtyRelationships())
+                if(! $aggregate->exists() || $aggregate->isDirty() || count($aggregate->getDirtyRelationships() > 0))
                 {
                     $dirtyAggregates[] = $aggregate;
                 }
@@ -542,16 +542,6 @@ class Aggregate implements InternallyMappable {
             return true;
         }
         else return false;
-    }
-
-    /**
-     * Check if any of the related entities are dirty
-     * 
-     * @return boolean 
-     */
-    public function hasDirtyRelationships()
-    {
-
     }
 
     /**
@@ -764,7 +754,6 @@ class Aggregate implements InternallyMappable {
         {
             // Compare the two array of hashes to find out existing
             // pivot records, and the ones to be created.
-            //tdd($cachedAttributes);
             $new = array_diff($hashes, array_keys($cachedAttributes[$relation]));
             $existing = array_intersect($hashes, array_keys($cachedAttributes[$relation])); 
         }
@@ -806,9 +795,43 @@ class Aggregate implements InternallyMappable {
 
         if($aggregate->hasAttribute('pivot'))
         {
-            $pivotAttribute = $aggregate->getEntityAttribute('pivot');
-            $cachedPivot = $this->getPivotAttributesFromCache($pivotHash, $relation);
+            $pivot = $aggregate->getEntityAttribute('pivot')->getEntityAttributes();
+
+            $cachedPivotAttributes = $this->getPivotAttributesFromCache($pivotHash, $relation);
+
+            $actualPivotAttributes = array_only($pivot,array_keys($cachedPivotAttributes));
+
+            $dirty = $this->getDirtyAttributes($actualPivotAttributes, $cachedPivotAttributes);
+            
+            if(count($dirty) > 0)
+            {
+                $id = $aggregate->getEntityId();
+
+                $this->entityMap->$relation($this->getEntityObject())->updateExistingPivot($id, $dirty);
+            }
         }
+    }
+
+    /**
+     * Compare two attributes array and return dirty attributes
+     * 
+     * @param  array  $actual 
+     * @param  array  $cached 
+     * @return array
+     */
+    protected function getDirtyAttributes(array $actual, array $cached)
+    {
+        $dirty = [];
+
+        foreach($actual as $key => $value)
+        {
+            if(! $this->originalIsNumericallyEquivalent($value, $cached[$key]))
+            {
+                $dirty[$key] = $actual[$key];
+            }
+        }
+
+        return $dirty;
     }
 
     /**

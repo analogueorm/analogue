@@ -1010,7 +1010,7 @@ class EntityMap {
      */
     public function getMorphClass()
     {
-        return $this->morphClass ?: get_class($this);
+        return $this->morphClass ?: $this->getClass();
     }
     
     /**
