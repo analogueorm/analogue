@@ -69,7 +69,7 @@ class Repository {
 	 */
 	public function firstMatching(array $attributes)
 	{
-		return $this->mapper->where($attributes)->first();
+		return $this->match($attributes)->first();
 	}
 
 	/**
@@ -80,7 +80,18 @@ class Repository {
 	 */
 	public function allMatching(array $attributes)
 	{
-		return $this->mapper->where($attributes)->get();
+		return $this->match($attributes)->get();
+	}
+
+	/**
+	 * Paginate all the entities matching the given attributes
+	 *
+	 * @param array $attributes
+	 * @return \Illuminate\Pagination\Paginator
+	 */
+	public function paginateMatching(array $attributes, $perPage = null)
+	{
+		return $this->match($attributes)->paginate($perPage);
 	}
 
 	/**
@@ -106,6 +117,19 @@ class Repository {
 	}
 
 	/**
+	 * Delete all the entities matching the given attributes
+	 *
+	 * @param array $attributes
+	 * @return null
+	 */
+	public function deleteMatching(array $attributes)
+	{
+		$entities = $this->match($attributes)->get();
+
+		return $this->delete($entities);
+	}
+
+	/**
 	 * Persist an entity or an entity collection in the database.
 	 * 
 	 * @param  Mappable|Collection|array $entity 
@@ -115,6 +139,32 @@ class Repository {
 	{
 		return $this->mapper->store($entity);	
 	}
+
+	/**
+	 * Start a query matching all the given attributes.
+	 * 
+	 * @param  array $attributes
+	 * @return \Analogue\ORM\System\Query
+	 */
+	public function match(array $attributes = [])
+    {
+        return $this->mapper->where(function ($query) use ($attributes) {
+            foreach ($attributes as $key => $value) {
+                if (is_numeric($key) && is_array($value))
+                {
+                    $query->where($value[0], $value[1], $value[2]);
+                }
+                elseif (is_array($value))
+                {
+                    $query->whereIn($key, $value);
+                }
+                else
+                {
+                    $query->where($key, '=', $value);
+                }
+            }
+        });
+    }
 
 	/**
 	 * Make custom mapper custom commands available in repository
