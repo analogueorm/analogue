@@ -14,14 +14,18 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $mapper->store($r);
 
         $q = $mapper->whereLabel('lazycoll')->first();
-        $this->assertInstanceOf('Analogue\ORM\System\CollectionProxy', $q->getEntityAttribute('permissions'));
+        // Check cache record for $q->id
+        $this->assertInstanceOf('Analogue\ORM\System\Proxies\CollectionProxy', $q->permissions);
+        $this->assertEquals(1, $q->permissions->count());
         $q->permissions->add(new Permission('p33'));
+        
         $mapper->store($q);
         $pm = get_mapper('AnalogueTest\App\Permission');
         $cc = $pm->whereLabel('p33')->first();
         $this->assertEquals('p33', $cc->label);
+        
         $z = $mapper->whereLabel('lazycoll')->first();
-
+       
         $this->assertEquals(2, $z->permissions->count());
     }
 

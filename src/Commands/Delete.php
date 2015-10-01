@@ -11,21 +11,24 @@ class Delete extends Command {
 	 */
 	public function execute()
 	{
-		$entity = $this->entity;
-		$mapper = $this->mapper;
+		$aggregate = $this->aggregate;
+
+		$entity = $aggregate->getEntityObject();
+
+		$mapper = $aggregate->getMapper();
 
 		if ($mapper->fireEvent('deleting', $entity) === false)
 		{
 			return false;
 		}
 
-		$keyName = $this->entityMap->getKeyName();
+		$keyName = $aggregate->getEntityMap()->getKeyName();
 		
-		$id = $this->entity->getEntityAttribute($keyName);
+		$id = $this->aggregate->getEntityId();
 
 		if (is_null($id) )
 		{
-			throw new MappingException('Executed a delete command on an entity with a null primary key');
+			throw new MappingException("Executed a delete command on an entity with 'null' as primary key");
 		}
 
 		$this->query->where($keyName, '=', $id)->delete();
@@ -33,7 +36,9 @@ class Delete extends Command {
 		$mapper->fireEvent('deleted', $entity, false);
 
 		// Once the Entity is successfully deleted, we'll just set the primary key to null.
-		$entity->setEntityAttribute($keyName, null);
+		$aggregate->setEntityAttribute($keyName, null);
+
+		
 	}
 
 }

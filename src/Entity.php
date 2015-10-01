@@ -2,9 +2,9 @@
 
 use ArrayAccess;
 use JsonSerializable;
-use Analogue\ORM\System\EntityProxy;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Analogue\ORM\System\Proxies\EntityProxy;
 
 class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
 

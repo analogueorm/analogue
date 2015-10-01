@@ -56,7 +56,13 @@ abstract class HasOneOrMany extends Relationship {
 
 	public function attachOne($entity)
 	{
-		$entity->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
+		$wrapper = $this->factory->make($entity);
+
+		// Ok, we need to guess the inverse of the relation from there. 
+		// Let's assume the inverse of the relation method is the name of 
+		// the entity. 
+
+		$wrapper->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
 	}
 
 	public function attachMany(EntityCollection $entities)
@@ -72,6 +78,33 @@ abstract class HasOneOrMany extends Relationship {
 		$this->detachMany([$entityHash]);
 	}
 
+	/**
+	 * Attach ids that are passed as arguments, and detach any other
+	 * @param  mixed  $entities 
+	 * @return void
+	 */
+	public function sync(array $entities)
+	{
+		$this->detachExcept($entities);
+	}
+
+	protected function detachExcept($entities)
+	{
+		$query = $this->query->getQuery()->from($this->relatedMap->getTable() );
+
+		if(count($entities) > 0)
+		{
+			$keys = $this->getKeys($entities);
+			$query->whereNotIn($this->relatedMap->getKeyName(), $keys);
+		}
+
+		$parentKey = $this->parentMap->getKeyName();
+
+		$query->where($this->getPlainForeignKey(), '=', $this->parent->getEntityAttribute($parentKey))
+			->update([$this->getPlainForeignKey() => null]);
+	}
+
+
 	public function detachMany(array $entityHashes)
 	{
 		$keys = [];
@@ -85,7 +118,7 @@ abstract class HasOneOrMany extends Relationship {
 		$query = $this->query->getQuery()->from($this->relatedMap->getTable() );
 
 		$query->whereIn($this->relatedMap->getKeyName(), $keys)
-			->update([$this->foreignKey => null]);
+			->update([$this->getPlainForeignKey() => null]);
 	}
 
 	/**
@@ -162,6 +195,8 @@ abstract class HasOneOrMany extends Relationship {
 		// matching very convenient and easy work. Then we'll just return them.
 		foreach ($entities as $entity)
 		{
+			$entity = $this->factory->make($entity);
+
 			$key = $entity->getEntityAttribute($this->localKey);
 
 			if (isset($dictionary[$key]))
@@ -267,4 +302,13 @@ abstract class HasOneOrMany extends Relationship {
 		return $this->parentMap->getTable().'.'.$this->localKey;
 	}
 
+	/**
+	 * Get the foreign key as value pair for this relation
+	 * 
+	 * @return array
+	 */
+	public function getForeignKeyValuePair()
+	{
+		return [$this->getPlainForeignKey() => $this->getParentKey()];
+	}
 }

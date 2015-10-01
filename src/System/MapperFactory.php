@@ -51,9 +51,11 @@ class MapperFactory {
     public function make($entityClass, EntityMap $entityMap)
     {
         $driver = $entityMap->getDriver();
+        
         $connection = $entityMap->getConnection();
 
         $adapter = $this->drivers->getAdapter($driver, $connection);
+        
         $entityMap->setDateFormat($adapter->getDateFormat());
 
         $mapper = new Mapper($entityMap, $adapter, $this->dispatcher, $this->manager);
@@ -61,9 +63,8 @@ class MapperFactory {
         // Fire Initializing Event
         $mapper->fireEvent('initializing', $mapper);
         
-        $mapInitializer = new MapInitializer($entityMap);
-        
-        $mapInitializer->init();
+        // Proceed necessary parsing on the EntityMap object
+        $entityMap->initialize();
 
         // Fire Initialized Event
         $mapper->fireEvent('initialized', $mapper);

@@ -7,6 +7,8 @@ use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Database\Query\Expression;
 
 abstract class Relationship {
@@ -28,7 +30,7 @@ abstract class Relationship {
 	/**
 	 * The parent entity proxy instance.
 	 *
-	 * @var object
+	 * @var \Analogue\ORM\System\InternallyMappable
 	 */
 	protected $parent;
 
@@ -80,6 +82,13 @@ abstract class Relationship {
 	protected static $constraints = true;
 
 	/**
+	 * Wrapper factory 
+	 * 
+	 * @var \Analogue\ORM\System\Wrappers\Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Create a new relation instance.
 	 *
 	 * @param  \Analogue\ORM\System\Mapper  $mapper
@@ -92,7 +101,9 @@ abstract class Relationship {
 
 		$this->query = $mapper->getQuery();
 
-		$this->parent = $parent;
+		$this->factory = new Factory;
+
+		$this->parent = $this->factory->make($parent);
 
 		$this->parentMapper = $mapper->getManager()->getMapper($parent);
 
@@ -241,8 +252,15 @@ abstract class Relationship {
 			$key = $this->relatedMap->getKeyName();
 		}
 
-		return array_unique(array_values(array_map(function($value) use ($key)
+		$host = $this;
+
+		return array_unique(array_values(array_map(function($value) use ($key, $host)
 		{
+			if(! $value instanceof InternallyMappable)
+			{
+				$value = $host->factory->make($value);
+			}
+
 			return $value->getEntityAttribute($key);
 
 		}, $entities)));
@@ -396,11 +414,23 @@ abstract class Relationship {
 	{
 		$class = get_class($entity);
 		
-		$keyName = $this->relatedMapper->getManager()->mapper($class)->getEntityMap()->getKeyName();
+		$keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
 		
 		$hash = $class.'.'.$entity->getEntityAttribute($keyName);
 
 		return $hash;
+	}
+
+	/**
+	 * Run synchronization content if needed by the
+	 * relation type. 
+	 * 
+	 * @param  array  $actualContent 
+	 * @return void
+	 */
+	public function sync(array $actualContent)
+	{
+		//
 	}
 
 	/**

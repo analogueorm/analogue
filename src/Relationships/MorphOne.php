@@ -12,7 +12,7 @@ class MorphOne extends MorphOneOrMany {
 	public function getResults($relation)
 	{
 		$result = $this->query->first();
-
+		
 		$this->cacheRelation($result, $relation);
 
 		return $result;
@@ -29,6 +29,8 @@ class MorphOne extends MorphOneOrMany {
 	{
 		foreach ($entities as $entity)
 		{
+			$entity = $this->factory->make($entity);
+
 			$entity->setEntityAttribute($relation, null);
 		}
 

@@ -1,65 +1,25 @@
-<?php namespace Analogue\ORM\Commands;
+<?php 
+
+namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
-use Analogue\ORM\System\EntityProxy;
-use Analogue\ORM\System\StateChecker;
-use Analogue\ORM\System\ProxyInterface;
-use Analogue\ORM\System\MapInitializer;
-use Analogue\ORM\System\CollectionProxy;
+use Analogue\ORM\Drivers\QueryAdapter;
+use Analogue\ORM\System\Aggregate;
+use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\System\Proxies\ProxyInterface;
+use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
  * Persist entities & relationships to the
  * database.
  */
-class Store extends Command 
+class Store extends Command
 {
-	/**
-	 * List of relationships which foreign key
-	 * is part of the entity's attributes
-	 * 
-	 * @var array
-	 */
-	protected $masterRelations = [];
-
-	/**
-	 * List of relationships owned by current entity
-	 * 
-	 * @var array
-	 */
-	protected $slaveRelations = [];	
-
-	/**
-	 * Related entities with modified attributes
-	 * 
-	 * @var array
-	 */
-	protected $dirtyRelations = [];
-
-	/**
-	 * List of relationships using pivot tables
-	 * 
-	 * @var array
-	 */
-	protected $relationsWithPivot = [];
-
-	/**
-	 * List of Many-to-many relationships that already
-	 * exist in the database
-	 * 
-	 * @var array
-	 */
-	protected $existingPivotEntities = [];
-
-	/**
-	 * List of Many-to-many relationships that don't
-	 * exist in the database
-	 * 
-	 * @var array
-	 */
-	protected $newPivotEntities = [];
 
 	/**
 	 * Persist the entity in the database
@@ -68,8 +28,10 @@ class Store extends Command
 	 */
 	public function execute()
 	{
-		$entity = $this->entity;
-		$mapper = $this->mapper;
+		
+		$entity = $this->aggregate->getEntityObject();
+
+		$mapper = $this->aggregate->getMapper();
 
 		if ($mapper->fireEvent('storing', $entity) === false)
 		{
@@ -78,7 +40,11 @@ class Store extends Command
 
 		$this->preStoreProcess();
 
-		if (! $this->entityState->exists() ) 
+		/**
+		 * We will test the entity for existence
+		 * and run a creation if it doesn't exists
+		 */
+		if (! $this->aggregate->exists() ) 
 		{
 			if ($mapper->fireEvent('creating', $entity) === false)
 			{
@@ -89,7 +55,12 @@ class Store extends Command
 
 			$mapper->fireEvent('created', $entity, false);
 		}
-		else
+		
+		/**
+		 * We'll only run an update if the entity
+		 * is actually dirty
+		 */
+		if ($this->aggregate->isDirty() )
 		{
 			if ($mapper->fireEvent('updating', $entity) === false)
 			{
@@ -104,7 +75,7 @@ class Store extends Command
 
 		$mapper->fireEvent('stored', $entity, false);
 
-		return $entity;
+		return $entity;;
 	}
 
 	/**
@@ -115,447 +86,79 @@ class Store extends Command
 	 */
 	protected function preStoreProcess()
 	{
-		// First we parse all the relationship of the entity to split
-		// them into different categories 
-		$this->parseRelations();
+		// Create any related object that doesn't exist in the database.
+		$localRelationships = $this->aggregate->getEntityMap()->getLocalRelationships();
 		
-		// Then if needed, we create any relation that the 
-		// entity belongs to.
-		if(count($this->masterRelations) > 0)
-		{
-			$this->createRelatedIfNotExists($this->masterRelations);
-			
-			// Then, we set the master relations foreign keys
-			// on the entity.
-			$this->attachRelations($this->masterRelations);
-		}
-		
-		// As storing the entity will reset the original relationships,
-		// we must parse for removed relations before storing it.
-		$this->detachMissingRelations();
+		$this->createRelatedEntities($localRelationships);
+
 	}
 
 	/**
-	 * Parse loaded relations and order them relative to their
-	 * ownership direction toward the current entity.
+	 * Check for existence and create non-existing related entities
 	 * 
+	 * @param  array
 	 * @return void
 	 */
-	protected function parseRelations()
+	protected function createRelatedEntities($relations)
 	{
-		$entity = $this->entity;
-
-		$entityMap = $this->entityMap;
-
-		$relations = $entityMap->getRelationships();
-
-		foreach($relations as $relation)
-		{
-			$currentRelation = $entityMap->$relation($entity);
-			
-			if($currentRelation->ownForeignKey())
-			{
-				$this->masterRelations[] = $relation;
-			}
-			else
-			{
-				if ($currentRelation->hasPivot() )
-				{
-					$this->relationsWithPivot[] = $relation;
-				}
-				else 
-				{
-					$this->slaveRelations[] = $relation;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Create related Entities if they don't exist
-	 * in the database
-	 * 
-	 * @param  array $relations 
-	 * @return void            
-	 */
-	protected function createRelatedIfNotExists($relations)
-	{
-		$attributes = $this->getAttributes();
-
-		foreach($relations as $relation)
-		{
-			if (! array_key_exists($relation, $attributes)) continue;
-
-			$value = $attributes[$relation];
-
-			if(is_null($value)) continue;
-
-			if($value instanceof EntityProxy) continue;
-
-			if($value instanceof Mappable)
-			{
-				$this->createEntityIfNotExists($value);
-			}
-			
-			// If the relation is a proxy, we test is the relation
-			// has been lazy loaded, otherwise we'll just treat
-			// the subset of newly added items.
-			if ($value instanceof CollectionProxy && $value->isLoaded() )
-			{
-				$value = $value->getUnderlyingCollection();
-			}
-
-			if ($value instanceof CollectionProxy && ! $value->isLoaded() )
-			{
-				$value = $value->getAddedItems();
-			}
-
-			// If the relation's attribute is an array or a collection
-			// let's assume the user intent is to store them as a many
-			// relation, so we turn the array into an EntityCollection
-			// if($value instanceof Collection || is_array($value) )
-
-			if($value instanceof EntityCollection)
-			{
-				foreach ($value as $entity)
-				{
-					$this->createEntityIfNotExists($entity);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Run a store command on an entity which doesn't exist.
-	 * 
-	 * @param  mixed $entity 
-	 * @return Mappable|null
-	 */
-	protected function createEntityIfNotExists($entity)
-	{
-		$mapper = Manager::getMapper($entity);
-
-		$checker = new StateChecker($entity, $mapper);
-
-		if(! $checker->exists())
-		{	
-			return $mapper->store($entity);
-		}
-	}
-
-	/**
-	 * Detach any relation that have been removed
-	 * from the entity.
-	 * 
-	 * @return void
-	 */
-	protected function detachMissingRelations()
-	{
-		$attributes = $this->getAttributes();
-
-		$cachedAttributes = $this->getCachedAttributes();
-
-		$relationships = $this->entityMap->getRelationships();
-
-		foreach ($relationships as $relation)
-		{
-			// If the key doesn't exist in the cache, it mean the relationship hasn't
-			// be loaded either by eager or lazy loading.
-			if(! array_key_exists($relation, $cachedAttributes)) continue;
-
-			$value = $attributes[$relation];
-
-			// Check if lazyloading proxy has been loaded.
-			if($value instanceof ProxyInterface && ! $value->isLoaded()) continue;
-
-			$cachedValue = $cachedAttributes[$relation];
-
-			if(is_string($cachedValue))
-			{
-				if (is_null($value))
-				{
-					$this->entityMap->$relation($this->entity)->detachFrom($cachedValue);
-
-					continue;
-				}
-				if ($value instanceof Mappable)
-				{
-					$hash = $this->getEntityHash($value);
-
-					if($hash !== $cachedValue)
-					{
-						$this->entityMap->$relation($this->entity)->detachFrom($cachedValue);
-					}
-					continue;
-				}
-				throw new MappingException("Store : couldn't interpret the value of $".$relation);
-			}
-
-			if(is_array($cachedValue) && count($cachedValue) > 0)
-			{
-				if (is_null($value))
-				{
-					$this->entityMap->$relation($this->entity)->detachMany($cachedValue);
-					
-					continue;
-				}
-				// If the collection is a proxy we have to check if it has been lazy loaded
-				// then we need to retrieve the underlying collection
-				if ($value instanceof CollectionProxy && $value->isLoaded() )
-				{
-					$value = $value->getUnderlyingCollection();
-				}
+		$entitiesToCreate = $this->aggregate->getNonExistingRelated($relations);
 				
-				if ($value instanceof EntityCollection)
-				{
-					$hashes = $value->getEntityHashes();
-
-					$missing = array_diff($cachedValue, $hashes);
-
-					if(count($missing) > 0)
-					{
-						$this->entityMap->$relation($this->entity)->detachMany($missing);
-					}
-
-					continue;
-				}
-				throw new MappingException("Store : couldn't interpret the value of $".$relation);
-			}
+		foreach($entitiesToCreate as $aggregate)
+		{
+			$this->createStoreCommand($aggregate)->execute();
 		}
-	}
-
-	protected function getEntityHash(Mappable $entity)
-	{
-		$mapper = Manager::getMapper($entity);
-
-		$key = $mapper->getEntityMap()->getKeyName();
-
-		return get_class($entity).'.'.$entity->getEntityAttribute($key);
 	}
 
 	/**
-	 * Return the entity's attributes
+	 * Create a new store command
 	 * 
-	 * @return array
+	 * @param  Aggregate $aggregate 
+	 * @return void
 	 */
-	protected function getAttributes()
+	protected function createStoreCommand(Aggregate $aggregate)
 	{
-		return $this->flattenEmbeddables($this->entity->getEntityAttributes());
-	}
+		// We gotta retrieve the corresponding query adapter to use.
+		$mapper = $aggregate->getMapper();
 
-	protected function flattenEmbeddables($attributes)
-	{
-		$embeddables = $this->entityMap->getEmbeddables();
-		
-		foreach($embeddables as $localKey => $embed)
-		{
-			// Retrieve the value object from the entity's attributes
-			$valueObject = $attributes[$localKey];
-
-			// Unset the corresponding key
-			unset($attributes[$localKey]);
-
-			$valueObjectAttributes = $valueObject->getEntityAttributes();
-
-			// Now (if setup in the entity map) we prefix the value object's
-			// attributes with the snake_case name of the embedded class.
-			$prefix = snake_case(class_basename($embed));
-
-			foreach($valueObjectAttributes as $key=>$value)
-			{
-				$valueObjectAttributes[$prefix.'_'.$key] = $value;
-				unset($valueObjectAttributes[$key]);
-			}
-
-			$attributes = array_merge($attributes, $valueObjectAttributes);
-		}
-		
-		return $attributes;
+		return new Store($aggregate, $mapper->newQueryBuilder() );
 	}
 
 	/**
-	 * Return the attribute array in the cache
+	 * Run all operations that have to occur after the entity 
+	 * is stored.
 	 * 
-	 * @return array
+	 * @return void
 	 */
-	protected function getCachedAttributes()
-	{
-		$id = $this->getId();
-
-		if(is_null($id))
-		{
-			return [];
-		}
-
-		return $this->mapper->getEntityCache()->get($id);
-	}
-
-	protected function getId()
-	{
-		$keyName = $this->entityMap->getKeyName();
-
-		$entityAttributes = $this->entity->getEntityAttributes();
-
-		if (! array_key_exists($keyName, $entityAttributes))
-		{
-			return null;
-		}
-		else
-		{
-			return $entityAttributes[$keyName];
-		}
-	}
-
 	protected function postStoreProcess()
 	{
-		// Set the foreign keys on related owned entities.
-		$this->attachRelations($this->slaveRelations);
+		$aggregate = $this->aggregate;
 
-		// Once the keys are set, we can store the related 
-		// entities in the databse.
-		$this->createRelatedIfNotExists($this->slaveRelations);
-		$this->createRelatedIfNotExists($this->relationsWithPivot);
-		
+		// Create any related object that doesn't exist in the database.
+		$foreignRelationships = $aggregate->getEntityMap()->getForeignRelationships();
+		$this->createRelatedEntities($foreignRelationships);
+
 		// Update any pivot tables that has been modified.
-		$this->updatePivotRelations($this->relationsWithPivot);
+		$aggregate->updatePivotRecords();
 
-		// Update any dirty relationship
-		$this->updateDirtyRelated();
+		// Update any dirty relationship. This include relationships that already exists, have 
+		// dirty attributes / newly created related entities / dirty related entities.
+		$dirtyRelatedAggregates = $aggregate->getDirtyRelationships();
 
-		if(count($this->entityMap->getRelationships()) >0)
+		foreach($dirtyRelatedAggregates as $related)
 		{
-			$this->setProxies($this->entity);
+			$this->createStoreCommand($related)->execute();
 		}
 
+		if($this->aggregate->exists())
+		{
+			$this->aggregate->syncRelationships();
+		}
+		// This should be move to the wrapper class
+		// so it's the same code for the entity builder
+		$aggregate->setProxies();
+		
 		// Update Entity Cache
-		$this->mapper->getEntityCache()->refresh($this->entity);
-	}
-	
-	/**
-	 * Update foreign keys on related entities
-	 * 
-	 * @param  array  $relations 
-	 * @return void
-	 */
-	protected function attachRelations(array $relations)
-	{
-		$attributes = $this->getAttributes();
-
-		foreach($relations as $relation)
-		{
-			if (! array_key_exists($relation, $attributes)) continue;
-
-			$related = $attributes[$relation];
-		
-			if ($related instanceof ProxyInterface) continue;
-
-			if(! is_null($related) )
-			{
-				$this->entityMap->$relation($this->entity)->attachTo($related);
-			}
-		}
-	}
-
-	/**
-	 * Parse Many-to-many relationships and create pivot records
-	 * if needed
-	 * 
-	 * @param  array  $relations 
-	 * @return void
-	 */
-	protected function updatePivotRelations(array $relations)
-	{
-		$attributes = $this->getAttributes();
-		$cachedAttributes = $this->getCachedAttributes();
-
-		foreach($relations as $relation)
-		{
-			if (! array_key_exists($relation, $attributes)) continue;
-
-			if (is_null($attributes[$relation])) continue;
-
-			if ($attributes[$relation] instanceof CollectionProxy)
-			{
-				// If the collection is loaded we'll load the whole
-				// underlying collection, if not, we'll only load
-				// the freshly added Entities.
-				if($attributes[$relation]->isLoaded() )
-				{
-					$value = $attributes[$relation]->getUnderlyingCollection();
-				}
-				else
-				{
-					$value = $attributes[$relation]->getAddedItems();
-				}
-			}
-			else
-			{
-				$value = $attributes[$relation];
-			}
-
-			// We need to parse the related entities and compare
-			// them to the key array we have in cache,which will
-			// determine if we need to create a new pivot record
-			$hashes = $value->getEntityHashes();
-			
-			if (array_key_exists($relation, $cachedAttributes))
-			{
-				// Compare the two
-				$new = array_diff($hashes, array_keys($cachedAttributes[$relation]));
-				$existing = array_intersect($hashes, array_keys($cachedAttributes[$relation])); 
-			}
-			else
-			{
-				$existing = [];
-				$new = $hashes;
-			}
-
-			if(count($new) > 0)
-			{
-				$pivots = $value->getSubsetByHashes($new);
-
-				$this->entityMap->$relation($this->entity)->createPivots($pivots);
-			}
-
-			if(count($existing) > 0)
-			{
-				$pivots = $value->getSubsetByHashes($existing);
-				
-				foreach($pivots as $pivot)
-				{
-					$this->updatePivotIfDirty($pivot, $relation);
-				}
-			}
-
-		}
-
-	}
-
-	/**
-	 * Update a pivot table if its attributes have changed.
-	 * 
-	 * @param  object $entity   
-	 * @param  string $relation 
-	 * @return void
-	 */
-	protected function updatePivotIfDirty($entity, $relation)
-	{
-		// tdd($entity);
-		// $key = $entity->getEntityKey();
-
-		// $original = $this->entity->getOriginalRelationships()[$relation]->find($key);
-
-		// if($entity->getPivotEntity()->getAttributes() !== $original->getPivotEntity()->getAttributes() )
-		// {
-		// 	$this->entityMap->$relation($this->entity)->updatePivot($entity);
-		// }	
-		
-		$attributes = $entity->getEntityAttributes();
-
-		if(array_key_exists('pivot', $attributes))
-		{
-			$this->entityMap->$relation($this->entity)->updatePivot($entity);
-		}
+		$aggregate->getMapper()->getEntityCache()->refresh($aggregate);
 	}
 
 	/**
@@ -612,107 +215,31 @@ class Store extends Command
 	}
 
 	/**
-	 * Execute a store command on a dirty entity
-	 * 
-	 * @param  mixed $entity 
-	 * @return void
-	 */
-	protected function updateEntityIfDirty($entity)
-	{
-		$mapper = Manager::getMapper($entity);
-
-		$checker = new StateChecker($entity, $mapper);
-
-		$dirtyAttributes = $checker->getDirtyAttributes();
-
-		if(count($dirtyAttributes) > 0)
-		{
-			$mapper->store($entity);
-		}
-	}
-
-	/**
 	 * Execute an insert statement on the database
 	 * 
 	 * @return void
 	 */
 	protected function insert()
 	{
-		$entity = $this->entity;
+		$aggregate = $this->aggregate;
 
-		$attributes = $this->getRawAttributes();
+		$attributes = $aggregate->getRawAttributes();
 		
-		$keyName = $this->entityMap->getKeyName();
+		$keyName = $aggregate->getEntityMap()->getKeyName();
 
 		// Check if the primary key is defined in the attributes
-		if(array_key_exists($keyName, $attributes))
+		if(array_key_exists($keyName, $attributes) && $attributes[$keyName] != null)
 		{
 			$this->query->insert($attributes);
 		}	
 		else
 		{
-			$sequence = $this->entityMap->getSequence();
+			$sequence = $aggregate->getEntityMap()->getSequence();
 
 			$id = $this->query->insertGetId($attributes, $sequence);
 
-			$entity->setEntityAttribute($keyName, $id);
+			$aggregate->setEntityAttribute($keyName, $id);
 		}
-	}
-
-	/**
-	 * Get all the attributes of the entity that
-	 * are not relationships.
-	 * 
-	 * @return array
-	 */
-	protected function getRawAttributes()
-	{
-		$attributes = $this->getAttributes();
-
-		$relationships = $this->entityMap->getRelationships();
-
-		return array_except($attributes, $relationships);
-	}
-
-	/**
-	 * Set the proxies attribute on a freshly stored entity
-	 * 
-	 * @param \Analogue\ORM\Entity
-	 */
-	protected function setProxies($entity)
-	{
-		if(! $this->entityMap->relationsParsed() )
-		{
-			$initializer = new MapInitializer($this->mapper->getEntityMap());
-			$initializer->splitRelationsTypes($entity);
-		}
-
-		$attributes = $entity->getEntityAttributes();
-		$singleRelations = $this->entityMap->getSingleRelationships();
-		$manyRelations = $this->entityMap->getManyRelationships();
-
-		$proxies = [];
-
-		foreach($this->entityMap->getRelationships() as $relation)
-		{
-			if(! array_key_exists($relation, $attributes) || is_null($attributes[$relation]))
-			{
-				if (in_array($relation, $singleRelations))
-				{
-					$proxies[$relation] = new EntityProxy($entity, $relation);
-				}
-				if (in_array($relation, $manyRelations))
-				{	
-					$proxies[$relation] = new CollectionProxy($entity, $relation);
-				}
-			}
-		}
-
-		foreach($proxies as $key => $value)
-		{	
-			$entity->setEntityAttribute($key, $value);
-		}
-
 	}
 
 	/**
@@ -724,11 +251,11 @@ class Store extends Command
 	{
 		$query = $this->query;
 
-		$keyName = $this->entityMap->getKeyName();
+		$keyName = $this->aggregate->getEntityKey();
 
-		$query = $query->where($keyName, '=', $this->getId() );
+		$query = $query->where($keyName, '=', $this->aggregate->getEntityId() );
 
-		$dirtyAttributes = $this->entityState->getDirtyAttributes();
+		$dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
 				
 		if(count($dirtyAttributes) > 0) 
 		{	

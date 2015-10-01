@@ -5,6 +5,7 @@ use Analogue\ORM\Entity;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\Plugins\AnaloguePlugin;
+use Analogue\ORM\System\Wrappers\Factory;
 
 /**
  * Implements the Timestamps support on Analogue Entities
@@ -26,24 +27,29 @@ class TimestampsPlugin extends AnaloguePlugin {
 			{
 				$mapper->registerEvent('creating', function($entity) use($entityMap) {
 					
+                    $factory = new Factory;
+                    $wrappedEntity = $factory->make($entity);
+
 					$createdAtField = $entityMap->getCreatedAtColumn();
-					
 					$updatedAtField = $entityMap->getUpdatedAtColumn();
 
 					$time= new Carbon;
 
-					$entity->setEntityAttribute($createdAtField, $time);
-					$entity->setEntityAttribute($updatedAtField, $time);
+					$wrappedEntity->setEntityAttribute($createdAtField, $time);
+					$wrappedEntity->setEntityAttribute($updatedAtField, $time);
 
 				});
 
 				$mapper->registerEvent('updating', function($entity) use($entityMap) {
 
+                    $factory = new Factory;
+                    $wrappedEntity = $factory->make($entity);
+
 					$updatedAtField = $entityMap->getUpdatedAtColumn();
 
 					$time= new Carbon;
 
-					$entity->setEntityAttribute($updatedAtField,$time);
+					$wrappedEntity->setEntityAttribute($updatedAtField,$time);
 				});				
 			}
 		});
