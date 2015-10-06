@@ -1,5 +1,5 @@
 <?php
-ini_set('error_reporting', E_ALL); 
+ini_set('error_reporting', E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
@@ -63,8 +63,7 @@ function setDebugOff()
 function tdd($value)
 {
     global $globalDebug;
-    if($globalDebug)
-    {
+    if ($globalDebug) {
         echo var_dump($value);
         die;
     }
@@ -73,8 +72,7 @@ function tdd($value)
 function tdump($value)
 {
     global $globalDebug;
-    if($globalDebug)
-    {
+    if ($globalDebug) {
         echo var_dump($value);
     }
 }

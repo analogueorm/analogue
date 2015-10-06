@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class AvatarMap extends EntityMap {
+class AvatarMap extends EntityMap
+{
 
     protected $table='custom_avatar';
 

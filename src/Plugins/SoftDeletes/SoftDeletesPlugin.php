@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\Plugins\SoftDeletes;
 
@@ -12,11 +12,12 @@ use Analogue\ORM\System\Wrappers\Factory;
  * This Plugin enables a softDeletes behaviour equivalent
  * to Eloquent ORM.
  */
-class SoftDeletesPlugin extends AnaloguePlugin {
+class SoftDeletesPlugin extends AnaloguePlugin
+{
 
     /**
      * Register the plugin
-     * 
+     *
      * @return void
      */
     public function register()
@@ -24,12 +25,10 @@ class SoftDeletesPlugin extends AnaloguePlugin {
         $host = $this;
 
         // Hook any mapper init and check the mapping include soft deletes.
-        $this->manager->registerGlobalEvent('initialized', function ($mapper) use ($host)
-        {
+        $this->manager->registerGlobalEvent('initialized', function ($mapper) use ($host) {
             $entityMap = $mapper->getEntityMap();
 
-            if($entityMap->usesSoftDeletes())
-            {
+            if ($entityMap->usesSoftDeletes()) {
                 $host->registerSoftDelete($mapper);
             }
 
@@ -39,8 +38,8 @@ class SoftDeletesPlugin extends AnaloguePlugin {
     /**
      * By hooking to the mapper initialization event, we can extend it
      * with the softDelete capacity.
-     * 
-     * @param  \Analogue\ORM\System\Mapper  $mapper 
+     *
+     * @param  \Analogue\ORM\System\Mapper  $mapper
      * @return void
      */
     protected function registerSoftDelete(Mapper $mapper)
@@ -53,7 +52,7 @@ class SoftDeletesPlugin extends AnaloguePlugin {
         $host = $this;
 
         // Register 'deleting' events
-        $mapper->registerEvent('deleting', function($entity) use($entityMap, $host) {
+        $mapper->registerEvent('deleting', function ($entity) use ($entityMap,$host) {
             
             // Convert Entity into an EntityWrapper
             $factory = new Factory;
@@ -62,12 +61,9 @@ class SoftDeletesPlugin extends AnaloguePlugin {
 
             $deletedAtField = $entityMap->getQualifiedDeletedAtColumn();
 
-            if(! is_null($wrappedEntity->getEntityAttribute($deletedAtField)))
-            {
+            if (! is_null($wrappedEntity->getEntityAttribute($deletedAtField))) {
                 return true;
-            }
-            else
-            {
+            } else {
                 $time= new Carbon;
 
                 $wrappedEntity->setEntityAttribute($deletedAtField, $time);
@@ -93,5 +89,4 @@ class SoftDeletesPlugin extends AnaloguePlugin {
     {
         return ['restoring', 'restored'];
     }
-
 }

@@ -4,7 +4,8 @@ use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
 use Analogue\ORM\EntityCollection;
 
-class DomainTest extends PHPUnit_Framework_TestCase {
+class DomainTest extends PHPUnit_Framework_TestCase
+{
 
     public function testStoreRoleUser()
     {
@@ -39,7 +40,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $b = new Permission('P2');
         $c = new Permission('P3');
 
-        $analogue->mapper($a)->store([$a,$b,$c]);
+        $analogue->mapper($a)->store([$a, $b, $c]);
 
         $this->assertGreaterThan(0, $a->id);
         $this->assertGreaterThan(0, $b->id);
@@ -54,7 +55,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $b = new Permission('P2');
         $c = new Permission('P3');
 
-        $analogue->mapper($a)->store(new Collection([$a,$b,$c]));
+        $analogue->mapper($a)->store(new Collection([$a, $b, $c]));
 
         $this->assertGreaterThan(0, $a->id);
         $this->assertGreaterThan(0, $b->id);
@@ -69,7 +70,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $b = new Permission('P2');
         $c = new Permission('P3');
 
-        $analogue->mapper($a)->store(new EntityCollection([$a,$b,$c]));
+        $analogue->mapper($a)->store(new EntityCollection([$a, $b, $c]));
 
         $this->assertGreaterThan(0, $a->id);
         $this->assertGreaterThan(0, $b->id);
@@ -109,7 +110,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $rawAttributes = $bob->getEntityAttributes();
         $this->assertInstanceOf('Analogue\ORM\System\Proxies\EntityProxy', $rawAttributes['role']);
         $this->assertInstanceOf('AnalogueTest\App\Role', $bob->role);
-        $this->assertEquals('guest', $bob->role->label);        
+        $this->assertEquals('guest', $bob->role->label);
     }
 
     public function testEntityLazyCollection()
@@ -122,7 +123,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $b = new Permission('P2');
         $c = new Permission('P3');
 
-        $perms = new EntityCollection([$a,$b,$c]);
+        $perms = new EntityCollection([$a, $b, $c]);
 
         $role->permissions = $perms;
         $analogue->mapper($role)->store($role);
@@ -133,14 +134,14 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         
         $this->assertInstanceOf('Analogue\ORM\System\Proxies\CollectionProxy', $rawAttributes['permissions']);
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']->load());
-        $this->assertEquals($perms->lists('label'), $ur->permissions->lists('label')); 
+        $this->assertEquals($perms->lists('label'), $ur->permissions->lists('label'));
     }
 
     public function testEagerLoading()
     {
         $analogue = get_analogue();
 
-        $ur=$analogue->query('AnalogueTest\App\Role')->with(['users','permissions'])->whereLabel('user')->first();
+        $ur=$analogue->query('AnalogueTest\App\Role')->with(['users', 'permissions'])->whereLabel('user')->first();
         //tdd($ur);
         $rawAttributes = $ur->getEntityAttributes();
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['permissions']);
@@ -159,7 +160,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
         $image1 = new Image('i1');
         $image2 = new Image('i2');
-        $resource->images = new EntityCollection([$image1,$image2]);
+        $resource->images = new EntityCollection([$image1, $image2]);
 
         //setDebugOn();
 
@@ -171,7 +172,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         
         $resourceMapper = get_mapper($resource);
         $id = $resource->custom_id;
-        $res = $resourceMapper->query()->with(['users','images'])->find($id);
+        $res = $resourceMapper->query()->with(['users', 'images'])->find($id);
     }
 
     public function testMissingPermissions()
@@ -186,11 +187,9 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
         $roles = $roleMapper->query()->with('permissions')->get();
 
-        foreach($roles as $role)
-        {
+        foreach ($roles as $role) {
             $this->assertEquals(0, $role->permissions->count());
         }
-        
     }
 
     public function testSoftDeleteAndRestore()
@@ -226,13 +225,13 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
         $q = $rm->find($id);
 
-        $this->assertEquals(2,$role->permissions->count());
+        $this->assertEquals(2, $role->permissions->count());
 
         // Replace
         $q->permissions = new EntityCollection([new Permission('three_perm')]);
         $rm->store($q);
         $z = $rm->find($id);
-        $this->assertEquals(1,$z->permissions->count());
+        $this->assertEquals(1, $z->permissions->count());
     }
 
     public function testPivotAttributes()
@@ -267,7 +266,6 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
     public function testDetachMissingRelationships()
     {
-        
         $user = new User('testmissing', new Role('missingRole'));
         $userMapper = get_mapper($user);
         $avatar1 = new Avatar('avatar1');
@@ -291,7 +289,6 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
     public function testRelationResetOnHasMany()
     {
-        
         $user = new User('relationsync', new Role('relationsSync'));
         $userMapper = get_mapper($user);
         $avatar1 = new Avatar('before-avatar-1');
@@ -359,7 +356,7 @@ class DomainTest extends PHPUnit_Framework_TestCase {
         $resource = new Resource('lazy-morph-many');
         $image1 = new Image('Image1');
         $image2 = new Image('Image2');
-        $resource->images = new Collection([$image1,$image2]);
+        $resource->images = new Collection([$image1, $image2]);
         $resourceMapper = get_mapper($resource);
         $resourceMapper->store($resource);
         $this->assertGreaterThan(0, $resource->custom_id);
@@ -422,5 +419,4 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals('new-path', $q->avatars->first()->image->path);
     }
-
 }

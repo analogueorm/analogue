@@ -1,6 +1,7 @@
 <?php namespace AnalogueTest\App;
 
-class Popo {
+class Popo
+{
 
     protected $id;
 

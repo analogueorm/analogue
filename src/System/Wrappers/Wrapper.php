@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\System\Wrappers;
 
@@ -10,18 +10,19 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
 /**
  * The Wrapper Class provides a single interface access several Entity types
  */
-abstract Class Wrapper implements InternallyMappable {
+abstract class Wrapper implements InternallyMappable
+{
   
     /**
      * Original Entity Object
-     * 
+     *
      * @var mixed
      */
     protected $entity;
 
     /**
      * Corresponding EntityMap
-     * 
+     *
      * @var \Analogue\ORM\EntityMap
      */
     protected $entityMap;
@@ -34,7 +35,7 @@ abstract Class Wrapper implements InternallyMappable {
 
     /**
      * Return the wrapped entity class
-     * 
+     *
      * @return mixed
      */
     public function getEntityClass()
@@ -44,7 +45,7 @@ abstract Class Wrapper implements InternallyMappable {
 
     /**
      * Returns the wrapped entity
-     * 
+     *
      * @return mixed
      */
     public function getObject()
@@ -65,34 +66,29 @@ abstract Class Wrapper implements InternallyMappable {
 
         $proxies = [];
 
-        foreach($this->entityMap->getRelationships() as $relation)
-        {
-            if(! array_key_exists($relation, $attributes) || is_null($attributes[$relation]))
-            {
-                if (in_array($relation, $singleRelations))
-                {
+        foreach ($this->entityMap->getRelationships() as $relation) {
+            if (! array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+                if (in_array($relation, $singleRelations)) {
                     $proxies[$relation] = new EntityProxy($this->getObject(), $relation);
                 }
-                if (in_array($relation, $manyRelations))
-                {   
+                if (in_array($relation, $manyRelations)) {
                     $proxies[$relation] = new CollectionProxy($this->getObject(), $relation);
                 }
             }
         }
 
-        foreach($proxies as $key => $value)
-        {   
+        foreach ($proxies as $key => $value) {
             $this->setEntityAttribute($key, $value);
         }
     }
 
-    abstract function setEntityAttribute($key, $value);
+    abstract public function setEntityAttribute($key, $value);
 
-    abstract function getEntityAttribute($key);    
+    abstract public function getEntityAttribute($key);
 
-    abstract function setEntityAttributes(array $attributes);
+    abstract public function setEntityAttributes(array $attributes);
 
-    abstract function getEntityAttributes();
+    abstract public function getEntityAttributes();
 
-    abstract function hasAttribute($key);
+    abstract public function hasAttribute($key);
 }

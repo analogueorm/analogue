@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-class CapsuleConnectionProvider {
+class CapsuleConnectionProvider
+{
 
     protected $capsule;
 
@@ -13,7 +14,7 @@ class CapsuleConnectionProvider {
 
     /**
      * Get a Database connection object
-     *  
+     *
      * @param  $name
      * @return \Illuminate\Database\Connection
      */
@@ -21,5 +22,4 @@ class CapsuleConnectionProvider {
     {
         return $this->capsule->getConnection($name);
     }
-
 }

@@ -4,7 +4,8 @@ use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
 use Analogue\ORM\EntityCollection;
 
-class EntityTest extends PHPUnit_Framework_TestCase {
+class EntityTest extends PHPUnit_Framework_TestCase
+{
 
     public function testAddToLazyLoadedCollection()
     {
@@ -29,7 +30,7 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $z->permissions->count());
     }
 
-    public function testHiddenAttributes() 
+    public function testHiddenAttributes()
     {
         $res = new Resource('name');
         $array = $res->toArray();
@@ -59,19 +60,17 @@ class EntityTest extends PHPUnit_Framework_TestCase {
         $p1 = new Permission('l1');
         $p2 = new Permission('l1');
         // Doesn't work. Should consider using array as allowed value ????
-        //$role->permissions = [$p1, $p2];    
+        //$role->permissions = [$p1, $p2];
         // Doesn't work. We definitely should consider support them !!
         //$perms = new Collection([$p1,$p2]);
-        $perms = new EntityCollection([$p1,$p2]);
+        $perms = new EntityCollection([$p1, $p2]);
         $role->permissions = $perms;
         $roleMapper = get_mapper($role);
         $roleMapper->store($role);
         $r=$roleMapper->whereLabel('lazyparser')->first();
-        foreach($r->permissions as $perm)
-        {
-             $this->assertEquals('l1',$perm->label);
+        foreach ($r->permissions as $perm) {
+            $this->assertEquals('l1', $perm->label);
         }
-       
     }
 
     public function testSimpleEntityToArray()

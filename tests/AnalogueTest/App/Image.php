@@ -2,7 +2,8 @@
 
 use Analogue\ORM\Entity;
 
-class Image extends Entity {
+class Image extends Entity
+{
 
     public function __construct($path)
     {

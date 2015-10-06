@@ -2,38 +2,38 @@
 
 use RuntimeException;
 
-class EntityNotFoundException extends RuntimeException {
+class EntityNotFoundException extends RuntimeException
+{
 
-	/**
-	 * Name of the affected Entity Map.
-	 *
-	 * @var string
-	 */
-	protected $entity;
+    /**
+     * Name of the affected Entity Map.
+     *
+     * @var string
+     */
+    protected $entity;
 
-	/**
-	 * Set the affected Entity Map.
-	 *
-	 * @param  string   $entity
-	 * @return $this
-	 */
-	public function setEntity($entity)
-	{
-		$this->entity = $entity;
+    /**
+     * Set the affected Entity Map.
+     *
+     * @param  string   $entity
+     * @return $this
+     */
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
 
-		$this->message = "No query results for entity [{$entity}].";
+        $this->message = "No query results for entity [{$entity}].";
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get the affected Entity.
-	 *
-	 * @return string
-	 */
-	public function getEnity()
-	{
-		return $this->entity;
-	}
-
+    /**
+     * Get the affected Entity.
+     *
+     * @return string
+     */
+    public function getEnity()
+    {
+        return $this->entity;
+    }
 }

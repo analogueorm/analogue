@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class UserMap extends EntityMap {
+class UserMap extends EntityMap
+{
 
     public $timestamps = true;
 
@@ -34,6 +35,4 @@ class UserMap extends EntityMap {
     {
         return $this->morphToMany($entity, 'AnalogueTest\App\Resource', 'resource_owner');
     }
-
-
 }
