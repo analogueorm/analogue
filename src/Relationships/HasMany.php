@@ -2,53 +2,51 @@
 
 use Analogue\ORM\EntityCollection;
 
-class HasMany extends HasOneOrMany {
+class HasMany extends HasOneOrMany
+{
 
-	/**
-	 * Get the results of the relationship.
-	 *
-	 * @return mixed
-	 */
-	public function getResults($relation)
-	{
-		$results = $this->query->get();
+    /**
+     * Get the results of the relationship.
+     *
+     * @return mixed
+     */
+    public function getResults($relation)
+    {
+        $results = $this->query->get();
 
-		$this->cacheRelation($results, $relation);
+        $this->cacheRelation($results, $relation);
 
-		return $results;
-	}
+        return $results;
+    }
 
-	/**
-	 * Initialize the relation on a set of entities.
-	 *
-	 * @param  array   $entities
-	 * @param  string  $relation
-	 * @return array
-	 */
-	public function initRelation(array $entities, $relation)
-	{
-		foreach ($entities as $entity)
-		{
-			$entityWrapper = $this->factory->make($entity);
+    /**
+     * Initialize the relation on a set of entities.
+     *
+     * @param  array   $entities
+     * @param  string  $relation
+     * @return array
+     */
+    public function initRelation(array $entities, $relation)
+    {
+        foreach ($entities as $entity) {
+            $entityWrapper = $this->factory->make($entity);
 
-			$entityWrapper->setEntityAttribute($relation, $this->relatedMap->newCollection());
-		}
+            $entityWrapper->setEntityAttribute($relation, $this->relatedMap->newCollection());
+        }
 
-		return $entities;
-	}
+        return $entities;
+    }
 
-	/**
-	 * Match the eagerly loaded results to their parents.
-	 *
-	 * @param  array   $entities
-	 * @param  \Analogue\ORM\EntityCollection  $results
-	 * @param  string  $relation
-	 * @return array
-	 */
-	public function match(array $entities, EntityCollection $results, $relation)
-	{
-		return $this->matchMany($entities, $results, $relation);
-	}
-
-
+    /**
+     * Match the eagerly loaded results to their parents.
+     *
+     * @param  array   $entities
+     * @param  \Analogue\ORM\EntityCollection  $results
+     * @param  string  $relation
+     * @return array
+     */
+    public function match(array $entities, EntityCollection $results, $relation)
+    {
+        return $this->matchMany($entities, $results, $relation);
+    }
 }

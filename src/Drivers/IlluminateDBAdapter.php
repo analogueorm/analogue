@@ -4,10 +4,11 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
- * Illuminate Driver for Analogue ORM. If multiple DB connections are 
+ * Illuminate Driver for Analogue ORM. If multiple DB connections are
  * involved, we'll treat each underlyin driver as a separate instance.
  */
-class IlluminateDBAdapter implements DBAdapter {
+class IlluminateDBAdapter implements DBAdapter
+{
 
     protected $connection;
 
@@ -18,8 +19,8 @@ class IlluminateDBAdapter implements DBAdapter {
 
     /**
      * Return a new Query instance for this driver
-     * 
-     * @return QueryAdapter 
+     *
+     * @return QueryAdapter
      */
     public function getQuery()
     {
@@ -27,14 +28,14 @@ class IlluminateDBAdapter implements DBAdapter {
 
         $grammar = $connection->getQueryGrammar();
 
-        $queryBuilder = new QueryBuilder($connection, $grammar, $connection->getPostProcessor() );
+        $queryBuilder = new QueryBuilder($connection, $grammar, $connection->getPostProcessor());
 
         return new IlluminateQueryAdapter($queryBuilder);
     }
 
     /**
      * Get the date format supported by the current connection
-     * 
+     *
      * @return string
      */
     public function getDateFormat()

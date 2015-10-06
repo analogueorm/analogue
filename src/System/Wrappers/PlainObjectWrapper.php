@@ -3,24 +3,25 @@
 use ReflectionClass;
 use Analogue\ORM\EntityMap;
 
-class PlainObjectWrapper extends Wrapper {
+class PlainObjectWrapper extends Wrapper
+{
     
     /**
      * The list of attributes for the managed entity
-     * 
+     *
      * @var array
      */
     protected $attributeList;
 
     /**
      * The reflection class for the managed entity
-     * 
+     *
      * @var \ReflectionClass
      */
     protected $reflection;
 
     /**
-     * 
+     *
      * @param [type] $popoEntity [description]
      * @param [type] $entityMap  [description]
      */
@@ -35,7 +36,7 @@ class PlainObjectWrapper extends Wrapper {
 
     /**
      * Get Compiled Attributes (key, attributes, embed, relations)
-     * 
+     *
      * @return array
      */
     protected function getAttributeList()
@@ -45,9 +46,9 @@ class PlainObjectWrapper extends Wrapper {
 
     /**
      * Extract Attributes from a Plain Php Object
-     * 
-     * @param  mixed $entity        
-     * @param  array $attributeList 
+     *
+     * @param  mixed $entity
+     * @param  array $attributeList
      * @return array $attributes
      */
     protected function extract()
@@ -57,15 +58,11 @@ class PlainObjectWrapper extends Wrapper {
         $attributes = [];
 
         foreach ($properties as $property) {
-            
             $name = $property->getName();
 
-            if($property->isPublic() )
-            {
+            if ($property->isPublic()) {
                 $attributes[$name] = $this->entity->$name;
-            }
-            else
-            {
+            } else {
                 $property->setAccessible(true);
     
                 $attributes[$name] = $property->getValue($this->entity);
@@ -89,8 +86,10 @@ class PlainObjectWrapper extends Wrapper {
 
         // We need to filter out properties that could belong to the object
         // and which are not intended to be handled by the ORM
-        return array_filter($objectProperties, function($item) use ($attributeList) {
-            if (in_array($item->getName(), $attributeList)) return true;
+        return array_filter($objectProperties, function ($item) use ($attributeList) {
+            if (in_array($item->getName(), $attributeList)) {
+                return true;
+            }
         });
     }
 
@@ -101,7 +100,7 @@ class PlainObjectWrapper extends Wrapper {
 
     /**
      * Hydrate Plain PHP Object with wrapped attributes
-     * 
+     *
      * @return void
      */
     protected function hydrate($attributes)
@@ -109,15 +108,11 @@ class PlainObjectWrapper extends Wrapper {
         $properties = $this->getMappedProperties();
 
         foreach ($properties as $property) {
-            
             $name = $property->getName();
 
-            if($property->isPublic() )
-            {
+            if ($property->isPublic()) {
                 $this->entity->$name = $attributes[$name];
-            }
-            else
-            {
+            } else {
                 $property->setAccessible(true);
     
                 $property->setValue($this->entity, $attributes[$name]);
@@ -126,10 +121,10 @@ class PlainObjectWrapper extends Wrapper {
     }
 
      /**
-     * Method used by the mapper to set the object 
+     * Method used by the mapper to set the object
      * attribute raw values (hydration)
-     * 
-     * @param array $attributes 
+     *
+     * @param array $attributes
      *
      * @return void
      */
@@ -139,7 +134,7 @@ class PlainObjectWrapper extends Wrapper {
     }
 
     /**
-     * Method used by the mapper to get the 
+     * Method used by the mapper to get the
      * raw object's values.
      *
      * @return array
@@ -152,8 +147,8 @@ class PlainObjectWrapper extends Wrapper {
     /**
      * Method used by the mapper to set raw
      * key-value pair
-     * 
-     * @param string $key  
+     *
+     * @param string $key
      * @param string $value
      *
      * @return void
@@ -162,12 +157,9 @@ class PlainObjectWrapper extends Wrapper {
     {
         $property = $this->getMappedProperty($key);
 
-        if($property->isPublic())
-        {
+        if ($property->isPublic()) {
             $this->entity->$key = $value;
-        }
-        else
-        {
+        } else {
             $property->setAccessible(true);
     
             $property->setValue($this->entity, $value);
@@ -179,20 +171,17 @@ class PlainObjectWrapper extends Wrapper {
     /**
      * Method used by the mapper to get single
      * key-value pair
-     * 
-     * @param  string $key 
+     *
+     * @param  string $key
      * @return mixed
      */
     public function getEntityAttribute($key)
     {
         $property = $this->getMappedProperty($key);
 
-        if($property->isPublic())
-        {
+        if ($property->isPublic()) {
             $value = $this->entity->$key;
-        }
-        else
-        {
+        } else {
             $property->setAccessible(true);
             $value = $property->getValue($this->entity);
         }
@@ -201,19 +190,19 @@ class PlainObjectWrapper extends Wrapper {
     }
 
      /**
-     * Test if a given attribute exists 
-     * 
-     * @param  string  $key 
-     * @return boolean      
+     * Test if a given attribute exists
+     *
+     * @param  string  $key
+     * @return boolean
      */
     public function hasAttribute($key)
     {
         $attributes = $this->entity->getEntityAttributes();
 
-        if(array_key_exists($key, $$this->attributeList))
-        {
+        if (array_key_exists($key, $$this->attributeList)) {
             return true;
+        } else {
+            return false;
         }
-        else return false;
     }
 }

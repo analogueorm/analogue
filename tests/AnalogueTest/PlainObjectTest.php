@@ -1,12 +1,13 @@
-<?php 
+<?php
 
 namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
 
-class PlainObjectTest extends PHPUnit_Framework_TestCase {
+class PlainObjectTest extends PHPUnit_Framework_TestCase
+{
 
-    public function testPopoStore() 
+    public function testPopoStore()
     {
 
         /*$popo = new Popo('popo1');
@@ -21,10 +22,9 @@ class PlainObjectTest extends PHPUnit_Framework_TestCase {
         $mapper->store($popo);
 
         $this->assertGreaterThan(0, $popo->getId());*/
-
     }
 
-    public function testPopoSingleRelationship() 
+    public function testPopoSingleRelationship()
     {
         /*$popo = new Popo('popo2');
 
@@ -36,5 +36,4 @@ class PlainObjectTest extends PHPUnit_Framework_TestCase {
 
         $mapper->store($popo);*/
     }
-
 }

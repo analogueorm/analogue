@@ -10,56 +10,56 @@ use Analogue\ORM\Drivers\IlluminateConnectionProvider;
 /**
  * Integrate Analogue into Laravel
  */
-class AnalogueServiceProvider extends ServiceProvider {
+class AnalogueServiceProvider extends ServiceProvider
+{
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
-	public function boot()
-	{
-		$manager = $this->app->make('analogue');
+    public function boot()
+    {
+        $manager = $this->app->make('analogue');
 
-		$manager->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
-		$manager->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
-	}
+        $manager->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
+        $manager->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
+    }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		$this->app->bindShared('analogue', function ($app) {
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->bindShared('analogue', function ($app) {
 
-			$db = $app['db'];
+            $db = $app['db'];
 
-			$connectionProvider = new IlluminateConnectionProvider($db);
+            $connectionProvider = new IlluminateConnectionProvider($db);
 
-			$illuminate = new IlluminateDriver($connectionProvider);
+            $illuminate = new IlluminateDriver($connectionProvider);
 
-			$driverManager = new DriverManager;
+            $driverManager = new DriverManager;
 
-			$driverManager->addDriver($illuminate);
+            $driverManager->addDriver($illuminate);
 
-			$event = $app->make('events');
+            $event = $app->make('events');
 
-			return new Manager($driverManager, $event);
-		});
-	}
-	
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return ['analogue'];
-	}
-
+            return new Manager($driverManager, $event);
+        });
+    }
+    
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return ['analogue'];
+    }
 }

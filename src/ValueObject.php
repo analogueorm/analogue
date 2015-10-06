@@ -7,8 +7,9 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Analogue\ORM\System\Proxies\ProxyInterface;
 
-class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable {
-	use MappableTrait;
+class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable
+{
+    use MappableTrait;
 
     /**
      * Dynamically retrieve attributes on the entity.
@@ -41,7 +42,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
      */
     public function __isset($key)
     {
-        return array_key_exists($key, $this->attributes); 
+        return array_key_exists($key, $this->attributes);
     }
 
     /**
@@ -125,7 +126,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     
     /**
      * Convert Mappable object to array;
-     * 
+     *
      * @return array
      */
     public function toArray()
@@ -134,32 +135,29 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     }
 
      /**
-     * Transform the Object to array/json, 
-     *  
+     * Transform the Object to array/json,
+     *
      * @return array
      */
     protected function attributesToArray(array $sourceAttributes)
     {
         $attributes = [];
 
-        foreach($sourceAttributes as $key => $attribute)
-        {
+        foreach ($sourceAttributes as $key => $attribute) {
             // If the attribute is a proxy, and hasn't be loaded, we discard
             // it from the returned set.
-            if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) continue;
+            if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) {
+                continue;
+            }
 
-            if ($attribute instanceof Carbon) 
-            {
+            if ($attribute instanceof Carbon) {
                 $attributes[$key] = $attribute->__toString();
                 continue;
             }
 
-            if ($attribute instanceof Arrayable)
-            {
+            if ($attribute instanceof Arrayable) {
                 $attributes[$key] = $attribute->toArray();
-            }
-            else
-            {
+            } else {
                 $attributes[$key] = $attribute;
             }
         }

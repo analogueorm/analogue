@@ -2,7 +2,8 @@
 
 use Analogue\ORM\Entity;
 
-class Resource extends Entity {
+class Resource extends Entity
+{
 
     protected $hidden = ['name', 'v_field_1'];
 
@@ -10,11 +11,11 @@ class Resource extends Entity {
     {
         $this->name = $name;
         // Instantiate value map
-        if(! $value)
-        {
-            $this->value = new V('a','b');
+        if (! $value) {
+            $this->value = new V('a', 'b');
+        } else {
+            $this->value = $value;
         }
-        else $this->value = $value;
     }
 
     public function setStringAttribute($value)
@@ -24,6 +25,6 @@ class Resource extends Entity {
 
     public function getStringAttribute($value)
     {
-        return 'mutated_'.$value;   
+        return 'mutated_'.$value;
     }
 }

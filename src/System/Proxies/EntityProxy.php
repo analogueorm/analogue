@@ -1,17 +1,18 @@
 <?php namespace Analogue\ORM\System\Proxies;
 
-class EntityProxy extends Proxy {
+class EntityProxy extends Proxy
+{
 
     /**
      * Underlying entity
-     * 
+     *
      * @var mixed
      */
     protected $entity;
 
     /**
      * Load the underlying relation
-     * 
+     *
      * @return void
      */
     protected function loadOnce()
@@ -21,12 +22,14 @@ class EntityProxy extends Proxy {
 
     /**
      * Return the actual Entity
-     * 
+     *
      * @return mixed
      */
     public function getUnderlyingObject()
     {
-        if (! $this->isLoaded() ) $this->loadOnce();
+        if (! $this->isLoaded()) {
+            $this->loadOnce();
+        }
 
         return $this->entity;
     }
@@ -34,12 +37,14 @@ class EntityProxy extends Proxy {
     /**
      * Transparently passes get operation to underlying entity
      *
-     * @param  string $attribute 
+     * @param  string $attribute
      * @return mixed
      */
     public function __get($attribute)
     {
-        if (! $this->isLoaded() ) $this->loadOnce();
+        if (! $this->isLoaded()) {
+            $this->loadOnce();
+        }
 
         return $this->entity->$attribute;
     }
@@ -53,22 +58,26 @@ class EntityProxy extends Proxy {
      */
     public function __set($attribute, $value)
     {
-        if (! $this->isLoaded() ) $this->loadOnce();
+        if (! $this->isLoaded()) {
+            $this->loadOnce();
+        }
 
         $this->entity->$attribute = $value;
     }
 
     /**
      * Transparently Redirect non overrided calls to the lazy loaded Entity
-     *  
-     * @param  string $method     
-     * @param  array  $parameters 
-     * @return mixed             
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     * @return mixed
      */
     public function __call($method, $parameters)
     {
-        if (! $this->isLoaded() ) $this->loadOnce();
+        if (! $this->isLoaded()) {
+            $this->loadOnce();
+        }
 
-        return call_user_func_array( [$this->loadedCollection, $method], $parameters);
+        return call_user_func_array([$this->loadedCollection, $method], $parameters);
     }
 }

@@ -2,7 +2,8 @@
 
 use Analogue\ORM\Entity;
 
-class Permission extends Entity {
+class Permission extends Entity
+{
 
     public function __construct($label)
     {

@@ -1,42 +1,42 @@
 <?php namespace Analogue\ORM;
 
-class ValueMap {
+class ValueMap
+{
 
-	protected $name;
+    protected $name;
 
-	protected $class;
+    protected $class;
 
-	protected $embeddables = [];
+    protected $embeddables = [];
 
-	protected $attributes = [];
+    protected $attributes = [];
 
-	public function getAttributes()
-	{
-		return $this->attributes;
-	}
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
 
-	public function getEmbeddables()
-	{
-		return $this->embeddables;
-	}
+    public function getEmbeddables()
+    {
+        return $this->embeddables;
+    }
 
-	public function setClass($class)
-	{
-		$this->class = $class;
-	}
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
 
-	public function getClass()
-	{
-		return $this->class;
-	}
+    public function getClass()
+    {
+        return $this->class;
+    }
 
-	public function getName()
-	{
-		if (isset($this->name))
-		{
-			return $this->name;
-		}
-		else return class_basename($this);
-	}
-
+    public function getName()
+    {
+        if (isset($this->name)) {
+            return $this->name;
+        } else {
+            return class_basename($this);
+        }
+    }
 }

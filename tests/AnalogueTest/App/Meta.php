@@ -2,8 +2,8 @@
 
 use Analogue\ORM\Mappable;
 
-
-class Meta implements Mappable {
+class Meta implements Mappable
+{
     
     protected $content = [];
 
@@ -19,16 +19,14 @@ class Meta implements Mappable {
   
     public function setEntityAttribute($key, $value)
     {
-        if($key == 'metadatas')
-        {
+        if ($key == 'metadatas') {
             $this->content = unserialize($value);
         }
     }
  
     public function getEntityAttribute($key)
     {
-        if($key == 'metadatas')
-        {
+        if ($key == 'metadatas') {
             return serialize($this->content);
         }
     }
@@ -47,5 +45,4 @@ class Meta implements Mappable {
     {
         return $this->content[$key];
     }
-
 }

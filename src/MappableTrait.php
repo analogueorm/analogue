@@ -2,9 +2,10 @@
 
 /**
  * Share behaviour of Entities/ValueObjects and allow
- * implementing mapping for custom classes 
+ * implementing mapping for custom classes
  */
-trait MappableTrait {
+trait MappableTrait
+{
 
     /**
      * The Entity's Attributes
@@ -13,10 +14,10 @@ trait MappableTrait {
     protected $attributes = [];
 
     /**
-     * Method used by the mapper to set the object 
+     * Method used by the mapper to set the object
      * attribute raw values (hydration)
-     * 
-     * @param array $attributes 
+     *
+     * @param array $attributes
      *
      * @return void
      */
@@ -26,7 +27,7 @@ trait MappableTrait {
     }
 
     /**
-     * Method used by the mapper to get the 
+     * Method used by the mapper to get the
      * raw object's values.
      *
      * @return array
@@ -39,8 +40,8 @@ trait MappableTrait {
     /**
      * Method used by the mapper to set raw
      * key-value pair
-     * 
-     * @param string $key  
+     *
+     * @param string $key
      * @param string $value
      *
      * @return void
@@ -53,8 +54,8 @@ trait MappableTrait {
     /**
      * Method used by the mapper to get single
      * key-value pair
-     * 
-     * @param  string $key 
+     *
+     * @param  string $key
      * @return mixed|null
      */
     /*public function getEntityAttribute($key)
@@ -65,5 +66,4 @@ trait MappableTrait {
         }
         else return null;
     }*/
-   
 }

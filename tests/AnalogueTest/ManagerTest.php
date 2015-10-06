@@ -2,7 +2,8 @@
 
 use PHPUnit_Framework_TestCase;
 
-class ManagerTest extends PHPUnit_Framework_TestCase {
+class ManagerTest extends PHPUnit_Framework_TestCase
+{
 
     public function testAnalogueConnection()
     {
@@ -35,7 +36,4 @@ class ManagerTest extends PHPUnit_Framework_TestCase {
         $mapper = get_mapper('AnalogueTest\App\User');
         $this->assertEquals('AnalogueTest\App\UserMap', get_class($mapper->getEntityMap()));
     }
-
-
-
 }

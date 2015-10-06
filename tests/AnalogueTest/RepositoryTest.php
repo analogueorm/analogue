@@ -5,7 +5,8 @@ use Analogue\ORM\Repository;
 use Analogue\ORM\Entity;
 use AnalogueTest\App\Permission;
 
-class RepositoryTest extends PHPUnit_Framework_TestCase {
+class RepositoryTest extends PHPUnit_Framework_TestCase
+{
 
     protected function getRepository()
     {
@@ -31,7 +32,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $p = new Permission('Puzzle');
         $repo->store($p);
         $id=$p->id;
-        $this->assertGreaterThan(0,$id);
+        $this->assertGreaterThan(0, $id);
         $q = $repo->find($id);
         $this->assertEquals('Puzzle', $q->label);
     }
@@ -41,10 +42,10 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $repo = $this->getRepository();
         $p = new Permission('First');
         $q = new Permission('Second');
-        $repo->store([$p,$q]);
+        $repo->store([$p, $q]);
         $id = $q->id;
         $r = $repo->firstMatching(['label' => 'Second']);
-        $this->assertEquals('Second',$r->label);
+        $this->assertEquals('Second', $r->label);
         $this->assertEquals($id, $r->id);
     }
 
@@ -54,10 +55,10 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $repo = $this->getRepository();
         $p = new Permission('Third');
         $q = new Permission('Third');
-        $repo->store([$p,$q]);
+        $repo->store([$p, $q]);
         $r = $repo->allMatching(['label' => 'Third']);
         
-        $this->assertInstanceOf('Analogue\ORM\EntityCollection',$r);
+        $this->assertInstanceOf('Analogue\ORM\EntityCollection', $r);
         $this->assertEquals(2, $r->count());
     }
 
@@ -66,10 +67,10 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $repo = $this->getRepository();
         $p = new Permission('First');
         $q = new Permission('Second');
-        $repo->store([$p,$q]);
+        $repo->store([$p, $q]);
         
         $s = $repo->paginate(1);
-        $this->assertEquals(1,count($s));
+        $this->assertEquals(1, count($s));
     }
 
     public function testStoreThenDelete()
@@ -78,7 +79,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase {
         $p = new Permission('Trash');
         $repo->store($p);
         $id=$p->id;
-        $this->assertGreaterThan(0,$id);
+        $this->assertGreaterThan(0, $id);
         $repo->delete($p);
         $q = $repo->find($id);
         $this->assertNull($q);

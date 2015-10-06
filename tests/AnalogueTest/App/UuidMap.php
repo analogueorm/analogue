@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class UuidMap extends EntityMap {
+class UuidMap extends EntityMap
+{
 
     protected $table = 'uuid';
 

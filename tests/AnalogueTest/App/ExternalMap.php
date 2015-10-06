@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class ExternalMap extends EntityMap {
+class ExternalMap extends EntityMap
+{
 
     protected $connection = 'external';
 
@@ -10,5 +11,4 @@ class ExternalMap extends EntityMap {
     {
         return $this->belongsTo($entity, 'AnalogueTest\App\User');
     }
-
 }

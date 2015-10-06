@@ -8,10 +8,11 @@ use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\CapsuleConnectionProvider;
 
 /**
- * This class is a proxy to the Manager class, which allows 
+ * This class is a proxy to the Manager class, which allows
  * using Analogue outside of the Laravel framework.
  */
-class Analogue {
+class Analogue
+{
 
     protected static $instance;
 
@@ -23,8 +24,7 @@ class Analogue {
 
     public function __construct(array $connection)
     {
-        if(! static::$booted)
-        {
+        if (! static::$booted) {
             static::$capsule = new Capsule;
 
             $this->addConnection($connection);
@@ -35,13 +35,12 @@ class Analogue {
 
     /**
      * Boot Analogue
-     * 
+     *
      * @return Analogue
      */
     public function boot()
     {
-        if (static::$booted)
-        {
+        if (static::$booted) {
             return $this;
         }
 
@@ -66,9 +65,9 @@ class Analogue {
 
     /**
      * Add a connection array to Capsule
-     * 
-     * @param array     $config 
-     * @param string    $name   
+     *
+     * @param array     $config
+     * @param string    $name
      */
     public function addConnection($config, $name = 'default')
     {
@@ -77,7 +76,7 @@ class Analogue {
 
     /**
      * Get a Database connection object
-     *  
+     *
      * @param  $name
      * @return \Illuminate\Database\Connection
      */
@@ -88,7 +87,7 @@ class Analogue {
 
     /**
      * Dynamically handle static calls to the instance, Facade Style.
-     * 
+     *
      * @param  string  $method
      * @param  array   $parameters
      * @return mixed
@@ -100,7 +99,7 @@ class Analogue {
 
     /**
      * Dynamically handle calls to the Analogue Manager instance.
-     * 
+     *
      * @param  string  $method
      * @param  array   $parameters
      * @return mixed

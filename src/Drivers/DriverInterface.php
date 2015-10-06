@@ -1,8 +1,9 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\Drivers;
 
-interface DriverInterface {
+interface DriverInterface
+{
 
     /**
      * Return the name of the driver
@@ -16,5 +17,4 @@ interface DriverInterface {
      * @return \Analogue\ORM\Drivers\DBAdapter
      */
     public function getAdapter($connection = null);
-
 }

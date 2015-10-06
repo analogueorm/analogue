@@ -4,18 +4,19 @@
  * This class is intended to facilitate the handling of ManyToMany relationships
  * inside the cache
  */
-class CachedRelationship {
+class CachedRelationship
+{
 
     /**
      * The Hash of the related entity
-     * 
+     *
      * @var string
      */
     protected $hash;
 
     /**
      * Pivot attributes, if any
-     * 
+     *
      * @var array
      */
     protected $pivotAttributes;
@@ -28,8 +29,8 @@ class CachedRelationship {
 
     /**
      * Return true if any pivot attributes are present
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function hasPivotAttributes()
     {
@@ -48,7 +49,7 @@ class CachedRelationship {
 
     /**
      * Get the cached values for the pivot attributes
-     * 
+     *
      * @return array
      */
     public function getPivotAttributes()
@@ -58,7 +59,7 @@ class CachedRelationship {
 
     /**
      * Access to the hash for fast cache comparison
-     * 
+     *
      * @return string
      */
     public function __toString()

@@ -4,8 +4,8 @@ use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityCollection;
 
-
-class MapperTest extends PHPUnit_Framework_TestCase {
+class MapperTest extends PHPUnit_Framework_TestCase
+{
 
     public function testMapperFactory()
     {
@@ -18,7 +18,6 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Analogue\ORM\System\Query', $mapper->getQuery());
         $this->assertInstanceOf('Analogue\ORM\System\Query', $mapper->globalQuery());
         $this->assertInstanceOf('Analogue\ORM\Entity', $mapper->newInstance());
-
     }
 
     public function testEntityNewInstanceHydration()
@@ -68,8 +67,8 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $eM = get_mapper($ext);
         $eM->store($ext);
         $q = $eM->whereName('e33')->with('user')->first();
-        $this->assertEquals('gege44',$q->user->email);
-    }    
+        $this->assertEquals('gege44', $q->user->email);
+    }
 
     public function testCrossConnectionEagerLoadingWithHasMany()
     {
@@ -80,8 +79,8 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $eM->store($ext);
         $uM = get_mapper($u);
         $q = $uM->whereEmail('gege555')->with('externals')->first();
-        $this->assertEquals('e555',$q->externals[0]->name);
-    }    
+        $this->assertEquals('e555', $q->externals[0]->name);
+    }
 
 
     public function testCrossConnectionRelationshipPivot()
@@ -93,11 +92,10 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $ext1->user_id = 0;
         $ext3 = new External('piv');
         $ext1->user_id = 0;
-        $u->externalpivots = new EntityCollection([$ext1,$ext2,$ext3]);
+        $u->externalpivots = new EntityCollection([$ext1, $ext2, $ext3]);
         $uM = get_mapper($u);
         $uM->store($u);
-
-    }    
+    }
 
     public function testCustomCommand()
     {
@@ -106,7 +104,7 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $mapper->addCustomCommand('AnalogueTest\App\CustomCommand');
 
         $this->assertEquals(true, $mapper->hasCustomCommand('customCommand'));
-        $this->assertEquals('executed' , $mapper->customCommand(new Entity));
+        $this->assertEquals('executed', $mapper->customCommand(new Entity));
     }
 
 
@@ -185,32 +183,29 @@ class MapperTest extends PHPUnit_Framework_TestCase {
         $u1 = new User('michel', new Role('lr1'));
         $u2 = new User('bono', new Role('lr2'));
 
-        $userMapper->store([$u1,$u2]);
+        $userMapper->store([$u1, $u2]);
 
         $id1 = $u1->id;
         $id2 = $u2->id;
 
         $this->assertFalse($id1 == $id2);
 
-        $q = $userMapper->whereEmail('michel')->orWhere('email','=','bono')->orderBy('email')->get();
+        $q = $userMapper->whereEmail('michel')->orWhere('email', '=', 'bono')->orderBy('email')->get();
         $this->assertEquals(2, $q->count());
         
         $this->assertEquals('lr2', $q[0]->role->label);
         $this->assertEquals('lr1', $q[1]->role->label);
-
     }
 
     public function testStoreAndHydrateLargeSets()
     {
         $pM = get_mapper('AnalogueTest\App\Permission');
         $perms =[];
-        for($x=0;$x<1000;$x++)
-        {
+        for ($x=0;$x<1000;$x++) {
             $perms[] = new Permission('large');
         }
         $pM->store($perms);
         $q = $pM->whereLabel('large')->get();
         $this->assertEquals(1000, $q->count());
-
     }
 }

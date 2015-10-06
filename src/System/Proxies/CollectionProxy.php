@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\System\Proxies;
 
@@ -10,7 +10,8 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Analogue\ORM\EntityCollection;
 
-class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable{
+class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
+{
 
     /**
      * Underlying Lazyloaded collection
@@ -37,25 +38,22 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
     /**
      * Add an entity to the proxy collection, weither it's loaded or not
-     * 
+     *
      * @param mixed $entity
      */
     public function add($entity)
     {
-        if($this->isLoaded() )
-        {
+        if ($this->isLoaded()) {
             return $this->loadedCollection->add($entity);
-        }
-        else
-        {
+        } else {
             $this->addedItems->add($entity);
         }
     }
 
     /**
      * Check if Proxy collection has been lazy-loaded
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function isLoaded()
     {
@@ -64,7 +62,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
     /**
      * Return the underlying collection
-     * 
+     *
      * @return \Analogue\ORM\EntityCollection
      */
     public function getUnderlyingCollection()
@@ -74,7 +72,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
     /**
      * Return Items that has been added prior to lazy-loading
-     * 
+     *
      * @return \Analogue\ORM\EntityCollection
      */
     public function getAddedItems()
@@ -84,17 +82,18 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
     /**
      * Load the underlying relation
-     * 
+     *
      * @return void
      */
     protected function loadOnce()
     {
-        if ($this->isLoaded()) return;
+        if ($this->isLoaded()) {
+            return;
+        }
         
         $this->loadedCollection = $this->load();
 
-        foreach($this->addedItems as $entity)
-        {
+        foreach ($this->addedItems as $entity) {
             $this->loadedCollection->add($entity);
         }
 
@@ -217,15 +216,17 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
     /**
      * Transparently Redirect non overrided calls to the lazy loaded collection
-     *  
+     *
      * @param  [type] $method     [description]
      * @param  [type] $parameters [description]
      * @return [type]             [description]
      */
     public function __call($method, $parameters)
     {
-        if (! $this->isLoaded() ) $this->loadOnce();
+        if (! $this->isLoaded()) {
+            $this->loadOnce();
+        }
 
-        return call_user_func_array( [$this->loadedCollection, $method], $parameters);
+        return call_user_func_array([$this->loadedCollection, $method], $parameters);
     }
 }

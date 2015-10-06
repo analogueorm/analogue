@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class RoleMap extends EntityMap {
+class RoleMap extends EntityMap
+{
 
     public function users(Role $entity)
     {
@@ -18,5 +19,4 @@ class RoleMap extends EntityMap {
     {
         return $this->morphToMany($entity, 'AnalogueTest\App\Resource', 'resource_owner');
     }
-
 }
