@@ -2,7 +2,8 @@
 
 use Illuminate\Database\DatabaseManager;
 
-class IlluminateConnectionProvider {
+class IlluminateConnectionProvider
+{
 
     protected $db;
 
@@ -13,7 +14,7 @@ class IlluminateConnectionProvider {
 
     /**
      * Get a Database connection object
-     *  
+     *
      * @param  $name
      * @return \Illuminate\Database\Connection
      */
@@ -21,5 +22,4 @@ class IlluminateConnectionProvider {
     {
         return $this->db->connection($name);
     }
-
 }

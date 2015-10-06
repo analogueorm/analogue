@@ -2,7 +2,8 @@
 
 use Analogue\ORM\Entity;
 
-class User extends Entity {
+class User extends Entity
+{
 
     public function __construct($email, Role $role)
     {
@@ -10,5 +11,4 @@ class User extends Entity {
         $this->role = $role;
         $this->metas = new Meta;
     }
-
 }

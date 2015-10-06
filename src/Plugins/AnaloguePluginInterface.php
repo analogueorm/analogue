@@ -1,13 +1,14 @@
 <?php namespace Analogue\ORM\Plugins;
 
-interface AnaloguePluginInterface {
+interface AnaloguePluginInterface
+{
 
     /**
      * Boot the plugin
-     * 
+     *
      * @return void
      */
-	public function register();
+    public function register();
 
     /**
      * Get custom events provided by the plugin
@@ -15,5 +16,4 @@ interface AnaloguePluginInterface {
      * @return array
      */
     public function getCustomEvents();
-
 }

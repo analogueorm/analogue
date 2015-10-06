@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\Relationships;
 
@@ -7,7 +7,8 @@ use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
 
-class BelongsTo extends Relationship {
+class BelongsTo extends Relationship
+{
 
     /**
      * The foreign key of the parent model.
@@ -32,7 +33,7 @@ class BelongsTo extends Relationship {
 
     /**
      * Indicate if the parent entity hold the key for the relation.
-     * 
+     *
      * @var boolean
      */
     protected static $ownForeignKey = true;
@@ -86,8 +87,7 @@ class BelongsTo extends Relationship {
      */
     public function addConstraints()
     {
-        if (static::$constraints)
-        {
+        if (static::$constraints) {
             // For belongs to relationships, which are essentially the inverse of has one
             // or has many relationships, we need to actually query on the primary key
             // of the related models matching on the foreign key that's on a parent.
@@ -142,12 +142,10 @@ class BelongsTo extends Relationship {
         // First we need to gather all of the keys from the parent models so we know what
         // to query for via the eager loading query. We will add them to an array then
         // execute a "where in" statement to gather up all of those related records.
-        foreach ($entities as $entity)
-        {
+        foreach ($entities as $entity) {
             $entity = $this->factory->make($entity);
 
-            if ( ! is_null($value = $entity->getEntityAttribute($this->foreignKey)))
-            {
+            if (! is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
                 $keys[] = $value;
             }
         }
@@ -155,8 +153,7 @@ class BelongsTo extends Relationship {
         // If there are no keys that were not null we will just return an array with 0 in
         // it so the query doesn't fail, but will not return any results, which should
         // be what this developer is expecting in a case where this happens to them.
-        if (count($keys) == 0)
-        {
+        if (count($keys) == 0) {
             return array(0);
         }
 
@@ -172,8 +169,7 @@ class BelongsTo extends Relationship {
      */
     public function initRelation(array $entities, $relation)
     {
-        foreach ($entities as $entity)
-        {
+        foreach ($entities as $entity) {
             $entity = $this->factory->make($entity);
             $entity->setEntityAttribute($relation, null);
         }
@@ -200,8 +196,7 @@ class BelongsTo extends Relationship {
         // the parents using that dictionary and the primary key of the children.
         $dictionary = [];
 
-        foreach ($results as $result)
-        {
+        foreach ($results as $result) {
             $result = $this->factory->make($result);
             $dictionary[$result->getEntityAttribute($other)] = $result->getObject();
         }
@@ -209,12 +204,10 @@ class BelongsTo extends Relationship {
         // Once we have the dictionary constructed, we can loop through all the parents
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
-        foreach ($entities as $entity)
-        {
+        foreach ($entities as $entity) {
             $entity = $this->factory->make($entity);
 
-            if (isset($dictionary[$entity->getEntityAttribute($foreign)]))
-            {
+            if (isset($dictionary[$entity->getEntityAttribute($foreign)])) {
                 $entity->setEntityAttribute($relation, $dictionary[$entity->getEntityAttribute($foreign)]);
             }
         }
@@ -232,13 +225,12 @@ class BelongsTo extends Relationship {
     {
         // The Mapper will retrieve this association within the object model, we won't be using
         // the foreign key attribute inside the parent Entity.
-        // 
+        //
         //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
         //
         // Instead, we'll just add the object to the Entity's attribute
         
         $this->parent->setEntityAttribute($this->relation, $entity);
-
     }
 
     /**
@@ -250,7 +242,7 @@ class BelongsTo extends Relationship {
     {
         // The Mapper will retrieve this association within the object model, we won't be using
         // the foreign key attribute inside the parent Entity.
-        // 
+        //
         //$this->parent->setEntityAttribute($this->foreignKey, null);
                 
         $this->parent->setEntityAttribute($this->relation, null);
@@ -269,7 +261,7 @@ class BelongsTo extends Relationship {
     /**
      * Get the foreign key value pair for a related object
      *
-     * @var mixed $related 
+     * @var mixed $related
      *
      * @return array
      */
@@ -277,16 +269,13 @@ class BelongsTo extends Relationship {
     {
         $foreignKey = $this->getForeignKey();
 
-        if ($related)
-        {
+        if ($related) {
             $wrapper = $this->factory->make($related);
 
             $relatedKey = $this->relatedMap->getKeyName();
 
             return [$foreignKey => $wrapper->getEntityAttribute($relatedKey)];
-        }
-        else
-        {
+        } else {
             return [$foreignKey => null];
         }
     }

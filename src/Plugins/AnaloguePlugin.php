@@ -2,11 +2,12 @@
 
 use Analogue\ORM\System\Manager;
 
-abstract class AnaloguePlugin implements AnaloguePluginInterface{
+abstract class AnaloguePlugin implements AnaloguePluginInterface
+{
 
     /**
      * Manager instance
-     * 
+     *
      * @var Manager
      */
     protected $manager;
@@ -18,7 +19,7 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface{
 
     /**
      * Boot the plugin
-     * 
+     *
      * @return void
      */
     abstract public function register();
@@ -29,5 +30,4 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface{
      * @return array
      */
     abstract public function getCustomEvents();
-
 }

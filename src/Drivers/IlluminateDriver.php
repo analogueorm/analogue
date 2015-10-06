@@ -1,11 +1,12 @@
 <?php namespace Analogue\ORM\Drivers;
 
-class IlluminateDriver implements DriverInterface {
+class IlluminateDriver implements DriverInterface
+{
 
     /**
      * The Illuminate Connection Provider
-     * 
-     * @var CapsuleConnectionProvider | IlluminateConnectionProvider 
+     *
+     * @var CapsuleConnectionProvider | IlluminateConnectionProvider
      */
     protected $connectionProvider;
 
@@ -16,7 +17,7 @@ class IlluminateDriver implements DriverInterface {
 
     /**
      * Return the name of the driver
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -26,8 +27,8 @@ class IlluminateDriver implements DriverInterface {
 
     /**
      * Get Analogue DBAdapter
-     * 
-     * @param  string $connection 
+     *
+     * @param  string $connection
      * @return \Analogue\ORM\DBAdater
      */
     public function getAdapter($connection = null)
@@ -36,6 +37,4 @@ class IlluminateDriver implements DriverInterface {
 
         return new IlluminateDBAdapter($connection);
     }
-
-
 }

@@ -1,10 +1,11 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\Plugins\SoftDeletes;
 
 use Analogue\ORM\Commands\Command;
 
-class Restore extends Command {
+class Restore extends Command
+{
 
     public function execute()
     {
@@ -13,8 +14,7 @@ class Restore extends Command {
         $mapper = $aggregate->getMapper();
         $entityMap = $mapper->getEntityMap();
 
-        if ($mapper->fireEvent('restoring', $entity) === false)
-        {
+        if ($mapper->fireEvent('restoring', $entity) === false) {
             return false;
         }
 
@@ -34,5 +34,4 @@ class Restore extends Command {
 
         return $entity;
     }
-
 }

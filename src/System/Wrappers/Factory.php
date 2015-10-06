@@ -3,35 +3,29 @@
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 
-class Factory {
+class Factory
+{
 
     /**
      * Build the wrapper corresponding to the object's type
-     * 
-     * @param  mixed $object 
+     *
+     * @param  mixed $object
      * @return Wrapper
      */
     public function make($object)
     {
         $manager = Manager::getInstance();
 
-        if($manager->isValueObject($object))
-        {
+        if ($manager->isValueObject($object)) {
             $entityMap = $manager->getValueMap($object);
-        }
-        else
-        {
+        } else {
             $entityMap = $manager->mapper($object)->getEntityMap();
         }
 
-        if ($object instanceof Mappable) 
-        {
+        if ($object instanceof Mappable) {
             return new EntityWrapper($object, $entityMap);
-        }
-        else
-        {
+        } else {
             return new PlainObjectWrapper($object, $entityMap);
         }
     }
-
 }

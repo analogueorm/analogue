@@ -3,7 +3,8 @@
 use Analogue\ORM\Commands\Command;
 use Analogue\ORM\Entity;
 
-class CustomCommand extends Command {
+class CustomCommand extends Command
+{
 
     public function execute()
     {

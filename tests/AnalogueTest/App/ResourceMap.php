@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class ResourceMap extends EntityMap {
+class ResourceMap extends EntityMap
+{
 
     public $timestamps = true;
 
@@ -14,7 +15,7 @@ class ResourceMap extends EntityMap {
 
     protected $updatedAtColumn = 'custom_updated_at';
 
-    protected $deletedAtColumn = 'custom_deleted_at';    
+    protected $deletedAtColumn = 'custom_deleted_at';
 
     protected $embeddables = ['value' => 'AnalogueTest\App\V'];
 

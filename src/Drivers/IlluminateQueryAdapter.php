@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Query\Builder;
 
-class IlluminateQueryAdapter implements QueryAdapter {
+class IlluminateQueryAdapter implements QueryAdapter
+{
 
     protected $query;
 
@@ -15,5 +16,4 @@ class IlluminateQueryAdapter implements QueryAdapter {
     {
         return call_user_func_array(array($this->query, $method), $parameters);
     }
-
 }

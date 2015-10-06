@@ -9,11 +9,12 @@ use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 
-class EntityCollection extends Collection {
+class EntityCollection extends Collection
+{
    
     /**
      * Wrapper Factory
-     * 
+     *
      * @var \Analogue\ORM\System\Wrappers\Factory
      */
     protected $factory;
@@ -30,18 +31,16 @@ class EntityCollection extends Collection {
      *
      * @param  mixed  $key
      * @param  mixed  $default
-     * 
+     *
      * @return \Analogue\ORM\Entity
      */
     public function find($key, $default = null)
     {
-        if($key instanceof Mappable)
-        {
+        if ($key instanceof Mappable) {
             $key = $this->getEntityKey($key);
         }
 
-        return array_first($this->items, function($itemKey, $entity) use ($key)
-        {
+        return array_first($this->items, function ($itemKey, $entity) use ($key) {
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }
@@ -112,12 +111,9 @@ class EntityCollection extends Collection {
      */
     public function offsetSet($key, $value)
     {
-        if (is_null($key))
-        {
+        if (is_null($key)) {
             $this->items[] = $value;
-        }
-        else
-        {
+        } else {
             $this->items[$key] = $value;
         }
     }
@@ -146,43 +142,43 @@ class EntityCollection extends Collection {
 
     /**
      * Generic function for returning class.key value pairs
-     * 
+     *
      * @return string
      */
     public function getEntityHashes()
     {
-        return array_map(function($entity) 
-        { 
+        return array_map(function ($entity) {
             $class = get_class($entity);
 
             $mapper = Manager::getMapper($class);
             
             $keyName = $mapper->getEntityMap()->getKeyName();
             
-            return $class.'.'.$entity->getEntityAttribute($keyName); 
-        }, 
+            return $class.'.'.$entity->getEntityAttribute($keyName);
+        },
         $this->items);
     }
 
     /**
      * Get a subset of the collection from entity hashes
-     * 
-     * @param  array  $hashes 
-     * @return 
+     *
+     * @param  array  $hashes
+     * @return
      */
     public function getSubsetByHashes(array $hashes)
     {
         $subset = [];
 
-        foreach($this->items as $item)
-        {
+        foreach ($this->items as $item) {
             $class = get_class($item);
 
             $mapper = Manager::getMapper($class);
             
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            if(in_array($class.'.'.$item->$keyName, $hashes)) $subset[] = $item; 
+            if (in_array($class.'.'.$item->$keyName, $hashes)) {
+                $subset[] = $item;
+            }
         }
 
         return $subset;
@@ -198,8 +194,7 @@ class EntityCollection extends Collection {
     {
         $dictionary = $this->getDictionary();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             $dictionary[$this->getEntityKey($item)] = $item;
         }
 
@@ -218,10 +213,8 @@ class EntityCollection extends Collection {
 
         $dictionary = $this->getDictionary($items);
 
-        foreach ($this->items as $item)
-        {
-            if ( ! isset($dictionary[$this->getEntityKey($item)]))
-            {
+        foreach ($this->items as $item) {
+            if (! isset($dictionary[$this->getEntityKey($item)])) {
                 $diff->add($item);
             }
         }
@@ -241,10 +234,8 @@ class EntityCollection extends Collection {
 
         $dictionary = $this->getDictionary($items);
 
-        foreach ($this->items as $item)
-        {
-            if (isset($dictionary[$this->getEntityKey($item)]))
-            {
+        foreach ($this->items as $item) {
+            if (isset($dictionary[$this->getEntityKey($item)])) {
                 $intersect->add($item);
             }
         }
@@ -290,8 +281,7 @@ class EntityCollection extends Collection {
 
         $dictionary = array();
 
-        foreach ($items as $value)
-        {
+        foreach ($items as $value) {
             $dictionary[$this->getEntityKey($value)] = $value;
         }
 
@@ -320,11 +310,10 @@ class EntityCollection extends Collection {
      */
     public function max($key = null)
     {
-        return $this->reduce(function($result, $item) use ($key)
-        {
+        return $this->reduce(function ($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
-            return (is_null($result) || $wrapper->getEntityAttribute($key) > $result) ? 
+            return (is_null($result) || $wrapper->getEntityAttribute($key) > $result) ?
                 $wrapper->getEntityAttribute($key) : $result;
         });
     }
@@ -337,11 +326,10 @@ class EntityCollection extends Collection {
      */
     public function min($key = null)
     {
-        return $this->reduce(function($result, $item) use ($key)
-        {
+        return $this->reduce(function ($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
-            return (is_null($result) || $wrapper->getEntityAttribute($key) < $result) 
+            return (is_null($result) || $wrapper->getEntityAttribute($key) < $result)
                 ? $wrapper->getEntityAttribute($key) : $result;
         });
     }

@@ -7,7 +7,8 @@ use AnalogueTest\App\Role;
 use AnalogueTest\App\Resource;
 use AnalogueTest\App\V;
 
-class ValueObjectTest extends PHPUnit_Framework_TestCase {
+class ValueObjectTest extends PHPUnit_Framework_TestCase
+{
 
     public function testValueObjectStoreAndRead()
     {
@@ -25,7 +26,7 @@ class ValueObjectTest extends PHPUnit_Framework_TestCase {
     {
         $resource = new Resource('res');
         $rMapper = get_mapper($resource);
-        $v= new V('v1','v2');
+        $v= new V('v1', 'v2');
         $resource->value = $v;
         $rMapper->store($resource);
         $id = $resource->custom_id;
@@ -36,5 +37,4 @@ class ValueObjectTest extends PHPUnit_Framework_TestCase {
         $z = $rMapper->find($id);
         $rMapper->store($z);
     }
-
 }

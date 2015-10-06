@@ -2,7 +2,8 @@
 
 use Analogue\ORM\EntityMap;
 
-class PopoMap extends EntityMap {
+class PopoMap extends EntityMap
+{
 
     protected $attributes = ['name'];
 

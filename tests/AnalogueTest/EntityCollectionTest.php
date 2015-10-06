@@ -5,7 +5,8 @@ use Analogue\ORM\EntityCollection as Collection;
 use Illuminate\Support\Collection as IlluminateCollection;
 use PHPUnit_Framework_TestCase;
 
-class EntityCollectionTest extends PHPUnit_Framework_TestCase {
+class EntityCollectionTest extends PHPUnit_Framework_TestCase
+{
 
     public function testAddingEntitiesToCollection()
     {
@@ -54,7 +55,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $b = new Entity;
         $b->foo = 20;
         
-        $c = new Collection([$a,$b]);
+        $c = new Collection([$a, $b]);
 
         $this->assertEquals(20, $c->max('foo'));
     }
@@ -68,7 +69,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $b = new Entity;
         $b->foo = 20;
         
-        $c = new Collection([$a,$b]);
+        $c = new Collection([$a, $b]);
 
         $this->assertEquals(10, $c->min('foo'));
     }
@@ -117,7 +118,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
 
         $c = new Collection(array($entity1, $entity2, $entity3));
 
-        $this->assertEquals(array(1,2,3), $c->getEntityKeys());
+        $this->assertEquals(array(1, 2, 3), $c->getEntityKeys());
     }
 
     
@@ -139,7 +140,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
 
     public function testCollectionDiffsWithGivenCollection()
     {
-       $e1 = new Entity;
+        $e1 = new Entity;
         $e1->id = 1;
         $e2 = new Entity;
         $e2->id = 2;
@@ -191,7 +192,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $e2->uid = 'b';
         $e2->name = 'bar';
 
-        $data = new Collection([$e1,$e2]);
+        $data = new Collection([$e1, $e2]);
         $this->assertEquals(new IlluminateCollection(['f' => 'foo', 'b' => 'bar']), $data->lists('name', 'uid'));
         $this->assertEquals(new IlluminateCollection(['foo', 'bar']), $data->lists('name'));
     }
@@ -206,10 +207,10 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $e3 = new Entity;
         $e3->id = 3;
 
-        $c = new Collection([$e1,$e2,$e3]);
+        $c = new Collection([$e1, $e2, $e3]);
 
         $this->assertEquals(new Collection([$e1]), $c->only(1));
-        $this->assertEquals(new Collection([$e2,$e3]), $c->only([2, 3]));
+        $this->assertEquals(new Collection([$e2, $e3]), $c->only([2, 3]));
     }
 
     
@@ -222,7 +223,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase {
         $e3 = new Entity;
         $e3->id = 3;
 
-        $c = new Collection([$e1,$e2,$e3]);
+        $c = new Collection([$e1, $e2, $e3]);
 
         $this->assertEquals(new Collection(array($e1, $e3)), $c->except(2));
         $this->assertEquals(new Collection(array($e1)), $c->except(array(2, 3)));

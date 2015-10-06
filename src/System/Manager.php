@@ -15,421 +15,419 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
 /**
  * This class keeps track of instanciated mappers, and entity <-> entityMap associations
  */
-class Manager {
+class Manager
+{
 
-	/**
-	 * Driver Manager
-	 * 
-	 * @var \Analogue\ORM\Drivers\Manager
-	 */
-	protected $drivers;
+    /**
+     * Driver Manager
+     *
+     * @var \Analogue\ORM\Drivers\Manager
+     */
+    protected $drivers;
 
-	/**
-	 * Registered entity classes and corresponding map objects.
-	 * 
-	 * @var array
-	 */
-	protected $entityClasses = [];
+    /**
+     * Registered entity classes and corresponding map objects.
+     *
+     * @var array
+     */
+    protected $entityClasses = [];
 
-	/**
-	 * Key value store of ValueObject Classes and corresponding map classes
-	 * 
-	 * @var array
-	 */
-	protected $valueClasses = [];
+    /**
+     * Key value store of ValueObject Classes and corresponding map classes
+     *
+     * @var array
+     */
+    protected $valueClasses = [];
 
-	/**
-	 * Loaded Mappers
-	 * 
-	 * @var array
-	 */
-	protected $mappers = [];
+    /**
+     * Loaded Mappers
+     *
+     * @var array
+     */
+    protected $mappers = [];
 
-	/**
-	 * Loaded Repositories
-	 *
-	 * @var array
-	 */
-	protected $repositories = [];
+    /**
+     * Loaded Repositories
+     *
+     * @var array
+     */
+    protected $repositories = [];
 
-	/**
-	 * Event dispatcher instance
-	 * 
-	 * @var \Illuminate\Contracts\Events\Dispatcher
-	 */
-	protected $eventDispatcher;
+    /**
+     * Event dispatcher instance
+     *
+     * @var \Illuminate\Contracts\Events\Dispatcher
+     */
+    protected $eventDispatcher;
 
-	/**
-	 * Manager instance
-	 * 
-	 * @var Manager
-	 */
-	protected static $instance;
+    /**
+     * Manager instance
+     *
+     * @var Manager
+     */
+    protected static $instance;
 
-	/**
-	 * Available Analogue Events
-	 * 
-	 * @var array
-	 */
-	protected $events = ['initializing', 'initialized', 'store', 'stored',
-		'creating', 'created', 'updating', 'updated', 'deleting', 'deleted' ];
+    /**
+     * Available Analogue Events
+     *
+     * @var array
+     */
+    protected $events = ['initializing', 'initialized', 'store', 'stored',
+        'creating', 'created', 'updating', 'updated', 'deleting', 'deleted' ];
 
-	/**
-	 * @param \Analogue\ORM\Drivers\Manager $driverManager       
-	 * @param Dispatcher $event 
-	 */
-	public function __construct(DriverManager $driverManager, Dispatcher $event)
-	{
-		$this->drivers = $driverManager;
+    /**
+     * @param \Analogue\ORM\Drivers\Manager $driverManager
+     * @param Dispatcher $event
+     */
+    public function __construct(DriverManager $driverManager, Dispatcher $event)
+    {
+        $this->drivers = $driverManager;
 
-		$this->eventDispatcher = $event;
+        $this->eventDispatcher = $event;
 
-		static::$instance = $this;
-	}
+        static::$instance = $this;
+    }
 
-	/**
-	 * Return the Driver Manager's instance
-	 * 
-	 * @return \Analogue\ORM\Drivers\Manager 
-	 */
-	public function getDriverManager()
-	{
-		return $this->drivers;
-	}
+    /**
+     * Return the Driver Manager's instance
+     *
+     * @return \Analogue\ORM\Drivers\Manager
+     */
+    public function getDriverManager()
+    {
+        return $this->drivers;
+    }
 
-	/**
-	 * Create a mapper for a given entity
-	 * 
-	 * @param \Analogue\ORM\Mappable|string $entity
-	 * @param mixed $entityMap 
-	 * @return Mapper
-	 */
-	public function mapper($entity, $entityMap = null)
-	{
-		if($entity instanceof Wrapper)
-		{
-			throw new MappingException('Tried to instantiate mapper on wrapped Entity');
-		}
+    /**
+     * Create a mapper for a given entity
+     *
+     * @param \Analogue\ORM\Mappable|string $entity
+     * @param mixed $entityMap
+     * @return Mapper
+     */
+    public function mapper($entity, $entityMap = null)
+    {
+        if ($entity instanceof Wrapper) {
+            throw new MappingException('Tried to instantiate mapper on wrapped Entity');
+        }
 
-		if(! is_string($entity)) $entity = get_class($entity);
+        if (! is_string($entity)) {
+            $entity = get_class($entity);
+        }
 
-		// Return existing mapper instance if exists.
-		if(array_key_exists($entity, $this->mappers))
-		{
-			return $this->mappers[$entity];
-		}
-		else {
-			return $this->buildMapper($entity, $entityMap);
-		}
-	}
+        // Return existing mapper instance if exists.
+        if (array_key_exists($entity, $this->mappers)) {
+            return $this->mappers[$entity];
+        } else {
+            return $this->buildMapper($entity, $entityMap);
+        }
+    }
 
-	/**
-	 * Build a new Mapper instance for a given Entity
-	 * 
-	 * @param  mixed|string $entity    
-	 * @param  $entityMap 
-	 * @return Mapper     
-	 */
-	protected function buildMapper($entity, $entityMap)
-	{
-		// If an EntityMap hasn't been manually registered by the user 
-		// register it at runtime.
-		if(! $this->isRegisteredEntity($entity)) 
-		{
-			$this->register($entity, $entityMap);
-		}
+    /**
+     * Build a new Mapper instance for a given Entity
+     *
+     * @param  mixed|string $entity
+     * @param  $entityMap
+     * @return Mapper
+     */
+    protected function buildMapper($entity, $entityMap)
+    {
+        // If an EntityMap hasn't been manually registered by the user
+        // register it at runtime.
+        if (! $this->isRegisteredEntity($entity)) {
+            $this->register($entity, $entityMap);
+        }
 
-		$entityMap = $this->entityClasses[$entity];
+        $entityMap = $this->entityClasses[$entity];
 
-		$factory = new MapperFactory($this->drivers, $this->eventDispatcher, $this);
+        $factory = new MapperFactory($this->drivers, $this->eventDispatcher, $this);
 
-		$mapper = $factory->make($entity, $entityMap);
+        $mapper = $factory->make($entity, $entityMap);
 
-		$this->mappers[$entity] = $mapper; 
+        $this->mappers[$entity] = $mapper;
 
-		// At this point we can safely call the boot() method on the entityMap as
-		// the mapper is now instanciated & registered within the manager.
-		
-		$mapper->getEntityMap()->boot(); 
-		
-		return $mapper;
-	}
+        // At this point we can safely call the boot() method on the entityMap as
+        // the mapper is now instanciated & registered within the manager.
+        
+        $mapper->getEntityMap()->boot();
+        
+        return $mapper;
+    }
 
-	/**
-	 * Create a mapper for a given entity (static alias)
-	 * 
-	 * @param \Analogue\ORM\Mappable|string $entity
-	 * @param mixed $entityMap 
-	 * @return Mapper
-	 */
-	public static function getMapper($entity,$entityMap = null)
-	{
-		return static::$instance->mapper($entity, $entityMap);
-	}
+    /**
+     * Create a mapper for a given entity (static alias)
+     *
+     * @param \Analogue\ORM\Mappable|string $entity
+     * @param mixed $entityMap
+     * @return Mapper
+     */
+    public static function getMapper($entity, $entityMap = null)
+    {
+        return static::$instance->mapper($entity, $entityMap);
+    }
 
-	/**
-	 * Get the Repository instance for the given Entity 
-	 * 
-	 * @param  \Analogue\ORM\Mappable|string $entity 
-	 * @return \Analogue\ORM\Repository
-	 */
-	public function repository($entity)
-	{
-		if(! is_string($entity)) $entity = get_class($entity);
+    /**
+     * Get the Repository instance for the given Entity
+     *
+     * @param  \Analogue\ORM\Mappable|string $entity
+     * @return \Analogue\ORM\Repository
+     */
+    public function repository($entity)
+    {
+        if (! is_string($entity)) {
+            $entity = get_class($entity);
+        }
 
-		// First we check if the repository is not already created.
-		if(array_key_exists($entity, $this->repositories))
-		{
-			return $this->repositories[$entity];
-		}
+        // First we check if the repository is not already created.
+        if (array_key_exists($entity, $this->repositories)) {
+            return $this->repositories[$entity];
+        }
 
-		$this->repositories[$entity] = new Repository($this->mapper($entity));
-		
-		return $this->repositories[$entity];
-	}
+        $this->repositories[$entity] = new Repository($this->mapper($entity));
+        
+        return $this->repositories[$entity];
+    }
 
-	/**
-	 * Register an entity 
-	 * 
-	 * @param  string|Mappable $entity    entity's class name
-	 * @param  string|EntityMap $entityMap map's class name
-	 * @return void
-	 */
-	public function register($entity, $entityMap = null)
-	{
-		// If an object is provider, get the class name from it
-		if(! is_string($entity) ) $entity = get_class($entity);
+    /**
+     * Register an entity
+     *
+     * @param  string|Mappable $entity    entity's class name
+     * @param  string|EntityMap $entityMap map's class name
+     * @return void
+     */
+    public function register($entity, $entityMap = null)
+    {
+        // If an object is provider, get the class name from it
+        if (! is_string($entity)) {
+            $entity = get_class($entity);
+        }
 
-		if($this->isRegisteredEntity($entity))
-		{
-			throw new MappingException("Entity $entity is already registered.");
-		}
+        if ($this->isRegisteredEntity($entity)) {
+            throw new MappingException("Entity $entity is already registered.");
+        }
 
-		if(! class_exists($entity))
-		{
-			throw new MappingException("Class $entity does not exists");
-		}
+        if (! class_exists($entity)) {
+            throw new MappingException("Class $entity does not exists");
+        }
 
-		if(is_null($entityMap) ) 
-		{
-			$entityMap = $this->getEntityMapInstanceFor($entity);
-		}
+        if (is_null($entityMap)) {
+            $entityMap = $this->getEntityMapInstanceFor($entity);
+        }
 
-		if(is_string($entityMap)) 
-		{
-			$entityMap = new $entityMap;
-		}
+        if (is_string($entityMap)) {
+            $entityMap = new $entityMap;
+        }
 
-		if(! $entityMap instanceof EntityMap)
-		{
-			throw new MappingException(get_class($entityMap)." must be an instance of EntityMap.");
-		}
+        if (! $entityMap instanceof EntityMap) {
+            throw new MappingException(get_class($entityMap)." must be an instance of EntityMap.");
+        }
 
-		$entityMap->setClass($entity);
+        $entityMap->setClass($entity);
 
         $entityMap->setManager($this);
 
-		$this->entityClasses[$entity] = $entityMap;
-	}
+        $this->entityClasses[$entity] = $entityMap;
+    }
 
-	/**
+    /**
      * Get the entity map instance for a custom entity
-     * 
-     * @param  string   	$entity 
+     *
+     * @param  string   	$entity
      * @return Mappable
      */
     protected function getEntityMapInstanceFor($entity)
     {
-        if (class_exists($entity.'Map'))
-        {
+        if (class_exists($entity.'Map')) {
             $map = $entity.'Map';
             $map = new $map;
-        }
-        else 
-        {
+        } else {
             // Generate an EntityMap obeject
             $map = $this->getNewEntityMap();
         }
         
         return $map;
-    }  
+    }
 
     /**
      * Dynamically create an entity map for a custom entity class
-     * 
-     * @return EntityMap         
+     *
+     * @return EntityMap
      */
     protected function getNewEntityMap()
     {
         return new EntityMap;
     }
 
-	/**
-	 * Register a Value Object
-	 * 
-	 * @param  string|ValueObject $valueObject 
-	 * @param  string $valueMap    
-	 * @return void
-	 */
-	public function registerValueObject($valueObject, $valueMap = null)
-	{
-		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+    /**
+     * Register a Value Object
+     *
+     * @param  string|ValueObject $valueObject
+     * @param  string $valueMap
+     * @return void
+     */
+    public function registerValueObject($valueObject, $valueMap = null)
+    {
+        if (! is_string($valueObject)) {
+            $valueObject = get_class($valueObject);
+        }
 
-		if(is_null($valueMap))
-		{
-			$valueMap = $valueObject.'Map';
-		}
+        if (is_null($valueMap)) {
+            $valueMap = $valueObject.'Map';
+        }
 
-		if(! class_exists($valueMap))
-		{
-			throw new MappingException("$valueMap doesn't exists");
-		}
+        if (! class_exists($valueMap)) {
+            throw new MappingException("$valueMap doesn't exists");
+        }
 
-		$this->valueClasses[$valueObject] = $valueMap;
-	}
+        $this->valueClasses[$valueObject] = $valueMap;
+    }
 
-	/**
-	 * Return true is the object is registered as value object
-	 * 
-	 * @param  mixed  $object
-	 * @return boolean       
-	 */
-	public function isValueObject($object)
-	{
-		if(! is_string($object) ) $object = get_class($object);
+    /**
+     * Return true is the object is registered as value object
+     *
+     * @param  mixed  $object
+     * @return boolean
+     */
+    public function isValueObject($object)
+    {
+        if (! is_string($object)) {
+            $object = get_class($object);
+        }
 
-		return array_key_exists($object, $this->valueClasses);
-	}
+        return array_key_exists($object, $this->valueClasses);
+    }
 
-	/**
-	 * Get the Value Map for a given Value Object Class
-	 * 
-	 * @param  string $valueObject 
-	 * @return \Analogue\ORM\ValueMap
-	 */
-	public function getValueMap($valueObject)
-	{
-		if(! is_string($valueObject) ) $valueObject = get_class($valueObject);
+    /**
+     * Get the Value Map for a given Value Object Class
+     *
+     * @param  string $valueObject
+     * @return \Analogue\ORM\ValueMap
+     */
+    public function getValueMap($valueObject)
+    {
+        if (! is_string($valueObject)) {
+            $valueObject = get_class($valueObject);
+        }
 
-		if(! array_key_exists($valueObject, $this->valueClasses))
-		{
-			$this->registerValueObject($valueObject);
-		}
-		$valueMap = new $this->valueClasses[$valueObject];
+        if (! array_key_exists($valueObject, $this->valueClasses)) {
+            $this->registerValueObject($valueObject);
+        }
+        $valueMap = new $this->valueClasses[$valueObject];
 
-		$valueMap->setClass($valueObject);
+        $valueMap->setClass($valueObject);
 
-		return $valueMap;
-	}
+        return $valueMap;
+    }
 
-	/**
-	 * Instanciate a new Value Object instance
-	 * 
-	 * @param  string $valueObject 
-	 * @return ValueObject
-	 */
-	public function getValueObjectInstance($valueObject)
-	{
-		$prototype = unserialize(sprintf('O:%d:"%s":0:{}',
-			strlen($valueObject),
-            			$valueObject
-         			)
-        		);
-		return $prototype;
-	}
+    /**
+     * Instanciate a new Value Object instance
+     *
+     * @param  string $valueObject
+     * @return ValueObject
+     */
+    public function getValueObjectInstance($valueObject)
+    {
+        $prototype = unserialize(sprintf('O:%d:"%s":0:{}',
+            strlen($valueObject),
+                        $valueObject
+                     )
+                );
+        return $prototype;
+    }
 
-	/**
-	 * Register Analogue Plugin
-	 * 
-	 * @param  string $plugin class
-	 * @return void
-	 */
-	public function registerPlugin($plugin)
-	{
-		$plugin = new $plugin($this);
+    /**
+     * Register Analogue Plugin
+     *
+     * @param  string $plugin class
+     * @return void
+     */
+    public function registerPlugin($plugin)
+    {
+        $plugin = new $plugin($this);
 
-		$this->events = array_merge($this->events, $plugin->getCustomEvents() );
+        $this->events = array_merge($this->events, $plugin->getCustomEvents());
 
-		$plugin->register();
-	}
+        $plugin->register();
+    }
 
-	/**
-	 * Check if the entity is already registered
-	 * 
-	 * @param  string|object  $entity
-	 * @return boolean         
-	 */
-	public function isRegisteredEntity($entity)
-	{
-		if (! is_string($entity)) $entity = get_class($entity);
+    /**
+     * Check if the entity is already registered
+     *
+     * @param  string|object  $entity
+     * @return boolean
+     */
+    public function isRegisteredEntity($entity)
+    {
+        if (! is_string($entity)) {
+            $entity = get_class($entity);
+        }
 
-		return array_key_exists($entity, $this->entityClasses);
-	}
+        return array_key_exists($entity, $this->entityClasses);
+    }
 
-	/**
-	 * Register event listeners that will be fired regardless the type
-	 * of the entity.
-	 * 
-	 * @param  string $event  
-	 * @param  closure|string $callback 
-	 * @return void
-	 */
-	public function registerGlobalEvent($event, $callback)
-	{
-		if (! in_array($event, $this->events)) 
-		{
-			throw new \Exception("Analogue : Event $event doesn't exist");
-		}
-		$this->eventDispatcher->listen("analogue.{$event}.*", $callback);
-	}
+    /**
+     * Register event listeners that will be fired regardless the type
+     * of the entity.
+     *
+     * @param  string $event
+     * @param  closure|string $callback
+     * @return void
+     */
+    public function registerGlobalEvent($event, $callback)
+    {
+        if (! in_array($event, $this->events)) {
+            throw new \Exception("Analogue : Event $event doesn't exist");
+        }
+        $this->eventDispatcher->listen("analogue.{$event}.*", $callback);
+    }
 
-	/**
-	 * Shortcut to Mapper store
-	 * 
-	 * @param  mixed $entity
-	 * @return mixed
-	 */
-	public function store($entity)
-	{
-		return $this->mapper($entity)->store($entity);
-	}
+    /**
+     * Shortcut to Mapper store
+     *
+     * @param  mixed $entity
+     * @return mixed
+     */
+    public function store($entity)
+    {
+        return $this->mapper($entity)->store($entity);
+    }
 
-	/**
-	 * Shortcut to Mapper delete
-	 * 
-	 * @param  mixed $entity
-	 * @return mixed
-	 */
-	public function delete($entity)
-	{
-		return $this->mapper($entity)->delete($entity);
-	}
+    /**
+     * Shortcut to Mapper delete
+     *
+     * @param  mixed $entity
+     * @return mixed
+     */
+    public function delete($entity)
+    {
+        return $this->mapper($entity)->delete($entity);
+    }
 
-	/**
-	 * Shortcut to Mapper query
-	 * 
-	 * @param  mixed $entity
-	 * @return \Analogue\System\Query
-	 */
-	public function query($entity)
-	{
-		return $this->mapper($entity)->query();
-	}
+    /**
+     * Shortcut to Mapper query
+     *
+     * @param  mixed $entity
+     * @return \Analogue\System\Query
+     */
+    public function query($entity)
+    {
+        return $this->mapper($entity)->query();
+    }
 
-	/**
-	 * Shortcut to Mapper Global Query
-	 * 
-	 * @param  mixed $entity
-	 * @return \Analogue\System\Query
-	 */
-	public function globalQuery($entity)
-	{
-		return $this->mapper($entity)->globalQuery();
-	}
-	
-	/**
+    /**
+     * Shortcut to Mapper Global Query
+     *
+     * @param  mixed $entity
+     * @return \Analogue\System\Query
+     */
+    public function globalQuery($entity)
+    {
+        return $this->mapper($entity)->globalQuery();
+    }
+    
+    /**
      * Return the Singleton instance of the manager
-     * 
+     *
      * @param  string  $method
      * @param  array   $parameters
      * @return mixed
@@ -438,5 +436,4 @@ class Manager {
     {
         return static::$instance;
     }
-
 }

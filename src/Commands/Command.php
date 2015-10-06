@@ -1,33 +1,33 @@
-<?php 
+<?php
 
 namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\System\Aggregate;
 use Analogue\ORM\Drivers\QueryAdapter;
 
-abstract class Command {
+abstract class Command
+{
 
-	/**
-	 * The aggregated entity on which the command is executed
-	 * 
-	 * @var \Analogue\ORM\System\Aggregate
-	 */
-	protected $aggregate;
+    /**
+     * The aggregated entity on which the command is executed
+     *
+     * @var \Analogue\ORM\System\Aggregate
+     */
+    protected $aggregate;
 
-	/**
-	 * Query Builder instance
-	 * 
-	 * @var \Illuminate\Database\Query\Builder
-	 */
-	protected $query;
+    /**
+     * Query Builder instance
+     *
+     * @var \Illuminate\Database\Query\Builder
+     */
+    protected $query;
 
-	public function __construct(Aggregate $aggregate, QueryAdapter $query)
-	{
-		$this->aggregate = $aggregate;
+    public function __construct(Aggregate $aggregate, QueryAdapter $query)
+    {
+        $this->aggregate = $aggregate;
 
-		$this->query = $query->from($aggregate->getEntityMap()->getTable());
-	}
+        $this->query = $query->from($aggregate->getEntityMap()->getTable());
+    }
 
-	abstract public function execute();
-
+    abstract public function execute();
 }

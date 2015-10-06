@@ -5,29 +5,30 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
- * Build a mapper instance from an EntityMap object, doing the 
+ * Build a mapper instance from an EntityMap object, doing the
  * required parsing of relationships. Abstracting to this class
  * will make it easy to later cache the EntityMap for better performances.
  */
-class MapperFactory {
+class MapperFactory
+{
 
     /**
      * Manager instance
-     * 
+     *
      * @var \Analogue\ORM\System\Manager
      */
     protected $manager;
 
     /**
      * DriverManager instance
-     * 
+     *
      * @var \Analogue\ORM\Drivers\Manager
      */
     protected $drivers;
 
     /**
      * Event dispatcher instance
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $dispatcher;
@@ -43,10 +44,10 @@ class MapperFactory {
 
     /**
      * Return a new Mapper instance
-     * 
-     * @param  string       $entityClass 
+     *
+     * @param  string       $entityClass
      * @param  string       $entityMap
-     * @return Mapper                     
+     * @return Mapper
      */
     public function make($entityClass, EntityMap $entityMap)
     {
@@ -71,5 +72,4 @@ class MapperFactory {
 
         return $mapper;
     }
-
 }

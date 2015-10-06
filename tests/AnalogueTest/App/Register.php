@@ -2,4 +2,6 @@
 
 use Analogue\ORM\Entity;
 
-class Register extends Entity {}
+class Register extends Entity
+{
+}
