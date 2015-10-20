@@ -33,7 +33,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     public function __construct(Mapper $mapper, $parent, $type, $id, $localKey)
     {
         $this->morphType = $type;
-        $this->morphClass = get_class($parent);
+        $this->morphClass = $mapper->getManager()->getMapper($parent)->getEntityMap()->getMorphClass();
 
         parent::__construct($mapper, $parent, $id, $localKey);
     }

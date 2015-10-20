@@ -1086,7 +1086,7 @@ class EntityMap
             if ($method->getNumberOfParameters() > 0) {
                 $params = $method->getParameters();
 
-                if ($params[0]->getClass()->name == $entityClass) {
+                if ($params[0]->getClass() && $params[0]->getClass()->name == $entityClass) {
                     $relationships[] = $methodName;
                 }
             }
