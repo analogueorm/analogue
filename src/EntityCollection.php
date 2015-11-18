@@ -69,17 +69,6 @@ class EntityCollection extends Collection
     }
 
     /**
-     * Push an item onto the beginning of the collection.
-     *
-     * @param  mixed  $value
-     * @return void
-     */
-    public function prepend($value)
-    {
-        array_unshift($this->items, $value);
-    }
-
-    /**
      * Push an item onto the end of the collection.
      *
      * @param  mixed  $value
