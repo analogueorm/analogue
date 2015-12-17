@@ -2,7 +2,7 @@
 
 trait MagicallyAccessiblePropertiesTrait
 {
-    function __get($var)
+    public function __get($var)
     {
         $method = 'get' . ucfirst($var);
 
@@ -13,7 +13,7 @@ trait MagicallyAccessiblePropertiesTrait
         return $this->$method();
     }
 
-    function __set($var, $val)
+    public function __set($var, $val)
     {
         $method = 'set' . ucfirst($var);
 
@@ -24,22 +24,22 @@ trait MagicallyAccessiblePropertiesTrait
         $this->$method($val);
     }
 
-    function offsetGet($offset)
+    public function offsetGet($offset)
     {
         return $this->$offset;
     }
 
-    function offsetSet($offset, $value)
+    public function offsetSet($offset, $value)
     {
         $this->$offset = $value;
     }
 
-    function offsetExists($offset)
+    public function offsetExists($offset)
     {
         return (bool) $this->offsetGet($offset);
     }
 
-    function offsetUnset($offset)
+    public function offsetUnset($offset)
     {
         $this->$offset = null;
     }
