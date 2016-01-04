@@ -1,7 +1,6 @@
 <?php namespace Analogue\ORM;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\DatabaseManager;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\Drivers\IlluminateDriver;
@@ -35,7 +34,7 @@ class AnalogueServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bindShared('analogue', function ($app) {
+        $this->app->singleton('analogue', function ($app) {
 
             $db = $app['db'];
 
