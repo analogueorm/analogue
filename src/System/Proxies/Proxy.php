@@ -2,7 +2,9 @@
 
 namespace Analogue\ORM\System\Proxies;
 
+use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\Mapper;
 
 abstract class Proxy implements ProxyInterface
 {
@@ -67,6 +69,7 @@ abstract class Proxy implements ProxyInterface
      *
      * @param  \Analogue\ORM\System\InternallyMappable  $entity
      * @param  string $relation
+     * @throws MappingException
      * @return \Analogue\ORM\System\Query
      */
     protected function query($entity, $relation)
@@ -80,6 +83,7 @@ abstract class Proxy implements ProxyInterface
      * Get the mapper instance for the entity
      *
      * @param  \Analogue\ORM\System\InternallyMappable $entity
+     * @throws MappingException
      * @return \Analogue\ORM\System\Mapper
      */
     protected function getMapper($entity)
