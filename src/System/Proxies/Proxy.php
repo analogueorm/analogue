@@ -79,7 +79,7 @@ abstract class Proxy implements ProxyInterface
     /**
      * Get the mapper instance for the entity
      *
-     * @param  mixed $entity
+     * @param  \Analogue\ORM\System\InternallyMappable $entity
      * @return \Analogue\ORM\System\Mapper
      */
     protected function getMapper($entity)

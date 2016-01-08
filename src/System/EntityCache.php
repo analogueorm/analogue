@@ -144,7 +144,7 @@ class EntityCache
      * Create a cachedRelationship instance which will hold related entity's hash and pivot attributes, if any.
      *
      * @param                $parentKey
-     * @param               $relation
+     * @param               string $relation
      * @param               $result
      * @param  Relationship $relationship
      * @return CachedRelationship
