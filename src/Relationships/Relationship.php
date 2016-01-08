@@ -285,7 +285,7 @@ abstract class Relationship
     /**
      * Get the parent model of the relation.
      *
-     * @return Mappable
+     * @return InternallyMappable
      */
     public function getParent()
     {

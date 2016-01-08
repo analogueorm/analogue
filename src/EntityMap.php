@@ -410,6 +410,7 @@ class EntityMap
      * Set the custom entity class
      *
      * @param string namespaced class name
+     * @param string $class
      */
     public function setClass($class)
     {
@@ -649,7 +650,7 @@ class EntityMap
      * Define a one-to-one relationship.
      *
      * @param  $entity
-     * @param  string  $related entity class
+     * @param  string  $relatedClass entity class
      * @param  string  $foreignKey
      * @param  string  $localKey
      * @return \Analogue\ORM\Relationships\HasOne
@@ -960,7 +961,7 @@ class EntityMap
     /**
      * Get the joining table name for a many-to-many relation.
      *
-     * @param  string  $related
+     * @param  EntityMap  $relatedMap
      * @return string
      */
     public function joiningTable($relatedMap)
@@ -988,7 +989,7 @@ class EntityMap
      * @param  string  $name
      * @param  string  $type
      * @param  string  $id
-     * @return array
+     * @return string[]
      */
     protected function getMorphs($name, $type, $id)
     {

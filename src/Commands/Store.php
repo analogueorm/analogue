@@ -35,7 +35,7 @@ class Store extends Command
          * We will test the entity for existence
          * and run a creation if it doesn't exists
          */
-        if (! $this->aggregate->exists()) {
+        if (!$this->aggregate->exists()) {
             if ($mapper->fireEvent('creating', $entity) === false) {
                 return false;
             }
@@ -98,7 +98,7 @@ class Store extends Command
      * Create a new store command
      *
      * @param  Aggregate $aggregate
-     * @return void
+     * @return Store
      */
     protected function createStoreCommand(Aggregate $aggregate)
     {
@@ -156,7 +156,7 @@ class Store extends Command
         $attributes = $this->getAttributes();
 
         foreach ($relations as $relation) {
-            if (! array_key_exists($relation, $attributes)) {
+            if (!array_key_exists($relation, $attributes)) {
                 continue;
             }
 
@@ -173,7 +173,7 @@ class Store extends Command
             if ($value instanceof CollectionProxy && $value->isLoaded()) {
                 $value = $value->getUnderlyingCollection();
             }
-            if ($value instanceof CollectionProxy && ! $value->isLoaded()) {
+            if ($value instanceof CollectionProxy && !$value->isLoaded()) {
                 foreach ($value->getAddedItems() as $entity) {
                     $this->updateEntityIfDirty($entity);
                 }
@@ -182,7 +182,7 @@ class Store extends Command
 
             if ($value instanceof EntityCollection) {
                 foreach ($value as $entity) {
-                    if (! $this->createEntityIfNotExists($entity)) {
+                    if (!$this->createEntityIfNotExists($entity)) {
                         $this->updateEntityIfDirty($entity);
                     }
                 }

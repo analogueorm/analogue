@@ -37,7 +37,7 @@ class EntityCollection extends Collection
             $key = $this->getEntityKey($key);
         }
 
-        return array_first($this->items, function ($itemKey, $entity) use ($key) {
+        return array_first($this->items, function($itemKey, $entity) use ($key) {
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }
@@ -133,14 +133,14 @@ class EntityCollection extends Collection
      */
     public function getEntityHashes()
     {
-        return array_map(function ($entity) {
+        return array_map(function($entity) {
             $class = get_class($entity);
 
             $mapper = Manager::getMapper($class);
             
             $keyName = $mapper->getEntityMap()->getKeyName();
             
-            return $class.'.'.$entity->getEntityAttribute($keyName);
+            return $class . '.' . $entity->getEntityAttribute($keyName);
         },
         $this->items);
     }
@@ -162,7 +162,7 @@ class EntityCollection extends Collection
             
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            if (in_array($class.'.'.$item->$keyName, $hashes)) {
+            if (in_array($class . '.' . $item->$keyName, $hashes)) {
                 $subset[] = $item;
             }
         }
@@ -200,7 +200,7 @@ class EntityCollection extends Collection
         $dictionary = $this->getDictionary($items);
 
         foreach ($this->items as $item) {
-            if (! isset($dictionary[$this->getEntityKey($item)])) {
+            if (!isset($dictionary[$this->getEntityKey($item)])) {
                 $diff->add($item);
             }
         }
@@ -296,7 +296,7 @@ class EntityCollection extends Collection
      */
     public function max($key = null)
     {
-        return $this->reduce(function ($result, $item) use ($key) {
+        return $this->reduce(function($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
             return (is_null($result) || $wrapper->getEntityAttribute($key) > $result) ?
@@ -312,7 +312,7 @@ class EntityCollection extends Collection
      */
     public function min($key = null)
     {
-        return $this->reduce(function ($result, $item) use ($key) {
+        return $this->reduce(function($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
             return (is_null($result) || $wrapper->getEntityAttribute($key) < $result)

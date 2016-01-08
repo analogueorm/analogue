@@ -47,8 +47,6 @@ class PlainObjectWrapper extends Wrapper
     /**
      * Extract Attributes from a Plain Php Object
      *
-     * @param  mixed $entity
-     * @param  array $attributeList
      * @return array $attributes
      */
     protected function extract()
@@ -74,8 +72,6 @@ class PlainObjectWrapper extends Wrapper
 
     /**
      * [getMappedProperties description]
-     * @param  [type] $entity        [description]
-     * @param  array  $attributeList [description]
      * @return [type]                [description]
      */
     protected function getMappedProperties()
@@ -86,13 +82,16 @@ class PlainObjectWrapper extends Wrapper
 
         // We need to filter out properties that could belong to the object
         // and which are not intended to be handled by the ORM
-        return array_filter($objectProperties, function ($item) use ($attributeList) {
+        return array_filter($objectProperties, function($item) use ($attributeList) {
             if (in_array($item->getName(), $attributeList)) {
                 return true;
             }
         });
     }
 
+    /**
+     * @param string $name
+     */
     protected function getMappedProperty($name)
     {
         return $this->reflection->getProperty($name);
@@ -189,12 +188,12 @@ class PlainObjectWrapper extends Wrapper
         return $value;
     }
 
-     /**
-     * Test if a given attribute exists
-     *
-     * @param  string  $key
-     * @return boolean
-     */
+        /**
+         * Test if a given attribute exists
+         *
+         * @param  string  $key
+         * @return boolean
+         */
     public function hasAttribute($key)
     {
         $attributes = $this->entity->getEntityAttributes();

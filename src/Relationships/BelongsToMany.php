@@ -110,7 +110,7 @@ class BelongsToMany extends Relationship
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @return EntityCollection
      */
     public function getResults($relation)
     {
@@ -284,9 +284,9 @@ class BelongsToMany extends Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\Query  $query
-     * @param  \Analogue\ORM\Query  $parent
-     * @return \Analogue\ORM\Query
+     * @param  Query  $query
+     * @param  Query  $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -302,9 +302,9 @@ class BelongsToMany extends Relationship
     /**
      * Add the constraints for a relationship count query on the same table.
      *
-     * @param  \Analogue\ORM\Query  $query
-     * @param  \Analogue\ORM\Query  $parent
-     * @return \Analogue\ORM\Query
+     * @param  Query  $query
+     * @param  Query  $parent
+     * @return Query
      */
     public function getRelationCountQueryForSelfJoin(Query $query, Query $parent)
     {
@@ -369,6 +369,7 @@ class BelongsToMany extends Relationship
      * Set the join clause for the relation query.
      *
      * @param  \Analogue\ORM\Query|null
+     * @param Query $query
      * @return $this
      */
     protected function setJoin($query = null)
@@ -559,7 +560,7 @@ class BelongsToMany extends Relationship
      *
      * @param  mixed  $id
      * @param  array  $attributes
-     * @return void
+     * @return integer
      */
     public function updateExistingPivot($id, array $attributes)
     {
@@ -667,7 +668,7 @@ class BelongsToMany extends Relationship
     /**
      * Get the attach record ID and extra attributes.
      *
-     * @param  mixed  $key
+     * @param  integer  $key
      * @param  mixed  $value
      * @param  array  $attributes
      * @return array

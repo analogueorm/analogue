@@ -23,7 +23,7 @@ class Repository
      * - Mappable object instance
      * - Instance of mapper
      *
-     * @param Mapper|Mappable|string $mapper
+     * @param Mapper $mapper
      * @param EntityMap              $entityMap (optional)
      *
      * @throws \InvalidArgumentException
@@ -96,7 +96,7 @@ class Repository
      * Delete an entity or an entity collection from the database
      *
      * @param  Mappable|Collection $entity
-     * @return null
+     * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
     {
@@ -126,7 +126,7 @@ class Repository
         if ($this->mapper->hasCustomCommand($method)) {
             call_user_func_array([$this->mapper, $method], $parameters);
         } else {
-            throw new Exception("No method $method on ".get_class($this));
+            throw new Exception("No method $method on " . get_class($this));
         }
     }
 }

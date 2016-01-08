@@ -18,11 +18,11 @@ class TimestampsPlugin extends AnaloguePlugin
      */
     public function register()
     {
-        $this->manager->registerGlobalEvent('initialized', function ($mapper) {
+        $this->manager->registerGlobalEvent('initialized', function($mapper) {
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesTimestamps()) {
-                $mapper->registerEvent('creating', function ($entity) use ($entityMap) {
+                $mapper->registerEvent('creating', function($entity) use ($entityMap) {
                     
                     $factory = new Factory;
                     $wrappedEntity = $factory->make($entity);
@@ -37,7 +37,7 @@ class TimestampsPlugin extends AnaloguePlugin
 
                 });
 
-                $mapper->registerEvent('updating', function ($entity) use ($entityMap) {
+                $mapper->registerEvent('updating', function($entity) use ($entityMap) {
 
                     $factory = new Factory;
                     $wrappedEntity = $factory->make($entity);

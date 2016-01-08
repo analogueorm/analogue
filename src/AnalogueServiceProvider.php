@@ -35,7 +35,7 @@ class AnalogueServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('analogue', function ($app) {
+        $this->app->singleton('analogue', function($app) {
 
             $db = $app['db'];
 

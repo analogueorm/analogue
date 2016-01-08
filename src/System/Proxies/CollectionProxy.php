@@ -222,7 +222,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      */
     public function __call($method, $parameters)
     {
-        if (! $this->isLoaded()) {
+        if (!$this->isLoaded()) {
             $this->loadOnce();
         }
 

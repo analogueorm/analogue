@@ -97,7 +97,6 @@ class Query
     /**
      * Create a new Analogue Query Builder instance.
      *
-     * @param \Analogue\ORM\Drivers\QueryAdapter  $query
      * @param \Analogue\ORM\System\Mapper $mapper
      * @return void
      */
@@ -206,7 +205,7 @@ class Query
      * Execute the query and get the first result or throw an exception.
      *
      * @param  array  $columns
-     * @return Mappable
+     * @return \Analogue\ORM\Entity
      *
      * @throws EntityNotFoundException
      */
@@ -274,7 +273,7 @@ class Query
      *
      * @param  int    $perPage
      * @param  array  $columns
-     * @return \Illuminate\Pagination\Paginator
+     * @return LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'])
     {
@@ -468,7 +467,7 @@ class Query
             $count = new Expression($count);
         }
 
-        return $this->where(new Expression('('.$hasQuery->toSql().')'), $operator, $count, $boolean);
+        return $this->where(new Expression('(' . $hasQuery->toSql() . ')'), $operator, $count, $boolean);
     }
 
     /**
@@ -500,7 +499,7 @@ class Query
      */
     protected function getHasRelationQuery($relation, $entity)
     {
-        return Relationship::noConstraints(function () use ($relation, $entity) {
+        return Relationship::noConstraints(function() use ($relation, $entity) {
             return $this->entityMap->$relation($entity);
         });
     }
@@ -549,7 +548,7 @@ class Query
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name)) {
-                $f = function () {};
+                $f = function() {};
 
                 list($name, $constraints) = [$constraints, $f];
             }
@@ -583,8 +582,8 @@ class Query
         foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
 
-            if (! isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {};
+            if (!isset($results[$last = implode('.', $progress)])) {
+                $results[$last] = function() {};
             }
         }
 
@@ -673,7 +672,7 @@ class Query
         // We want to run a relationship query without any constrains so that we will
         // not have to remove these where clauses manually which gets really hacky
         // and is error prone while we remove the developer's own where clauses.
-        $query = Relationship::noConstraints(function () use ($relation) {
+        $query = Relationship::noConstraints(function() use ($relation) {
             return $this->entityMap->$relation($this->getEntityInstance());
         });
 
@@ -704,7 +703,7 @@ class Query
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoad as $name => $constraints) {
             if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation.'.'))] = $constraints;
+                $nested[substr($name, strlen($relation . '.'))] = $constraints;
             }
         }
 
@@ -722,7 +721,7 @@ class Query
     {
         $dots = str_contains($name, '.');
 
-        return $dots && starts_with($name, $relation.'.');
+        return $dots && starts_with($name, $relation . '.');
     }
 
     /**
