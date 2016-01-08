@@ -197,7 +197,7 @@ class Aggregate implements InternallyMappable
      * Check if value isn't parent or root in the aggregate
      *
      * @param  mixed
-     * @return true|void
+     * @return boolean|null
      */
     protected function isParentOrRoot($value)
     {
@@ -295,6 +295,7 @@ class Aggregate implements InternallyMappable
      * Create a related subAggregate
      *
      * @param  mixed $entity
+     * @param string $relation
      * @return self
      */
     protected function createSubAggregate($entity, $relation)

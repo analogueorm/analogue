@@ -150,7 +150,7 @@ class HasManyThrough extends Relationship
      *
      * @param  \Analogue\ORM\Entity[] $entities
      * @param  string                 $relation
-     * @return array
+     * @return \Analogue\ORM\Entity[]
      */
     public function initRelation(array $entities, $relation)
     {
@@ -167,7 +167,7 @@ class HasManyThrough extends Relationship
      * @param  \Analogue\ORM\Entity[] $entities
      * @param  EntityCollection       $results
      * @param  string                 $relation
-     * @return array
+     * @return \Analogue\ORM\Entity[]
      */
     public function match(array $entities, EntityCollection $results, $relation)
     {
@@ -221,7 +221,7 @@ class HasManyThrough extends Relationship
      * Get the results of the relationship.
      *
      * @param  $relation
-     * @return mixed
+     * @return EntityCollection
      */
     public function getResults($relation)
     {
@@ -277,7 +277,7 @@ class HasManyThrough extends Relationship
      *
      * @param  int   $perPage
      * @param  array $columns
-     * @return \Illuminate\Pagination\Paginator
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'])
     {

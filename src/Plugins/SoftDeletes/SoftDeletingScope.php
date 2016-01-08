@@ -41,7 +41,7 @@ class SoftDeletingScope implements ScopeInterface
 
         $query = $query->getQuery();
 
-        foreach ((array)$query->wheres as $key => $where) {
+        foreach ((array) $query->wheres as $key => $where) {
             // If the where clause is a soft delete date constraint, we will remove it from
             // the query and reset the keys on the wheres. This allows this developer to
             // include deleted model in a relationship result set that is lazy loaded.
