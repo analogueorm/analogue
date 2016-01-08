@@ -205,7 +205,7 @@ class EntityMap
      *
      * @var array
      */
-    protected static $singleClasses = ['BelongsTo', 'HasOne', 'MorphOne','MorphTo'];
+    protected static $singleClasses = ['BelongsTo', 'HasOne', 'MorphOne', 'MorphTo'];
 
     /**
      * Relationships with a pivot record
@@ -392,7 +392,7 @@ class EntityMap
         if (!is_null($this->sequence)) {
             return $this->sequence;
         } else {
-            return $this->getTable().'_id_seq';
+            return $this->getTable() . '_id_seq';
         }
     }
 
@@ -561,7 +561,7 @@ class EntityMap
      */
     public function getQualifiedKeyName()
     {
-        return $this->getTable().'.'.$this->getKeyName();
+        return $this->getTable() . '.' . $this->getKeyName();
     }
 
     /**
@@ -642,7 +642,7 @@ class EntityMap
      */
     public function getForeignKey()
     {
-        return snake_case(class_basename($this->getClass())).'_id';
+        return snake_case(class_basename($this->getClass())) . '_id';
     }
 
     /**
@@ -664,7 +664,7 @@ class EntityMap
 
         $localKey = $localKey ?: $this->getKeyName();
 
-        return new HasOne($relatedMapper, $entity, $relatedMap->getTable().'.'.$foreignKey, $localKey);
+        return new HasOne($relatedMapper, $entity, $relatedMap->getTable() . '.' . $foreignKey, $localKey);
     }
 
     /**
@@ -687,7 +687,7 @@ class EntityMap
 
         $table = $relatedMapper->getEntityMap()->getTable();
         
-        return new MorphOne($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
+        return new MorphOne($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
 
     /**
@@ -714,7 +714,7 @@ class EntityMap
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (is_null($foreignKey)) {
-            $foreignKey = snake_case($relation).'_id';
+            $foreignKey = snake_case($relation) . '_id';
         }
 
         $relatedMapper = $this->manager->mapper($related);
@@ -787,7 +787,7 @@ class EntityMap
 
         $relatedMapper = $this->manager->mapper($related);
 
-        $table = $relatedMapper->getEntityMap()->getTable().'.'.$foreignKey;
+        $table = $relatedMapper->getEntityMap()->getTable() . '.' . $foreignKey;
 
         $localKey = $localKey ?: $this->getKeyName();
 
@@ -842,7 +842,7 @@ class EntityMap
 
         $localKey = $localKey ?: $this->getKeyName();
         
-        return new MorphMany($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
+        return new MorphMany($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
 
     /**
@@ -903,7 +903,7 @@ class EntityMap
         // First, we will need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we will make the query
         // instances, as well as the relationship instances we need for these.
-        $foreignKey = $foreignKey ?: $name.'_id';
+        $foreignKey = $foreignKey ?: $name . '_id';
 
         $relatedMapper = $this->manager->mapper($related);
 
@@ -934,7 +934,7 @@ class EntityMap
         // For the inverse of the polymorphic many-to-many relations, we will change
         // the way we determine the foreign and other keys, as it is the opposite
         // of the morph-to-many method since we're figuring out these inverses.
-        $otherKey = $otherKey ?: $name.'_id';
+        $otherKey = $otherKey ?: $name . '_id';
 
         return $this->morphToMany($entity, $related, $name, $table, $foreignKey, $otherKey, true);
     }
@@ -948,7 +948,7 @@ class EntityMap
     {
         $self = __FUNCTION__;
 
-        $caller = array_first(debug_backtrace(false), function ($key, $trace) use ($self) {
+        $caller = array_first(debug_backtrace(false), function($key, $trace) use ($self) {
             $caller = $trace['function'];
 
             return (!in_array($caller, EntityMap::$manyMethods) && $caller != $self);
@@ -992,9 +992,9 @@ class EntityMap
      */
     protected function getMorphs($name, $type, $id)
     {
-        $type = $type ?: $name.'_type';
+        $type = $type ?: $name . '_type';
 
-        $id = $id ?: $name.'_id';
+        $id = $id ?: $name . '_id';
 
         return [$type, $id];
     }
@@ -1157,8 +1157,8 @@ class EntityMap
      */
     public function __call($method, $parameters)
     {
-        if (! array_key_exists($method, $this->dynamicRelationships)) {
-            throw new Exception(get_class($this)." has no method $method");
+        if (!array_key_exists($method, $this->dynamicRelationships)) {
+            throw new Exception(get_class($this) . " has no method $method");
         }
 
         // Add $this to parameters so the closure can call relationship method on the map.

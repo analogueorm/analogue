@@ -132,7 +132,7 @@ class BelongsToMany extends Relationship
      */
     public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
     {
-        return $this->where($this->table.'.'.$column, $operator, $value, $boolean);
+        return $this->where($this->table . '.' . $column, $operator, $value, $boolean);
     }
 
     /**
@@ -181,7 +181,7 @@ class BelongsToMany extends Relationship
      */
     public function firstOrFail($columns = ['*'])
     {
-        if (! is_null($entity = $this->first($columns))) {
+        if (!is_null($entity = $this->first($columns))) {
             return $entity;
         }
 
@@ -312,11 +312,11 @@ class BelongsToMany extends Relationship
 
         $tablePrefix = $this->query->getQuery()->getConnection()->getTablePrefix();
 
-        $query->from($this->table.' as '.$tablePrefix.$hash = $this->getRelationCountHash());
+        $query->from($this->table . ' as ' . $tablePrefix . $hash = $this->getRelationCountHash());
 
         $key = $this->wrap($this->getQualifiedParentKeyName());
 
-        return $query->where($hash.'.'.$this->foreignKey, '=', new Expression($key));
+        return $query->where($hash . '.' . $this->foreignKey, '=', new Expression($key));
     }
 
     /**
@@ -326,7 +326,7 @@ class BelongsToMany extends Relationship
      */
     public function getRelationCountHash()
     {
-        return 'self_'.md5(microtime(true));
+        return 'self_' . md5(microtime(true));
     }
 
     /**
@@ -338,7 +338,7 @@ class BelongsToMany extends Relationship
     protected function getSelectColumns(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->relatedMap->getTable().'.*'];
+            $columns = [$this->relatedMap->getTable() . '.*'];
         }
 
         return array_merge($columns, $this->getAliasedPivotColumns());
@@ -359,7 +359,7 @@ class BelongsToMany extends Relationship
         $columns = [];
 
         foreach (array_merge($defaults, $this->pivotColumns) as $column) {
-            $columns[] = $this->table.'.'.$column.' as pivot_'.$column;
+            $columns[] = $this->table . '.' . $column . ' as pivot_' . $column;
         }
 
         return array_unique($columns);
@@ -380,7 +380,7 @@ class BelongsToMany extends Relationship
         // model instance. Then we can set the "where" for the parent models.
         $baseTable = $this->relatedMap->getTable();
 
-        $key = $baseTable.'.'.$this->relatedMap->getKeyName();
+        $key = $baseTable . '.' . $this->relatedMap->getKeyName();
 
         $query->join($this->table, $key, '=', $this->getOtherKey());
 
@@ -719,7 +719,7 @@ class BelongsToMany extends Relationship
     {
         $fresh = $this->freshTimestamp();
 
-        if (! $exists) {
+        if (!$exists) {
             $record[$this->createdAt()] = $fresh;
         }
 
@@ -732,7 +732,7 @@ class BelongsToMany extends Relationship
     {
         $keyName = $this->relatedMap->getKeyName();
 
-        return array_map(function ($m) use ($keyName) { return $m->$keyName; }, $entities);
+        return array_map(function($m) use ($keyName) { return $m->$keyName; }, $entities);
     }
 
     /**
@@ -744,7 +744,7 @@ class BelongsToMany extends Relationship
     public function detach($ids = [])
     {
         if ($ids instanceof EntityCollection) {
-            $ids = (array)$ids->modelKeys();
+            $ids = (array) $ids->modelKeys();
         }
 
         $query = $this->newPivotQuery();
@@ -755,7 +755,7 @@ class BelongsToMany extends Relationship
         $ids = (array) $ids;
 
         if (count($ids) > 0) {
-            $query->whereIn($this->otherKey, (array)$ids);
+            $query->whereIn($this->otherKey, (array) $ids);
         }
 
         // Once we have all of the conditions set on the statement, we are ready

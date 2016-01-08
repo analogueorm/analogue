@@ -92,7 +92,7 @@ class BelongsTo extends Relationship
             // of the related models matching on the foreign key that's on a parent.
             $table = $this->relatedMap->getTable();
 
-            $this->query->where($table.'.'.$this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
+            $this->query->where($table . '.' . $this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
         }
     }
 
@@ -107,7 +107,7 @@ class BelongsTo extends Relationship
     {
         $query->select(new Expression('count(*)'));
 
-        $otherKey = $this->wrap($query->getTable().'.'.$this->otherKey);
+        $otherKey = $this->wrap($query->getTable() . '.' . $this->otherKey);
 
         return $query->where($this->getQualifiedForeignKey(), '=', new Expression($otherKey));
     }
@@ -123,7 +123,7 @@ class BelongsTo extends Relationship
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
-        $key = $this->relatedMap->getTable().'.'.$this->otherKey;
+        $key = $this->relatedMap->getTable() . '.' . $this->otherKey;
 
         $this->query->whereIn($key, $this->getEagerModelKeys($entities));
     }
@@ -144,7 +144,7 @@ class BelongsTo extends Relationship
         foreach ($entities as $entity) {
             $entity = $this->factory->make($entity);
 
-            if (! is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
+            if (!is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
                 $keys[] = $value;
             }
         }
@@ -286,7 +286,7 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedForeignKey()
     {
-        return $this->parentMap->getTable().'.'.$this->foreignKey;
+        return $this->parentMap->getTable() . '.' . $this->foreignKey;
     }
 
     /**
@@ -306,6 +306,6 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedOtherKeyName()
     {
-        return $this->relatedMap->getTable().'.'.$this->otherKey;
+        return $this->relatedMap->getTable() . '.' . $this->otherKey;
     }
 }

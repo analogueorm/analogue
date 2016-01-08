@@ -147,7 +147,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
         foreach ($sourceAttributes as $key => $attribute) {
             // If the attribute is a proxy, and hasn't be loaded, we discard
             // it from the returned set.
-            if ($attribute instanceof ProxyInterface && ! $attribute->isLoaded()) {
+            if ($attribute instanceof ProxyInterface && !$attribute->isLoaded()) {
                 continue;
             }
 
