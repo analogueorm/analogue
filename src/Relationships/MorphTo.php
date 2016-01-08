@@ -102,7 +102,7 @@ class MorphTo extends BelongsTo
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @return EntityCollection
      */
     public function getEager()
     {
@@ -152,7 +152,7 @@ class MorphTo extends BelongsTo
      * Gather all of the foreign keys for a given type.
      *
      * @param  string $type
-     * @return array
+     * @return BaseCollection
      */
     protected function gatherKeysByType($type)
     {

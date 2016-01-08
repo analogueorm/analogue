@@ -70,7 +70,7 @@ class BelongsTo extends Relationship
      */
     public function detachFrom($related)
     {
-        return $this->dissociate($related);//todo
+        return $this->dissociate($related); //todo
     }
 
     /**
@@ -78,7 +78,7 @@ class BelongsTo extends Relationship
      *
      * @param  $relation
      *
-     * @return mixed
+     * @return \Analogue\ORM\Entity
      */
     public function getResults($relation)
     {

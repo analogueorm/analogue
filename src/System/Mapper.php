@@ -141,7 +141,7 @@ class Mapper
      */
     protected function aggregate($entity)
     {
-         return new Aggregate($entity);
+            return new Aggregate($entity);
     }
 
     /**

@@ -279,7 +279,7 @@ abstract class Relationship
     /**
      * Get the base query builder
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Analogue\ORM\Drivers\QueryAdapter
      */
     public function getBaseQuery()
     {

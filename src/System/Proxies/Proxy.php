@@ -65,7 +65,7 @@ abstract class Proxy implements ProxyInterface
     /**
      * Return the Query Builder on the relation
      *
-     * @param  mixed  $entity
+     * @param  \Analogue\ORM\System\InternallyMappable  $entity
      * @param  string $relation
      * @return \Analogue\ORM\System\Query
      */
