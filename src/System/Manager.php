@@ -5,11 +5,9 @@ namespace Analogue\ORM\System;
 use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Wrapper;
 use Illuminate\Contracts\Events\Dispatcher;
 use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\Plugins\AnaloguePluginInterface;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
@@ -17,7 +15,6 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
  */
 class Manager
 {
-
     /**
      * Driver Manager
      *
@@ -72,8 +69,18 @@ class Manager
      *
      * @var array
      */
-    protected $events = ['initializing', 'initialized', 'store', 'stored',
-        'creating', 'created', 'updating', 'updated', 'deleting', 'deleted' ];
+    protected $events = [
+        'initializing',
+        'initialized',
+        'store',
+        'stored',
+        'creating',
+        'created',
+        'updating',
+        'updated',
+        'deleting',
+        'deleted',
+    ];
 
     /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
@@ -148,7 +155,7 @@ class Manager
 
         // At this point we can safely call the boot() method on the entityMap as
         // the mapper is now instanciated & registered within the manager.
-        
+
         $mapper->getEntityMap()->boot();
         
         return $mapper;
@@ -232,7 +239,7 @@ class Manager
     /**
      * Get the entity map instance for a custom entity
      *
-     * @param  string   	$entity
+     * @param  string   $entity
      * @return Mappable
      */
     protected function getEntityMapInstanceFor($entity)
@@ -375,7 +382,7 @@ class Manager
      */
     public function registerGlobalEvent($event, $callback)
     {
-        if (! in_array($event, $this->events)) {
+        if (!in_array($event, $this->events)) {
             throw new \Exception("Analogue : Event $event doesn't exist");
         }
         $this->eventDispatcher->listen("analogue.{$event}.*", $callback);

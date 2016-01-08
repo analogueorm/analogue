@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest;
+<?php
+
+namespace AnalogueTest;
 
 use PHPUnit_Framework_TestCase;
 
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
-
     public function testAnalogueConnection()
     {
         $class = get_class(get_analogue());

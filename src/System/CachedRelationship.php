@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 /**
  * This class is intended to facilitate the handling of ManyToMany relationships
@@ -6,7 +8,6 @@
  */
 class CachedRelationship
 {
-
     /**
      * The Hash of the related entity
      *
@@ -34,7 +35,7 @@ class CachedRelationship
      */
     public function hasPivotAttributes()
     {
-        return count($this->pivotAttributes) > 0 ? true : false;
+        return count($this->pivotAttributes) > 0;
     }
 
     /**

@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -9,7 +11,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 class IlluminateDBAdapter implements DBAdapter
 {
-
     protected $connection;
 
     public function __construct(Connection $connection)

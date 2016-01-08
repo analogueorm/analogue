@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 interface Mappable
 {
-
     /**
      * Set the object attribute raw values (hydration)
      *

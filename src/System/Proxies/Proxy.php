@@ -6,7 +6,6 @@ use Analogue\ORM\System\Manager;
 
 abstract class Proxy implements ProxyInterface
 {
-
     /**
      * The name of the relationship method handled by the proxy.
      *
@@ -47,7 +46,7 @@ abstract class Proxy implements ProxyInterface
     public function load()
     {
         $entities = $this->query($this->parentEntity, $this->relation)->getResults($this->relation);
-        
+
         $this->loaded = true;
 
         return $entities;

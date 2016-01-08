@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\EntityMap;
 
 class AvatarMap extends EntityMap
 {
-
     protected $table='custom_avatar';
 
     public function image(Avatar $avatar)

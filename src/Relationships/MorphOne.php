@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\EntityCollection;
 
 class MorphOne extends MorphOneOrMany
 {
-
     /**
      * Get the results of the relationship.
      *
@@ -13,7 +14,7 @@ class MorphOne extends MorphOneOrMany
     public function getResults($relation)
     {
         $result = $this->query->first();
-        
+
         $this->cacheRelation($result, $relation);
 
         return $result;

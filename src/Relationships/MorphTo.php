@@ -1,13 +1,13 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Support\Collection as BaseCollection;
 
 class MorphTo extends BelongsTo
 {
-
     /**
      * The type of the polymorphic relation.
      *
@@ -27,9 +27,9 @@ class MorphTo extends BelongsTo
      *
      * @var array
      */
-    protected $dictionary = array();
+    protected $dictionary = [];
 
-    /*
+    /**
      * Indicates if soft-deleted model instances should be fetched.
      *
      * @var bool
@@ -100,7 +100,7 @@ class MorphTo extends BelongsTo
         return $entities;
     }
 
-    /*
+    /**
      * Get the results of the relationship.
      *
      * @return mixed
@@ -193,7 +193,7 @@ class MorphTo extends BelongsTo
         //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
         //
         // Instead, we'll just add the object to the Entity's attribute
-        
+
         $this->parent->setEntityAttribute($this->relation, $entity);
     }
 

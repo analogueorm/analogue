@@ -6,7 +6,6 @@ use Analogue\ORM\Commands\Command;
 
 class Restore extends Command
 {
-
     public function execute()
     {
         $aggregate = $this->aggregate;

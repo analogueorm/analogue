@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 use Analogue\ORM\EntityMap;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -11,7 +13,6 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
  */
 class MapperFactory
 {
-
     /**
      * Manager instance
      *

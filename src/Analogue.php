@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use Analogue\ORM\System\Manager;
 use Illuminate\Events\Dispatcher;
@@ -13,7 +15,6 @@ use Analogue\ORM\Drivers\CapsuleConnectionProvider;
  */
 class Analogue
 {
-
     protected static $instance;
 
     protected static $manager;
@@ -94,7 +95,7 @@ class Analogue
      */
     public static function __callStatic($method, $parameters)
     {
-        return call_user_func_array(array(static::$instance, $method), $parameters);
+        return call_user_func_array([static::$instance, $method], $parameters);
     }
 
     /**
@@ -106,6 +107,6 @@ class Analogue
      */
     public function __call($method, $parameters)
     {
-        return call_user_func_array(array(static::$manager, $method), $parameters);
+        return call_user_func_array([static::$manager, $method], $parameters);
     }
 }

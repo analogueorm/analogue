@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\EntityCollection;
 
 class HasOne extends HasOneOrMany
 {
-
     /**
      * Get the results of the relationship.
      *

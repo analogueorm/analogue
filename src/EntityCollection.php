@@ -2,8 +2,6 @@
 
 namespace Analogue\ORM;
 
-use InvalidArgumentException;
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
@@ -11,7 +9,6 @@ use Illuminate\Support\Arr;
 
 class EntityCollection extends Collection
 {
-   
     /**
      * Wrapper Factory
      *
@@ -115,7 +112,7 @@ class EntityCollection extends Collection
      */
     public function contains($key, $value = null)
     {
-        return ! is_null($this->find($key));
+        return !is_null($this->find($key));
     }
 
     /**
@@ -268,7 +265,7 @@ class EntityCollection extends Collection
     {
         $items = is_null($items) ? $this->items : $items;
 
-        $dictionary = array();
+        $dictionary = [];
 
         foreach ($items as $value) {
             $dictionary[$this->getEntityKey($value)] = $value;

@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 interface ScopeInterface
 {
-
     /**
      * Apply the scope to a given Query builder.
      *

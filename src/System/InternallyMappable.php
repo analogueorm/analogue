@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 interface InternallyMappable
 {
-
     /**
      * Set the object attribute raw values (hydration)
      *

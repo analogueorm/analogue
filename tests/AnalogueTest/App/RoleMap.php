@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\EntityMap;
 
 class RoleMap extends EntityMap
 {
-
     public function users(Role $entity)
     {
         return $this->hasMany($entity, 'AnalogueTest\App\User');

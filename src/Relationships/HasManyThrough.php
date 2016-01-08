@@ -1,14 +1,14 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
 
 class HasManyThrough extends Relationship
 {
-
     /**
      * The distance parent Entity instance.
      *
@@ -194,7 +194,7 @@ class HasManyThrough extends Relationship
      */
     protected function buildDictionary(EntityCollection $results)
     {
-        $dictionary = array();
+        $dictionary = [];
 
         $foreign = $this->firstKey;
 
@@ -228,7 +228,7 @@ class HasManyThrough extends Relationship
      * @param  array  $columns
      * @return \Analogue\ORM\EntityCollection
      */
-    public function get($columns = array('*'))
+    public function get($columns = ['*'])
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
@@ -253,13 +253,13 @@ class HasManyThrough extends Relationship
      * @param  array  $columns
      * @return \Analogue\ORM\Relationships\BelongsToMany
      */
-    protected function getSelectColumns(array $columns = array('*'))
+    protected function getSelectColumns(array $columns = ['*'])
     {
-        if ($columns == array('*')) {
-            $columns = array($this->relatedMap->getTable().'.*');
+        if ($columns == ['*']) {
+            $columns = [$this->relatedMap->getTable().'.*'];
         }
 
-        return array_merge($columns, array($this->parentMap->getTable().'.'.$this->firstKey));
+        return array_merge($columns, [$this->parentMap->getTable().'.'.$this->firstKey]);
     }
 
     /**
@@ -269,7 +269,7 @@ class HasManyThrough extends Relationship
      * @param  array  $columns
      * @return \Illuminate\Pagination\Paginator
      */
-    public function paginate($perPage = null, $columns = array('*'))
+    public function paginate($perPage = null, $columns = ['*'])
     {
         $this->query->addSelect($this->getSelectColumns($columns));
 

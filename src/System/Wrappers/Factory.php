@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\System\Wrappers;
+<?php
+
+namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 
 class Factory
 {
-
     /**
      * Build the wrapper corresponding to the object's type
      *

@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Commands;
+<?php
+
+namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\Exceptions\MappingException;
 
 class Delete extends Command
 {
-    
     /**
      * Execute the Delete Statement
      *
@@ -27,7 +28,7 @@ class Delete extends Command
         $id = $this->aggregate->getEntityId();
 
         if (is_null($id)) {
-            throw new MappingException("Executed a delete command on an entity with 'null' as primary key");
+            throw new MappingException('Executed a delete command on an entity with "null" as primary key');
         }
 
         $this->query->where($keyName, '=', $id)->delete();

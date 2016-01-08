@@ -1,4 +1,6 @@
-<?php namespace AnalogueTest;
+<?php
+
+namespace AnalogueTest;
 
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Repository;
@@ -7,7 +9,6 @@ use AnalogueTest\App\Permission;
 
 class RepositoryTest extends PHPUnit_Framework_TestCase
 {
-
     protected function getRepository()
     {
         $analogue = get_analogue();
@@ -57,7 +58,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         $q = new Permission('Third');
         $repo->store([$p, $q]);
         $r = $repo->allMatching(['label' => 'Third']);
-        
+
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $r);
         $this->assertEquals(2, $r->count());
     }
@@ -68,7 +69,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         $p = new Permission('First');
         $q = new Permission('Second');
         $repo->store([$p, $q]);
-        
+
         $s = $repo->paginate(1);
         $this->assertEquals(1, count($s));
     }

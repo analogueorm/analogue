@@ -6,10 +6,8 @@ use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\System\Proxies\ProxyInterface;
 
 /**
  * The EntityCache class is responsible for tracking entity's attribute states
@@ -17,7 +15,6 @@ use Analogue\ORM\System\Proxies\ProxyInterface;
  */
 class EntityCache
 {
-
     /**
      * Entity's raw attributes/relationships
      *
@@ -265,7 +262,7 @@ class EntityCache
         // First we'll handle each relationships that are a one to one
         // relation, and which will be saved as a CachedRelationship
         // object inside the cache.
-        
+
         // NOTE : storing localRelationships maybe useless has we store
         // the foreign key in the attributes already.
 

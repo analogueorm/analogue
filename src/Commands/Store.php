@@ -3,15 +3,9 @@
 namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\Mappable;
-use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
-use Analogue\ORM\Drivers\QueryAdapter;
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\EntityProxy;
-use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\System\Proxies\ProxyInterface;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
@@ -20,7 +14,6 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 class Store extends Command
 {
-
     /**
      * Persist the entity in the database
      *
@@ -46,7 +39,7 @@ class Store extends Command
             if ($mapper->fireEvent('creating', $entity) === false) {
                 return false;
             }
-            
+
             $this->insert();
 
             $mapper->fireEvent('created', $entity, false);
@@ -70,7 +63,6 @@ class Store extends Command
         $mapper->fireEvent('stored', $entity, false);
 
         return $entity;
-        ;
     }
 
     /**
@@ -83,7 +75,7 @@ class Store extends Command
     {
         // Create any related object that doesn't exist in the database.
         $localRelationships = $this->aggregate->getEntityMap()->getLocalRelationships();
-        
+
         $this->createRelatedEntities($localRelationships);
     }
 
@@ -96,7 +88,7 @@ class Store extends Command
     protected function createRelatedEntities($relations)
     {
         $entitiesToCreate = $this->aggregate->getNonExistingRelated($relations);
-                
+
         foreach ($entitiesToCreate as $aggregate) {
             $this->createStoreCommand($aggregate)->execute();
         }
@@ -147,7 +139,7 @@ class Store extends Command
         // This should be move to the wrapper class
         // so it's the same code for the entity builder
         $aggregate->setProxies();
-        
+
         // Update Entity Cache
         $aggregate->getMapper()->getEntityCache()->refresh($aggregate);
     }

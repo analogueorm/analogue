@@ -15,7 +15,6 @@ use Analogue\ORM\Exceptions\EntityNotFoundException;
  */
 class BelongsToMany extends Relationship
 {
-
     /**
      * The intermediate table for the relation.
      *
@@ -49,7 +48,7 @@ class BelongsToMany extends Relationship
      *
      * @var array
      */
-    protected $pivotColumns = array();
+    protected $pivotColumns = [];
 
     /**
      * This relationship has pivot attributes
@@ -165,7 +164,7 @@ class BelongsToMany extends Relationship
      * @param  array   $columns
      * @return mixed
      */
-    public function first($columns = array('*'))
+    public function first($columns = ['*'])
     {
         $results = $this->take(1)->get($columns);
 
@@ -180,7 +179,7 @@ class BelongsToMany extends Relationship
      *
      * @throws Mappable|EntityNotFoundException
      */
-    public function firstOrFail($columns = array('*'))
+    public function firstOrFail($columns = ['*'])
     {
         if (! is_null($entity = $this->first($columns))) {
             return $entity;
@@ -195,12 +194,12 @@ class BelongsToMany extends Relationship
      * @param  array  $columns
      * @return \Analogue\ORM\EntityCollection
      */
-    public function get($columns = array('*'))
+    public function get($columns = ['*'])
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
         // models with the result of those columns as a separate model relation.
-        $columns = $this->query->getQuery()->columns ? array() : $columns;
+        $columns = $this->query->getQuery()->columns ? [] : $columns;
 
         $select = $this->getSelectColumns($columns);
 
@@ -229,7 +228,7 @@ class BelongsToMany extends Relationship
         // To hydrate the pivot relationship, we will just gather the pivot attributes
         // and create a new Pivot model, which is basically a dynamic model that we
         // will set the attributes, table, and connections on so it they be used.
-        
+
         foreach ($entities as $entity) {
             $entityWrapper = $this->factory->make($entity);
 
@@ -247,7 +246,7 @@ class BelongsToMany extends Relationship
      */
     protected function cleanPivotAttributes(InternallyMappable $entity)
     {
-        $values = array();
+        $values = [];
 
         $attributes = $entity->getEntityAttributes();
 
@@ -336,10 +335,10 @@ class BelongsToMany extends Relationship
      * @param  array  $columns
      * @return \Analogue\ORM\Relationships\BelongsToMany
      */
-    protected function getSelectColumns(array $columns = array('*'))
+    protected function getSelectColumns(array $columns = ['*'])
     {
-        if ($columns == array('*')) {
-            $columns = array($this->relatedMap->getTable().'.*');
+        if ($columns == ['*']) {
+            $columns = [$this->relatedMap->getTable().'.*'];
         }
 
         return array_merge($columns, $this->getAliasedPivotColumns());
@@ -352,12 +351,12 @@ class BelongsToMany extends Relationship
      */
     protected function getAliasedPivotColumns()
     {
-        $defaults = array($this->foreignKey, $this->otherKey);
+        $defaults = [$this->foreignKey, $this->otherKey];
 
         // We need to alias all of the pivot columns with the "pivot_" prefix so we
         // can easily extract them out of the models and put them into the pivot
         // relationships when they are retrieved and hydrated into the models.
-        $columns = array();
+        $columns = [];
 
         foreach (array_merge($defaults, $this->pivotColumns) as $column) {
             $columns[] = $this->table.'.'.$column.' as pivot_'.$column;
@@ -480,7 +479,7 @@ class BelongsToMany extends Relationship
         // First we will build a dictionary of child models keyed by the foreign key
         // of the relation so that we will easily and quickly match them to their
         // parents without having a possibly slow inner loops for every models.
-        $dictionary = array();
+        $dictionary = [];
 
         foreach ($results as $entity) {
             $wrapper = $this->factory->make($entity);
@@ -514,8 +513,8 @@ class BelongsToMany extends Relationship
         $keyName = $this->relatedMap->getKeyName();
 
         $this->updateExistingPivot(
-                $entity->getEntityAttribute($keyName),
-                $entity->getEntityAttribute('pivot')->getEntityAttributes()
+            $entity->getEntityAttribute($keyName),
+            $entity->getEntityAttribute('pivot')->getEntityAttributes()
         );
     }
 
@@ -568,9 +567,7 @@ class BelongsToMany extends Relationship
             $attributes = $this->setTimestampsOnAttach($attributes, true);
         }
 
-        $updated = $this->newPivotStatementForId($id)->update($attributes);
-
-        return $updated;
+        return $this->newPivotStatementForId($id)->update($attributes);
     }
 
     /**
@@ -580,7 +577,7 @@ class BelongsToMany extends Relationship
      * @param  array  $attributes
      * @return void
      */
-    public function attach($id, array $attributes = array())
+    public function attach($id, array $attributes = [])
     {
         $query = $this->newPivotStatement();
 
@@ -604,7 +601,7 @@ class BelongsToMany extends Relationship
      * @param  array $entities
      * @return void
      */
-    protected function detachExcept(array $entities = array())
+    protected function detachExcept(array $entities = [])
     {
         $query = $this->newPivotQuery();
 
@@ -632,7 +629,7 @@ class BelongsToMany extends Relationship
      */
     protected function createAttachRecords($ids, array $attributes)
     {
-        $records = array();
+        $records = [];
 
         $timed = in_array($this->createdAt(), $this->pivotColumns);
 
@@ -678,10 +675,10 @@ class BelongsToMany extends Relationship
     protected function getAttachId($key, $value, array $attributes)
     {
         if (is_array($value)) {
-            return array($key, array_merge($value, $attributes));
+            return [$key, array_merge($value, $attributes)];
         }
 
-        return array($value, $attributes);
+        return [$value, $attributes];
     }
 
     /**
@@ -744,10 +741,10 @@ class BelongsToMany extends Relationship
      * @param  int|array  $ids
      * @return int
      */
-    public function detach($ids = array())
+    public function detach($ids = [])
     {
         if ($ids instanceof EntityCollection) {
-            $ids = (array) $ids->modelKeys();
+            $ids = (array)$ids->modelKeys();
         }
 
         $query = $this->newPivotQuery();
@@ -758,7 +755,7 @@ class BelongsToMany extends Relationship
         $ids = (array) $ids;
 
         if (count($ids) > 0) {
-            $query->whereIn($this->otherKey, (array) $ids);
+            $query->whereIn($this->otherKey, (array)$ids);
         }
 
         // Once we have all of the conditions set on the statement, we are ready
@@ -817,7 +814,7 @@ class BelongsToMany extends Relationship
      * @param  bool   $exists
      * @return \Analogue\ORM\Relationships\Pivot
      */
-    public function newPivot(array $attributes = array(), $exists = false)
+    public function newPivot(array $attributes = [], $exists = false)
     {
         $pivot = new Pivot($this->parent, $this->parentMap, $attributes, $this->table, $exists);
         
@@ -830,7 +827,7 @@ class BelongsToMany extends Relationship
      * @param  array  $attributes
      * @return \Analogue\ORM\Relationships\Pivot
      */
-    public function newExistingPivot(array $attributes = array())
+    public function newExistingPivot(array $attributes = [])
     {
         return $this->newPivot($attributes, true);
     }
@@ -879,7 +876,7 @@ class BelongsToMany extends Relationship
      */
     public function getForeignKey()
     {
-        return $this->table.'.'.$this->foreignKey;
+        return $this->table . '.' . $this->foreignKey;
     }
 
     /**
@@ -889,7 +886,7 @@ class BelongsToMany extends Relationship
      */
     public function getOtherKey()
     {
-        return $this->table.'.'.$this->otherKey;
+        return $this->table . '.' . $this->otherKey;
     }
 
     /**

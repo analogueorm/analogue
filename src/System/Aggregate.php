@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 use Illuminate\Support\Collection;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\Proxies\ProxyInterface;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\Exceptions\MappingException;
@@ -13,7 +14,6 @@ use Analogue\ORM\Exceptions\MappingException;
  */
 class Aggregate implements InternallyMappable
 {
-
     /**
      * The Root Entity
      *
@@ -182,7 +182,7 @@ class Aggregate implements InternallyMappable
         // At this point, we can assume the attribute is an Entity instance
         // so we'll treat it as such.
         $subAggregate = $this->createSubAggregate($value, $relation);
-       
+
         // Even if it's a single entity, we'll store it as an array
         // just for consistency with other relationships
         $this->relationships[$relation] = [$subAggregate];
@@ -204,7 +204,6 @@ class Aggregate implements InternallyMappable
                 return true;
             }
         }
-
 
         if (! is_null($this->parent)) {
             $parentClass = get_class($this->parent->getEntityObject());
@@ -467,7 +466,7 @@ class Aggregate implements InternallyMappable
     {
         $cachedRelations = $this->getCachedAttribute($relation);
 
-        if (! is_null($cachedRelations)) {
+        if (!is_null($cachedRelations)) {
             $missing = [];
 
             foreach ($cachedRelations as $hash) {
@@ -756,7 +755,7 @@ class Aggregate implements InternallyMappable
             $actualPivotAttributes = array_only($pivot, array_keys($cachedPivotAttributes));
 
             $dirty = $this->getDirtyAttributes($actualPivotAttributes, $cachedPivotAttributes);
-            
+
             if (count($dirty) > 0) {
                 $id = $aggregate->getEntityId();
 

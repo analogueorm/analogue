@@ -6,7 +6,6 @@ use PHPUnit_Framework_TestCase;
 
 class PlainObjectTest extends PHPUnit_Framework_TestCase
 {
-
     public function testPopoStore()
     {
 

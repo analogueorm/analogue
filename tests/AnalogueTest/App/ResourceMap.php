@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\EntityMap;
 
 class ResourceMap extends EntityMap
 {
-
     public $timestamps = true;
 
     public $softDeletes = true;

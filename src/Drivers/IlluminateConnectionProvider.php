@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\DatabaseManager;
 
 class IlluminateConnectionProvider
 {
-
     protected $db;
 
     public function __construct(DatabaseManager $db)

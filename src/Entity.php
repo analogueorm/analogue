@@ -1,14 +1,11 @@
-<?php namespace Analogue\ORM;
+<?php
 
-use ArrayAccess;
-use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
+namespace Analogue\ORM;
+
 use Analogue\ORM\System\Proxies\EntityProxy;
 
-class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable
+class Entity extends ValueObject
 {
-
     /**
      * Entities Hidden Attributes, that will be discarded when converting
      * the entity to Array/Json

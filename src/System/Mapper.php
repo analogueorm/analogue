@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 use InvalidArgumentException;
 use Analogue\ORM\Mappable;
@@ -7,7 +9,6 @@ use Analogue\ORM\Commands\Store;
 use Analogue\ORM\Commands\Delete;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use Analogue\ORM\Commands\Command;
 use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\Exceptions\MappingException;
 
@@ -18,7 +19,6 @@ use Analogue\ORM\Exceptions\MappingException;
  */
 class Mapper
 {
-
     /**
      * The Manager instance
      *
@@ -123,7 +123,7 @@ class Mapper
     protected function storeEntity($entity)
     {
         $this->checkEntityType($entity);
-        
+
         $store = new Store($this->aggregate($entity), $this->newQueryBuilder());
 
         return $store->execute();
@@ -284,7 +284,7 @@ class Mapper
      */
     public function hasGlobalScope($scope)
     {
-        return ! is_null($this->getGlobalScope($scope));
+        return !is_null($this->getGlobalScope($scope));
     }
 
     /**
@@ -454,7 +454,7 @@ class Mapper
      * @param  array  $attributes
      * @return mixed
      */
-    public function newInstance($attributes = array())
+    public function newInstance($attributes = [])
     {
         $class = $this->entityMap->getClass();
 
@@ -484,11 +484,7 @@ class Mapper
             throw new MappingException("Tried to instantiate a non-existing Entity class : $className");
         }
 
-        $prototype = unserialize(sprintf('O:%d:"%s":0:{}',
-            strlen($className),
-                        $className
-                    )
-                );
+        $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
         return $prototype;
     }
     
@@ -562,6 +558,6 @@ class Mapper
         }
 
         // Redirect call on a new query instance
-        return call_user_func_array(array($this->query(), $method), $parameters);
+        return call_user_func_array([$this->query(), $method], $parameters);
     }
 }

@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 
 abstract class MorphOneOrMany extends HasOneOrMany
 {
-
     /**
      * The foreign key type for the relationship.
      *

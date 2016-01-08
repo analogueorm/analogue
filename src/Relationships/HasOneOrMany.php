@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
 
 abstract class HasOneOrMany extends Relationship
 {
-
     /**
      * The foreign key of the parent model.
      *
@@ -100,7 +101,6 @@ abstract class HasOneOrMany extends Relationship
         $query->where($this->getPlainForeignKey(), '=', $this->parent->getEntityAttribute($parentKey))
             ->update([$this->getPlainForeignKey() => null]);
     }
-
 
     public function detachMany(array $entityHashes)
     {
@@ -228,7 +228,7 @@ abstract class HasOneOrMany extends Relationship
      */
     protected function buildDictionary(EntityCollection $results)
     {
-        $dictionary = array();
+        $dictionary = [];
 
         $foreign = $this->getPlainForeignKey();
 
@@ -241,7 +241,7 @@ abstract class HasOneOrMany extends Relationship
 
         return $dictionary;
     }
-    
+
     /**
      * Get the key for comparing against the parent key in "has" query.
      *

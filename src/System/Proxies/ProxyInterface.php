@@ -1,10 +1,10 @@
-<?php namespace Analogue\ORM\System\Proxies;
+<?php
+namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\Mappable;
 
 interface ProxyInterface
 {
-
     /**
      * Convert a proxy into the underlying related Object
      *

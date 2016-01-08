@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Plugins;
+<?php
+
+namespace Analogue\ORM\Plugins;
 
 use Analogue\ORM\System\Manager;
 
 abstract class AnaloguePlugin implements AnaloguePluginInterface
 {
-
     /**
      * Manager instance
      *

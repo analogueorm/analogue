@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\System;
+<?php
+
+namespace Analogue\ORM\System;
 
 use Closure;
 use Exception;
@@ -6,7 +8,6 @@ use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
 use Analogue\ORM\Drivers\DBAdapter;
-use Analogue\ORM\Drivers\QueryAdapter;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Expression;
@@ -16,7 +17,6 @@ use Illuminate\Database\Query\Expression;
  */
 class Query
 {
-
     /**
      * Mapper Instance
      *
@@ -65,17 +65,33 @@ class Query
      * @var array
      */
     protected $passthru = [
-        'toSql', 'lists', 'pluck', 'count',
-        'min', 'max', 'avg', 'sum', 'exists', 'getBindings',
+        'toSql',
+        'lists',
+        'pluck',
+        'count',
+        'min',
+        'max',
+        'avg',
+        'sum',
+        'exists',
+        'getBindings',
     ];
 
     /**
      * Query Builder Blacklist
      */
     protected $blacklist = [
-        'insert', 'insertGetId', 'lock', 'lockForUpdate',
-        'sharedLock', 'update', 'increment', 'decrement', 'delete',
-        'truncate', 'raw',
+        'insert',
+        'insertGetId',
+        'lock',
+        'lockForUpdate',
+        'sharedLock',
+        'update',
+        'increment',
+        'decrement',
+        'delete',
+        'truncate',
+        'raw',
     ];
 
     /**
@@ -105,14 +121,14 @@ class Query
      * @param  array  $columns
      * @return \Analogue\ORM\EntityCollection
      */
-    public function get($columns = array('*'))
+    public function get($columns = ['*'])
     {
         $entities = $this->getEntities($columns);
 
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded, which will solve the
         // n+1 query issue for the developers to avoid running a lot of queries.
-        
+
         if (count($entities) > 0) {
             $entities = $this->eagerLoadRelations($entities);
         }
@@ -127,7 +143,7 @@ class Query
      * @param  array  $columns
      * @return \Analogue\ORM\Mappable
      */
-    public function find($id, $columns = array('*'))
+    public function find($id, $columns = ['*'])
     {
         if (is_array($id)) {
             return $this->findMany($id, $columns);
@@ -145,7 +161,7 @@ class Query
      * @param  array  $columns
      * @return EntityCollection
      */
-    public function findMany($id, $columns = array('*'))
+    public function findMany($id, $columns = ['*'])
     {
         if (empty($id)) {
             return new EntityCollection;
@@ -165,9 +181,9 @@ class Query
      *
      * @throws \Analogue\ORM\Exception\EntityNotFoundException
      */
-    public function findOrFail($id, $columns = array('*'))
+    public function findOrFail($id, $columns = ['*'])
     {
-        if (! is_null($entity = $this->find($id, $columns))) {
+        if (!is_null($entity = $this->find($id, $columns))) {
             return $entity;
         }
 
@@ -181,7 +197,7 @@ class Query
      * @param  array  $columns
      * @return \Analogue\ORM\Entity
      */
-    public function first($columns = array('*'))
+    public function first($columns = ['*'])
     {
         return $this->take(1)->get($columns)->first();
     }
@@ -194,9 +210,9 @@ class Query
      *
      * @throws EntityNotFoundException
      */
-    public function firstOrFail($columns = array('*'))
+    public function firstOrFail($columns = ['*'])
     {
-        if (! is_null($entity = $this->first($columns))) {
+        if (!is_null($entity = $this->first($columns))) {
             return $entity;
         }
 
@@ -211,7 +227,7 @@ class Query
      */
     public function pluck($column)
     {
-        $result = $this->first(array($column));
+        $result = $this->first([$column]);
 
         if ($result) {
             return $result->{$column};
@@ -260,7 +276,7 @@ class Query
      * @param  array  $columns
      * @return \Illuminate\Pagination\Paginator
      */
-    public function paginate($perPage = null, $columns = array('*'))
+    public function paginate($perPage = null, $columns = ['*'])
     {
         $total = $this->query->getCountForPagination();
 
@@ -349,7 +365,7 @@ class Query
 
             $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
-            call_user_func_array(array($this->query, 'where'), func_get_args());
+            call_user_func_array([$this->query, 'where'], func_get_args());
         }
 
         return $this;
@@ -526,7 +542,7 @@ class Query
      */
     protected function parseRelations(array $relations)
     {
-        $results = array();
+        $results = [];
 
         foreach ($relations as $name => $constraints) {
             // If the "relation" value is actually a numeric key, we can assume that no
@@ -535,7 +551,7 @@ class Query
             if (is_numeric($name)) {
                 $f = function () {};
 
-                list($name, $constraints) = array($constraints, $f);
+                list($name, $constraints) = [$constraints, $f];
             }
 
             // We need to separate out any nested includes. Which allows the developers
@@ -559,7 +575,7 @@ class Query
      */
     protected function parseNested($name, $results)
     {
-        $progress = array();
+        $progress = [];
 
         // If the relation has already been set on the result array, we will not set it
         // again, since that would override any constraints that were already placed
@@ -640,7 +656,7 @@ class Query
         // Once we have the results, we just match those back up to their parent models
         // using the relationship instance. Then we just return the finished arrays
         // of models which have been eagerly hydrated and are readied for return.
-        
+
         $results = $relation->getEager();
 
         return $relation->match($entities, $results, $name);
@@ -681,7 +697,7 @@ class Query
      */
     protected function nestedRelations($relation)
     {
-        $nested = array();
+        $nested = [];
 
         // We are basically looking for any relationships that are nested deeper than
         // the given top-level relationship. We will just check for any relations
@@ -717,7 +733,7 @@ class Query
      */
     protected function enforceIdColumn($columns)
     {
-        if (! in_array($this->entityMap->getKeyName(), $columns)) {
+        if (!in_array($this->entityMap->getKeyName(), $columns)) {
             $columns[] = $this->entityMap->getKeyName();
         }
         return $columns;
@@ -729,7 +745,7 @@ class Query
      * @param  array  $columns
      * @return Analogue\ORM\EntityCollection
      */
-    public function getEntities($columns = array('*'))
+    public function getEntities($columns = ['*'])
     {
         // As we need the primary key to feed the
         // entity cache, we need it loaded on each
@@ -750,7 +766,7 @@ class Query
      * @param  array  $attributes
      * @return Entity
      */
-    public function getEntityInstance(array $attributes = array())
+    public function getEntityInstance(array $attributes = [])
     {
         return $this->mapper->newInstance($attributes);
     }
@@ -842,7 +858,7 @@ class Query
             throw new Exception("Method $method doesn't exist");
         }
 
-        $result = call_user_func_array(array($this->query, $method), $parameters);
+        $result = call_user_func_array([$this->query, $method], $parameters);
 
         return in_array($method, $this->passthru) ? $result : $this;
     }

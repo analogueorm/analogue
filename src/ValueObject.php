@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use ArrayAccess;
 use Carbon\Carbon;

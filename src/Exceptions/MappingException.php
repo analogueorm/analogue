@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\Exceptions;
+<?php
+
+namespace Analogue\ORM\Exceptions;
 
 use Exception;
 

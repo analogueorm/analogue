@@ -5,7 +5,6 @@ namespace Analogue\ORM;
 use Exception;
 use ReflectionClass;
 use Analogue\ORM\System\Manager;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
 use Analogue\ORM\Relationships\BelongsTo;
 use Analogue\ORM\Relationships\BelongsToMany;
@@ -23,7 +22,6 @@ use Analogue\ORM\Relationships\MorphToMany;
  */
 class EntityMap
 {
-
     /**
      * The mapping driver to use with this entity
      */
@@ -199,8 +197,7 @@ class EntityMap
      *
      * @var array
      */
-    protected static $manyClasses = ['BelongsToMany', 'HasMany', 'HasManyThrough',
-        'MorphMany', 'MorphToMany'];
+    protected static $manyClasses = ['BelongsToMany', 'HasMany', 'HasManyThrough', 'MorphMany', 'MorphToMany'];
 
     /**
      * The 'Single' relationships classes, which related Entity attribute should be
@@ -229,8 +226,15 @@ class EntityMap
      *
      * @var array
      */
-    protected static $foreignClasses = ['BelongsToMany', 'HasMany', 'HasManyThrough',
-        'MorphMany', 'MorphToMany', 'HasOne', 'MorphOne'];
+    protected static $foreignClasses = [
+        'BelongsToMany',
+        'HasMany',
+        'HasManyThrough',
+        'MorphMany',
+        'MorphToMany',
+        'HasOne',
+        'MorphOne',
+    ];
 
     /**
      * The date format to use with the current database connection
@@ -284,7 +288,7 @@ class EntityMap
     public function getCompiledAttributes()
     {
         $key = $this->getKeyName();
-        
+
         $embeddables = array_keys($this->getEmbeddables());
 
         $relationships = $this->getRelationships();
@@ -361,7 +365,7 @@ class EntityMap
      */
     public function getTable()
     {
-        if (! is_null($this->table)) {
+        if (!is_null($this->table)) {
             return $this->table;
         }
         
@@ -385,7 +389,7 @@ class EntityMap
      */
     public function getSequence()
     {
-        if (! is_null($this->sequence)) {
+        if (!is_null($this->sequence)) {
             return $this->sequence;
         } else {
             return $this->getTable().'_id_seq';
@@ -405,12 +409,12 @@ class EntityMap
     /**
      * Set the custom entity class
      *
-     * @param  string namespaced class name
+     * @param string namespaced class name
      */
     public function setClass($class)
     {
         // Throw exception if class not exists
-        
+
         $this->class = $class;
     }
 
@@ -947,10 +951,10 @@ class EntityMap
         $caller = array_first(debug_backtrace(false), function ($key, $trace) use ($self) {
             $caller = $trace['function'];
 
-            return (! in_array($caller, EntityMap::$manyMethods) && $caller != $self);
+            return (!in_array($caller, EntityMap::$manyMethods) && $caller != $self);
         });
 
-        return ! is_null($caller) ? $caller['function'] : null;
+        return !is_null($caller) ? $caller['function'] : null;
     }
 
     /**
@@ -968,7 +972,7 @@ class EntityMap
 
         $related = $relatedMap->getTable();
 
-        $tables = array($related, $base);
+        $tables = [$related, $base];
 
         // Now that we have the model names in an array we can just sort them and
         // use the implode function to join them together with an underscores,
@@ -992,7 +996,7 @@ class EntityMap
 
         $id = $id ?: $name.'_id';
 
-        return array($type, $id);
+        return [$type, $id];
     }
 
     /**
@@ -1011,7 +1015,7 @@ class EntityMap
      * @param  array  $entities
      * @return \Analogue\ORM\EntityCollection
      */
-    public function newCollection(array $entities = array())
+    public function newCollection(array $entities = [])
     {
         return new EntityCollection($entities, $this);
     }
@@ -1160,6 +1164,6 @@ class EntityMap
         // Add $this to parameters so the closure can call relationship method on the map.
         $parameters[] = $this;
 
-        return  call_user_func_array(array($this->dynamicRelationships[$method], $parameters));
+        return  call_user_func_array([$this->dynamicRelationships[$method], $parameters]);
     }
 }

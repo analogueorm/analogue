@@ -1,9 +1,8 @@
-<?php namespace Analogue\ORM\Plugins\Timestamps;
+<?php
+
+namespace Analogue\ORM\Plugins\Timestamps;
 
 use Carbon\Carbon;
-use Analogue\ORM\Entity;
-use Analogue\ORM\EntityMap;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\Plugins\AnaloguePlugin;
 use Analogue\ORM\System\Wrappers\Factory;
 
@@ -12,7 +11,6 @@ use Analogue\ORM\System\Wrappers\Factory;
  */
 class TimestampsPlugin extends AnaloguePlugin
 {
-
     /**
      * Register the plugin
      *
@@ -32,7 +30,7 @@ class TimestampsPlugin extends AnaloguePlugin
                     $createdAtField = $entityMap->getCreatedAtColumn();
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time= new Carbon;
+                    $time = new Carbon;
 
                     $wrappedEntity->setEntityAttribute($createdAtField, $time);
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
@@ -46,7 +44,7 @@ class TimestampsPlugin extends AnaloguePlugin
 
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time= new Carbon;
+                    $time = new Carbon;
 
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
                 });

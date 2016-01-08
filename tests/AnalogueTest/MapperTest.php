@@ -1,4 +1,6 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Entity;
@@ -6,7 +8,6 @@ use Analogue\ORM\EntityCollection;
 
 class MapperTest extends PHPUnit_Framework_TestCase
 {
-
     public function testMapperFactory()
     {
         $mapper = get_mapper('Analogue\ORM\Entity');
@@ -25,7 +26,7 @@ class MapperTest extends PHPUnit_Framework_TestCase
         $mapper = get_mapper('Analogue\ORM\Entity');
         $attributes = [
             'column1' => 1,
-            'column2' => "2",
+            'column2' => '2',
         ];
         $entity = $mapper->newInstance($attributes);
         $this->assertEquals($entity->getEntityAttributes(), $attributes);

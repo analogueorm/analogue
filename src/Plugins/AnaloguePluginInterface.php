@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\Plugins;
+<?php
+
+namespace Analogue\ORM\Plugins;
 
 interface AnaloguePluginInterface
 {
-
     /**
      * Boot the plugin
      *

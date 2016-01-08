@@ -4,7 +4,6 @@ namespace Analogue\ORM\Drivers;
 
 interface DriverInterface
 {
-
     /**
      * Return the name of the driver
      * @return string

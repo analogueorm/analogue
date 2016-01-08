@@ -9,7 +9,6 @@ use Illuminate\Database\Query\Expression;
 
 class BelongsTo extends Relationship
 {
-
     /**
      * The foreign key of the parent model.
      *
@@ -55,7 +54,7 @@ class BelongsTo extends Relationship
 
         parent::__construct($mapper, $parent);
     }
-    
+
     public function attachTo($related)
     {
         return $this->associate($related);
@@ -65,7 +64,7 @@ class BelongsTo extends Relationship
     {
         return $this->dissociate($related);
     }
-    
+
     /**
      * Get the results of the relationship.
      *
@@ -137,7 +136,7 @@ class BelongsTo extends Relationship
      */
     protected function getEagerModelKeys(array $entities)
     {
-        $keys = array();
+        $keys = [];
 
         // First we need to gather all of the keys from the parent models so we know what
         // to query for via the eager loading query. We will add them to an array then
@@ -154,7 +153,7 @@ class BelongsTo extends Relationship
         // it so the query doesn't fail, but will not return any results, which should
         // be what this developer is expecting in a case where this happens to them.
         if (count($keys) == 0) {
-            return array(0);
+            return [0];
         }
 
         return array_values(array_unique($keys));
@@ -229,7 +228,7 @@ class BelongsTo extends Relationship
         //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
         //
         // Instead, we'll just add the object to the Entity's attribute
-        
+
         $this->parent->setEntityAttribute($this->relation, $entity);
     }
 
@@ -244,7 +243,7 @@ class BelongsTo extends Relationship
         // the foreign key attribute inside the parent Entity.
         //
         //$this->parent->setEntityAttribute($this->foreignKey, null);
-                
+
         $this->parent->setEntityAttribute($this->relation, null);
     }
 

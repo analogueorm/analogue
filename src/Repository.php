@@ -1,15 +1,14 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use Exception;
-use Analogue\ORM\Mappable;
-use Analogue\ORM\EntityMap;
 use InvalidArgumentException;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 
 class Repository
 {
-
     /**
      * The mapper object for the corresponding entity
      *
@@ -25,7 +24,7 @@ class Repository
      * - Instance of mapper
      *
      * @param Mapper|Mappable|string $mapper
-     * @param EntityMap 			 $entityMap (optionnal)
+     * @param EntityMap              $entityMap (optional)
      *
      * @throws \InvalidArgumentException
      */
@@ -36,7 +35,7 @@ class Repository
         } elseif ($mapper instanceof Mapper) {
             $this->mapper = $mapper;
         } else {
-            new InvalidArgumentException('Repository class constuctor need a valid Mapper or Mappable object.');
+            new InvalidArgumentException('Repository class constructor need a valid Mapper or Mappable object.');
         }
     }
 
@@ -125,7 +124,7 @@ class Repository
     public function __call($method, $parameters)
     {
         if ($this->mapper->hasCustomCommand($method)) {
-            call_user_func_array(array($this->mapper, $method), $parameters);
+            call_user_func_array([$this->mapper, $method], $parameters);
         } else {
             throw new Exception("No method $method on ".get_class($this));
         }

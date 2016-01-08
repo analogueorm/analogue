@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -7,7 +9,6 @@ use Illuminate\Support\Facades\Facade;
  */
 class AnalogueFacade extends Facade
 {
-
     /**
      * Get the registered name of the component.
      *

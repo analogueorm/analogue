@@ -1,6 +1,7 @@
-<?php namespace Analogue\ORM\System;
+<?php
 
-use Analogue\ORM\Mappable;
+namespace Analogue\ORM\System;
+
 use Analogue\ORM\System\Wrappers\Factory;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
@@ -68,7 +69,7 @@ class EntityBuilder
      */
     public function build(array $results)
     {
-        $entities = array();
+        $entities = [];
 
         //$prototype = $this->getWrapperPrototype();
         //$prototype = $this->mapper->newInstance();

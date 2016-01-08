@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\EntityMap;
 
 class PopoMap extends EntityMap
 {
-
     protected $attributes = ['name'];
 
     public function user(Popo $entity)

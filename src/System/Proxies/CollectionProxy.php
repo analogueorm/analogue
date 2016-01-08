@@ -12,7 +12,6 @@ use Analogue\ORM\EntityCollection;
 
 class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
-
     /**
      * Underlying Lazyloaded collection
      * @var EntityCollection
@@ -57,7 +56,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      */
     public function isLoaded()
     {
-        return ! is_null($this->loadedCollection);
+        return !is_null($this->loadedCollection);
     }
 
     /**

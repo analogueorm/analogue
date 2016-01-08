@@ -7,7 +7,6 @@ use Analogue\ORM\Drivers\QueryAdapter;
 
 abstract class Command
 {
-
     /**
      * The aggregated entity on which the command is executed
      *

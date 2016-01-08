@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Closure;
 use Carbon\Carbon;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Wrappers\Factory;
@@ -13,7 +14,6 @@ use Illuminate\Database\Query\Expression;
 
 abstract class Relationship
 {
-
     /**
      * The mapper instance for the related entity
      *
@@ -118,14 +118,12 @@ abstract class Relationship
     }
 
     /**
-     *
      * @param  [type] $related [description]
      * @return [type]         [description]
      */
     abstract public function attachTo($related);
 
     /**
-     *
      * @param  [type] $related [description]
      * @return [type]         [description]
      */
@@ -411,9 +409,9 @@ abstract class Relationship
     protected function getEntityHash(Mappable $entity)
     {
         $class = get_class($entity);
-        
+
         $keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
-        
+
         $hash = $class.'.'.$entity->getEntityAttribute($keyName);
 
         return $hash;
@@ -440,7 +438,7 @@ abstract class Relationship
      */
     public function __call($method, $parameters)
     {
-        $result = call_user_func_array(array($this->query, $method), $parameters);
+        $result = call_user_func_array([$this->query, $method], $parameters);
 
         if ($result === $this->query) {
             return $this;

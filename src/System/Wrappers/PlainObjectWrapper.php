@@ -1,11 +1,11 @@
-<?php namespace Analogue\ORM\System\Wrappers;
+<?php
+
+namespace Analogue\ORM\System\Wrappers;
 
 use ReflectionClass;
-use Analogue\ORM\EntityMap;
 
 class PlainObjectWrapper extends Wrapper
 {
-    
     /**
      * The list of attributes for the managed entity
      *

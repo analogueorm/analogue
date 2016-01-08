@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\Entity;
 
 class Pivot extends Entity
 {
-
     protected $exists;
 
     /**
@@ -55,7 +56,7 @@ class Pivot extends Entity
      *
      * @var array
      */
-    protected $guarded = array();
+    protected $guarded = [];
 
     /**
      * Pivot uses timestamps ?

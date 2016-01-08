@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 
 class MorphToMany extends BelongsToMany
 {
-
     /**
      * The type of the polymorphic relation.
      *
@@ -129,7 +130,7 @@ class MorphToMany extends BelongsToMany
      * @param  bool   $exists
      * @return \Analogue\ORM\Relationships\Pivot
      */
-    public function newPivot(array $attributes = array(), $exists = false)
+    public function newPivot(array $attributes = [], $exists = false)
     {
         $pivot = new MorphPivot($this->parent, $this->parentMap, $attributes, $this->table, $exists);
 

@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 class IlluminateDriver implements DriverInterface
 {
-
     /**
      * The Illuminate Connection Provider
      *

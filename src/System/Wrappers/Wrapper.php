@@ -2,7 +2,6 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
-use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
@@ -12,7 +11,6 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 abstract class Wrapper implements InternallyMappable
 {
-  
     /**
      * Original Entity Object
      *

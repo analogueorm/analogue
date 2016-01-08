@@ -3,7 +3,6 @@
 namespace Analogue\ORM\Plugins\SoftDeletes;
 
 use Carbon\Carbon;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\Plugins\AnaloguePlugin;
 use Analogue\ORM\System\Wrappers\Factory;
@@ -14,7 +13,6 @@ use Analogue\ORM\System\Wrappers\Factory;
  */
 class SoftDeletesPlugin extends AnaloguePlugin
 {
-
     /**
      * Register the plugin
      *
@@ -52,7 +50,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
         $host = $this;
 
         // Register 'deleting' events
-        $mapper->registerEvent('deleting', function ($entity) use ($entityMap,$host) {
+        $mapper->registerEvent('deleting', function ($entity) use ($entityMap, $host) {
             
             // Convert Entity into an EntityWrapper
             $factory = new Factory;
@@ -61,7 +59,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
 
             $deletedAtField = $entityMap->getQualifiedDeletedAtColumn();
 
-            if (! is_null($wrappedEntity->getEntityAttribute($deletedAtField))) {
+            if (!is_null($wrappedEntity->getEntityAttribute($deletedAtField))) {
                 return true;
             } else {
                 $time= new Carbon;

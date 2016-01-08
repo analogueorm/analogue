@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Query;
 
 class MorphPivot extends Pivot
 {
-
     /**
      * The type of the polymorphic relation.
      *

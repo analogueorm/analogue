@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Query\Builder;
 
 class IlluminateQueryAdapter implements QueryAdapter
 {
-
     protected $query;
 
     public function __construct(Builder $query)
@@ -14,6 +15,6 @@ class IlluminateQueryAdapter implements QueryAdapter
 
     public function __call($method, $parameters)
     {
-        return call_user_func_array(array($this->query, $method), $parameters);
+        return call_user_func_array([$this->query, $method], $parameters);
     }
 }

@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\System\Proxies;
+<?php
+
+namespace Analogue\ORM\System\Proxies;
 
 class EntityProxy extends Proxy
 {
-
     /**
      * Underlying entity
      *
