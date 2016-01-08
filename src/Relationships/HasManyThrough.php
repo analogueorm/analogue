@@ -45,6 +45,7 @@ class HasManyThrough extends Relationship
      * @param \Analogue\ORM\EntityMap $parentMap
      * @param string                  $firstKey
      * @param string                  $secondKey
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $farParent, $parentMap, $firstKey, $secondKey)
     {
@@ -61,6 +62,7 @@ class HasManyThrough extends Relationship
 
     /**
      * @param $related
+     * @return mixed
      */
     public function attachTo($related)
     {
@@ -69,6 +71,7 @@ class HasManyThrough extends Relationship
 
     /**
      * @param $related
+     * @return mixed
      */
     public function detachFrom($related)
     {

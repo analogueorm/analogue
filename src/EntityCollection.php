@@ -33,6 +33,7 @@ class EntityCollection extends Collection
      *
      * @param  mixed $key
      * @param  mixed $default
+     * @throws MappingException
      * @return \Analogue\ORM\Entity
      */
     public function find($key, $default = null)
@@ -63,6 +64,7 @@ class EntityCollection extends Collection
      * Remove an entity from the collection
      *
      * @param $entity
+     * @throws MappingException
      * @return mixed
      */
     public function remove($entity)
@@ -184,6 +186,7 @@ class EntityCollection extends Collection
      * Merge the collection with the given items.
      *
      * @param  array $items
+     * @throws MappingException
      * @return self
      */
     public function merge($items)
@@ -222,6 +225,7 @@ class EntityCollection extends Collection
      * Intersect the collection with the given items.
      *
      * @param  \ArrayAccess|array $items
+     * @throws MappingException
      * @return self
      */
     public function intersect($items)
@@ -269,6 +273,7 @@ class EntityCollection extends Collection
      * Get a dictionary keyed by primary keys.
      *
      * @param  \ArrayAccess|array $items
+     * @throws MappingException
      * @return array
      */
     public function getDictionary($items = null)
@@ -285,6 +290,7 @@ class EntityCollection extends Collection
     }
 
     /**
+     * @throws MappingException
      * @return array
      */
     public function getEntityKeys()
@@ -310,6 +316,7 @@ class EntityCollection extends Collection
      * Get the max value of a given key.
      *
      * @param  string|null $key
+     * @throws MappingException
      * @return mixed
      */
     public function max($key = null)
@@ -326,6 +333,7 @@ class EntityCollection extends Collection
      * Get the min value of a given key.
      *
      * @param  string|null $key
+     * @throws MappingException
      * @return mixed
      */
     public function min($key = null)
@@ -366,6 +374,7 @@ class EntityCollection extends Collection
      * Return only unique items from the collection.
      *
      * @param  string|null $key
+     * @throws MappingException
      * @return self
      */
     public function unique($key = null)

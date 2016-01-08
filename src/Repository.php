@@ -102,6 +102,8 @@ class Repository
      * Delete an entity or an entity collection from the database
      *
      * @param  Mappable|EntityCollection $entity
+     * @throws MappingException
+     * @throws \InvalidArgumentException
      * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
@@ -113,6 +115,8 @@ class Repository
      * Persist an entity or an entity collection in the database.
      *
      * @param  Mappable|EntityCollection|array $entity
+     * @throws MappingException
+     * @throws \InvalidArgumentException
      * @return Mappable|EntityCollection|array
      */
     public function store($entity)

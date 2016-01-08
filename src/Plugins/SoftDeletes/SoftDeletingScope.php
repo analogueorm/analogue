@@ -32,7 +32,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Remove the scope from the given Analogue query builder.
      *
-     * @param  \Analogue\ORM\System\Query $query
+     * @param  mixed $query
      * @return void
      */
     public function remove(Query $query)

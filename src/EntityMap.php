@@ -929,10 +929,7 @@ class EntityMap
 
         $table = $table ?: str_plural($name);
 
-        return new MorphToMany(
-            $relatedMapper, $entity, $name, $table, $foreignKey,
-            $otherKey, $caller, $inverse
-        );
+        return new MorphToMany($relatedMapper, $entity, $name, $table, $foreignKey, $otherKey, $caller, $inverse);
     }
 
     /**

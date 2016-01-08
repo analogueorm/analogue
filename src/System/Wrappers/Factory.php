@@ -11,6 +11,7 @@ class Factory
      * Build the wrapper corresponding to the object's type
      *
      * @param  mixed $object
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return Wrapper
      */
     public function make($object)

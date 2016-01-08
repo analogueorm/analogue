@@ -24,11 +24,12 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param Mapper                 $mapper
-     * @param \Analogue\ORM\Mappable $parent
-     * @param string                 $type
-     * @param string                 $id
-     * @param string                 $localKey
+     * @param  Mapper                 $mapper
+     * @param  \Analogue\ORM\Mappable $parent
+     * @param  string                 $type
+     * @param  string                 $id
+     * @param  string                 $localKey
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent, $type, $id, $localKey)
     {

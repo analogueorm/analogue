@@ -16,7 +16,7 @@ use Illuminate\Database\Query\Expression;
 /**
  * Analogue Query builder.
  *
- * @mixin QueryAdapter
+ * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
  */
 class Query
 {
@@ -37,7 +37,7 @@ class Query
     /**
      * Query Builder Instance
      *
-     * @var \Analogue\ORM\Drivers\QueryAdapter
+     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
      */
     protected $query;
 
@@ -102,7 +102,6 @@ class Query
      *
      * @param  Mapper    $mapper
      * @param  DBAdapter $adapter
-     * @return void
      */
     public function __construct(Mapper $mapper, DBAdapter $adapter)
     {
@@ -832,7 +831,7 @@ class Query
      * (REFACTOR: this method should move out, we need to provide the client classes
      * with the adapter instead.)
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
      */
     public function getQuery()
     {

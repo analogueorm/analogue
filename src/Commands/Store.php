@@ -17,6 +17,7 @@ class Store extends Command
     /**
      * Persist the entity in the database
      *
+     * @throws \InvalidArgumentException
      * @return false|mixed
      */
     public function execute()
@@ -69,6 +70,7 @@ class Store extends Command
      * Run all operations that have to occur before actually
      * storing the entity
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function preStoreProcess()
@@ -83,6 +85,7 @@ class Store extends Command
      * Check for existence and create non-existing related entities
      *
      * @param  array
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function createRelatedEntities($relations)
@@ -112,6 +115,7 @@ class Store extends Command
      * Run all operations that have to occur after the entity
      * is stored.
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function postStoreProcess()

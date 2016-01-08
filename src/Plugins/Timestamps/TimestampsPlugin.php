@@ -15,6 +15,7 @@ class TimestampsPlugin extends AnaloguePlugin
     /**
      * Register the plugin
      *
+     * @throws \Exception
      * @return void
      */
     public function register()

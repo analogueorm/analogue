@@ -112,6 +112,7 @@ class EntityBuilder
     /**
      * Get the correct wrapper prototype corresponding to the object type
      *
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return InternallyMappable
      */
     protected function getWrapperInstance()
@@ -123,6 +124,7 @@ class EntityBuilder
      * Hydrate value object embedded in this entity
      *
      * @param  array $attributes
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return void
      */
     protected function hydrateValueObjects(& $attributes)
@@ -138,6 +140,7 @@ class EntityBuilder
      * @param  array  $attributes
      * @param  string $localKey
      * @param  string $valueClass
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return void
      */
     protected function hydrateValueObject(& $attributes, $localKey, $valueClass)

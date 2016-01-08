@@ -95,6 +95,8 @@ class Mapper
      * Persist an entity or an entity collection into the database
      *
      * @param  Mappable|Collection $entity
+     * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return Mappable|Collection
      */
     public function store($entity)
@@ -122,6 +124,7 @@ class Mapper
      *
      * @param  Mappable $entity
      * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return \Analogue\ORM\Entity
      */
     protected function storeEntity($entity)
@@ -137,11 +140,12 @@ class Mapper
      * Convert an entity into an aggregate root
      *
      * @param  mixed $entity
+     * @throws MappingException
      * @return \Analogue\ORM\System\Aggregate
      */
     protected function aggregate($entity)
     {
-            return new Aggregate($entity);
+        return new Aggregate($entity);
     }
 
     /**
@@ -149,6 +153,7 @@ class Mapper
      *
      * @param  Collection|array $entities
      * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return Collection
      */
     protected function storeCollection($entities)
@@ -168,6 +173,8 @@ class Mapper
      * Delete an entity or an entity collection from the database
      *
      * @param  mixed|Collection
+     * @throws MappingException
+     * @throws \InvalidArgumentException
      * @return Collection|void
      */
     public function delete($entity)
@@ -389,6 +396,7 @@ class Mapper
      * @param  string                 $command
      * @param  mixed|Collection|array $entity
      * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return mixed
      */
     public function executeCustomCommand($command, $entity)
@@ -410,6 +418,7 @@ class Mapper
      * @param  string $commandClass
      * @param  mixed  $entity
      * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return mixed
      */
     protected function executeSingleCustomCommand($commandClass, $entity)

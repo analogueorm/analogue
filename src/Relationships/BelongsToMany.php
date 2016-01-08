@@ -10,10 +10,6 @@ use Illuminate\Database\Query\Expression;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
 
-/**
- * @method where
- * @method take
- */
 class BelongsToMany extends Relationship
 {
     /**
@@ -79,14 +75,16 @@ class BelongsToMany extends Relationship
     }
 
     /**
-     * @param $related
+     * @param  $related
+     * @return mixed
      */
     public function attachTo($related)
     {
     }
 
     /**
-     * @param $related
+     * @param  $related
+     * @return mixed
      */
     public function detachFrom($related)
     {
@@ -574,6 +572,7 @@ class BelongsToMany extends Relationship
      *
      * @param  mixed $id
      * @param  array $attributes
+     * @throws \InvalidArgumentException
      * @return integer
      */
     public function updateExistingPivot($id, array $attributes)
@@ -762,6 +761,7 @@ class BelongsToMany extends Relationship
      * Detach models from the relationship.
      *
      * @param  int|array $ids
+     * @throws \InvalidArgumentException
      * @return int
      */
     public function detach($ids = [])
@@ -790,7 +790,7 @@ class BelongsToMany extends Relationship
     /**
      * Create a new query builder for the pivot table.
      *
-     * @throws  \InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return \Illuminate\Database\Query\Builder
      */

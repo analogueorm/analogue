@@ -57,7 +57,8 @@ class BelongsTo extends Relationship
     }
 
     /**
-     * @param $related
+     * @param  $related
+     * @return mixed
      */
     public function attachTo($related)
     {

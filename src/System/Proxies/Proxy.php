@@ -4,7 +4,6 @@ namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\Manager;
-use Analogue\ORM\System\Mapper;
 
 abstract class Proxy implements ProxyInterface
 {
@@ -43,6 +42,7 @@ abstract class Proxy implements ProxyInterface
     /**
      * Call the relationship method on the underlying entity map
      *
+     * @throws MappingException
      * @return mixed
      */
     public function load()

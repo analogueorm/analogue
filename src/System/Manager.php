@@ -136,6 +136,7 @@ class Manager
      *
      * @param  string $entity
      * @param         $entityMap
+     * @throws MappingException
      * @return Mapper
      */
     protected function buildMapper($entity, $entityMap)
@@ -231,7 +232,7 @@ class Manager
         }
 
         if (!$entityMap instanceof EntityMap) {
-            throw new MappingException(get_class($entityMap) . " must be an instance of EntityMap.");
+            throw new MappingException(get_class($entityMap) . ' must be an instance of EntityMap.');
         }
 
         $entityMap->setClass($entity);

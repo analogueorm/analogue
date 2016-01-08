@@ -102,6 +102,7 @@ class MorphTo extends BelongsTo
     /**
      * Get the results of the relationship.
      *
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return EntityCollection
      */
     public function getEager()
@@ -135,6 +136,7 @@ class MorphTo extends BelongsTo
      * Get all of the relation results for a type.
      *
      * @param  string $type
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return EntityCollection
      */
     protected function getResultsByType($type)

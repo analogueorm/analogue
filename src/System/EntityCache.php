@@ -116,7 +116,7 @@ class EntityCache
      * @param  string       $relation name of the relation
      * @param  mixed        $results  results of the relationship's query
      * @param  Relationship $relationship
-     *
+     * @throws MappingException
      * @return void
      */
     public function cacheLoadedRelationResult($parent, $relation, $results, Relationship $relationship)
@@ -147,6 +147,7 @@ class EntityCache
      * @param  string       $relation
      * @param               $result
      * @param  Relationship $relationship
+     * @throws MappingException
      * @return CachedRelationship
      */
     protected function getCachedRelationship($parentKey, $relation, $result, Relationship $relationship)
@@ -186,6 +187,7 @@ class EntityCache
      * @param string           $relation
      * @param EntityCollection $results
      * @param Relationship     $relationship
+     * @throws MappingException
      */
     protected function cacheManyRelationResults($parentKey, $relation, $results, Relationship $relationship)
     {
@@ -207,6 +209,7 @@ class EntityCache
      * @param string       $relation
      * @param Mappable     $result
      * @param Relationship $relationship
+     * @throws MappingException
      */
     protected function cacheSingleRelationResult($parentKey, $relation, $result, Relationship $relationship)
     {
@@ -217,6 +220,7 @@ class EntityCache
      * Get Entity's Hash
      *
      * @param  $entity
+     * @throws MappingException
      * @return string
      */
     protected function getEntityHash(InternallyMappable $entity)

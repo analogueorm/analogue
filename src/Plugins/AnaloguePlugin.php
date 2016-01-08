@@ -13,6 +13,10 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface
      */
     protected $manager;
 
+    /**
+     * AnaloguePlugin constructor.
+     * @param Manager $manager
+     */
     public function __construct(Manager $manager)
     {
         $this->manager = $manager;

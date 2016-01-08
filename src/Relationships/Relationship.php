@@ -97,8 +97,9 @@ abstract class Relationship
     /**
      * Create a new relation instance.
      *
-     * @param Mapper   $mapper
-     * @param Mappable $parent
+     * @param  Mapper   $mapper
+     * @param  Mappable $parent
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent)
     {

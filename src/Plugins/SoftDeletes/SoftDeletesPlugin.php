@@ -16,6 +16,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
     /**
      * Register the plugin
      *
+     * @throws \Exception
      * @return void
      */
     public function register()
@@ -38,6 +39,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
      * with the softDelete capacity.
      *
      * @param  \Analogue\ORM\System\Mapper $mapper
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return bool|void
      */
     protected function registerSoftDelete(Mapper $mapper)

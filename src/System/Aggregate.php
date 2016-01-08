@@ -79,6 +79,7 @@ class Aggregate implements InternallyMappable
      * @param Aggregate|null $parent
      * @param string         $parentRelationship
      * @param Aggregate|null $root
+     * @throws MappingException
      */
     public function __construct($entity, Aggregate $parent = null, $parentRelationship = null, Aggregate $root = null)
     {
@@ -102,6 +103,7 @@ class Aggregate implements InternallyMappable
     /**
      * Parse Every relationships defined on the entity
      *
+     * @throws MappingException
      * @return void
      */
     protected function parseRelationships()
@@ -295,7 +297,8 @@ class Aggregate implements InternallyMappable
      * Create a related subAggregate
      *
      * @param  mixed $entity
-     * @param string $relation
+     * @param  string $relation
+     * @throws MappingException
      * @return self
      */
     protected function createSubAggregate($entity, $relation)
@@ -577,6 +580,7 @@ class Aggregate implements InternallyMappable
      * Return's entity raw attributes in the state they were at last
      * query.
      *
+     * @param  array|null $columns
      * @return array
      */
     protected function getCachedRawAttributes(array $columns = null)

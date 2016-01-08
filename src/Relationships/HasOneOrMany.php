@@ -39,6 +39,7 @@ abstract class HasOneOrMany extends Relationship
 
     /**
      * @param \Analogue\ORM\Entity|EntityCollection $entity
+     * @return void
      */
     public function attachTo($entity)
     {
@@ -96,6 +97,7 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Attach ids that are passed as arguments, and detach any other
      * @param  mixed $entities
+     * @throws \InvalidArgumentException
      * @return void
      */
     public function sync(array $entities)
@@ -104,7 +106,8 @@ abstract class HasOneOrMany extends Relationship
     }
 
     /**
-     * @param $entities
+     * @param  $entities
+     * @throws \InvalidArgumentException
      */
     protected function detachExcept($entities)
     {

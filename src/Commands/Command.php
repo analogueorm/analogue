@@ -24,7 +24,7 @@ abstract class Command
     /**
      * Command constructor.
      * @param Aggregate $aggregate
-     * @param QueryAdapter $query
+     * @param QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter $query
      */
     public function __construct(Aggregate $aggregate, QueryAdapter $query)
     {
