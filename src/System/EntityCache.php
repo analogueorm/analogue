@@ -127,7 +127,7 @@ class EntityCache
     {
         $keyName = $this->entityMap->getKeyName();
 
-        if (! $parent instanceof InternallyMappable) {
+        if (!$parent instanceof InternallyMappable) {
             $parent = $this->factory->make($parent);
         }
 
@@ -157,7 +157,7 @@ class EntityCache
     {
         $pivotColumns = $relationship->getPivotAttributes();
 
-        if (! array_key_exists($relation, $this->pivotAttributes)) {
+        if (!array_key_exists($relation, $this->pivotAttributes)) {
             $this->pivotAttributes[$relation] = $pivotColumns;
         }
 
@@ -187,8 +187,8 @@ class EntityCache
      * Cache a many relationship
      *
      * @param  [type]       $parentKey    [description]
-     * @param  [type]       $relation     [description]
-     * @param  [type]       $results      [description]
+     * @param  string       $relation     [description]
+     * @param  EntityCollection       $results      [description]
      * @param  Relationship $relationship [description]
      * @return [type]                     [description]
      */
@@ -209,8 +209,8 @@ class EntityCache
      * Cache a single relationship
      *
      * @param  [type]       $parentKey    [description]
-     * @param  [type]       $relation     [description]
-     * @param  [type]       $results      [description]
+     * @param  string       $relation     [description]
+     * @param  Mappable       $result      [description]
      * @param  Relationship $relationship [description]
      * @return [type]                     [description]
      */
@@ -233,7 +233,7 @@ class EntityCache
 
         $keyName = $mapper->getEntityMap()->getKeyName();
 
-        return $class.'.'.$entity->getEntityAttribute($keyName);
+        return $class . '.' . $entity->getEntityAttribute($keyName);
     }
 
     /**
@@ -250,7 +250,6 @@ class EntityCache
     /**
      * Transform an Aggregated Entity into a cache record
      *
-     * @param  Aggregate $entity
      * @return array
      */
     protected function transform(Aggregate $aggregatedEntity)

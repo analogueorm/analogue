@@ -24,8 +24,6 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  Mappable  $parent
      * @param  string  $foreignKey
      * @param  string  $localKey
      * @return void

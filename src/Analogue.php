@@ -25,7 +25,7 @@ class Analogue
 
     public function __construct(array $connection)
     {
-        if (! static::$booted) {
+        if (!static::$booted) {
             static::$capsule = new Capsule;
 
             $this->addConnection($connection);

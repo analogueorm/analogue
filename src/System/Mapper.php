@@ -70,7 +70,7 @@ class Mapper
     protected $customCommands = [];
 
     /**
-     * @param EntityMap     $entityMapper
+     * @param EntityMap     $entityMap
      * @param DBAdapter     $adapter
      * @param Dispatcher    $dispatcher
      * @param Manager       $manager
@@ -165,7 +165,7 @@ class Mapper
      * Delete an entity or an entity collection from the database
      *
      * @param  mixed|Collection
-     * @return void
+     * @return Collection|null
      */
     public function delete($entity)
     {
@@ -244,7 +244,7 @@ class Mapper
             throw new InvalidArgumentException("Fired Event with invalid Entity Object");
         }
 
-        $event = "analogue.{$event}.".$this->entityMap->getClass();
+        $event = "analogue.{$event}." . $this->entityMap->getClass();
 
         $method = $halt ? 'until' : 'fire';
 
@@ -255,7 +255,7 @@ class Mapper
      * Register an entity event with the dispatcher.
      *
      * @param  string  $event
-     * @param  \Closure|string  $callback
+     * @param  \Closure  $callback
      * @return void
      */
     public function registerEvent($event, $callback)
@@ -295,7 +295,7 @@ class Mapper
      */
     public function getGlobalScope($scope)
     {
-        return array_first($this->globalScopes, function ($key, $value) use ($scope) {
+        return array_first($this->globalScopes, function($key, $value) use ($scope) {
             return $scope instanceof $value;
         });
     }
@@ -313,7 +313,7 @@ class Mapper
     /**
      * Apply all of the global scopes to an Analogue Query builder.
      *
-     * @param  \Analogue\ORM\System\Query  $builder
+     * @param Query $query
      * @return \Analogue\ORM\System\Query
      */
     public function applyGlobalScopes($query)
@@ -328,7 +328,7 @@ class Mapper
     /**
      * Remove all of the global scopes from an Analogue Query builder.
      *
-     * @param  \Analogue\ORM\System\Query  $builder
+     * @param Query $query
      * @return \Analogue\ORM\System\Query
      */
     public function removeGlobalScopes($query)
@@ -356,7 +356,7 @@ class Mapper
     /**
      * Get a new query builder that doesn't have any global scopes.
      *
-     * @return Analogue\ORM\System\Query|static
+     * @return Query
      */
     public function newQueryWithoutScopes()
     {
@@ -398,7 +398,7 @@ class Mapper
     /**
      * Execute a single command instance
      *
-     * @param  string $command
+     * @param  string $commandClass
      * @param  mixed  $entity
      * @return mixed
      */
@@ -476,11 +476,12 @@ class Mapper
      * Use a trick to generate a class prototype that we
      * can instantiate without calling the constructor.
      *
+     * @param string|null $className
      * @return mixed
      */
     protected function customClassInstance($className)
     {
-        if (! class_exists($className)) {
+        if (!class_exists($className)) {
             throw new MappingException("Tried to instantiate a non-existing Entity class : $className");
         }
 

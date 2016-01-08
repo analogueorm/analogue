@@ -24,7 +24,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
      * @param  Mappable  $parent
      * @param  string  $type
      * @param  string  $id

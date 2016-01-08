@@ -40,8 +40,7 @@ class HasManyThrough extends Relationship
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  Mappable  $parent
+     * @param  \Analogue\ORM\EntityMap  $parentMap
      * @param  string  $firstKey
      * @param  string  $secondKey
      * @return void
@@ -91,9 +90,9 @@ class HasManyThrough extends Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\Query  $query
-     * @param  \Analogue\ORM\Query  $parent
-     * @return \Analogue\ORM\Query
+     * @param  Query  $query
+     * @param  Query  $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -111,7 +110,7 @@ class HasManyThrough extends Relationship
     /**
      * Set the join clause on the query.
      *
-     * @param  \Analogue\ORM\Query|null  $query
+     * @param  null|Query  $query
      * @return void
      */
     protected function setJoin(Query $query = null)

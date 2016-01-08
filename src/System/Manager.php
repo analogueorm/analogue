@@ -118,7 +118,7 @@ class Manager
             throw new MappingException('Tried to instantiate mapper on wrapped Entity');
         }
 
-        if (! is_string($entity)) {
+        if (!is_string($entity)) {
             $entity = get_class($entity);
         }
 
@@ -133,7 +133,7 @@ class Manager
     /**
      * Build a new Mapper instance for a given Entity
      *
-     * @param  mixed|string $entity
+     * @param  string $entity
      * @param  $entityMap
      * @return Mapper
      */
@@ -141,7 +141,7 @@ class Manager
     {
         // If an EntityMap hasn't been manually registered by the user
         // register it at runtime.
-        if (! $this->isRegisteredEntity($entity)) {
+        if (!$this->isRegisteredEntity($entity)) {
             $this->register($entity, $entityMap);
         }
 
@@ -165,7 +165,7 @@ class Manager
      * Create a mapper for a given entity (static alias)
      *
      * @param \Analogue\ORM\Mappable|string $entity
-     * @param mixed $entityMap
+     * @param null|EntityMap $entityMap
      * @return Mapper
      */
     public static function getMapper($entity, $entityMap = null)
@@ -181,7 +181,7 @@ class Manager
      */
     public function repository($entity)
     {
-        if (! is_string($entity)) {
+        if (!is_string($entity)) {
             $entity = get_class($entity);
         }
 
@@ -205,7 +205,7 @@ class Manager
     public function register($entity, $entityMap = null)
     {
         // If an object is provider, get the class name from it
-        if (! is_string($entity)) {
+        if (!is_string($entity)) {
             $entity = get_class($entity);
         }
 
@@ -213,7 +213,7 @@ class Manager
             throw new MappingException("Entity $entity is already registered.");
         }
 
-        if (! class_exists($entity)) {
+        if (!class_exists($entity)) {
             throw new MappingException("Class $entity does not exists");
         }
 
@@ -225,8 +225,8 @@ class Manager
             $entityMap = new $entityMap;
         }
 
-        if (! $entityMap instanceof EntityMap) {
-            throw new MappingException(get_class($entityMap)." must be an instance of EntityMap.");
+        if (!$entityMap instanceof EntityMap) {
+            throw new MappingException(get_class($entityMap) . " must be an instance of EntityMap.");
         }
 
         $entityMap->setClass($entity);
@@ -244,8 +244,8 @@ class Manager
      */
     protected function getEntityMapInstanceFor($entity)
     {
-        if (class_exists($entity.'Map')) {
-            $map = $entity.'Map';
+        if (class_exists($entity . 'Map')) {
+            $map = $entity . 'Map';
             $map = new $map;
         } else {
             // Generate an EntityMap obeject
@@ -268,21 +268,21 @@ class Manager
     /**
      * Register a Value Object
      *
-     * @param  string|ValueObject $valueObject
+     * @param  string $valueObject
      * @param  string $valueMap
      * @return void
      */
     public function registerValueObject($valueObject, $valueMap = null)
     {
-        if (! is_string($valueObject)) {
+        if (!is_string($valueObject)) {
             $valueObject = get_class($valueObject);
         }
 
         if (is_null($valueMap)) {
-            $valueMap = $valueObject.'Map';
+            $valueMap = $valueObject . 'Map';
         }
 
-        if (! class_exists($valueMap)) {
+        if (!class_exists($valueMap)) {
             throw new MappingException("$valueMap doesn't exists");
         }
 
@@ -297,7 +297,7 @@ class Manager
      */
     public function isValueObject($object)
     {
-        if (! is_string($object)) {
+        if (!is_string($object)) {
             $object = get_class($object);
         }
 
@@ -312,11 +312,11 @@ class Manager
      */
     public function getValueMap($valueObject)
     {
-        if (! is_string($valueObject)) {
+        if (!is_string($valueObject)) {
             $valueObject = get_class($valueObject);
         }
 
-        if (! array_key_exists($valueObject, $this->valueClasses)) {
+        if (!array_key_exists($valueObject, $this->valueClasses)) {
             $this->registerValueObject($valueObject);
         }
         $valueMap = new $this->valueClasses[$valueObject];
@@ -361,7 +361,7 @@ class Manager
      */
     public function isRegisteredEntity($entity)
     {
-        if (! is_string($entity)) {
+        if (!is_string($entity)) {
             $entity = get_class($entity);
         }
 
@@ -373,7 +373,7 @@ class Manager
      * of the entity.
      *
      * @param  string $event
-     * @param  closure|string $callback
+     * @param  \Closure $callback
      * @return void
      */
     public function registerGlobalEvent($event, $callback)
@@ -399,7 +399,7 @@ class Manager
      * Shortcut to Mapper delete
      *
      * @param  mixed $entity
-     * @return mixed
+     * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
     {
@@ -410,7 +410,7 @@ class Manager
      * Shortcut to Mapper query
      *
      * @param  mixed $entity
-     * @return \Analogue\System\Query
+     * @return Query
      */
     public function query($entity)
     {
@@ -421,7 +421,7 @@ class Manager
      * Shortcut to Mapper Global Query
      *
      * @param  mixed $entity
-     * @return \Analogue\System\Query
+     * @return Query
      */
     public function globalQuery($entity)
     {
@@ -431,9 +431,7 @@ class Manager
     /**
      * Return the Singleton instance of the manager
      *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
+     * @return Manager
      */
     public static function getInstance()
     {

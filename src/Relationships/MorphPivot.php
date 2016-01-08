@@ -27,7 +27,7 @@ class MorphPivot extends Pivot
     /**
      * Set the keys for a save update query.
      *
-     * @param  \Analogue\ORM\Query  $query
+     * @param  Query  $query
      * @return \Analogue\ORM\Query
      */
     protected function setKeysForSaveQuery(Query $query)

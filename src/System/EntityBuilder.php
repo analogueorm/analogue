@@ -84,7 +84,7 @@ class EntityBuilder
 
             $resultArray = (array) $result;
 
-            $tmpCache[$resultArray[$keyName] ] = $resultArray;
+            $tmpCache[$resultArray[$keyName]] = $resultArray;
 
             // Hydrate any embedded Value Object
             $this->hydrateValueObjects($resultArray);
@@ -109,7 +109,7 @@ class EntityBuilder
     /**
      * Get the correct wrapper prototype corresponding to the object type
      *
-     * @return mixed
+     * @return InternallyMappable
      */
     protected function getWrapperInstance()
     {
@@ -148,13 +148,13 @@ class EntityBuilder
         $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
 
         foreach ($embeddedAttributes as $key) {
-            $prefix = snake_case(class_basename($valueClass)).'_';
+            $prefix = snake_case(class_basename($valueClass)) . '_';
 
             $voWrapper = $this->factory->make($valueObject);
 
-            $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
+            $voWrapper->setEntityAttribute($key, $attributes[$prefix . $key]);
             
-            unset($attributes[$prefix.$key]);
+            unset($attributes[$prefix . $key]);
         }
         
         $attributes[$localKey] = $valueObject;
@@ -175,7 +175,7 @@ class EntityBuilder
     /**
      * Build lazy loading proxies for the current entity
      *
-     * @param \Analogue\ORM\Mappable $entity
+     * @param InternallyMappable $entity
      *
      * @return array
      */

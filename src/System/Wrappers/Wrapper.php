@@ -65,7 +65,7 @@ abstract class Wrapper implements InternallyMappable
         $proxies = [];
 
         foreach ($this->entityMap->getRelationships() as $relation) {
-            if (! array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
                 if (in_array($relation, $singleRelations)) {
                     $proxies[$relation] = new EntityProxy($this->getObject(), $relation);
                 }

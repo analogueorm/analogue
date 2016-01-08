@@ -23,7 +23,7 @@ class Entity extends ValueObject
     public function __get($key)
     {
         if ($this->hasGetMutator($key)) {
-            $method = 'get'.$this->getMutatorMethod($key);
+            $method = 'get' . $this->getMutatorMethod($key);
 
             $attribute = null;
 
@@ -33,7 +33,7 @@ class Entity extends ValueObject
 
             return $this->$method($attribute);
         }
-        if (! array_key_exists($key, $this->attributes)) {
+        if (!array_key_exists($key, $this->attributes)) {
             return null;
         }
         if ($this->attributes[$key] instanceof EntityProxy) {
@@ -52,7 +52,7 @@ class Entity extends ValueObject
     public function __set($key, $value)
     {
         if ($this->hasSetMutator($key)) {
-            $method = 'set'.$this->getMutatorMethod($key);
+            $method = 'set' . $this->getMutatorMethod($key);
 
             $this->$method($value);
         } else {
@@ -68,7 +68,7 @@ class Entity extends ValueObject
      */
     protected function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'get' . $this->getMutatorMethod($key)) ? true : false;
     }
 
     /**
@@ -79,12 +79,12 @@ class Entity extends ValueObject
      */
     protected function hasSetMutator($key)
     {
-        return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'set' . $this->getMutatorMethod($key)) ? true : false;
     }
 
     protected function getMutatorMethod($key)
     {
-        return ucfirst($key).'Attribute';
+        return ucfirst($key) . 'Attribute';
     }
 
     /**
@@ -104,7 +104,7 @@ class Entity extends ValueObject
                 continue;
             }
             if ($this->hasGetMutator($key)) {
-                $method = 'get'.$this->getMutatorMethod($key);
+                $method = 'get' . $this->getMutatorMethod($key);
                 $attributes[$key] = $this->$method($attribute);
             }
         }

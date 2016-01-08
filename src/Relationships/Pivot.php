@@ -68,10 +68,11 @@ class Pivot extends Entity
     /**
      * Create a new pivot model instance.
      *
-     * @param  $parent
+     * @param  \Analogue\ORM\System\InternallyMappable $parent
      * @param  array   $attributes
      * @param  string  $table
      * @param  bool    $exists
+     * @param \Analogue\ORM\EntityMap $parentMap
      * @return void
      */
     public function __construct($parent, $parentMap, $attributes, $table, $exists = false)
