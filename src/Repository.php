@@ -2,11 +2,17 @@
 
 namespace Analogue\ORM;
 
+use Analogue\ORM\Exceptions\MappingException;
 use Exception;
 use InvalidArgumentException;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 
+/**
+ * Class Repository
+ *
+ * @mixin Mapper
+ */
 class Repository
 {
     /**
@@ -23,10 +29,10 @@ class Repository
      * - Mappable object instance
      * - Instance of mapper
      *
-     * @param Mapper $mapper
-     * @param EntityMap              $entityMap (optional)
-     *
+     * @param  Mapper         $mapper
+     * @param  EntityMap|null $entityMap (optional)
      * @throws \InvalidArgumentException
+     * @throws MappingException
      */
     public function __construct($mapper, EntityMap $entityMap = null)
     {
@@ -84,8 +90,8 @@ class Repository
     /**
      * Return a paginator instance on the EntityCollection
      *
-     * @param  int $perPage number of item per page (fallback on default setup in entity map)
-     * @return
+     * @param int|null $perPage number of item per page (fallback on default setup in entity map)
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null)
     {
@@ -95,7 +101,7 @@ class Repository
     /**
      * Delete an entity or an entity collection from the database
      *
-     * @param  Mappable|Collection $entity
+     * @param  Mappable|EntityCollection $entity
      * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
@@ -106,8 +112,8 @@ class Repository
     /**
      * Persist an entity or an entity collection in the database.
      *
-     * @param  Mappable|Collection|array $entity
-     * @return Mappable|Collection|array
+     * @param  Mappable|EntityCollection|array $entity
+     * @return Mappable|EntityCollection|array
      */
     public function store($entity)
     {
@@ -117,8 +123,9 @@ class Repository
     /**
      * Make custom mapper custom commands available in repository
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param  string $method
+     * @param  array  $parameters
+     * @throws Exception
      * @return mixed
      */
     public function __call($method, $parameters)

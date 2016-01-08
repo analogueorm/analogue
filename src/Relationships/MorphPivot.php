@@ -27,8 +27,8 @@ class MorphPivot extends Pivot
     /**
      * Set the keys for a save update query.
      *
-     * @param  Query  $query
-     * @return \Analogue\ORM\Query
+     * @param  Query $query
+     * @return Query
      */
     protected function setKeysForSaveQuery(Query $query)
     {
@@ -40,8 +40,8 @@ class MorphPivot extends Pivot
     /**
      * Set the morph type for the pivot.
      *
-     * @param  string  $morphType
-     * @return $this
+     * @param  string $morphType
+     * @return self
      */
     public function setMorphType($morphType)
     {
@@ -53,8 +53,8 @@ class MorphPivot extends Pivot
     /**
      * Set the morph class for the pivot.
      *
-     * @param  string  $morphClass
-     * @return \Analogue\ORM\Relationships\MorphPivot
+     * @param  string $morphClass
+     * @return self
      */
     public function setMorphClass($morphClass)
     {

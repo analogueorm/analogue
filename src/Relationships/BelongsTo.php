@@ -2,6 +2,7 @@
 
 namespace Analogue\ORM\Relationships;
 
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
@@ -40,11 +41,11 @@ class BelongsTo extends Relationship
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Analogue\ORM\System\Mapper $mapper
-     * @param  Mappable  $parent
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
-     * @param  string  $relation
+     * @param Mapper   $mapper
+     * @param Mappable $parent
+     * @param string   $foreignKey
+     * @param string   $otherKey
+     * @param string   $relation
      */
     public function __construct(Mapper $mapper, $parent, $foreignKey, $otherKey, $relation)
     {
@@ -55,18 +56,27 @@ class BelongsTo extends Relationship
         parent::__construct($mapper, $parent);
     }
 
+    /**
+     * @param $related
+     */
     public function attachTo($related)
     {
-        return $this->associate($related);
+        $this->associate($related);
     }
 
+    /**
+     * @param $related
+     * @return Mappable
+     */
     public function detachFrom($related)
     {
-        return $this->dissociate($related);
+        return $this->dissociate($related);//todo
     }
 
     /**
      * Get the results of the relationship.
+     *
+     * @param  $relation
      *
      * @return mixed
      */
@@ -99,9 +109,9 @@ class BelongsTo extends Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  \Analogue\ORM\System\Query  $parent
-     * @return \Analogue\ORM\System\Query
+     * @param  Query $query
+     * @param  Query $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -115,7 +125,7 @@ class BelongsTo extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -131,7 +141,7 @@ class BelongsTo extends Relationship
     /**
      * Gather the keys from an array of related models.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return array
      */
     protected function getEagerModelKeys(array $entities)
@@ -162,8 +172,8 @@ class BelongsTo extends Relationship
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $entities
-     * @param  string  $relation
+     * @param  array  $entities
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -179,9 +189,9 @@ class BelongsTo extends Relationship
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
@@ -260,7 +270,7 @@ class BelongsTo extends Relationship
     /**
      * Get the foreign key value pair for a related object
      *
-     * @var mixed $related
+     * @param  mixed $related
      *
      * @return array
      */

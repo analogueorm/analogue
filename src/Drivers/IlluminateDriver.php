@@ -7,10 +7,14 @@ class IlluminateDriver implements DriverInterface
     /**
      * The Illuminate Connection Provider
      *
-     * @var CapsuleConnectionProvider | IlluminateConnectionProvider
+     * @var CapsuleConnectionProvider|IlluminateConnectionProvider
      */
     protected $connectionProvider;
 
+    /**
+     * IlluminateDriver constructor.
+     * @param $connectionProvider
+     */
     public function __construct($connectionProvider)
     {
         $this->connectionProvider = $connectionProvider;
@@ -29,8 +33,8 @@ class IlluminateDriver implements DriverInterface
     /**
      * Get Analogue DBAdapter
      *
-     * @param  string $connection
-     * @return \Analogue\ORM\DBAdater
+     * @param  string|null $connection
+     * @return IlluminateDBAdapter
      */
     public function getAdapter($connection = null)
     {

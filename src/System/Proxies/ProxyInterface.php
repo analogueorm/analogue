@@ -8,7 +8,7 @@ interface ProxyInterface
     /**
      * Convert a proxy into the underlying related Object
      *
-     * @return Mappable|EntityCollection
+     * @return Mappable|\Analogue\ORM\EntityCollection
      */
     public function load();
 

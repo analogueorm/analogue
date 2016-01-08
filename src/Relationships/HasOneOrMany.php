@@ -24,9 +24,10 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Create a new has many relationship instance.
      *
-     * @param  string  $foreignKey
-     * @param  string  $localKey
-     * @return void
+     * @param Mapper                 $mapper
+     * @param \Analogue\ORM\Mappable $parentEntity
+     * @param string                 $foreignKey
+     * @param string                 $localKey
      */
     public function __construct(Mapper $mapper, $parentEntity, $foreignKey, $localKey)
     {
@@ -36,22 +37,33 @@ abstract class HasOneOrMany extends Relationship
         parent::__construct($mapper, $parentEntity);
     }
 
+    /**
+     * @param \Analogue\ORM\Entity|EntityCollection $entity
+     */
     public function attachTo($entity)
     {
         if ($entity instanceof EntityCollection) {
-            return $this->attachMany($entity);
+            $this->attachMany($entity);
         }
-        return $this->attachOne($entity);
+        $this->attachOne($entity);
     }
 
+    /**
+     * @param $entityHash
+     * @return void
+     */
     public function detachFrom($entityHash)
     {
         if (is_array($entityHash)) {
-            return $this->detachMany($entityHash);
+            $this->detachMany($entityHash);
+            return;
         }
-        return $this->detachMany([$entityHash]);
+        $this->detachMany([$entityHash]);
     }
 
+    /**
+     * @param \Analogue\ORM\Entity $entity
+     */
     public function attachOne($entity)
     {
         $wrapper = $this->factory->make($entity);
@@ -63,6 +75,9 @@ abstract class HasOneOrMany extends Relationship
         $wrapper->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
     }
 
+    /**
+     * @param EntityCollection $entities
+     */
     public function attachMany(EntityCollection $entities)
     {
         foreach ($entities as $entity) {
@@ -70,6 +85,9 @@ abstract class HasOneOrMany extends Relationship
         }
     }
 
+    /**
+     * @param $entityHash
+     */
     protected function detachOne($entityHash)
     {
         $this->detachMany([$entityHash]);
@@ -77,7 +95,7 @@ abstract class HasOneOrMany extends Relationship
 
     /**
      * Attach ids that are passed as arguments, and detach any other
-     * @param  mixed  $entities
+     * @param  mixed $entities
      * @return void
      */
     public function sync(array $entities)
@@ -85,6 +103,9 @@ abstract class HasOneOrMany extends Relationship
         $this->detachExcept($entities);
     }
 
+    /**
+     * @param $entities
+     */
     protected function detachExcept($entities)
     {
         $query = $this->query->getQuery()->from($this->relatedMap->getTable());
@@ -100,6 +121,9 @@ abstract class HasOneOrMany extends Relationship
             ->update([$this->getPlainForeignKey() => null]);
     }
 
+    /**
+     * @param array $entityHashes
+     */
     public function detachMany(array $entityHashes)
     {
         $keys = [];
@@ -130,7 +154,7 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -141,9 +165,9 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function matchOne(array $entities, EntityCollection $results, $relation)
@@ -154,9 +178,9 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function matchMany(array $entities, EntityCollection $results, $relation)
@@ -167,10 +191,10 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
-     * @param  string  $type
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
+     * @param  string           $type
      * @return array
      */
     protected function matchOneOrMany(array $entities, EntityCollection $results, $relation, $type)
@@ -178,10 +202,6 @@ abstract class HasOneOrMany extends Relationship
         $dictionary = $this->buildDictionary($results);
 
         $cache = $this->parentMapper->getEntityCache();
-
-        // As our cache will hold polymorphic relations, we'll key
-        // them by entity.key as a standard.
-        $foreignKey = $this->relatedMap->getKeyName();
 
         // Once we have the dictionary we can simply spin through the parent models to
         // link them up with their children using the keyed dictionary to make the
@@ -206,9 +226,9 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param  array   $dictionary
-     * @param  string  $key
-     * @param  string  $type
+     * @param  array  $dictionary
+     * @param  string $key
+     * @param  string $type
      * @return mixed
      */
     protected function getRelationValue(array $dictionary, $key, $type)
@@ -221,7 +241,7 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Analogue\ORM\EntityCollection  $results
+     * @param  EntityCollection $results
      * @return array
      */
     protected function buildDictionary(EntityCollection $results)

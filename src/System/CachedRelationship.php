@@ -22,6 +22,11 @@ class CachedRelationship
      */
     protected $pivotAttributes;
 
+    /**
+     * CachedRelationship constructor.
+     * @param $hash
+     * @param array $pivotAttributes
+     */
     public function __construct($hash, $pivotAttributes = [])
     {
         $this->hash = $hash;

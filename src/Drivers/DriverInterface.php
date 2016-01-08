@@ -12,7 +12,7 @@ interface DriverInterface
 
     /**
      * Get Analogue DB Adapter
-     * @param  string $connection   connection name for drivers supporting multiple connections
+     * @param  string $connection connection name for drivers supporting multiple connections
      * @return \Analogue\ORM\Drivers\DBAdapter
      */
     public function getAdapter($connection = null);

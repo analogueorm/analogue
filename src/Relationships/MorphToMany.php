@@ -35,14 +35,14 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\Entityl  $parent
-     * @param  string  $name
-     * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
-     * @param  string  $relationName
-     * @param  bool   $inverse
-     * @return void
+     * @param Mapper                $mapper
+     * @param  \Analogue\ORM\Entity $parent
+     * @param  string               $name
+     * @param  string               $table
+     * @param  string               $foreignKey
+     * @param  string               $otherKey
+     * @param  string|null          $relationName
+     * @param  bool                 $inverse
      */
     public function __construct(Mapper $mapper, $parent, $name, $table, $foreignKey, $otherKey, $relationName = null, $inverse = false)
     {
@@ -58,7 +58,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Set the where clause for the relation query.
      *
-     * @return $this
+     * @return self
      */
     protected function setWhere()
     {
@@ -72,8 +72,8 @@ class MorphToMany extends BelongsToMany
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  Query  $query
-     * @param  Query  $parent
+     * @param  Query $query
+     * @param  Query $parent
      * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
@@ -86,7 +86,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -99,8 +99,8 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot attachment record.
      *
-     * @param  int   $id
-     * @param  bool  $timed
+     * @param  int  $id
+     * @param  bool $timed
      * @return array
      */
     protected function createAttachRecord($id, $timed)
@@ -113,6 +113,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new query builder for the pivot table.
      *
+     * @throws \InvalidArgumentException
      * @return \Illuminate\Database\Query\Builder
      */
     protected function newPivotQuery()
@@ -125,9 +126,9 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot model instance.
      *
-     * @param  array  $attributes
-     * @param  bool   $exists
-     * @return \Analogue\ORM\Relationships\Pivot
+     * @param  array $attributes
+     * @param  bool  $exists
+     * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
     {

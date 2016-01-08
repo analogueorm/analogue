@@ -10,6 +10,11 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Analogue\ORM\EntityCollection;
 
+/**
+ * Class CollectionProxy
+ *
+ * @mixin EntityCollection
+ */
 class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
     /**
@@ -25,8 +30,8 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     protected $addedItems;
 
     /**
-     * @param mixed $parentEntity
-     * @param string $relation  relationship method handled by the proxy.
+     * @param mixed  $parentEntity
+     * @param string $relation relationship method handled by the proxy.
      */
     public function __construct($parentEntity, $relation)
     {
@@ -39,6 +44,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      * Add an entity to the proxy collection, weither it's loaded or not
      *
      * @param mixed $entity
+     * @return self|void
      */
     public function add($entity)
     {
@@ -62,7 +68,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Return the underlying collection
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return EntityCollection
      */
     public function getUnderlyingCollection()
     {
@@ -72,7 +78,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Return Items that has been added prior to lazy-loading
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return EntityCollection
      */
     public function getAddedItems()
     {
@@ -114,7 +120,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Determine if an item exists at an offset.
      *
-     * @param  mixed  $key
+     * @param  mixed $key
      * @return bool
      */
     public function offsetExists($key)
@@ -127,7 +133,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Get an item at a given offset.
      *
-     * @param  mixed  $key
+     * @param  mixed $key
      * @return mixed
      */
     public function offsetGet($key)
@@ -140,28 +146,26 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Set the item at a given offset.
      *
-     * @param  mixed  $key
-     * @param  mixed  $value
-     * @return void
+     * @param mixed $key
+     * @param mixed $value
      */
     public function offsetSet($key, $value)
     {
         $this->loadOnce();
 
-        return $this->getUnderlyingCollection()->offsetSet($key, $value);
+        $this->getUnderlyingCollection()->offsetSet($key, $value);
     }
 
     /**
      * Unset the item at a given offset.
      *
-     * @param  string  $key
-     * @return void
+     * @param string $key
      */
     public function offsetUnset($key)
     {
         $this->loadOnce();
 
-        return $this->getUnderlyingCollection()->offsetUnset($key);
+        $this->getUnderlyingCollection()->offsetUnset($key);
     }
 
     /**
@@ -191,7 +195,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Get the collection of items as JSON.
      *
-     * @param  int  $options
+     * @param  int $options
      * @return string
      */
     public function toJson($options = 0)
@@ -213,12 +217,11 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
         return $this->getUnderlyingCollection()->getIterator();
     }
 
+
     /**
-     * Transparently Redirect non overrided calls to the lazy loaded collection
-     *
-     * @param  [type] $method     [description]
-     * @param  [type] $parameters [description]
-     * @return [type]             [description]
+     * @param  $method
+     * @param  $parameters
+     * @return mixed
      */
     public function __call($method, $parameters)
     {

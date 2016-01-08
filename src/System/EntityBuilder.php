@@ -11,7 +11,6 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 class EntityBuilder
 {
-
     /**
      * The mapper for the entity to build
      * @var \Analogue\ORM\System\Mapper
@@ -45,6 +44,11 @@ class EntityBuilder
      */
     protected $factory;
 
+    /**
+     * EntityBuilder constructor.
+     * @param Mapper $mapper
+     * @param array  $eagerLoads
+     */
     public function __construct(Mapper $mapper, array $eagerLoads)
     {
         $this->mapper = $mapper;
@@ -63,8 +67,7 @@ class EntityBuilder
     /**
      * Convert a result set into an array of entities
      *
-     * @param  array  $results
-     *
+     * @param  array $results
      * @return array
      */
     public function build(array $results)
@@ -132,7 +135,7 @@ class EntityBuilder
     /**
      * Hydrate a single value object
      *
-     * @param  array $attributes
+     * @param  array  $attributes
      * @param  string $localKey
      * @param  string $valueClass
      * @return void
@@ -142,8 +145,6 @@ class EntityBuilder
         $map = $this->mapper->getManager()->getValueMap($valueClass);
 
         $embeddedAttributes = $map->getAttributes();
-
-        //$nestedValueObjects = $map->getEmbeddables();
 
         $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
 

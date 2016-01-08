@@ -17,18 +17,4 @@ interface Mappable
      * @return array
      */
     public function getEntityAttributes();
-
-    /**
-     * Set the raw entity attributes
-     * @param string $key
-     * @param string $value
-     */
-    //public function setEntityAttribute($key, $value);
-
-    /**
-     * Return the entity's attribute
-     * @param  string $key
-     * @return mixed
-     */
-    //public function getEntityAttribute($key);
 }

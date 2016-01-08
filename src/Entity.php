@@ -45,8 +45,8 @@ class Entity extends ValueObject
     /**
      * Dynamically set attributes on the entity.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param  string $key
+     * @param  mixed  $value
      * @return void
      */
     public function __set($key, $value)
@@ -63,7 +63,7 @@ class Entity extends ValueObject
     /**
      * Is a getter method defined ?
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     protected function hasGetMutator($key)
@@ -74,7 +74,7 @@ class Entity extends ValueObject
     /**
      * Is a setter method defined ?
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     protected function hasSetMutator($key)
@@ -82,6 +82,10 @@ class Entity extends ValueObject
         return method_exists($this, 'set' . $this->getMutatorMethod($key)) ? true : false;
     }
 
+    /**
+     * @param $key
+     * @return string
+     */
     protected function getMutatorMethod($key)
     {
         return ucfirst($key) . 'Attribute';

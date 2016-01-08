@@ -34,6 +34,12 @@ class MapperFactory
      */
     protected $dispatcher;
 
+    /**
+     * MapperFactory constructor.
+     * @param DriverManager $drivers
+     * @param Dispatcher    $dispatcher
+     * @param Manager       $manager
+     */
     public function __construct(DriverManager $drivers, Dispatcher $dispatcher, Manager $manager)
     {
         $this->drivers = $drivers;
@@ -46,8 +52,8 @@ class MapperFactory
     /**
      * Return a new Mapper instance
      *
-     * @param  string       $entityClass
-     * @param  string       $entityMap
+     * @param  string    $entityClass
+     * @param  EntityMap $entityMap
      * @return Mapper
      */
     public function make($entityClass, EntityMap $entityMap)

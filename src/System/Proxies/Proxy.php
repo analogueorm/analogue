@@ -16,7 +16,7 @@ abstract class Proxy implements ProxyInterface
     /**
      * Reference to parent entity object
      *
-     * @var InternallyMappable
+     * @var \Analogue\ORM\System\InternallyMappable
      */
     protected $parentEntity;
 
@@ -29,7 +29,7 @@ abstract class Proxy implements ProxyInterface
 
     /**
      * @param mixed  $parentEntity
-     * @param string $relation  relationship method handled by the proxy.
+     * @param string $relation     relationship method handled by the proxy.
      */
     public function __construct($parentEntity, $relation)
     {
@@ -65,9 +65,9 @@ abstract class Proxy implements ProxyInterface
     /**
      * Return the Query Builder on the relation
      *
-     * @param  mixed    $entity
-     * @param  string    $relation
-     * @return Query
+     * @param  mixed  $entity
+     * @param  string $relation
+     * @return \Analogue\ORM\System\Query
      */
     protected function query($entity, $relation)
     {

@@ -6,6 +6,9 @@ use Analogue\ORM\Entity;
 
 class Pivot extends Entity
 {
+    /**
+     * @var bool
+     */
     protected $exists;
 
     /**
@@ -68,12 +71,11 @@ class Pivot extends Entity
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Analogue\ORM\System\InternallyMappable $parent
-     * @param  array   $attributes
-     * @param  string  $table
-     * @param  bool    $exists
-     * @param \Analogue\ORM\EntityMap $parentMap
-     * @return void
+     * @param \Analogue\ORM\System\InternallyMappable $parent
+     * @param \Analogue\ORM\EntityMap                 $parentMap
+     * @param array                                   $attributes
+     * @param string                                  $table
+     * @param bool                                    $exists
      */
     public function __construct($parent, $parentMap, $attributes, $table, $exists = false)
     {
@@ -119,8 +121,8 @@ class Pivot extends Entity
     /**
      * Set the key names for the pivot model instance.
      *
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
+     * @param  string $foreignKey
+     * @param  string $otherKey
      * @return $this
      */
     public function setPivotKeys($foreignKey, $otherKey)

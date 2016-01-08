@@ -17,7 +17,7 @@ class Store extends Command
     /**
      * Persist the entity in the database
      *
-     * @return void
+     * @return false|mixed
      */
     public function execute()
     {
@@ -223,6 +223,8 @@ class Store extends Command
     /**
      * Run an update statement on the entity
      *
+     * @throws \InvalidArgumentException
+     *
      * @return void
      */
     protected function update()
@@ -234,7 +236,7 @@ class Store extends Command
         $query = $query->where($keyName, '=', $this->aggregate->getEntityId());
 
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
-                
+
         if (count($dirtyAttributes) > 0) {
             $query->update($dirtyAttributes);
         }

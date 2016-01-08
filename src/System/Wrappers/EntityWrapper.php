@@ -69,7 +69,7 @@ class EntityWrapper extends Wrapper
     /**
      * Test if a given attribute exists
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     public function hasAttribute($key)

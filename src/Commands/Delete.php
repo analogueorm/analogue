@@ -9,7 +9,9 @@ class Delete extends Command
     /**
      * Execute the Delete Statement
      *
-     * @return void
+     * @throws MappingException
+     * @throws \InvalidArgumentException
+     * @return false|void
      */
     public function execute()
     {

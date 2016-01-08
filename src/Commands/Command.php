@@ -21,6 +21,11 @@ abstract class Command
      */
     protected $query;
 
+    /**
+     * Command constructor.
+     * @param Aggregate $aggregate
+     * @param QueryAdapter $query
+     */
     public function __construct(Aggregate $aggregate, QueryAdapter $query)
     {
         $this->aggregate = $aggregate;

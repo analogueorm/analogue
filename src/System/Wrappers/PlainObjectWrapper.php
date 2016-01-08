@@ -16,14 +16,14 @@ class PlainObjectWrapper extends Wrapper
     /**
      * The reflection class for the managed entity
      *
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     protected $reflection;
 
     /**
-     *
-     * @param [type] $popoEntity [description]
-     * @param [type] $entityMap  [description]
+     * PlainObjectWrapper constructor.
+     * @param $popoEntity
+     * @param $entityMap
      */
     public function __construct($popoEntity, $entityMap)
     {
@@ -71,8 +71,7 @@ class PlainObjectWrapper extends Wrapper
     }
 
     /**
-     * [getMappedProperties description]
-     * @return [type]                [description]
+     * @return \ReflectionProperty[]
      */
     protected function getMappedProperties()
     {
@@ -82,7 +81,7 @@ class PlainObjectWrapper extends Wrapper
 
         // We need to filter out properties that could belong to the object
         // and which are not intended to be handled by the ORM
-        return array_filter($objectProperties, function($item) use ($attributeList) {
+        return array_filter($objectProperties, function (\ReflectionProperty $item) use ($attributeList) {
             if (in_array($item->getName(), $attributeList)) {
                 return true;
             }
@@ -90,7 +89,8 @@ class PlainObjectWrapper extends Wrapper
     }
 
     /**
-     * @param string $name
+     * @param  string $name
+     * @return \ReflectionProperty
      */
     protected function getMappedProperty($name)
     {
@@ -100,6 +100,7 @@ class PlainObjectWrapper extends Wrapper
     /**
      * Hydrate Plain PHP Object with wrapped attributes
      *
+     * @param  $attributes
      * @return void
      */
     protected function hydrate($attributes)
@@ -113,7 +114,7 @@ class PlainObjectWrapper extends Wrapper
                 $this->entity->$name = $attributes[$name];
             } else {
                 $property->setAccessible(true);
-    
+
                 $property->setValue($this->entity, $attributes[$name]);
             }
         }
@@ -196,8 +197,6 @@ class PlainObjectWrapper extends Wrapper
          */
     public function hasAttribute($key)
     {
-        $attributes = $this->entity->getEntityAttributes();
-
         if (array_key_exists($key, $$this->attributeList)) {
             return true;
         } else {

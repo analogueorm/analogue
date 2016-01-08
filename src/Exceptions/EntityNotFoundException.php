@@ -33,7 +33,7 @@ class EntityNotFoundException extends RuntimeException
      *
      * @return string
      */
-    public function getEnity()
+    public function getEntity()
     {
         return $this->entity;
     }

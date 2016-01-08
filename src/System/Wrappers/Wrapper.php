@@ -25,6 +25,11 @@ abstract class Wrapper implements InternallyMappable
      */
     protected $entityMap;
 
+    /**
+     * Wrapper constructor.
+     * @param $entity
+     * @param $entityMap
+     */
     public function __construct($entity, $entityMap)
     {
         $this->entity = $entity;
@@ -80,13 +85,33 @@ abstract class Wrapper implements InternallyMappable
         }
     }
 
+    /**
+     * @param string $key
+     * @param string $value
+     * @return mixed
+     */
     abstract public function setEntityAttribute($key, $value);
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     abstract public function getEntityAttribute($key);
 
+    /**
+     * @param array $attributes
+     * @return mixed
+     */
     abstract public function setEntityAttributes(array $attributes);
 
+    /**
+     * @return mixed
+     */
     abstract public function getEntityAttributes();
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     abstract public function hasAttribute($key);
 }

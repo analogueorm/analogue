@@ -43,6 +43,10 @@ class EntityCache
      */
     protected $pivotAttributes = [];
 
+    /**
+     * EntityCache constructor.
+     * @param EntityMap $entityMap
+     */
     public function __construct(EntityMap $entityMap)
     {
         $this->entityMap = $entityMap;
@@ -101,25 +105,17 @@ class EntityCache
     protected function mergeCacheResults($entities)
     {
         foreach ($entities as $key => $entity) {
-            if (array_key_exists($key, $this->cache)) {
-                /*
-                $existingValue = $this->cache[$key];
-
-                $this->cache[$key] = $entity + $existingValue;*/
-
-                $this->cache[$key] = $entity;
-            } else {
-                $this->cache[$key] = $entity;
-            }
+            $this->cache[$key] = $entity;
         }
     }
 
     /**
      * Cache Relation's query result for an entity
      *
-     * @param  mixed 	$parent
-     * @param  string   $relation name of the relation
-     * @param  mixed 	$results  results of the relationship's query
+     * @param  mixed        $parent
+     * @param  string       $relation name of the relation
+     * @param  mixed        $results  results of the relationship's query
+     * @param  Relationship $relationship
      *
      * @return void
      */
@@ -147,11 +143,11 @@ class EntityCache
     /**
      * Create a cachedRelationship instance which will hold related entity's hash and pivot attributes, if any.
      *
-     * @param  [type]       $parentKey    [description]
-     * @param  [type]       $relation     [description]
-     * @param  [type]       $result       [description]
-     * @param  Relationship $relationship [description]
-     * @return [type]                     [description]
+     * @param                $parentKey
+     * @param               $relation
+     * @param               $result
+     * @param  Relationship $relationship
+     * @return CachedRelationship
      */
     protected function getCachedRelationship($parentKey, $relation, $result, Relationship $relationship)
     {
@@ -186,11 +182,10 @@ class EntityCache
     /**
      * Cache a many relationship
      *
-     * @param  [type]       $parentKey    [description]
-     * @param  string       $relation     [description]
-     * @param  EntityCollection       $results      [description]
-     * @param  Relationship $relationship [description]
-     * @return [type]                     [description]
+     * @param                  $parentKey
+     * @param string           $relation
+     * @param EntityCollection $results
+     * @param Relationship     $relationship
      */
     protected function cacheManyRelationResults($parentKey, $relation, $results, Relationship $relationship)
     {
@@ -208,11 +203,10 @@ class EntityCache
     /**
      * Cache a single relationship
      *
-     * @param  [type]       $parentKey    [description]
-     * @param  string       $relation     [description]
-     * @param  Mappable       $result      [description]
-     * @param  Relationship $relationship [description]
-     * @return [type]                     [description]
+     * @param              $parentKey
+     * @param string       $relation
+     * @param Mappable     $result
+     * @param Relationship $relationship
      */
     protected function cacheSingleRelationResult($parentKey, $relation, $result, Relationship $relationship)
     {
@@ -238,9 +232,7 @@ class EntityCache
 
     /**
      * Refresh the cache record for an aggregated entity after a write operation
-     *
-     * @param  InternallyMappable $entity [description]
-     * @return [type]                     [description]
+     * @param Aggregate $entity
      */
     public function refresh(Aggregate $entity)
     {
@@ -250,6 +242,8 @@ class EntityCache
     /**
      * Transform an Aggregated Entity into a cache record
      *
+     * @param  Aggregate $aggregatedEntity
+     * @throws MappingException
      * @return array
      */
     protected function transform(Aggregate $aggregatedEntity)
@@ -295,7 +289,12 @@ class EntityCache
 
         return $baseAttributes + $relationAttributes;
     }
-        
+
+    /**
+     * @param                     $relation
+     * @param  InternallyMappable $entity
+     * @return array
+     */
     protected function getPivotValues($relation, InternallyMappable $entity)
     {
         $values = [];

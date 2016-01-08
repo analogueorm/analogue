@@ -11,7 +11,7 @@ use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
- * This class keeps track of instanciated mappers, and entity <-> entityMap associations
+ * This class keeps track of instantiated mappers, and entity <-> entityMap associations
  */
 class Manager
 {
@@ -108,8 +108,9 @@ class Manager
     /**
      * Create a mapper for a given entity
      *
-     * @param \Analogue\ORM\Mappable|string $entity
-     * @param mixed $entityMap
+     * @param  \Analogue\ORM\Mappable|string $entity
+     * @param  mixed                         $entityMap
+     * @throws MappingException
      * @return Mapper
      */
     public function mapper($entity, $entityMap = null)
@@ -134,7 +135,7 @@ class Manager
      * Build a new Mapper instance for a given Entity
      *
      * @param  string $entity
-     * @param  $entityMap
+     * @param         $entityMap
      * @return Mapper
      */
     protected function buildMapper($entity, $entityMap)
@@ -154,7 +155,7 @@ class Manager
         $this->mappers[$entity] = $mapper;
 
         // At this point we can safely call the boot() method on the entityMap as
-        // the mapper is now instanciated & registered within the manager.
+        // the mapper is now instantiated & registered within the manager.
 
         $mapper->getEntityMap()->boot();
         
@@ -164,8 +165,9 @@ class Manager
     /**
      * Create a mapper for a given entity (static alias)
      *
-     * @param \Analogue\ORM\Mappable|string $entity
-     * @param null|EntityMap $entityMap
+     * @param  \Analogue\ORM\Mappable|string $entity
+     * @param  null|EntityMap                $entityMap
+     * @throws MappingException
      * @return Mapper
      */
     public static function getMapper($entity, $entityMap = null)
@@ -177,6 +179,8 @@ class Manager
      * Get the Repository instance for the given Entity
      *
      * @param  \Analogue\ORM\Mappable|string $entity
+     * @throws \InvalidArgumentException
+     * @throws MappingException
      * @return \Analogue\ORM\Repository
      */
     public function repository($entity)
@@ -198,8 +202,9 @@ class Manager
     /**
      * Register an entity
      *
-     * @param  string|Mappable $entity    entity's class name
-     * @param  string|EntityMap $entityMap map's class name
+     * @param  string|\Analogue\ORM\Mappable $entity    entity's class name
+     * @param  string|EntityMap              $entityMap map's class name
+     * @throws MappingException
      * @return void
      */
     public function register($entity, $entityMap = null)
@@ -240,7 +245,7 @@ class Manager
      * Get the entity map instance for a custom entity
      *
      * @param  string   $entity
-     * @return Mappable
+     * @return \Analogue\ORM\Mappable
      */
     protected function getEntityMapInstanceFor($entity)
     {
@@ -248,7 +253,7 @@ class Manager
             $map = $entity . 'Map';
             $map = new $map;
         } else {
-            // Generate an EntityMap obeject
+            // Generate an EntityMap object
             $map = $this->getNewEntityMap();
         }
         
@@ -270,6 +275,7 @@ class Manager
      *
      * @param  string $valueObject
      * @param  string $valueMap
+     * @throws MappingException
      * @return void
      */
     public function registerValueObject($valueObject, $valueMap = null)
@@ -292,7 +298,7 @@ class Manager
     /**
      * Return true is the object is registered as value object
      *
-     * @param  mixed  $object
+     * @param  mixed $object
      * @return boolean
      */
     public function isValueObject($object)
@@ -308,6 +314,7 @@ class Manager
      * Get the Value Map for a given Value Object Class
      *
      * @param  string $valueObject
+     * @throws MappingException
      * @return \Analogue\ORM\ValueMap
      */
     public function getValueMap($valueObject)
@@ -327,10 +334,10 @@ class Manager
     }
 
     /**
-     * Instanciate a new Value Object instance
+     * Instantiate a new Value Object instance
      *
      * @param  string $valueObject
-     * @return ValueObject
+     * @return \Analogue\ORM\ValueObject
      */
     public function getValueObjectInstance($valueObject)
     {
@@ -356,7 +363,7 @@ class Manager
     /**
      * Check if the entity is already registered
      *
-     * @param  string|object  $entity
+     * @param  string|object $entity
      * @return boolean
      */
     public function isRegisteredEntity($entity)
@@ -374,6 +381,7 @@ class Manager
      *
      * @param  string $event
      * @param  \Closure $callback
+     * @throws \Exception
      * @return void
      */
     public function registerGlobalEvent($event, $callback)
@@ -388,6 +396,7 @@ class Manager
      * Shortcut to Mapper store
      *
      * @param  mixed $entity
+     * @throws MappingException
      * @return mixed
      */
     public function store($entity)
@@ -399,6 +408,7 @@ class Manager
      * Shortcut to Mapper delete
      *
      * @param  mixed $entity
+     * @throws MappingException
      * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
@@ -410,6 +420,7 @@ class Manager
      * Shortcut to Mapper query
      *
      * @param  mixed $entity
+     * @throws MappingException
      * @return Query
      */
     public function query($entity)
@@ -421,6 +432,7 @@ class Manager
      * Shortcut to Mapper Global Query
      *
      * @param  mixed $entity
+     * @throws MappingException
      * @return Query
      */
     public function globalQuery($entity)

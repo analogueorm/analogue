@@ -6,6 +6,11 @@ use Analogue\ORM\Commands\Command;
 
 class Restore extends Command
 {
+    /**
+     * @throws \InvalidArgumentException
+     *
+     * @return false|mixed
+     */
     public function execute()
     {
         $aggregate = $this->aggregate;
