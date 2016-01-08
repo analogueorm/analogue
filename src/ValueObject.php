@@ -103,7 +103,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     {
         unset($this->$offset);
     }
-    
+
     /**
      * Convert the object into something JSON serializable.
      *
@@ -113,7 +113,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     {
         return $this->toArray();
     }
-    
+
     /**
      * Convert the entity instance to JSON.
      *
@@ -125,7 +125,6 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
         return json_encode($this->toArray(), $options);
     }
 
-    
     /**
      * Convert Mappable object to array;
      *
@@ -136,7 +135,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
         return $this->attributesToArray($this->attributes);
     }
 
-     /**
+    /**
      * Transform the Object to array/json,
      *
      * @return array

@@ -120,7 +120,7 @@ class PlainObjectWrapper extends Wrapper
         }
     }
 
-     /**
+    /**
      * Method used by the mapper to set the object
      * attribute raw values (hydration)
      *

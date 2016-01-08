@@ -334,11 +334,7 @@ class Manager
      */
     public function getValueObjectInstance($valueObject)
     {
-        $prototype = unserialize(sprintf('O:%d:"%s":0:{}',
-            strlen($valueObject),
-                        $valueObject
-                     )
-                );
+        $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($valueObject), $valueObject));
         return $prototype;
     }
 
