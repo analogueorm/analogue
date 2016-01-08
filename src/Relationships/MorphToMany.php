@@ -49,7 +49,7 @@ class MorphToMany extends BelongsToMany
     {
         $this->inverse = $inverse;
         
-        $this->morphType = $name.'_type';
+        $this->morphType = $name . '_type';
 
         $this->morphClass = $inverse ? $mapper->getEntityMap()->getClass() : get_class($parent);
 
@@ -65,7 +65,7 @@ class MorphToMany extends BelongsToMany
     {
         parent::setWhere();
 
-        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
+        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
 
         return $this;
     }
@@ -81,7 +81,7 @@ class MorphToMany extends BelongsToMany
     {
         $query = parent::getRelationCountQuery($query, $parent);
 
-        return $query->where($this->table.'.'.$this->morphType, $this->morphClass);
+        return $query->where($this->table . '.' . $this->morphType, $this->morphClass);
     }
 
     /**
@@ -94,7 +94,7 @@ class MorphToMany extends BelongsToMany
     {
         parent::addEagerConstraints($entities);
 
-        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
+        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
     }
 
     /**

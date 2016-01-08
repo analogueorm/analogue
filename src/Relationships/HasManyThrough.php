@@ -83,7 +83,7 @@ class HasManyThrough extends Relationship
         if (static::$constraints) {
             $farParentKeyName = $this->farParentMap->getKeyName();
 
-            $this->query->where($parentTable.'.'.$this->firstKey,
+            $this->query->where($parentTable . '.' . $this->firstKey,
                 '=', $this->farParent->getEntityAttribute($farParentKeyName));
         }
     }
@@ -103,7 +103,7 @@ class HasManyThrough extends Relationship
 
         $query->select(new Expression('count(*)'));
 
-        $key = $this->wrap($parentTable.'.'.$this->firstKey);
+        $key = $this->wrap($parentTable . '.' . $this->firstKey);
 
         return $query->where($this->getHasCompareKey(), '=', new Expression($key));
     }
@@ -118,7 +118,7 @@ class HasManyThrough extends Relationship
     {
         $query = $query ?: $this->query;
 
-        $foreignKey = $this->relatedMap->getTable().'.'.$this->secondKey;
+        $foreignKey = $this->relatedMap->getTable() . '.' . $this->secondKey;
 
         $query->join($this->parentMap->getTable(), $this->getQualifiedParentKeyName(), '=', $foreignKey);
     }
@@ -133,7 +133,7 @@ class HasManyThrough extends Relationship
     {
         $table = $this->parentMap->getTable();
 
-        $this->query->whereIn($table.'.'.$this->firstKey, $this->getKeys($entities));
+        $this->query->whereIn($table . '.' . $this->firstKey, $this->getKeys($entities));
     }
 
     /**
@@ -256,10 +256,10 @@ class HasManyThrough extends Relationship
     protected function getSelectColumns(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->relatedMap->getTable().'.*'];
+            $columns = [$this->relatedMap->getTable() . '.*'];
         }
 
-        return array_merge($columns, [$this->parentMap->getTable().'.'.$this->firstKey]);
+        return array_merge($columns, [$this->parentMap->getTable() . '.' . $this->firstKey]);
     }
 
     /**

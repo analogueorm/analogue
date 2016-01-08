@@ -252,8 +252,8 @@ abstract class Relationship
 
         $host = $this;
 
-        return array_unique(array_values(array_map(function ($value) use ($key, $host) {
-            if (! $value instanceof InternallyMappable) {
+        return array_unique(array_values(array_map(function($value) use ($key, $host) {
+            if (!$value instanceof InternallyMappable) {
                 $value = $host->factory->make($value);
             }
 
@@ -412,7 +412,7 @@ abstract class Relationship
 
         $keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
 
-        $hash = $class.'.'.$entity->getEntityAttribute($keyName);
+        $hash = $class . '.' . $entity->getEntityAttribute($keyName);
 
         return $hash;
     }

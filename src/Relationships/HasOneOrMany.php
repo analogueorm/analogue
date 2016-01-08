@@ -291,7 +291,7 @@ abstract class HasOneOrMany extends Relationship
      */
     public function getQualifiedParentKeyName()
     {
-        return $this->parentMap->getTable().'.'.$this->localKey;
+        return $this->parentMap->getTable() . '.' . $this->localKey;
     }
 
     /**

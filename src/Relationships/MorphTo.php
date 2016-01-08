@@ -163,7 +163,7 @@ class MorphTo extends BelongsTo
     {
         $foreign = $this->foreignKey;
 
-        return BaseCollection::make($this->dictionary[$type])->map(function ($entities) use ($foreign) {
+        return BaseCollection::make($this->dictionary[$type])->map(function($entities) use ($foreign) {
             return head($entities)->{$foreign};
 
         })->unique();
