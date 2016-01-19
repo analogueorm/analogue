@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 interface QueryAdapter
 {

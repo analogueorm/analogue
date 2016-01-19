@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -9,9 +11,15 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 class IlluminateDBAdapter implements DBAdapter
 {
-
+    /**
+     * @var Connection
+     */
     protected $connection;
 
+    /**
+     * IlluminateDBAdapter constructor.
+     * @param Connection $connection
+     */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
@@ -67,6 +75,6 @@ class IlluminateDBAdapter implements DBAdapter
      */
     public function rollback()
     {
-        $this->connection->rollback();
+        $this->connection->rollBack();
     }
 }

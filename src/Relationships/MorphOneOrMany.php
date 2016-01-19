@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 
 abstract class MorphOneOrMany extends HasOneOrMany
 {
-
     /**
      * The foreign key type for the relationship.
      *
@@ -23,12 +24,12 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  Mappable  $parent
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
-     * @return void
+     * @param  Mapper                 $mapper
+     * @param  \Analogue\ORM\Mappable $parent
+     * @param  string                 $type
+     * @param  string                 $id
+     * @param  string                 $localKey
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent, $type, $id, $localKey)
     {
@@ -37,12 +38,6 @@ abstract class MorphOneOrMany extends HasOneOrMany
 
         parent::__construct($mapper, $parent, $id, $localKey);
     }
-
-    /*public function attachOne($entity)
-    {
-        $entity->setEntityAttribute($this->getPlainMorphType(), get_class($this->parent));
-        $entity->setEntityAttribute($this->getPlainForeignKey(), $this->getParentKey());
-    }*/
 
     /**
      * Set the base constraints on the relation query.
@@ -61,9 +56,9 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Get the relationship count query.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  \Analogue\ORM\System\Query  $parent
-     * @return \Analogue\ORM\System\Query
+     * @param  Query $query
+     * @param  Query $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -75,7 +70,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)

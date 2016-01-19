@@ -1,8 +1,9 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 class Popo
 {
-
     protected $id;
 
     protected $name;

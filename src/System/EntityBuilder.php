@@ -1,6 +1,7 @@
-<?php namespace Analogue\ORM\System;
+<?php
 
-use Analogue\ORM\Mappable;
+namespace Analogue\ORM\System;
+
 use Analogue\ORM\System\Wrappers\Factory;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
@@ -10,7 +11,6 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 class EntityBuilder
 {
-
     /**
      * The mapper for the entity to build
      * @var \Analogue\ORM\System\Mapper
@@ -44,6 +44,11 @@ class EntityBuilder
      */
     protected $factory;
 
+    /**
+     * EntityBuilder constructor.
+     * @param Mapper $mapper
+     * @param array  $eagerLoads
+     */
     public function __construct(Mapper $mapper, array $eagerLoads)
     {
         $this->mapper = $mapper;
@@ -62,13 +67,12 @@ class EntityBuilder
     /**
      * Convert a result set into an array of entities
      *
-     * @param  array  $results
-     *
+     * @param  array $results
      * @return array
      */
     public function build(array $results)
     {
-        $entities = array();
+        $entities = [];
 
         //$prototype = $this->getWrapperPrototype();
         //$prototype = $this->mapper->newInstance();
@@ -83,7 +87,7 @@ class EntityBuilder
 
             $resultArray = (array) $result;
 
-            $tmpCache[$resultArray[$keyName] ] = $resultArray;
+            $tmpCache[$resultArray[$keyName]] = $resultArray;
 
             // Hydrate any embedded Value Object
             $this->hydrateValueObjects($resultArray);
@@ -108,7 +112,8 @@ class EntityBuilder
     /**
      * Get the correct wrapper prototype corresponding to the object type
      *
-     * @return mixed
+     * @throws \Analogue\ORM\Exceptions\MappingException
+     * @return InternallyMappable
      */
     protected function getWrapperInstance()
     {
@@ -119,6 +124,7 @@ class EntityBuilder
      * Hydrate value object embedded in this entity
      *
      * @param  array $attributes
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return void
      */
     protected function hydrateValueObjects(& $attributes)
@@ -131,9 +137,10 @@ class EntityBuilder
     /**
      * Hydrate a single value object
      *
-     * @param  array $attributes
+     * @param  array  $attributes
      * @param  string $localKey
      * @param  string $valueClass
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return void
      */
     protected function hydrateValueObject(& $attributes, $localKey, $valueClass)
@@ -142,18 +149,16 @@ class EntityBuilder
 
         $embeddedAttributes = $map->getAttributes();
 
-        //$nestedValueObjects = $map->getEmbeddables();
-
         $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
 
         foreach ($embeddedAttributes as $key) {
-            $prefix = snake_case(class_basename($valueClass)).'_';
+            $prefix = snake_case(class_basename($valueClass)) . '_';
 
             $voWrapper = $this->factory->make($valueObject);
 
-            $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
+            $voWrapper->setEntityAttribute($key, $attributes[$prefix . $key]);
             
-            unset($attributes[$prefix.$key]);
+            unset($attributes[$prefix . $key]);
         }
         
         $attributes[$localKey] = $valueObject;
@@ -174,7 +179,7 @@ class EntityBuilder
     /**
      * Build lazy loading proxies for the current entity
      *
-     * @param \Analogue\ORM\Mappable $entity
+     * @param InternallyMappable $entity
      *
      * @return array
      */

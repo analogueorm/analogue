@@ -1,13 +1,13 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Support\Collection as BaseCollection;
 
 class MorphTo extends BelongsTo
 {
-
     /**
      * The type of the polymorphic relation.
      *
@@ -18,7 +18,7 @@ class MorphTo extends BelongsTo
     /**
      * The entities whose relations are being eager loaded.
      *
-     * @var \Analogue\ORM\EntityCollection
+     * @var EntityCollection
      */
     protected $entities;
 
@@ -27,9 +27,9 @@ class MorphTo extends BelongsTo
      *
      * @var array
      */
-    protected $dictionary = array();
+    protected $dictionary = [];
 
-    /*
+    /**
      * Indicates if soft-deleted model instances should be fetched.
      *
      * @var bool
@@ -46,13 +46,12 @@ class MorphTo extends BelongsTo
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  Mappable  $parent
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
-     * @param  string  $type
-     * @param  string  $relation
-     * @return void
+     * @param Mapper                 $mapper
+     * @param \Analogue\ORM\Mappable $parent
+     * @param string                 $foreignKey
+     * @param string                 $otherKey
+     * @param string                 $type
+     * @param string                 $relation
      */
     public function __construct(Mapper $mapper, $parent, $foreignKey, $otherKey, $type, $relation)
     {
@@ -64,7 +63,7 @@ class MorphTo extends BelongsTo
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -75,7 +74,7 @@ class MorphTo extends BelongsTo
     /**
      * Build a dictionary with the entities
      *
-     * @param  \Analogue\ORM\EntityCollection  $entities
+     * @param  EntityCollection $entities
      * @return void
      */
     protected function buildDictionary(EntityCollection $entities)
@@ -90,9 +89,9 @@ class MorphTo extends BelongsTo
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
@@ -100,10 +99,11 @@ class MorphTo extends BelongsTo
         return $entities;
     }
 
-    /*
+    /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @throws \Analogue\ORM\Exceptions\MappingException
+     * @return EntityCollection
      */
     public function getEager()
     {
@@ -117,8 +117,8 @@ class MorphTo extends BelongsTo
     /**
      * Match the results for a given type to their parents.
      *
-     * @param  string  $type
-     * @param  \Analogue\ORM\EntityCollection  $results
+     * @param  string           $type
+     * @param  EntityCollection $results
      * @return void
      */
     protected function matchToMorphParents($type, EntityCollection $results)
@@ -135,20 +135,17 @@ class MorphTo extends BelongsTo
     /**
      * Get all of the relation results for a type.
      *
-     * @param  string  $type
-     * @return \Analogue\ORM\EntityCollection
+     * @param  string $type
+     * @throws \Analogue\ORM\Exceptions\MappingException
+     * @return EntityCollection
      */
     protected function getResultsByType($type)
     {
         $mapper = $this->relatedMapper->getManager()->mapper($type);
 
-        $map = $mapper->getEntityMap();
-
-        $key = $map->getKeyName();
+        $key = $mapper->getEntityMap()->getKeyName();
 
         $query = $mapper->getQuery();
-
-        //$query = $this->useWithTrashed($query);
 
         return $query->whereIn($key, $this->gatherKeysByType($type)->all())->get();
     }
@@ -156,8 +153,8 @@ class MorphTo extends BelongsTo
     /**
      * Gather all of the foreign keys for a given type.
      *
-     * @param  string  $type
-     * @return array
+     * @param  string $type
+     * @return BaseCollection
      */
     protected function gatherKeysByType($type)
     {
@@ -168,16 +165,6 @@ class MorphTo extends BelongsTo
 
         })->unique();
     }
-
-    /**
-     * Get the foreign key of the relationship.
-     *
-     * @return string
-     */
-    /*public function getForeignKey()
-    {
-        return $this->foreignKey;
-    }*/
 
     /**
      * Associate the model instance to the given parent.
@@ -193,7 +180,7 @@ class MorphTo extends BelongsTo
         //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
         //
         // Instead, we'll just add the object to the Entity's attribute
-        
+
         $this->parent->setEntityAttribute($this->relation, $entity);
     }
 

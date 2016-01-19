@@ -7,7 +7,6 @@ use Analogue\ORM\Drivers\QueryAdapter;
 
 abstract class Command
 {
-
     /**
      * The aggregated entity on which the command is executed
      *
@@ -22,6 +21,11 @@ abstract class Command
      */
     protected $query;
 
+    /**
+     * Command constructor.
+     * @param Aggregate $aggregate
+     * @param QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter $query
+     */
     public function __construct(Aggregate $aggregate, QueryAdapter $query)
     {
         $this->aggregate = $aggregate;

@@ -1,4 +1,6 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
 use Illuminate\Support\Collection;
@@ -6,7 +8,6 @@ use Analogue\ORM\EntityCollection;
 
 class DomainTest extends PHPUnit_Framework_TestCase
 {
-
     public function testStoreRoleUser()
     {
         $analogue = get_analogue();

@@ -1,14 +1,12 @@
-<?php namespace Analogue\ORM\System\Wrappers;
+<?php
 
-use Analogue\ORM\Mappable;
-use Analogue\ORM\EntityMap;
+namespace Analogue\ORM\System\Wrappers;
 
 /**
  * Simple Wrapper for Mappable objects
  */
 class EntityWrapper extends Wrapper
 {
-   
     /**
      * Method used by the mapper to set the object
      * attribute raw values (hydration)
@@ -71,7 +69,7 @@ class EntityWrapper extends Wrapper
     /**
      * Test if a given attribute exists
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     public function hasAttribute($key)

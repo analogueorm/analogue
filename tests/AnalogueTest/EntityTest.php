@@ -1,12 +1,12 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use PHPUnit_Framework_TestCase;
-use Illuminate\Support\Collection;
 use Analogue\ORM\EntityCollection;
 
 class EntityTest extends PHPUnit_Framework_TestCase
 {
-
     public function testAddToLazyLoadedCollection()
     {
         $mapper = get_mapper('AnalogueTest\App\Role');

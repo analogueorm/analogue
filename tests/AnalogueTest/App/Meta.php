@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\Mappable;
 
 class Meta implements Mappable
 {
-    
     protected $content = [];
 
     public function setEntityAttributes(array $attributes)

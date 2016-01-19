@@ -1,15 +1,15 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 interface DBAdapter
 {
-
     /**
      * Return's Driver specific Query Implementation
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
      */
     public function getQuery();
-    
 
     /**
      * Return the Date format used on this adapter

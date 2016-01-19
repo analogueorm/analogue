@@ -1,12 +1,20 @@
-<?php namespace Analogue\ORM\Drivers;
+<?php
+
+namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class CapsuleConnectionProvider
 {
-
+    /**
+     * @var Capsule
+     */
     protected $capsule;
 
+    /**
+     * CapsuleConnectionProvider constructor.
+     * @param Capsule $capsule
+     */
     public function __construct(Capsule $capsule)
     {
         $this->capsule = $capsule;

@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use Analogue\ORM\System\Manager;
 use Illuminate\Events\Dispatcher;
@@ -10,21 +12,38 @@ use Analogue\ORM\Drivers\CapsuleConnectionProvider;
 /**
  * This class is a proxy to the Manager class, which allows
  * using Analogue outside of the Laravel framework.
+ *
+ * @mixin Manager
  */
 class Analogue
 {
-
+    /**
+     * @var self
+     */
     protected static $instance;
 
+    /**
+     * @var Manager
+     */
     protected static $manager;
 
+    /**
+     * @var Capsule
+     */
     protected static $capsule;
 
+    /**
+     * @var bool
+     */
     protected static $booted = false;
 
+    /**
+     * Analogue constructor.
+     * @param array $connection
+     */
     public function __construct(array $connection)
     {
-        if (! static::$booted) {
+        if (!static::$booted) {
             static::$capsule = new Capsule;
 
             $this->addConnection($connection);
@@ -66,12 +85,12 @@ class Analogue
     /**
      * Add a connection array to Capsule
      *
-     * @param array     $config
-     * @param string    $name
+     * @param array  $config
+     * @param string $name
      */
     public function addConnection($config, $name = 'default')
     {
-        return static::$capsule->addConnection($config, $name);
+        static::$capsule->addConnection($config, $name);
     }
 
     /**
@@ -88,24 +107,24 @@ class Analogue
     /**
      * Dynamically handle static calls to the instance, Facade Style.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param  string $method
+     * @param  array  $parameters
      * @return mixed
      */
     public static function __callStatic($method, $parameters)
     {
-        return call_user_func_array(array(static::$instance, $method), $parameters);
+        return call_user_func_array([static::$instance, $method], $parameters);
     }
 
     /**
      * Dynamically handle calls to the Analogue Manager instance.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param  string $method
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
     {
-        return call_user_func_array(array(static::$manager, $method), $parameters);
+        return call_user_func_array([static::$manager, $method], $parameters);
     }
 }

@@ -3,15 +3,9 @@
 namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\Mappable;
-use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
-use Analogue\ORM\Drivers\QueryAdapter;
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\EntityProxy;
-use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\System\Proxies\ProxyInterface;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
@@ -20,11 +14,11 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 class Store extends Command
 {
-
     /**
      * Persist the entity in the database
      *
-     * @return void
+     * @throws \InvalidArgumentException
+     * @return false|mixed
      */
     public function execute()
     {
@@ -42,11 +36,11 @@ class Store extends Command
          * We will test the entity for existence
          * and run a creation if it doesn't exists
          */
-        if (! $this->aggregate->exists()) {
+        if (!$this->aggregate->exists()) {
             if ($mapper->fireEvent('creating', $entity) === false) {
                 return false;
             }
-            
+
             $this->insert();
 
             $mapper->fireEvent('created', $entity, false);
@@ -70,20 +64,20 @@ class Store extends Command
         $mapper->fireEvent('stored', $entity, false);
 
         return $entity;
-        ;
     }
 
     /**
      * Run all operations that have to occur before actually
      * storing the entity
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function preStoreProcess()
     {
         // Create any related object that doesn't exist in the database.
         $localRelationships = $this->aggregate->getEntityMap()->getLocalRelationships();
-        
+
         $this->createRelatedEntities($localRelationships);
     }
 
@@ -91,12 +85,13 @@ class Store extends Command
      * Check for existence and create non-existing related entities
      *
      * @param  array
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function createRelatedEntities($relations)
     {
         $entitiesToCreate = $this->aggregate->getNonExistingRelated($relations);
-                
+
         foreach ($entitiesToCreate as $aggregate) {
             $this->createStoreCommand($aggregate)->execute();
         }
@@ -106,7 +101,7 @@ class Store extends Command
      * Create a new store command
      *
      * @param  Aggregate $aggregate
-     * @return void
+     * @return Store
      */
     protected function createStoreCommand(Aggregate $aggregate)
     {
@@ -120,6 +115,7 @@ class Store extends Command
      * Run all operations that have to occur after the entity
      * is stored.
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function postStoreProcess()
@@ -147,7 +143,7 @@ class Store extends Command
         // This should be move to the wrapper class
         // so it's the same code for the entity builder
         $aggregate->setProxies();
-        
+
         // Update Entity Cache
         $aggregate->getMapper()->getEntityCache()->refresh($aggregate);
     }
@@ -164,7 +160,7 @@ class Store extends Command
         $attributes = $this->getAttributes();
 
         foreach ($relations as $relation) {
-            if (! array_key_exists($relation, $attributes)) {
+            if (!array_key_exists($relation, $attributes)) {
                 continue;
             }
 
@@ -181,7 +177,7 @@ class Store extends Command
             if ($value instanceof CollectionProxy && $value->isLoaded()) {
                 $value = $value->getUnderlyingCollection();
             }
-            if ($value instanceof CollectionProxy && ! $value->isLoaded()) {
+            if ($value instanceof CollectionProxy && !$value->isLoaded()) {
                 foreach ($value->getAddedItems() as $entity) {
                     $this->updateEntityIfDirty($entity);
                 }
@@ -190,7 +186,7 @@ class Store extends Command
 
             if ($value instanceof EntityCollection) {
                 foreach ($value as $entity) {
-                    if (! $this->createEntityIfNotExists($entity)) {
+                    if (!$this->createEntityIfNotExists($entity)) {
                         $this->updateEntityIfDirty($entity);
                     }
                 }
@@ -231,6 +227,8 @@ class Store extends Command
     /**
      * Run an update statement on the entity
      *
+     * @throws \InvalidArgumentException
+     *
      * @return void
      */
     protected function update()
@@ -242,7 +240,7 @@ class Store extends Command
         $query = $query->where($keyName, '=', $this->aggregate->getEntityId());
 
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
-                
+
         if (count($dirtyAttributes) > 0) {
             $query->update($dirtyAttributes);
         }

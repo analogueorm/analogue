@@ -1,10 +1,11 @@
-<?php namespace AnalogueTest\App;
+<?php
+
+namespace AnalogueTest\App;
 
 use Analogue\ORM\Entity;
 
 class Resource extends Entity
 {
-
     protected $hidden = ['name', 'v_field_1'];
 
     public function __construct($name, V $value = null)

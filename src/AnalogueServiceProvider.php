@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 use Illuminate\Support\ServiceProvider;
 use Analogue\ORM\System\Manager;
@@ -11,7 +13,6 @@ use Analogue\ORM\Drivers\IlluminateConnectionProvider;
  */
 class AnalogueServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      *

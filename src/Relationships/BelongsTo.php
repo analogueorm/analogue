@@ -2,6 +2,7 @@
 
 namespace Analogue\ORM\Relationships;
 
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
@@ -9,7 +10,6 @@ use Illuminate\Database\Query\Expression;
 
 class BelongsTo extends Relationship
 {
-
     /**
      * The foreign key of the parent model.
      *
@@ -41,11 +41,11 @@ class BelongsTo extends Relationship
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Analogue\ORM\System\Mapper $mapper
-     * @param  Mappable  $parent
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
-     * @param  string  $relation
+     * @param Mapper   $mapper
+     * @param Mappable $parent
+     * @param string   $foreignKey
+     * @param string   $otherKey
+     * @param string   $relation
      */
     public function __construct(Mapper $mapper, $parent, $foreignKey, $otherKey, $relation)
     {
@@ -55,21 +55,31 @@ class BelongsTo extends Relationship
 
         parent::__construct($mapper, $parent);
     }
-    
+
+    /**
+     * @param  $related
+     * @return mixed
+     */
     public function attachTo($related)
     {
-        return $this->associate($related);
+        $this->associate($related);
     }
 
+    /**
+     * @param $related
+     * @return Mappable
+     */
     public function detachFrom($related)
     {
-        return $this->dissociate($related);
+        return $this->dissociate($related); //todo
     }
-    
+
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @param  $relation
+     *
+     * @return \Analogue\ORM\Entity
      */
     public function getResults($relation)
     {
@@ -93,22 +103,22 @@ class BelongsTo extends Relationship
             // of the related models matching on the foreign key that's on a parent.
             $table = $this->relatedMap->getTable();
 
-            $this->query->where($table.'.'.$this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
+            $this->query->where($table . '.' . $this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
         }
     }
 
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  \Analogue\ORM\System\Query  $parent
-     * @return \Analogue\ORM\System\Query
+     * @param  Query $query
+     * @param  Query $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
         $query->select(new Expression('count(*)'));
 
-        $otherKey = $this->wrap($query->getTable().'.'.$this->otherKey);
+        $otherKey = $this->wrap($query->getTable() . '.' . $this->otherKey);
 
         return $query->where($this->getQualifiedForeignKey(), '=', new Expression($otherKey));
     }
@@ -116,7 +126,7 @@ class BelongsTo extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -124,7 +134,7 @@ class BelongsTo extends Relationship
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
-        $key = $this->relatedMap->getTable().'.'.$this->otherKey;
+        $key = $this->relatedMap->getTable() . '.' . $this->otherKey;
 
         $this->query->whereIn($key, $this->getEagerModelKeys($entities));
     }
@@ -132,12 +142,12 @@ class BelongsTo extends Relationship
     /**
      * Gather the keys from an array of related models.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return array
      */
     protected function getEagerModelKeys(array $entities)
     {
-        $keys = array();
+        $keys = [];
 
         // First we need to gather all of the keys from the parent models so we know what
         // to query for via the eager loading query. We will add them to an array then
@@ -145,7 +155,7 @@ class BelongsTo extends Relationship
         foreach ($entities as $entity) {
             $entity = $this->factory->make($entity);
 
-            if (! is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
+            if (!is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
                 $keys[] = $value;
             }
         }
@@ -154,7 +164,7 @@ class BelongsTo extends Relationship
         // it so the query doesn't fail, but will not return any results, which should
         // be what this developer is expecting in a case where this happens to them.
         if (count($keys) == 0) {
-            return array(0);
+            return [0];
         }
 
         return array_values(array_unique($keys));
@@ -163,8 +173,8 @@ class BelongsTo extends Relationship
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $entities
-     * @param  string  $relation
+     * @param  array  $entities
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -180,9 +190,9 @@ class BelongsTo extends Relationship
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
@@ -229,7 +239,7 @@ class BelongsTo extends Relationship
         //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
         //
         // Instead, we'll just add the object to the Entity's attribute
-        
+
         $this->parent->setEntityAttribute($this->relation, $entity);
     }
 
@@ -244,7 +254,7 @@ class BelongsTo extends Relationship
         // the foreign key attribute inside the parent Entity.
         //
         //$this->parent->setEntityAttribute($this->foreignKey, null);
-                
+
         $this->parent->setEntityAttribute($this->relation, null);
     }
 
@@ -261,7 +271,7 @@ class BelongsTo extends Relationship
     /**
      * Get the foreign key value pair for a related object
      *
-     * @var mixed $related
+     * @param  mixed $related
      *
      * @return array
      */
@@ -287,7 +297,7 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedForeignKey()
     {
-        return $this->parentMap->getTable().'.'.$this->foreignKey;
+        return $this->parentMap->getTable() . '.' . $this->foreignKey;
     }
 
     /**
@@ -307,6 +317,6 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedOtherKeyName()
     {
-        return $this->relatedMap->getTable().'.'.$this->otherKey;
+        return $this->relatedMap->getTable() . '.' . $this->otherKey;
     }
 }

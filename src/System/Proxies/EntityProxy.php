@@ -1,8 +1,9 @@
-<?php namespace Analogue\ORM\System\Proxies;
+<?php
+
+namespace Analogue\ORM\System\Proxies;
 
 class EntityProxy extends Proxy
 {
-
     /**
      * Underlying entity
      *
@@ -27,7 +28,7 @@ class EntityProxy extends Proxy
      */
     public function getUnderlyingObject()
     {
-        if (! $this->isLoaded()) {
+        if (!$this->isLoaded()) {
             $this->loadOnce();
         }
 
@@ -42,7 +43,7 @@ class EntityProxy extends Proxy
      */
     public function __get($attribute)
     {
-        if (! $this->isLoaded()) {
+        if (!$this->isLoaded()) {
             $this->loadOnce();
         }
 
@@ -58,7 +59,7 @@ class EntityProxy extends Proxy
      */
     public function __set($attribute, $value)
     {
-        if (! $this->isLoaded()) {
+        if (!$this->isLoaded()) {
             $this->loadOnce();
         }
 
@@ -74,7 +75,7 @@ class EntityProxy extends Proxy
      */
     public function __call($method, $parameters)
     {
-        if (! $this->isLoaded()) {
+        if (!$this->isLoaded()) {
             $this->loadOnce();
         }
 

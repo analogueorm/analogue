@@ -1,15 +1,17 @@
-<?php namespace Analogue\ORM\System\Wrappers;
+<?php
+
+namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 
 class Factory
 {
-
     /**
      * Build the wrapper corresponding to the object's type
      *
      * @param  mixed $object
+     * @throws \Analogue\ORM\Exceptions\MappingException
      * @return Wrapper
      */
     public function make($object)

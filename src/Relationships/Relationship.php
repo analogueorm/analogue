@@ -1,37 +1,42 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Closure;
 use Carbon\Carbon;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Database\Query\Expression;
 
+/**
+ * Class Relationship
+ *
+ * @mixin Query
+ */
 abstract class Relationship
 {
-
     /**
      * The mapper instance for the related entity
      *
-     * @var \Analogue\ORM\System\Mapper
+     * @var Mapper
      */
     protected $relatedMapper;
 
     /**
      * The Analogue Query Builder instance.
      *
-     * @var \Analogue\ORM\Query
+     * @var Query
      */
     protected $query;
 
     /**
      * The parent entity proxy instance.
      *
-     * @var \Analogue\ORM\System\InternallyMappable
+     * @var InternallyMappable
      */
     protected $parent;
 
@@ -44,7 +49,7 @@ abstract class Relationship
     /**
      * The Parent Mapper instance
      *
-     * @var \Analogue\ORM\System\Mapper
+     * @var Mapper
      */
     protected $parentMapper;
 
@@ -92,9 +97,9 @@ abstract class Relationship
     /**
      * Create a new relation instance.
      *
-     * @param  \Analogue\ORM\System\Mapper  $mapper
-     * @param  Mappable  $parent
-     * @return void
+     * @param  Mapper   $mapper
+     * @param  Mappable $parent
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent)
     {
@@ -118,16 +123,14 @@ abstract class Relationship
     }
 
     /**
-     *
-     * @param  [type] $related [description]
-     * @return [type]         [description]
+     * @param $related
+     * @return mixed
      */
     abstract public function attachTo($related);
 
     /**
-     *
-     * @param  [type] $related [description]
-     * @return [type]         [description]
+     * @param $related
+     * @return mixed
      */
     abstract public function detachFrom($related);
 
@@ -161,7 +164,7 @@ abstract class Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $models
+     * @param  array $models
      * @return void
      */
     abstract public function addEagerConstraints(array $models);
@@ -169,8 +172,8 @@ abstract class Relationship
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
-     * @param  string  $relation
+     * @param  array  $models
+     * @param  string $relation
      * @return array
      */
     abstract public function initRelation(array $models, $relation);
@@ -178,9 +181,9 @@ abstract class Relationship
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     abstract public function match(array $entities, EntityCollection $results, $relation);
@@ -188,7 +191,7 @@ abstract class Relationship
     /**
      * Get the results of the relationship.
      *
-     * @param string 	$relation 	relation name in parent's entity map
+     * @param string $relation relation name in parent's entity map
      * @return mixed
      */
     abstract public function getResults($relation);
@@ -196,7 +199,7 @@ abstract class Relationship
     /**
      * Get the relationship for eager loading.
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return EntityCollection
      */
     public function getEager()
     {
@@ -206,9 +209,9 @@ abstract class Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  \Analogue\ORM\System\Query  $parent
-     * @return \Analogue\ORM\System\Query
+     * @param  Query $query
+     * @param  Query $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -222,7 +225,7 @@ abstract class Relationship
     /**
      * Run a callback with constraints disabled on the relation.
      *
-     * @param  \Closure  $callback
+     * @param  Closure $callback
      * @return mixed
      */
     public static function noConstraints(Closure $callback)
@@ -242,8 +245,8 @@ abstract class Relationship
     /**
      * Get all of the primary keys for an array of entities.
      *
-     * @param  array   $entities
-     * @param  string  $key
+     * @param  array  $entities
+     * @param  string $key
      * @return array
      */
     protected function getKeys(array $entities, $key = null)
@@ -255,7 +258,7 @@ abstract class Relationship
         $host = $this;
 
         return array_unique(array_values(array_map(function ($value) use ($key, $host) {
-            if (! $value instanceof InternallyMappable) {
+            if (!$value instanceof InternallyMappable) {
                 $value = $host->factory->make($value);
             }
 
@@ -267,7 +270,7 @@ abstract class Relationship
     /**
      * Get the underlying query for the relation.
      *
-     * @return \Analogue\ORM\System\Query
+     * @return Query
      */
     public function getQuery()
     {
@@ -277,7 +280,7 @@ abstract class Relationship
     /**
      * Get the base query builder
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Analogue\ORM\Drivers\QueryAdapter
      */
     public function getBaseQuery()
     {
@@ -287,7 +290,7 @@ abstract class Relationship
     /**
      * Get the parent model of the relation.
      *
-     * @return Mappable
+     * @return InternallyMappable
      */
     public function getParent()
     {
@@ -317,7 +320,7 @@ abstract class Relationship
     /**
      * Get the related mapper for the relation
      *
-     * @return \Analogue\ORM\System\Mapper
+     * @return Mapper
      */
     public function getRelatedMapper()
     {
@@ -358,7 +361,7 @@ abstract class Relationship
     /**
      * Wrap the given value with the parent query's grammar.
      *
-     * @param  string  $value
+     * @param  string $value
      * @return string
      */
     public function wrap($value)
@@ -369,7 +372,7 @@ abstract class Relationship
     /**
      * Get a fresh timestamp
      *
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     protected function freshTimestamp()
     {
@@ -380,9 +383,8 @@ abstract class Relationship
      * Cache the link between parent and related
      * into the mapper's Entity Cache.
      *
-     * @param  EntityCollection|Mappable $results 	result of the relation query
-     * @param  string  $relation 					Name of the relation method on the parent entity
-     *
+     * @param  EntityCollection|Mappable $results  result of the relation query
+     * @param  string                    $relation name of the relation method on the parent entity
      * @return void
      */
     protected function cacheRelation($results, $relation)
@@ -411,19 +413,17 @@ abstract class Relationship
     protected function getEntityHash(Mappable $entity)
     {
         $class = get_class($entity);
-        
-        $keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
-        
-        $hash = $class.'.'.$entity->getEntityAttribute($keyName);
 
-        return $hash;
+        $keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
+
+        return $class . '.' . $entity->getEntityAttribute($keyName);
     }
 
     /**
      * Run synchronization content if needed by the
      * relation type.
      *
-     * @param  array  $actualContent
+     * @param  array $actualContent
      * @return void
      */
     public function sync(array $actualContent)
@@ -434,13 +434,13 @@ abstract class Relationship
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param  string $method
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
     {
-        $result = call_user_func_array(array($this->query, $method), $parameters);
+        $result = call_user_func_array([$this->query, $method], $parameters);
 
         if ($result === $this->query) {
             return $this;

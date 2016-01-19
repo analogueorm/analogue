@@ -2,11 +2,11 @@
 
 namespace Analogue\ORM\System\Proxies;
 
+use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\Manager;
 
 abstract class Proxy implements ProxyInterface
 {
-
     /**
      * The name of the relationship method handled by the proxy.
      *
@@ -17,7 +17,7 @@ abstract class Proxy implements ProxyInterface
     /**
      * Reference to parent entity object
      *
-     * @var InternallyMappable
+     * @var \Analogue\ORM\System\InternallyMappable
      */
     protected $parentEntity;
 
@@ -30,7 +30,7 @@ abstract class Proxy implements ProxyInterface
 
     /**
      * @param mixed  $parentEntity
-     * @param string $relation  relationship method handled by the proxy.
+     * @param string $relation     relationship method handled by the proxy.
      */
     public function __construct($parentEntity, $relation)
     {
@@ -42,12 +42,13 @@ abstract class Proxy implements ProxyInterface
     /**
      * Call the relationship method on the underlying entity map
      *
+     * @throws MappingException
      * @return mixed
      */
     public function load()
     {
         $entities = $this->query($this->parentEntity, $this->relation)->getResults($this->relation);
-        
+
         $this->loaded = true;
 
         return $entities;
@@ -66,9 +67,10 @@ abstract class Proxy implements ProxyInterface
     /**
      * Return the Query Builder on the relation
      *
-     * @param  mixed    $entity
-     * @param  string    $relation
-     * @return Query
+     * @param  \Analogue\ORM\System\InternallyMappable  $entity
+     * @param  string $relation
+     * @throws MappingException
+     * @return \Analogue\ORM\System\Query
      */
     protected function query($entity, $relation)
     {
@@ -80,7 +82,8 @@ abstract class Proxy implements ProxyInterface
     /**
      * Get the mapper instance for the entity
      *
-     * @param  mixed $entity
+     * @param  \Analogue\ORM\System\InternallyMappable $entity
+     * @throws MappingException
      * @return \Analogue\ORM\System\Mapper
      */
     protected function getMapper($entity)

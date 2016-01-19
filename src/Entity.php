@@ -1,14 +1,11 @@
-<?php namespace Analogue\ORM;
+<?php
 
-use ArrayAccess;
-use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
+namespace Analogue\ORM;
+
 use Analogue\ORM\System\Proxies\EntityProxy;
 
-class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable
+class Entity extends ValueObject
 {
-
     /**
      * Entities Hidden Attributes, that will be discarded when converting
      * the entity to Array/Json
@@ -26,7 +23,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
     public function __get($key)
     {
         if ($this->hasGetMutator($key)) {
-            $method = 'get'.$this->getMutatorMethod($key);
+            $method = 'get' . $this->getMutatorMethod($key);
 
             $attribute = null;
 
@@ -36,7 +33,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
 
             return $this->$method($attribute);
         }
-        if (! array_key_exists($key, $this->attributes)) {
+        if (!array_key_exists($key, $this->attributes)) {
             return null;
         }
         if ($this->attributes[$key] instanceof EntityProxy) {
@@ -48,14 +45,14 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
     /**
      * Dynamically set attributes on the entity.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param  string $key
+     * @param  mixed  $value
      * @return void
      */
     public function __set($key, $value)
     {
         if ($this->hasSetMutator($key)) {
-            $method = 'set'.$this->getMutatorMethod($key);
+            $method = 'set' . $this->getMutatorMethod($key);
 
             $this->$method($value);
         } else {
@@ -66,28 +63,32 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
     /**
      * Is a getter method defined ?
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     protected function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'get' . $this->getMutatorMethod($key)) ? true : false;
     }
 
     /**
      * Is a setter method defined ?
      *
-     * @param  string  $key
+     * @param  string $key
      * @return boolean
      */
     protected function hasSetMutator($key)
     {
-        return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'set' . $this->getMutatorMethod($key)) ? true : false;
     }
 
+    /**
+     * @param $key
+     * @return string
+     */
     protected function getMutatorMethod($key)
     {
-        return ucfirst($key).'Attribute';
+        return ucfirst($key) . 'Attribute';
     }
 
     /**
@@ -107,7 +108,7 @@ class Entity extends ValueObject implements Mappable, ArrayAccess, Jsonable, Jso
                 continue;
             }
             if ($this->hasGetMutator($key)) {
-                $method = 'get'.$this->getMutatorMethod($key);
+                $method = 'get' . $this->getMutatorMethod($key);
                 $attributes[$key] = $this->$method($attribute);
             }
         }

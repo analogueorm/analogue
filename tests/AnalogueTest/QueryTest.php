@@ -1,9 +1,10 @@
-<?php namespace AnalogueTest;
+<?php
+
+namespace AnalogueTest;
 
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\EntityCollection;
 use AnalogueTest\App\Permission;
-use AnalogueTest\App\Avatar;
 use AnalogueTest\App\Role;
 
 class QueryTest extends PHPUnit_Framework_TestCase
@@ -205,8 +206,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $mapper = get_mapper('AnalogueTest\App\Permission');
         $c = new EntityCollection;
-        $y=0;
-        for ($x=0;$x<30;$x++) {
+        $y = 0;
+        for ($x = 0; $x < 30; $x++) {
             $c->add(new Permission("P$x"));
         }
         $mapper->store($c);
@@ -218,8 +219,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $mapper = get_mapper('AnalogueTest\App\Permission');
         $c = new EntityCollection;
-        $y=0;
-        for ($x=0;$x<30;$x++) {
+        $y = 0;
+        for ($x = 0; $x < 30; $x++) {
             $c->add(new Permission("P$x"));
         }
         $mapper->store($c);
@@ -231,8 +232,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $mapper = get_mapper('AnalogueTest\App\Permission');
         $c = new EntityCollection;
-        $y=0;
-        for ($x=0;$x<30;$x++) {
+        $y = 0;
+        for ($x = 0; $x < 30; $x++) {
             $c->add(new Permission("P$x"));
         }
         $mapper->store($c);

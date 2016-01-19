@@ -1,4 +1,6 @@
-<?php namespace AnalogueTest;
+<?php
+
+namespace AnalogueTest;
 
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityCollection as Collection;
@@ -7,7 +9,6 @@ use PHPUnit_Framework_TestCase;
 
 class EntityCollectionTest extends PHPUnit_Framework_TestCase
 {
-
     public function testAddingEntitiesToCollection()
     {
         $c = new Collection();
@@ -17,7 +18,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
 
         $c->add($e)->add($f);
 
-        $this->assertEquals(array($e, $f), $c->all());
+        $this->assertEquals([$e, $f], $c->all());
     }
 
     /*public function testConstructorRejectNonMappableItems()
@@ -86,7 +87,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $entity3 = new Entity;
         $entity3->id = 3;
         
-        $c = new Collection(array($entity1, $entity2));
+        $c = new Collection([$entity1, $entity2]);
 
         $this->assertTrue($c->contains($entity1));
         $this->assertTrue($c->contains($entity2));
@@ -116,9 +117,9 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $entity3 = new Entity;
         $entity3->id = 3;
 
-        $c = new Collection(array($entity1, $entity2, $entity3));
+        $c = new Collection([$entity1, $entity2, $entity3]);
 
-        $this->assertEquals(array(1, 2, 3), $c->getEntityKeys());
+        $this->assertEquals([1, 2, 3], $c->getEntityKeys());
     }
 
     
@@ -134,7 +135,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $c1 = new Collection([$e1, $e2]);
         $c2 = new Collection([$e2, $e3]);
 
-        $this->assertEquals(new Collection(array($e1, $e2, $e3)), $c1->merge($c2));
+        $this->assertEquals(new Collection([$e1, $e2, $e3]), $c1->merge($c2));
     }
 
 
@@ -150,7 +151,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $c1 = new Collection([$e1, $e2]);
         $c2 = new Collection([$e2, $e3]);
 
-        $this->assertEquals(new Collection(array($e1)), $c1->diff($c2));
+        $this->assertEquals(new Collection([$e1]), $c1->diff($c2));
     }
 
 
@@ -166,7 +167,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $c1 = new Collection([$e1, $e2]);
         $c2 = new Collection([$e2, $e3]);
 
-        $this->assertEquals(new Collection(array($e2)), $c1->intersect($c2));
+        $this->assertEquals(new Collection([$e2]), $c1->intersect($c2));
     }
     
 
@@ -177,9 +178,9 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $e2 = new Entity;
         $e2->id = 2;
 
-        $c = new Collection(array($e1, $e2, $e2));
+        $c = new Collection([$e1, $e2, $e2]);
 
-        $this->assertEquals(new Collection(array($e1, $e2)), $c->unique());
+        $this->assertEquals(new Collection([$e1, $e2]), $c->unique());
     }
 
     
@@ -225,7 +226,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
 
         $c = new Collection([$e1, $e2, $e3]);
 
-        $this->assertEquals(new Collection(array($e1, $e3)), $c->except(2));
-        $this->assertEquals(new Collection(array($e1)), $c->except(array(2, 3)));
+        $this->assertEquals(new Collection([$e1, $e3]), $c->except(2));
+        $this->assertEquals(new Collection([$e1]), $c->except([2, 3]));
     }
 }

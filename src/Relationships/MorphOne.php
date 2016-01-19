@@ -1,19 +1,21 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\EntityCollection;
 
 class MorphOne extends MorphOneOrMany
 {
-
     /**
      * Get the results of the relationship.
      *
+     * @param  $relation
      * @return mixed
      */
     public function getResults($relation)
     {
         $result = $this->query->first();
-        
+
         $this->cacheRelation($result, $relation);
 
         return $result;
@@ -22,8 +24,8 @@ class MorphOne extends MorphOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $entities
-     * @param  string  $relation
+     * @param  array  $entities
+     * @param  string $relation
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -40,9 +42,9 @@ class MorphOne extends MorphOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\Collection  $results
-     * @param  string  $relation
+     * @param  array            $entities
+     * @param  EntityCollection $results
+     * @param  string           $relation
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)

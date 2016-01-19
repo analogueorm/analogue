@@ -1,14 +1,14 @@
-<?php namespace Analogue\ORM\Relationships;
+<?php
+
+namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\EntityCollection;
 use Illuminate\Database\Query\Expression;
 
 class HasManyThrough extends Relationship
 {
-
     /**
      * The distance parent Entity instance.
      *
@@ -40,11 +40,12 @@ class HasManyThrough extends Relationship
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Analogue\ORM\System\Query  $query
-     * @param  Mappable  $parent
-     * @param  string  $firstKey
-     * @param  string  $secondKey
-     * @return void
+     * @param Mapper                  $mapper
+     * @param \Analogue\ORM\Mappable  $farParent
+     * @param \Analogue\ORM\EntityMap $parentMap
+     * @param string                  $firstKey
+     * @param string                  $secondKey
+     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $farParent, $parentMap, $firstKey, $secondKey)
     {
@@ -59,11 +60,19 @@ class HasManyThrough extends Relationship
         parent::__construct($mapper, $parentInstance);
     }
 
+    /**
+     * @param $related
+     * @return mixed
+     */
     public function attachTo($related)
     {
         // N/A
     }
 
+    /**
+     * @param $related
+     * @return mixed
+     */
     public function detachFrom($related)
     {
         // N/A
@@ -83,17 +92,20 @@ class HasManyThrough extends Relationship
         if (static::$constraints) {
             $farParentKeyName = $this->farParentMap->getKeyName();
 
-            $this->query->where($parentTable.'.'.$this->firstKey,
-                '=', $this->farParent->getEntityAttribute($farParentKeyName));
+            $this->query->where(
+                $parentTable . '.' . $this->firstKey,
+                '=',
+                $this->farParent->getEntityAttribute($farParentKeyName)
+            );
         }
     }
 
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  \Analogue\ORM\Query  $query
-     * @param  \Analogue\ORM\Query  $parent
-     * @return \Analogue\ORM\Query
+     * @param  Query $query
+     * @param  Query $parent
+     * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
@@ -103,7 +115,7 @@ class HasManyThrough extends Relationship
 
         $query->select(new Expression('count(*)'));
 
-        $key = $this->wrap($parentTable.'.'.$this->firstKey);
+        $key = $this->wrap($parentTable . '.' . $this->firstKey);
 
         return $query->where($this->getHasCompareKey(), '=', new Expression($key));
     }
@@ -111,14 +123,14 @@ class HasManyThrough extends Relationship
     /**
      * Set the join clause on the query.
      *
-     * @param  \Analogue\ORM\Query|null  $query
+     * @param  null|Query $query
      * @return void
      */
     protected function setJoin(Query $query = null)
     {
         $query = $query ?: $this->query;
 
-        $foreignKey = $this->relatedMap->getTable().'.'.$this->secondKey;
+        $foreignKey = $this->relatedMap->getTable() . '.' . $this->secondKey;
 
         $query->join($this->parentMap->getTable(), $this->getQualifiedParentKeyName(), '=', $foreignKey);
     }
@@ -126,22 +138,22 @@ class HasManyThrough extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $entities
+     * @param  array $entities
      * @return void
      */
     public function addEagerConstraints(array $entities)
     {
         $table = $this->parentMap->getTable();
 
-        $this->query->whereIn($table.'.'.$this->firstKey, $this->getKeys($entities));
+        $this->query->whereIn($table . '.' . $this->firstKey, $this->getKeys($entities));
     }
 
     /**
      * Initialize the relation on a set of entities.
      *
-     * @param  array   $entities
-     * @param  string  $relation
-     * @return array
+     * @param  \Analogue\ORM\Entity[] $entities
+     * @param  string                 $relation
+     * @return \Analogue\ORM\Entity[]
      */
     public function initRelation(array $entities, $relation)
     {
@@ -155,10 +167,10 @@ class HasManyThrough extends Relationship
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $entities
-     * @param  \Analogue\ORM\EntityCollection  $results
-     * @param  string  $relation
-     * @return array
+     * @param  \Analogue\ORM\Entity[] $entities
+     * @param  EntityCollection       $results
+     * @param  string                 $relation
+     * @return \Analogue\ORM\Entity[]
      */
     public function match(array $entities, EntityCollection $results, $relation)
     {
@@ -186,15 +198,15 @@ class HasManyThrough extends Relationship
         return $entities;
     }
 
-    /*
+    /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Analogue\ORM\EntityCollection  $results
+     * @param  EntityCollection $results
      * @return array
      */
     protected function buildDictionary(EntityCollection $results)
     {
-        $dictionary = array();
+        $dictionary = [];
 
         $foreign = $this->firstKey;
 
@@ -211,7 +223,8 @@ class HasManyThrough extends Relationship
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @param  $relation
+     * @return EntityCollection
      */
     public function getResults($relation)
     {
@@ -225,10 +238,10 @@ class HasManyThrough extends Relationship
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
-     * @return \Analogue\ORM\EntityCollection
+     * @param  array $columns
+     * @return EntityCollection
      */
-    public function get($columns = array('*'))
+    public function get($columns = ['*'])
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
@@ -250,32 +263,30 @@ class HasManyThrough extends Relationship
     /**
      * Set the select clause for the relation query.
      *
-     * @param  array  $columns
-     * @return \Analogue\ORM\Relationships\BelongsToMany
+     * @param  array $columns
+     * @return BelongsToMany
      */
-    protected function getSelectColumns(array $columns = array('*'))
+    protected function getSelectColumns(array $columns = ['*'])
     {
-        if ($columns == array('*')) {
-            $columns = array($this->relatedMap->getTable().'.*');
+        if ($columns == ['*']) {
+            $columns = [$this->relatedMap->getTable() . '.*'];
         }
 
-        return array_merge($columns, array($this->parentMap->getTable().'.'.$this->firstKey));
+        return array_merge($columns, [$this->parentMap->getTable() . '.' . $this->firstKey]);
     }
 
     /**
      * Get a paginator for the "select" statement.
      *
-     * @param  int    $perPage
-     * @param  array  $columns
-     * @return \Illuminate\Pagination\Paginator
+     * @param  int   $perPage
+     * @param  array $columns
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = array('*'))
+    public function paginate($perPage = null, $columns = ['*'])
     {
         $this->query->addSelect($this->getSelectColumns($columns));
 
-        $pager = $this->query->paginate($perPage, $columns);
-
-        return $pager;
+        return $this->query->paginate($perPage, $columns);
     }
 
     /**

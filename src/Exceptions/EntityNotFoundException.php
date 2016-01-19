@@ -1,10 +1,11 @@
-<?php namespace Analogue\ORM\Exceptions;
+<?php
+
+namespace Analogue\ORM\Exceptions;
 
 use RuntimeException;
 
 class EntityNotFoundException extends RuntimeException
 {
-
     /**
      * Name of the affected Entity Map.
      *
@@ -32,7 +33,7 @@ class EntityNotFoundException extends RuntimeException
      *
      * @return string
      */
-    public function getEnity()
+    public function getEntity()
     {
         return $this->entity;
     }

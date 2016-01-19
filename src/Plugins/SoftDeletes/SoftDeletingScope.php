@@ -1,11 +1,12 @@
-<?php namespace Analogue\ORM\Plugins\SoftDeletes;
+<?php
+
+namespace Analogue\ORM\Plugins\SoftDeletes;
 
 use Analogue\ORM\System\Query;
 use Analogue\ORM\System\ScopeInterface;
 
 class SoftDeletingScope implements ScopeInterface
 {
-
     /**
      * All of the extensions to be added to the builder.
      *
@@ -16,7 +17,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Apply the scope to a given Analogue query builder.
      *
-     * @param  \Analogue\ORM\System\Query  $query
+     * @param  \Analogue\ORM\System\Query $query
      * @return void
      */
     public function apply(Query $query)
@@ -31,7 +32,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Remove the scope from the given Analogue query builder.
      *
-     * @param  \Analogue\ORM\System\Query  $query
+     * @param  mixed $query
      * @return void
      */
     public function remove(Query $query)
@@ -55,7 +56,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Extend the query builder with the needed functions.
      *
-     * @param  \Analogue\ORM\System\Query  $query
+     * @param  \Analogue\ORM\System\Query $query
      * @return void
      */
     public function extend(Query $query)
@@ -68,7 +69,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the with-trashed extension to the builder.
      *
-     * @param  \Analogue\ORM\System\Query  $query
+     * @param  \Analogue\ORM\System\Query $query
      * @return void
      */
     protected function addWithTrashed(Query $query)
@@ -83,7 +84,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the only-trashed extension to the builder.
      *
-     * @param  \Analogue\ORM\System\Query  $query
+     * @param  \Analogue\ORM\System\Query $query
      * @return void
      */
     protected function addOnlyTrashed(Query $query)
@@ -100,8 +101,8 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Determine if the given where clause is a soft delete constraint.
      *
-     * @param  array   $where
-     * @param  string  $column
+     * @param  array  $where
+     * @param  string $column
      * @return bool
      */
     protected function isSoftDeleteConstraint(array $where, $column)

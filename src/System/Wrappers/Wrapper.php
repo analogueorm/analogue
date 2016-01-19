@@ -2,7 +2,6 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
-use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
@@ -12,7 +11,6 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
  */
 abstract class Wrapper implements InternallyMappable
 {
-  
     /**
      * Original Entity Object
      *
@@ -27,6 +25,11 @@ abstract class Wrapper implements InternallyMappable
      */
     protected $entityMap;
 
+    /**
+     * Wrapper constructor.
+     * @param $entity
+     * @param $entityMap
+     */
     public function __construct($entity, $entityMap)
     {
         $this->entity = $entity;
@@ -67,7 +70,7 @@ abstract class Wrapper implements InternallyMappable
         $proxies = [];
 
         foreach ($this->entityMap->getRelationships() as $relation) {
-            if (! array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
                 if (in_array($relation, $singleRelations)) {
                     $proxies[$relation] = new EntityProxy($this->getObject(), $relation);
                 }
@@ -82,13 +85,33 @@ abstract class Wrapper implements InternallyMappable
         }
     }
 
+    /**
+     * @param string $key
+     * @param string $value
+     * @return mixed
+     */
     abstract public function setEntityAttribute($key, $value);
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     abstract public function getEntityAttribute($key);
 
+    /**
+     * @param array $attributes
+     * @return mixed
+     */
     abstract public function setEntityAttributes(array $attributes);
 
+    /**
+     * @return mixed
+     */
     abstract public function getEntityAttributes();
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     abstract public function hasAttribute($key);
 }

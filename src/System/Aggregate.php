@@ -1,8 +1,10 @@
-<?php namespace Analogue\ORM\System;
+<?php
 
+namespace Analogue\ORM\System;
+
+use Analogue\ORM\Relationships\Pivot;
 use Illuminate\Support\Collection;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\Proxies\ProxyInterface;
 use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\Exceptions\MappingException;
@@ -13,7 +15,6 @@ use Analogue\ORM\Exceptions\MappingException;
  */
 class Aggregate implements InternallyMappable
 {
-
     /**
      * The Root Entity
      *
@@ -74,10 +75,11 @@ class Aggregate implements InternallyMappable
     /**
      * Create a new Aggregated Entity instance
      *
-     * @param mixed          $entity             [description]
-     * @param Aggregate|null $parent             [description]
-     * @param string         $parentRelationship [description]
-     * @param Aggregate|null $root               [description]
+     * @param mixed          $entity
+     * @param Aggregate|null $parent
+     * @param string         $parentRelationship
+     * @param Aggregate|null $root
+     * @throws MappingException
      */
     public function __construct($entity, Aggregate $parent = null, $parentRelationship = null, Aggregate $root = null)
     {
@@ -101,6 +103,7 @@ class Aggregate implements InternallyMappable
     /**
      * Parse Every relationships defined on the entity
      *
+     * @throws MappingException
      * @return void
      */
     protected function parseRelationships()
@@ -117,12 +120,13 @@ class Aggregate implements InternallyMappable
     /**
      * Parse for values common to single & many relations
      *
-     * @param  string    $relation
+     * @param  string $relation
+     * @throws MappingException
      * @return mixed|boolean
      */
     protected function parseForCommonValues($relation)
     {
-        if (! $this->hasAttribute($relation)) {
+        if (!$this->hasAttribute($relation)) {
             // If no attribute exists for this relationships
             // we'll make it a simple empty array. This will
             // save us from constantly checking for the attributes
@@ -151,11 +155,12 @@ class Aggregate implements InternallyMappable
      * Parse a 'single' relationship
      *
      * @param  string $relation
-     * @return void|boolean
+     * @throws MappingException
+     * @return boolean
      */
     protected function parseSingleRelationship($relation)
     {
-        if (! $value = $this->parseForCommonValues($relation)) {
+        if (!$value = $this->parseForCommonValues($relation)) {
             return true;
         }
         
@@ -163,7 +168,7 @@ class Aggregate implements InternallyMappable
             throw new MappingException("Entity's attribute $relation should not be array, or collection");
         }
 
-        if ($value instanceof EntityProxy && ! $value->isLoaded()) {
+        if ($value instanceof EntityProxy && !$value->isLoaded()) {
             $this->relationships[$relation] = [];
             return true;
         }
@@ -182,7 +187,7 @@ class Aggregate implements InternallyMappable
         // At this point, we can assume the attribute is an Entity instance
         // so we'll treat it as such.
         $subAggregate = $this->createSubAggregate($value, $relation);
-       
+
         // Even if it's a single entity, we'll store it as an array
         // just for consistency with other relationships
         $this->relationships[$relation] = [$subAggregate];
@@ -194,19 +199,18 @@ class Aggregate implements InternallyMappable
      * Check if value isn't parent or root in the aggregate
      *
      * @param  mixed
-     * @return boolean
+     * @return boolean|null
      */
     protected function isParentOrRoot($value)
     {
-        if (! is_null($this->root)) {
+        if (!is_null($this->root)) {
             $rootClass = get_class($this->root->getEntityObject());
             if ($rootClass == get_class($value)) {
                 return true;
             }
         }
 
-
-        if (! is_null($this->parent)) {
+        if (!is_null($this->parent)) {
             $parentClass = get_class($this->parent->getEntityObject());
             if ($parentClass == get_class($value)) {
                 return true;
@@ -218,11 +222,12 @@ class Aggregate implements InternallyMappable
      * Parse a 'many' relationship
      *
      * @param  string $relation
+     * @throws MappingException
      * @return boolean
      */
     protected function parseManyRelationship($relation)
     {
-        if (! $value = $this->parseForCommonValues($relation)) {
+        if (!$value = $this->parseForCommonValues($relation)) {
             return true;
         }
 
@@ -237,13 +242,13 @@ class Aggregate implements InternallyMappable
             $value = $value->getUnderlyingCollection();
         }
 
-        if ($value instanceof CollectionProxy && ! $value->isLoaded()) {
+        if ($value instanceof CollectionProxy && !$value->isLoaded()) {
             $value = $value->getAddedItems();
         }
 
         // At this point $value should be either an array or an instance
         // of a collection class.
-        if (! is_array($value) && ! $value instanceof Collection) {
+        if (!is_array($value) && !$value instanceof Collection) {
             throw new MappingException("'$relation' attribute should be array() or Collection");
         }
 
@@ -256,8 +261,8 @@ class Aggregate implements InternallyMappable
      * Return Entity's relationship attribute
      *
      * @param  string $relation
+     * @throws MappingException
      * @return mixed
-     * @throws \Analogue\ORM\Exceptions\MappingException
      */
     protected function getRelationshipValue($relation)
     {
@@ -274,7 +279,8 @@ class Aggregate implements InternallyMappable
      * Create a child, aggregated entity
      *
      * @param  mixed $entities
-     * @return
+     * @param string $relation
+     * @return array
      */
     protected function createSubAggregates($entities, $relation)
     {
@@ -291,7 +297,9 @@ class Aggregate implements InternallyMappable
      * Create a related subAggregate
      *
      * @param  mixed $entity
-     * @return \Analogue\ORM\System\RootAggregate;
+     * @param  string $relation
+     * @throws MappingException
+     * @return self
      */
     protected function createSubAggregate($entity, $relation)
     {
@@ -302,9 +310,7 @@ class Aggregate implements InternallyMappable
             $root = $this->root;
         }
 
-        $aggregate = new Aggregate($entity, $this, $relation, $root);
-
-        return $aggregate;
+        return new self($entity, $this, $relation, $root);
     }
 
     /**
@@ -344,13 +350,13 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityHash()
     {
-        return $this->getEntityClass().'.'.$this->getEntityId();
+        return $this->getEntityClass() . '.' . $this->getEntityId();
     }
 
     /**
      * Get wrapped entity class
      *
-     * @return
+     * @return string
      */
     public function getEntityClass()
     {
@@ -395,7 +401,7 @@ class Aggregate implements InternallyMappable
     /**
      * Get Non existing related entities from several relationships
      *
-     * @param  array  $relationships
+     * @param  array $relationships
      * @return array
      */
     public function getNonExistingRelated(array $relationships)
@@ -422,7 +428,7 @@ class Aggregate implements InternallyMappable
         $nonExisting = [];
 
         foreach ($this->relationships[$relation] as $aggregate) {
-            if (! $aggregate->exists()) {
+            if (!$aggregate->exists()) {
                 $nonExisting[] = $aggregate;
             }
         }
@@ -432,8 +438,6 @@ class Aggregate implements InternallyMappable
 
     /**
      * Synchronize relationships if needed
-     *
-     * @return
      */
     public function syncRelationships()
     {
@@ -447,7 +451,7 @@ class Aggregate implements InternallyMappable
     /**
      * Synchronize a relationship attribute
      *
-     * @return void
+     * @param $relation
      */
     protected function synchronize($relation)
     {
@@ -467,11 +471,11 @@ class Aggregate implements InternallyMappable
     {
         $cachedRelations = $this->getCachedAttribute($relation);
 
-        if (! is_null($cachedRelations)) {
+        if (!is_null($cachedRelations)) {
             $missing = [];
 
             foreach ($cachedRelations as $hash) {
-                if (! $this->getRelatedAggregateFromHash($hash, $relation)) {
+                if (!$this->getRelatedAggregateFromHash($hash, $relation)) {
                     $missing[] = $hash;
                 }
             }
@@ -493,7 +497,7 @@ class Aggregate implements InternallyMappable
 
         foreach ($this->relationships as $relation) {
             foreach ($relation as $aggregate) {
-                if (! $aggregate->exists() || $aggregate->isDirty() || count($aggregate->getDirtyRelationships() > 0)) {
+                if (!$aggregate->exists() || $aggregate->isDirty() || count($aggregate->getDirtyRelationships() > 0)) {
                     $dirtyAggregates[] = $aggregate;
                 }
             }
@@ -562,7 +566,7 @@ class Aggregate implements InternallyMappable
             $prefix = snake_case(class_basename($embed));
 
             foreach ($valueObjectAttributes as $key=>$value) {
-                $valueObjectAttributes[$prefix.'_'.$key] = $value;
+                $valueObjectAttributes[$prefix . '_' . $key] = $value;
                 unset($valueObjectAttributes[$key]);
             }
 
@@ -576,6 +580,7 @@ class Aggregate implements InternallyMappable
      * Return's entity raw attributes in the state they were at last
      * query.
      *
+     * @param  array|null $columns
      * @return array
      */
     protected function getCachedRawAttributes(array $columns = null)
@@ -598,7 +603,7 @@ class Aggregate implements InternallyMappable
     {
         $cachedAttributes = $this->getCache()->get($this->getEntityId());
 
-        if (! array_key_exists($key, $cachedAttributes)) {
+        if (!array_key_exists($key, $cachedAttributes)) {
             return null;
         } else {
             return $cachedAttributes[$key];
@@ -622,7 +627,7 @@ class Aggregate implements InternallyMappable
             }
         }
 
-        if (! is_null($this->parent)) {
+        if (!is_null($this->parent)) {
             $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
         }
 
@@ -656,7 +661,6 @@ class Aggregate implements InternallyMappable
      * Get foreign key attribute(s) from a parent entity in this
      * aggregate context
      *
-     * @param  string $relation
      * @return array
      */
     protected function getForeignKeyAttributesFromParent()
@@ -669,7 +673,8 @@ class Aggregate implements InternallyMappable
         $parentRelation = $this->parentRelationship;
 
         if (in_array($parentRelation, $parentForeignRelations)
-            && ! in_array($parentRelation, $parentPivotRelations)) {
+            && !in_array($parentRelation, $parentPivotRelations)
+        ) {
             $parentObject = $this->parent->getEntityObject();
 
             // Call Relationship's method on parent map
@@ -722,8 +727,6 @@ class Aggregate implements InternallyMappable
         }
 
         if (count($new) > 0) {
-            $relatedCollection = $this->getEntityAttribute($relation);
-
             $pivots = $this->getRelatedAggregatesFromHashes($new, $relation);
 
             $this->entityMap->$relation($this->getEntityObject())->createPivots($pivots);
@@ -756,7 +759,7 @@ class Aggregate implements InternallyMappable
             $actualPivotAttributes = array_only($pivot, array_keys($cachedPivotAttributes));
 
             $dirty = $this->getDirtyAttributes($actualPivotAttributes, $cachedPivotAttributes);
-            
+
             if (count($dirty) > 0) {
                 $id = $aggregate->getEntityId();
 
@@ -768,8 +771,8 @@ class Aggregate implements InternallyMappable
     /**
      * Compare two attributes array and return dirty attributes
      *
-     * @param  array  $actual
-     * @param  array  $cached
+     * @param  array $actual
+     * @param  array $cached
      * @return array
      */
     protected function getDirtyAttributes(array $actual, array $cached)
@@ -777,7 +780,7 @@ class Aggregate implements InternallyMappable
         $dirty = [];
 
         foreach ($actual as $key => $value) {
-            if (! $this->originalIsNumericallyEquivalent($value, $cached[$key])) {
+            if (!$this->originalIsNumericallyEquivalent($value, $cached[$key])) {
                 $dirty[$key] = $actual[$key];
             }
         }
@@ -818,7 +821,7 @@ class Aggregate implements InternallyMappable
         foreach ($hashes as $hash) {
             $aggregate = $this->getRelatedAggregateFromHash($hash, $relation);
 
-            if (! is_null($aggregate)) {
+            if (!is_null($aggregate)) {
                 $related[] = $aggregate;
             }
         }
@@ -831,7 +834,7 @@ class Aggregate implements InternallyMappable
      *
      * @param  string $hash
      * @param  string $relation
-     * @return \Analogue\ORM\System\Aggregate | null
+     * @return \Analogue\ORM\System\Aggregate|null
      */
     protected function getRelatedAggregateFromHash($hash, $relation)
     {
@@ -896,10 +899,10 @@ class Aggregate implements InternallyMappable
                 continue;
             }
 
-            if (! array_key_exists($key, $cachedAttributes) && ! $value instanceof Pivot) {
+            if (!array_key_exists($key, $cachedAttributes) && !$value instanceof Pivot) {
                 $dirty[$key] = $value;
             } elseif ($value !== $cachedAttributes[$key] &&
-                ! $this->originalIsNumericallyEquivalent($value, $cachedAttributes[$key])) {
+                !$this->originalIsNumericallyEquivalent($value, $cachedAttributes[$key])) {
                 $dirty[$key] = $value;
             }
         }
@@ -907,6 +910,10 @@ class Aggregate implements InternallyMappable
         return $dirty;
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     protected function isRelation($key)
     {
         return in_array($key, $this->entityMap->getRelationships());
@@ -915,6 +922,8 @@ class Aggregate implements InternallyMappable
     /**
      * Determine if the new and old values for a given key are numerically equivalent.
      *
+     * @param $current
+     * @param $original
      * @return boolean
      */
     protected function originalIsNumericallyEquivalent($current, $original)
@@ -1006,11 +1015,9 @@ class Aggregate implements InternallyMappable
 
     /**
      * Set the lazyloading proxies on the wrapped entity
-     *
-     * @return void
      */
     public function setProxies()
     {
-        return $this->wrappedEntity->setProxies();
+        $this->wrappedEntity->setProxies();
     }
 }

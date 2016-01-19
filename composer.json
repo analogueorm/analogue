@@ -1,8 +1,14 @@
 {
     "name": "analogue/orm",
     "description": "An intuitive Data Mapper ORM for PHP and Laravel",
-    "keywords": ["orm", "datamapper", "laravel", 
-    "entity", "repository", "mapper"],
+    "keywords": [
+        "orm",
+        "datamapper",
+        "laravel",
+        "entity",
+        "repository",
+        "mapper"
+    ],
     "homepage": "http://github.com/analogueorm/analogue",
     "license": "MIT",
     "authors": [
@@ -29,5 +35,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable":true
+    "prefer-stable": true
 }

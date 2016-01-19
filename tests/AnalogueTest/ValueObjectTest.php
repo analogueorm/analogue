@@ -1,7 +1,8 @@
-<?php namespace AnalogueTest;
+<?php
+
+namespace AnalogueTest;
 
 use PHPUnit_Framework_TestCase;
-use AnalogueTest\App\Meta;
 use AnalogueTest\App\User;
 use AnalogueTest\App\Role;
 use AnalogueTest\App\Resource;
@@ -9,7 +10,6 @@ use AnalogueTest\App\V;
 
 class ValueObjectTest extends PHPUnit_Framework_TestCase
 {
-
     public function testValueObjectStoreAndRead()
     {
         $user = new User('boris', new Role('meta'));

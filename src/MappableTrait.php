@@ -1,4 +1,6 @@
-<?php namespace Analogue\ORM;
+<?php
+
+namespace Analogue\ORM;
 
 /**
  * Share behaviour of Entities/ValueObjects and allow
@@ -6,7 +8,6 @@
  */
 trait MappableTrait
 {
-
     /**
      * The Entity's Attributes
      * @var array
@@ -60,10 +61,10 @@ trait MappableTrait
      */
     public function getEntityAttribute($key)
     {
-        if(array_key_exists($key, $this->attributes))
-        {
+        if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
+        } else {
+            return null;
         }
-        else return null;
     }
 }

@@ -1,9 +1,9 @@
-<?php namespace Analogue\ORM\Plugins\Timestamps;
+<?php
 
+namespace Analogue\ORM\Plugins\Timestamps;
+
+use Analogue\ORM\System\Mapper;
 use Carbon\Carbon;
-use Analogue\ORM\Entity;
-use Analogue\ORM\EntityMap;
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\Plugins\AnaloguePlugin;
 use Analogue\ORM\System\Wrappers\Factory;
 
@@ -12,27 +12,27 @@ use Analogue\ORM\System\Wrappers\Factory;
  */
 class TimestampsPlugin extends AnaloguePlugin
 {
-
     /**
      * Register the plugin
      *
+     * @throws \Exception
      * @return void
      */
     public function register()
     {
-        $this->manager->registerGlobalEvent('initialized', function ($mapper) {
+        $this->manager->registerGlobalEvent('initialized', function (Mapper $mapper) {
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesTimestamps()) {
                 $mapper->registerEvent('creating', function ($entity) use ($entityMap) {
-                    
+
                     $factory = new Factory;
                     $wrappedEntity = $factory->make($entity);
 
                     $createdAtField = $entityMap->getCreatedAtColumn();
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time= new Carbon;
+                    $time = new Carbon;
 
                     $wrappedEntity->setEntityAttribute($createdAtField, $time);
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
@@ -46,7 +46,7 @@ class TimestampsPlugin extends AnaloguePlugin
 
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time= new Carbon;
+                    $time = new Carbon;
 
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
                 });
