@@ -149,6 +149,27 @@ class DomainTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Analogue\ORM\EntityCollection', $rawAttributes['users']);
     }
 
+    public function testPolymorphicRelation()
+    {
+        $analogue = get_analogue();
+
+        $user = new User("bob@example.com", new Role("role"));
+        $avatar = new Avatar("Bob", $user);
+
+        $image = new Image("/imageable"); 
+        $image->imageable = $avatar;
+
+        $avatar->image = $image;
+
+        $analogue->mapper(Avatar::class)->store($avatar);
+        
+        $image = $analogue->query(Image::class)->where("path", "/imageable")->get()->first();
+        
+        // $image->imageable should be equal to the Avatar class
+        $this->assertEquals(Avatar::class, get_class($image->imageable));
+        $this->assertEquals("Bob", $image->imageable->name);
+    }
+
     public function testStoreAndLoadPolymorphicManyRelations()
     {
         $analogue = get_analogue();
