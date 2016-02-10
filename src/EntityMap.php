@@ -772,6 +772,7 @@ class EntityMap
         // as a belongs-to style relationship since morph-to extends that class and
         // we will pass in the appropriate values so that it behaves as expected.
         else {
+            $class = $this->manager->getInverseMorphMap($class);
             $relatedMapper = $this->manager->mapper($class);
 
             $foreignKey = $relatedMapper->getEntityMap()->getKeyName();
@@ -1023,7 +1024,8 @@ class EntityMap
      */
     public function getMorphClass()
     {
-        return $this->morphClass ?: $this->getClass();
+        $morphClass = $this->manager->getMorphMap($this->getClass());
+        return $this->morphClass ?: $morphClass;
     }
     
     /**

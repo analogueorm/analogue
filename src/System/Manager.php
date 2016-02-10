@@ -37,6 +37,11 @@ class Manager
     protected $valueClasses = [];
 
     /**
+     * Morph map
+     */
+    protected $morphMap = [];
+
+    /**
      * Loaded Mappers
      *
      * @var array
@@ -439,6 +444,23 @@ class Manager
     public function globalQuery($entity)
     {
         return $this->mapper($entity)->globalQuery();
+    }
+
+    public function morphMap(array $morphMap)
+    {
+        $this->morphMap = $morphMap;
+        return $this;
+    }
+
+    public function getMorphMap($class)
+    {
+        $key = array_search($class, $this->morphMap);
+        return $key !== false ? $key : $class;
+    }
+
+    public function getInverseMorphMap($key)
+    {
+        return array_key_exists($key, $this->morphMap) ? $this->morphMap[$key] : $key; 
     }
     
     /**
