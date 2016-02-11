@@ -5,6 +5,7 @@ namespace AnalogueTest;
 use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Repository;
 use Analogue\ORM\Entity;
+use Analogue\ORM\EntityCollection;
 use AnalogueTest\App\Permission;
 
 class RepositoryTest extends PHPUnit_Framework_TestCase
@@ -84,5 +85,57 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         $repo->delete($p);
         $q = $repo->find($id);
         $this->assertNull($q);
+    }
+
+    public function testStoreEntityWithChangedRelation()
+    {
+        $analogue = get_analogue();
+        $userRepo = $analogue->repository('AnalogueTest\App\User');
+        
+        // User has role id of 1
+        $user = $userRepo->find(1);
+
+        $roleRepo = $analogue->repository('AnalogueTest\App\Role');
+        
+        // Set user role to be role with id 2
+        $user->role = $roleRepo->find(2);
+        $userRepo->store($user);
+
+        // Refetch $user from repo
+        $user = $userRepo->find(1);
+        
+        // User's role_id should now be 2
+        $this->assertEquals("2", $user->role_id);
+    }
+
+    public function testStoreEntityWithChangedMultiRelation()
+    {
+        $analogue = get_analogue();
+        $roleRepo = $analogue->repository('AnalogueTest\App\Role');
+        $permissionRepo = $this->getRepository();
+        
+        // Add two roles to permission
+        $permission = $permissionRepo->find(14); 
+        $permission->roles = new EntityCollection([
+            $roleRepo->find(1),
+            $roleRepo->find(2),
+        ]);
+
+        $permissionRepo->store($permission);
+
+        $this->assertEquals(2, count($permission->roles));
+        
+        // Change permission to only have a single role
+        $permission->roles = new EntityCollection([
+            $roleRepo->find(1),
+        ]);
+
+        $permissionRepo->store($permission);
+
+        // Reload from repo
+        $permission = $permissionRepo->find(14); 
+
+        // Permission should only have one role
+        $this->assertEquals(1, count($permission->roles));
     }
 }
