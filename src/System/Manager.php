@@ -128,6 +128,8 @@ class Manager
             $entity = get_class($entity);
         }
 
+        $entity = $this->getInverseMorphMap($entity);
+
         // Return existing mapper instance if exists.
         if (array_key_exists($entity, $this->mappers)) {
             return $this->mappers[$entity];
