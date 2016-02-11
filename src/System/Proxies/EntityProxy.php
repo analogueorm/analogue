@@ -79,6 +79,6 @@ class EntityProxy extends Proxy
             $this->loadOnce();
         }
 
-        return call_user_func_array([$this->loadedCollection, $method], $parameters);
+        return call_user_func_array([$this->entity, $method], $parameters);
     }
 }
