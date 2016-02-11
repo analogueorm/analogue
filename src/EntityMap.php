@@ -777,7 +777,7 @@ class EntityMap
             $foreignKey = $relatedMapper->getEntityMap()->getKeyName();
             
             return new MorphTo(
-                $mapper, $entity, $id, $foreignKey, $type, $name
+                $relatedMapper, $entity, $id, $foreignKey, $type, $name
             );
         }
     }
