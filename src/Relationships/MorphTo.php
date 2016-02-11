@@ -123,9 +123,14 @@ class MorphTo extends BelongsTo
      */
     protected function matchToMorphParents($type, EntityCollection $results)
     {
+        $mapper = $this->relatedMapper->getManager()->mapper($type);
+        $keyName = $mapper->getEntityMap()->getKeyName();
+
         foreach ($results as $result) {
-            if (isset($this->dictionary[$type][$result->getEntityKey()])) {
-                foreach ($this->dictionary[$type][$result->getEntityKey()] as $entity) {
+            $key = $result->{$keyName};
+
+            if (isset($this->dictionary[$type][$key])) {
+                foreach ($this->dictionary[$type][$key] as $entity) {
                     $entity->setEntityAttribute($this->relation, $result);
                 }
             }
