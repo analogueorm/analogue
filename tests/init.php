@@ -37,6 +37,10 @@ function get_analogue()
     $analogue->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
     $analogue->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
 
+    $analogue->morphMap([
+        "avatar" => "AnalogueTest\App\Avatar",
+    ]);
+
     return $analogue;
 }
 
