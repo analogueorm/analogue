@@ -234,10 +234,11 @@ class Aggregate implements InternallyMappable
         if (!$value = $this->parseForCommonValues($relation)) {
             return true;
         }
-
+        
         if (is_array($value) || $value instanceof Collection) {
             $this->needSync[] = $relation;
         }
+
         // If the relation is a proxy, we test is the relation
         // has been lazy loaded, otherwise we'll just treat
         // the subset of newly added items.

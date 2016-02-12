@@ -6,7 +6,9 @@ use PHPUnit_Framework_TestCase;
 use Analogue\ORM\Repository;
 use Analogue\ORM\Entity;
 use Analogue\ORM\EntityCollection;
+use Illuminate\Support\Collection;
 use AnalogueTest\App\Permission;
+use AnalogueTest\App\Role;
 
 class RepositoryTest extends PHPUnit_Framework_TestCase
 {
@@ -114,9 +116,14 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         $analogue = get_analogue();
         $roleRepo = $analogue->repository('AnalogueTest\App\Role');
         $permissionRepo = $this->getRepository();
+
+        $mapper = get_mapper(Permission::class);
+        
         
         // Add two roles to permission
         $permission = $permissionRepo->find(14); 
+        
+
         $permission->roles = new EntityCollection([
             $roleRepo->find(1),
             $roleRepo->find(2),
@@ -124,18 +131,30 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
 
         $permissionRepo->store($permission);
 
+        $permission = $permissionRepo->find(14); 
         $this->assertEquals(2, count($permission->roles));
-        
-        // Change permission to only have a single role
-        $permission->roles = new EntityCollection([
-            $roleRepo->find(1),
+
+        $role = new Role('A new one that did not exists');
+        $role2 = new Role('Another Role that did not exists');
+        $roleRepo->store([$role, $role2]);
+        $permission->roles = new Collection([
+            $roleRepo->find($role->id),
+            $roleRepo->find($role2->id),                       
         ]);
-
         $permissionRepo->store($permission);
-
         // Reload from repo
         $permission = $permissionRepo->find(14); 
+        $this->assertEquals(2, $permission->roles->count());
 
+
+        // Change permission to only have a single role
+        $permission->roles = new Collection([
+            $roleRepo->find(1),
+        ]);
+        $permissionRepo->store($permission);
+        // Reload from repo
+        $permission = $permissionRepo->find(14); 
+        //$permission->roles->count();
         // Permission should only have one role
         $this->assertEquals(1, count($permission->roles));
     }

@@ -619,20 +619,21 @@ class BelongsToMany extends Relationship
      */
     protected function detachExcept(array $entities = [])
     {
+        tdd($this->relationName);
         $query = $this->newPivotQuery();
 
-        // If id is empty, we'll simply skip that statement.
         if (count($entities) > 0) {
             $keys = $this->getKeys($entities);
 
             $query->whereNotIn($this->otherKey, $keys);
         }
-
         $parentKey = $this->parentMap->getKeyName();
 
         $query->where($this->foreignKey, '=', $this->parent->getEntityAttribute($parentKey));
-
+        
         $query->delete();
+
+        $query = $this->newPivotQuery();
     }
 
 
