@@ -84,7 +84,7 @@ class Aggregate implements InternallyMappable
     public function __construct($entity, Aggregate $parent = null, $parentRelationship = null, Aggregate $root = null)
     {
         $factory = new Factory;
-
+        
         $this->wrappedEntity = $factory->make($entity);
 
         $this->parent = $parent;
@@ -187,11 +187,15 @@ class Aggregate implements InternallyMappable
         // At this point, we can assume the attribute is an Entity instance
         // so we'll treat it as such.
         $subAggregate = $this->createSubAggregate($value, $relation);
-
+         
         // Even if it's a single entity, we'll store it as an array
         // just for consistency with other relationships
         $this->relationships[$relation] = [$subAggregate];
- 
+
+        // We always need to check a loaded relation is in sync
+        // with its local key
+        $this->needSync[] = $relation;
+
         return true;
     }
 
@@ -267,7 +271,7 @@ class Aggregate implements InternallyMappable
     protected function getRelationshipValue($relation)
     {
         $value = $this->getEntityAttribute($relation);
-
+        //if($relation == "role") tdd($this->wrappedEntity->getEntityAttributes());
         if (is_bool($value) || is_float($value) || is_int($value) || is_string($value)) {
             throw new MappingException("Entity's attribute $relation should be array, object, collection or null");
         }
@@ -439,11 +443,13 @@ class Aggregate implements InternallyMappable
     /**
      * Synchronize relationships if needed
      */
-    public function syncRelationships()
+    public function syncRelationships(array $relationships)
     {
         if ($this->exists()) {
-            foreach ($this->needSync as $relation) {
-                $this->synchronize($relation);
+            foreach ($relationships as $relation) {
+                if (in_array($relation, $this->needSync)) {
+                    $this->synchronize($relation);
+                }
             }
         }
     }

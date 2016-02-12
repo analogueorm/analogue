@@ -144,7 +144,7 @@ class EntityCollection extends Collection
      */
     public function getEntityHashes()
     {
-        return array_map(function($entity) {
+        return array_map(function ($entity) {
             $class = get_class($entity);
 
             $mapper = Manager::getMapper($class);
@@ -321,7 +321,7 @@ class EntityCollection extends Collection
      */
     public function max($key = null)
     {
-        return $this->reduce(function($result, $item) use ($key) {
+        return $this->reduce(function ($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
             return (is_null($result) || $wrapper->getEntityAttribute($key) > $result) ?
@@ -338,7 +338,7 @@ class EntityCollection extends Collection
      */
     public function min($key = null)
     {
-        return $this->reduce(function($result, $item) use ($key) {
+        return $this->reduce(function ($result, $item) use ($key) {
             $wrapper = $this->factory->make($item);
 
             return (is_null($result) || $wrapper->getEntityAttribute($key) < $result)

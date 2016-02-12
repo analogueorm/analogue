@@ -79,6 +79,9 @@ class Store extends Command
         $localRelationships = $this->aggregate->getEntityMap()->getLocalRelationships();
 
         $this->createRelatedEntities($localRelationships);
+
+        // Now we can sync the related collections
+        $this->aggregate->syncRelationships($localRelationships);
     }
 
     /**
@@ -129,6 +132,11 @@ class Store extends Command
         // Update any pivot tables that has been modified.
         $aggregate->updatePivotRecords();
 
+        // Now we can sync the related collections
+        if ($this->aggregate->exists()) {
+            $this->aggregate->syncRelationships($foreignRelationships);
+        }
+
         // Update any dirty relationship. This include relationships that already exists, have
         // dirty attributes / newly created related entities / dirty related entities.
         $dirtyRelatedAggregates = $aggregate->getDirtyRelationships();
@@ -137,10 +145,8 @@ class Store extends Command
             $this->createStoreCommand($related)->execute();
         }
 
-        if ($this->aggregate->exists()) {
-            $this->aggregate->syncRelationships();
-        }
-        // This should be move to the wrapper class
+
+        // TODO be move it to the wrapper class
         // so it's the same code for the entity builder
         $aggregate->setProxies();
 

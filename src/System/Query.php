@@ -672,7 +672,7 @@ class Query
         // We want to run a relationship query without any constrains so that we will
         // not have to remove these where clauses manually which gets really hacky
         // and is error prone while we remove the developer's own where clauses.
-        $query = Relationship::noConstraints(function() use ($relation) {
+        $query = Relationship::noConstraints(function () use ($relation) {
             return $this->entityMap->$relation($this->getEntityInstance());
         });
 

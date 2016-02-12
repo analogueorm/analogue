@@ -225,6 +225,19 @@ class BelongsTo extends Relationship
         return $entities;
     }
 
+    public function sync(array $entities)
+    {
+        if (count($entities) > 1) {
+            throw new MappingException("Single Relationship shouldn't be synced with more than one entity");
+        }
+        
+        if (count($entities) == 1) {
+            return $this->associate($entities[0]);
+        }
+
+        return false;
+    }
+
     /**
      * Associate the model instance to the given parent.
      *
@@ -233,14 +246,7 @@ class BelongsTo extends Relationship
      */
     public function associate($entity)
     {
-        // The Mapper will retrieve this association within the object model, we won't be using
-        // the foreign key attribute inside the parent Entity.
-        //
-        //$this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
-        //
-        // Instead, we'll just add the object to the Entity's attribute
-
-        $this->parent->setEntityAttribute($this->relation, $entity);
+        $this->parent->setEntityAttribute($this->foreignKey, $entity->getEntityAttribute($this->otherKey));
     }
 
     /**

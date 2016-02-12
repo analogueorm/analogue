@@ -91,7 +91,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
     {
         $analogue = get_analogue();
         $userRepo = $analogue->repository('AnalogueTest\App\User');
-        
+
         // User has role id of 1
         $user = $userRepo->find(1);
 
@@ -99,8 +99,9 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         
         // Set user role to be role with id 2
         $user->role = $roleRepo->find(2);
-        $userRepo->store($user);
 
+        $userRepo->store($user);
+ 
         // Refetch $user from repo
         $user = $userRepo->find(1);
         

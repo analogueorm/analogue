@@ -426,11 +426,8 @@ abstract class Relationship
      * @param  array $actualContent
      * @return void
      */
-    public function sync(array $actualContent)
-    {
-        //
-    }
-
+    abstract public function sync(array $actualContent);
+    
     /**
      * Handle dynamic method calls to the relationship.
      *

@@ -462,7 +462,7 @@ class Manager
 
     public function getInverseMorphMap($key)
     {
-        return array_key_exists($key, $this->morphMap) ? $this->morphMap[$key] : $key; 
+        return array_key_exists($key, $this->morphMap) ? $this->morphMap[$key] : $key;
     }
     
     /**

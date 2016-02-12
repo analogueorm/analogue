@@ -310,7 +310,7 @@ class Mapper
      */
     public function getGlobalScope($scope)
     {
-        return array_first($this->globalScopes, function($key, $value) use ($scope) {
+        return array_first($this->globalScopes, function ($key, $value) use ($scope) {
             return $scope instanceof $value;
         });
     }
