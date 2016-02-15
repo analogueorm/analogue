@@ -619,7 +619,6 @@ class BelongsToMany extends Relationship
      */
     protected function detachExcept(array $entities = [])
     {
-        tdd($this->relationName);
         $query = $this->newPivotQuery();
 
         if (count($entities) > 0) {
