@@ -113,9 +113,10 @@ class Manager
     /**
      * Create a mapper for a given entity
      *
-     * @param  \Analogue\ORM\Mappable|string $entity
-     * @param  mixed                         $entityMap
+     * @param  \Analogue\ORM\Mappable|string|array|Collection $entity
+     * @param  mixed $entityMap
      * @throws MappingException
+     * @throws \InvalidArgumentException
      * @return Mapper
      */
     public function mapper($entity, $entityMap = null)
@@ -124,9 +125,22 @@ class Manager
             throw new MappingException('Tried to instantiate mapper on wrapped Entity');
         }
 
-        if (!is_string($entity)) {
+        // Implementation Mapper isArrayOrCollection method
+        if (is_array($entity) || $entity instanceof Collection) {
+            if (!count($entity)) {
+                throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
+            }
+            $entity = $entity[0];
+
+
+        } elseif (is_object($entity)) {
             $entity = get_class($entity);
+
+
+        } elseif (!is_string($entity)) {
+            throw new \InvalidArgumentException('Invalid mapper Entity type');
         }
+
 
         $entity = $this->getInverseMorphMap($entity);
 
