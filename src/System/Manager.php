@@ -134,7 +134,10 @@ class Manager
                     throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
                 }
 
-                $entity = $entity[0];
+                $entity = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
+                    ? $entity->current()
+                    : current($entity);
+
                 break;
 
             case is_object($entity):
