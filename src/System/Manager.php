@@ -16,6 +16,13 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
 class Manager
 {
     /**
+     * Manager instance
+     *
+     * @var Manager
+     */
+    protected static $instance;
+
+    /**
      * Driver Manager
      *
      * @var \Analogue\ORM\Drivers\Manager
@@ -63,13 +70,6 @@ class Manager
     protected $eventDispatcher;
 
     /**
-     * Manager instance
-     *
-     * @var Manager
-     */
-    protected static $instance;
-
-    /**
      * Available Analogue Events
      *
      * @var array
@@ -89,7 +89,7 @@ class Manager
 
     /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
-     * @param Dispatcher $event
+     * @param Dispatcher                    $event
      */
     public function __construct(DriverManager $driverManager, Dispatcher $event)
     {
@@ -101,20 +101,23 @@ class Manager
     }
 
     /**
-     * Return the Driver Manager's instance
+     * Create a mapper for a given entity (static alias)
      *
-     * @return \Analogue\ORM\Drivers\Manager
+     * @param  \Analogue\ORM\Mappable|string $entity
+     * @param  null|EntityMap                $entityMap
+     * @throws MappingException
+     * @return Mapper
      */
-    public function getDriverManager()
+    public static function getMapper($entity, $entityMap = null)
     {
-        return $this->drivers;
+        return static::$instance->mapper($entity, $entityMap);
     }
 
     /**
      * Create a mapper for a given entity
      *
      * @param  \Analogue\ORM\Mappable|string|array|\Traversable $entity
-     * @param  mixed $entityMap
+     * @param  mixed                                            $entityMap
      * @throws MappingException
      * @throws \InvalidArgumentException
      * @return Mapper
@@ -154,6 +157,15 @@ class Manager
     }
 
     /**
+     * @param string $key
+     * @return string
+     */
+    public function getInverseMorphMap($key)
+    {
+        return array_key_exists($key, $this->morphMap) ? $this->morphMap[$key] : $key;
+    }
+
+    /**
      * Build a new Mapper instance for a given Entity
      *
      * @param  string $entity
@@ -181,45 +193,23 @@ class Manager
         // the mapper is now instantiated & registered within the manager.
 
         $mapper->getEntityMap()->boot();
-        
+
         return $mapper;
     }
 
     /**
-     * Create a mapper for a given entity (static alias)
+     * Check if the entity is already registered
      *
-     * @param  \Analogue\ORM\Mappable|string $entity
-     * @param  null|EntityMap                $entityMap
-     * @throws MappingException
-     * @return Mapper
+     * @param  string|object $entity
+     * @return boolean
      */
-    public static function getMapper($entity, $entityMap = null)
-    {
-        return static::$instance->mapper($entity, $entityMap);
-    }
-
-    /**
-     * Get the Repository instance for the given Entity
-     *
-     * @param  \Analogue\ORM\Mappable|string $entity
-     * @throws \InvalidArgumentException
-     * @throws MappingException
-     * @return \Analogue\ORM\Repository
-     */
-    public function repository($entity)
+    public function isRegisteredEntity($entity)
     {
         if (!is_string($entity)) {
             $entity = get_class($entity);
         }
 
-        // First we check if the repository is not already created.
-        if (array_key_exists($entity, $this->repositories)) {
-            return $this->repositories[$entity];
-        }
-
-        $this->repositories[$entity] = new Repository($this->mapper($entity));
-        
-        return $this->repositories[$entity];
+        return array_key_exists($entity, $this->entityClasses);
     }
 
     /**
@@ -267,7 +257,7 @@ class Manager
     /**
      * Get the entity map instance for a custom entity
      *
-     * @param  string   $entity
+     * @param  string $entity
      * @return \Analogue\ORM\Mappable
      */
     protected function getEntityMapInstanceFor($entity)
@@ -279,7 +269,7 @@ class Manager
             // Generate an EntityMap object
             $map = $this->getNewEntityMap();
         }
-        
+
         return $map;
     }
 
@@ -294,28 +284,47 @@ class Manager
     }
 
     /**
-     * Register a Value Object
+     * Return the Singleton instance of the manager
      *
-     * @param  string $valueObject
-     * @param  string $valueMap
-     * @throws MappingException
-     * @return void
+     * @return Manager
      */
-    public function registerValueObject($valueObject, $valueMap = null)
+    public static function getInstance()
     {
-        if (!is_string($valueObject)) {
-            $valueObject = get_class($valueObject);
+        return static::$instance;
+    }
+
+    /**
+     * Return the Driver Manager's instance
+     *
+     * @return \Analogue\ORM\Drivers\Manager
+     */
+    public function getDriverManager()
+    {
+        return $this->drivers;
+    }
+
+    /**
+     * Get the Repository instance for the given Entity
+     *
+     * @param  \Analogue\ORM\Mappable|string $entity
+     * @throws \InvalidArgumentException
+     * @throws MappingException
+     * @return \Analogue\ORM\Repository
+     */
+    public function repository($entity)
+    {
+        if (!is_string($entity)) {
+            $entity = get_class($entity);
         }
 
-        if (is_null($valueMap)) {
-            $valueMap = $valueObject . 'Map';
+        // First we check if the repository is not already created.
+        if (array_key_exists($entity, $this->repositories)) {
+            return $this->repositories[$entity];
         }
 
-        if (!class_exists($valueMap)) {
-            throw new MappingException("$valueMap doesn't exists");
-        }
+        $this->repositories[$entity] = new Repository($this->mapper($entity));
 
-        $this->valueClasses[$valueObject] = $valueMap;
+        return $this->repositories[$entity];
     }
 
     /**
@@ -357,6 +366,31 @@ class Manager
     }
 
     /**
+     * Register a Value Object
+     *
+     * @param  string $valueObject
+     * @param  string $valueMap
+     * @throws MappingException
+     * @return void
+     */
+    public function registerValueObject($valueObject, $valueMap = null)
+    {
+        if (!is_string($valueObject)) {
+            $valueObject = get_class($valueObject);
+        }
+
+        if (is_null($valueMap)) {
+            $valueMap = $valueObject . 'Map';
+        }
+
+        if (!class_exists($valueMap)) {
+            throw new MappingException("$valueMap doesn't exists");
+        }
+
+        $this->valueClasses[$valueObject] = $valueMap;
+    }
+
+    /**
      * Instantiate a new Value Object instance
      *
      * @param  string $valueObject
@@ -365,6 +399,7 @@ class Manager
     public function getValueObjectInstance($valueObject)
     {
         $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($valueObject), $valueObject));
+
         return $prototype;
     }
 
@@ -384,25 +419,10 @@ class Manager
     }
 
     /**
-     * Check if the entity is already registered
-     *
-     * @param  string|object $entity
-     * @return boolean
-     */
-    public function isRegisteredEntity($entity)
-    {
-        if (!is_string($entity)) {
-            $entity = get_class($entity);
-        }
-
-        return array_key_exists($entity, $this->entityClasses);
-    }
-
-    /**
      * Register event listeners that will be fired regardless the type
      * of the entity.
      *
-     * @param  string $event
+     * @param  string   $event
      * @param  \Closure $callback
      * @throws \Exception
      * @return void
@@ -463,30 +483,25 @@ class Manager
         return $this->mapper($entity)->globalQuery();
     }
 
+    /**
+     * @param array $morphMap
+     * @return $this
+     */
     public function morphMap(array $morphMap)
     {
         $this->morphMap = $morphMap;
+
         return $this;
     }
 
+    /**
+     * @param string $class
+     * @return mixed
+     */
     public function getMorphMap($class)
     {
         $key = array_search($class, $this->morphMap);
-        return $key !== false ? $key : $class;
-    }
 
-    public function getInverseMorphMap($key)
-    {
-        return array_key_exists($key, $this->morphMap) ? $this->morphMap[$key] : $key;
-    }
-    
-    /**
-     * Return the Singleton instance of the manager
-     *
-     * @return Manager
-     */
-    public static function getInstance()
-    {
-        return static::$instance;
+        return $key !== false ? $key : $class;
     }
 }
