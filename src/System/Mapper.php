@@ -2,16 +2,16 @@
 
 namespace Analogue\ORM\System;
 
-use Analogue\ORM\System\Wrappers\Wrapper;
-use InvalidArgumentException;
-use Analogue\ORM\Mappable;
-use Analogue\ORM\EntityMap;
-use Analogue\ORM\Commands\Store;
 use Analogue\ORM\Commands\Delete;
+use Analogue\ORM\Commands\Store;
+use Analogue\ORM\Drivers\DBAdapter;
+use Analogue\ORM\EntityMap;
+use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Wrappers\Wrapper;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use Analogue\ORM\Drivers\DBAdapter;
-use Analogue\ORM\Exceptions\MappingException;
+use InvalidArgumentException;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -94,14 +94,14 @@ class Mapper
     /**
      * Persist an entity or an entity collection into the database
      *
-     * @param  Mappable|Collection $entity
+     * @param  Mappable|\Traversable|array $entity
      * @throws \InvalidArgumentException
      * @throws MappingException
-     * @return Mappable|Collection
+     * @return Mappable|\Traversable|array
      */
     public function store($entity)
     {
-        if ($this->isArrayOrCollection($entity)) {
+        if (Support::isTraversable($entity)) {
             return $this->storeCollection($entity);
         } else {
             return $this->storeEntity($entity);
@@ -109,14 +109,24 @@ class Mapper
     }
 
     /**
-     * Return true if an object is an array or collection
+     * Store an entity collection inside a single DB Transaction
      *
-     * @param  mixed $argument
-     * @return boolean
+     * @param  \Traversable|array $entities
+     * @throws \InvalidArgumentException
+     * @throws MappingException
+     * @return \Traversable|array
      */
-    protected function isArrayOrCollection($argument)
+    protected function storeCollection($entities)
     {
-        return $argument instanceof Collection || is_array($argument);
+        $this->adapter->beginTransaction();
+
+        foreach ($entities as $entity) {
+            $this->storeEntity($entity);
+        }
+
+        $this->adapter->commit();
+
+        return $entities;
     }
 
     /**
@@ -137,6 +147,22 @@ class Mapper
     }
 
     /**
+     * Check that the entity correspond to the current mapper.
+     *
+     * @param  mixed $entity
+     * @throws InvalidArgumentException
+     * @return void
+     */
+    protected function checkEntityType($entity)
+    {
+        if (get_class($entity) != $this->entityMap->getClass()) {
+            $expected = $this->entityMap->getClass();
+            $actual = get_class($entity);
+            throw new InvalidArgumentException("Expected : $expected, got $actual.");
+        }
+    }
+
+    /**
      * Convert an entity into an aggregate root
      *
      * @param  mixed $entity
@@ -149,41 +175,51 @@ class Mapper
     }
 
     /**
-     * Store an entity collection inside a single DB Transaction
+     * Get a the Underlying QueryAdapter.
      *
-     * @param  Collection|array $entities
-     * @throws \InvalidArgumentException
-     * @throws MappingException
-     * @return Collection
+     * @return \Analogue\ORM\Drivers\QueryAdapter
      */
-    protected function storeCollection($entities)
+    public function newQueryBuilder()
     {
-        $this->adapter->beginTransaction();
-
-        foreach ($entities as $entity) {
-            $this->storeEntity($entity);
-        }
-
-        $this->adapter->commit();
-
-        return $entities;
+        return $this->adapter->getQuery();
     }
 
     /**
      * Delete an entity or an entity collection from the database
      *
-     * @param  mixed|Collection
+     * @param  Mappable|\Traversable|array
      * @throws MappingException
      * @throws \InvalidArgumentException
-     * @return Collection|void
+     * @return \Traversable|array
      */
     public function delete($entity)
     {
-        if ($this->isArrayOrCollection($entity)) {
+        if (Support::isTraversable($entity)) {
             return $this->deleteCollection($entity);
         } else {
             $this->deleteEntity($entity);
         }
+    }
+
+    /**
+     * Delete an Entity Collection inside a single db transaction
+     *
+     * @param  \Traversable|array $entities
+     * @throws \InvalidArgumentException
+     * @throws MappingException
+     * @return \Traversable|array
+     */
+    protected function deleteCollection($entities)
+    {
+        $this->adapter->beginTransaction();
+
+        foreach ($entities as $entity) {
+            $this->deleteEntity($entity);
+        }
+
+        $this->adapter->commit();
+
+        return $entities;
     }
 
     /**
@@ -201,27 +237,6 @@ class Mapper
         $delete = new Delete($this->aggregate($entity), $this->newQueryBuilder());
 
         $delete->execute();
-    }
-
-    /**
-     * Delete an Entity Collection inside a single db transaction
-     *
-     * @param  Collection|array $entities
-     * @throws \InvalidArgumentException
-     * @throws MappingException
-     * @return Collection
-     */
-    protected function deleteCollection($entities)
-    {
-        $this->adapter->beginTransaction();
-
-        foreach ($entities as $entity) {
-            $this->deleteEntity($entity);
-        }
-
-        $this->adapter->commit();
-        
-        return $entities;
     }
 
     /**
@@ -316,13 +331,28 @@ class Mapper
     }
 
     /**
-     * Get the global scopes for this class instance.
+     * Get a new query instance without a given scope.
      *
-     * @return \Analogue\ORM\System\ScopeInterface
+     * @param  \Analogue\ORM\System\ScopeInterface $scope
+     * @return \Analogue\ORM\System\Query
      */
-    public function getGlobalScopes()
+    public function newQueryWithoutScope($scope)
     {
-        return $this->globalScopes;
+        $this->getGlobalScope($scope)->remove($query = $this->getQuery(), $this);
+
+        return $query;
+    }
+
+    /**
+     * Get the Analogue Query Builder for this instance
+     *
+     * @return \Analogue\ORM\System\Query
+     */
+    public function getQuery()
+    {
+        $query = new Query($this, $this->adapter);
+
+        return $this->applyGlobalScopes($query);
     }
 
     /**
@@ -341,41 +371,13 @@ class Mapper
     }
 
     /**
-     * Remove all of the global scopes from an Analogue Query builder.
+     * Get the global scopes for this class instance.
      *
-     * @param Query $query
-     * @return \Analogue\ORM\System\Query
+     * @return \Analogue\ORM\System\ScopeInterface
      */
-    public function removeGlobalScopes($query)
+    public function getGlobalScopes()
     {
-        foreach ($this->getGlobalScopes() as $scope) {
-            $scope->remove($query, $this);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Get a new query instance without a given scope.
-     *
-     * @param  \Analogue\ORM\System\ScopeInterface $scope
-     * @return \Analogue\ORM\System\Query
-     */
-    public function newQueryWithoutScope($scope)
-    {
-        $this->getGlobalScope($scope)->remove($query = $this->getQuery(), $this);
-
-        return $query;
-    }
-
-    /**
-     * Get a new query builder that doesn't have any global scopes.
-     *
-     * @return Query
-     */
-    public function newQueryWithoutScopes()
-    {
-        return $this->removeGlobalScopes($this->getQuery());
+        return $this->globalScopes;
     }
 
     /**
@@ -388,82 +390,6 @@ class Mapper
         $name = lcfirst(class_basename($command));
 
         $this->customCommands[$name] = $command;
-    }
-
-    /**
-     * Execute a custom command on an Entity
-     *
-     * @param  string                 $command
-     * @param  mixed|Collection|array $entity
-     * @throws \InvalidArgumentException
-     * @throws MappingException
-     * @return mixed
-     */
-    public function executeCustomCommand($command, $entity)
-    {
-        $commandClass = $this->customCommands[$command];
-
-        if ($this->isArrayOrCollection($entity)) {
-            foreach ($entity as $instance) {
-                $this->executeSingleCustomCommand($commandClass, $instance);
-            }
-        } else {
-            return $this->executeSingleCustomCommand($commandClass, $entity);
-        }
-    }
-
-    /**
-     * Execute a single command instance
-     *
-     * @param  string $commandClass
-     * @param  mixed  $entity
-     * @throws \InvalidArgumentException
-     * @throws MappingException
-     * @return mixed
-     */
-    protected function executeSingleCustomCommand($commandClass, $entity)
-    {
-        $this->checkEntityType($entity);
-
-        $instance = new $commandClass($this->aggregate($entity), $this->newQueryBuilder());
-
-        return $instance->execute();
-    }
-
-    /**
-     * Check that the entity correspond to the current mapper.
-     *
-     * @param  mixed $entity
-     * @throws InvalidArgumentException
-     * @return void
-     */
-    protected function checkEntityType($entity)
-    {
-        if (get_class($entity) != $this->entityMap->getClass()) {
-            $expected = $this->entityMap->getClass();
-            $actual = get_class($entity);
-            throw new InvalidArgumentException("Expected : $expected, got $actual.");
-        }
-    }
-
-    /**
-     * Get all the custom commands registered on this mapper
-     *
-     * @return array
-     */
-    public function getCustomCommands()
-    {
-        return array_keys($this->customCommands);
-    }
-
-    /**
-     * Check if this mapper supports this command
-     * @param  string $command
-     * @return boolean
-     */
-    public function hasCustomCommand($command)
-    {
-        return in_array($command, $this->getCustomCommands());
     }
 
     /**
@@ -505,29 +431,8 @@ class Mapper
         }
 
         $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
-        return $prototype;
-    }
-    
-    /**
-     * Get the Analogue Query Builder for this instance
-     *
-     * @return \Analogue\ORM\System\Query
-     */
-    public function getQuery()
-    {
-        $query = new Query($this, $this->adapter);
 
-        return $this->applyGlobalScopes($query);
-    }
-    
-    /**
-     * Get the Analogue Query Builder for this instance
-     *
-     * @return \Analogue\ORM\System\Query
-     */
-    public function query()
-    {
-        return $this->getQuery();
+        return $prototype;
     }
 
     /**
@@ -541,13 +446,28 @@ class Mapper
     }
 
     /**
-     * Get a the Underlying QueryAdapter.
+     * Get a new query builder that doesn't have any global scopes.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return Query
      */
-    public function newQueryBuilder()
+    public function newQueryWithoutScopes()
     {
-        return $this->adapter->getQuery();
+        return $this->removeGlobalScopes($this->getQuery());
+    }
+
+    /**
+     * Remove all of the global scopes from an Analogue Query builder.
+     *
+     * @param Query $query
+     * @return \Analogue\ORM\System\Query
+     */
+    public function removeGlobalScopes($query)
+    {
+        foreach ($this->getGlobalScopes() as $scope) {
+            $scope->remove($query, $this);
+        }
+
+        return $query;
     }
 
     /**
@@ -575,10 +495,81 @@ class Mapper
             if (count($parameters) == 0) {
                 throw new \Exception("$method must at least have 1 argument");
             }
+
             return $this->executeCustomCommand($method, $parameters[0]);
         }
 
         // Redirect call on a new query instance
         return call_user_func_array([$this->query(), $method], $parameters);
+    }
+
+    /**
+     * Check if this mapper supports this command
+     * @param  string $command
+     * @return boolean
+     */
+    public function hasCustomCommand($command)
+    {
+        return in_array($command, $this->getCustomCommands());
+    }
+
+    /**
+     * Get all the custom commands registered on this mapper
+     *
+     * @return array
+     */
+    public function getCustomCommands()
+    {
+        return array_keys($this->customCommands);
+    }
+
+    /**
+     * Execute a custom command on an Entity
+     *
+     * @param  string                 $command
+     * @param  mixed|Collection|array $entity
+     * @throws \InvalidArgumentException
+     * @throws MappingException
+     * @return mixed
+     */
+    public function executeCustomCommand($command, $entity)
+    {
+        $commandClass = $this->customCommands[$command];
+
+        if (Support::isTraversable($entity)) {
+            foreach ($entity as $instance) {
+                $this->executeSingleCustomCommand($commandClass, $instance);
+            }
+        } else {
+            return $this->executeSingleCustomCommand($commandClass, $entity);
+        }
+    }
+
+    /**
+     * Execute a single command instance
+     *
+     * @param  string $commandClass
+     * @param  mixed  $entity
+     * @throws \InvalidArgumentException
+     * @throws MappingException
+     * @return mixed
+     */
+    protected function executeSingleCustomCommand($commandClass, $entity)
+    {
+        $this->checkEntityType($entity);
+
+        $instance = new $commandClass($this->aggregate($entity), $this->newQueryBuilder());
+
+        return $instance->execute();
+    }
+
+    /**
+     * Get the Analogue Query Builder for this instance
+     *
+     * @return \Analogue\ORM\System\Query
+     */
+    public function query()
+    {
+        return $this->getQuery();
     }
 }
