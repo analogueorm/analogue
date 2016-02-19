@@ -114,4 +114,33 @@ class Entity extends ValueObject
         }
         return $attributes;
     }
+
+    /**
+     * Create entity with arbitrary arguments
+     *
+     * @param array|string $argumentsOrPrimaryKey
+     * @return Entity
+     * @throws MappingException
+     * @throws \InvalidArgumentException
+     */
+    public static function mock($argumentsOrPrimaryKey)
+    {
+        if (!is_array($argumentsOrPrimaryKey)) {
+            $primaryKey = Manager::getInstance()
+                ->mapper(static::class)
+                ->getEntityMap()
+                ->getKeyName();
+
+            $argumentsOrPrimaryKey = [$primaryKey => $argumentsOrPrimaryKey];
+        }
+
+        $instance = (new \ReflectionClass(static::class))
+            ->newInstanceWithoutConstructor();
+
+        foreach ($argumentsOrPrimaryKey as $key => $value) {
+            $instance->$key = $value;
+        }
+
+        return $instance;
+    }
 }
