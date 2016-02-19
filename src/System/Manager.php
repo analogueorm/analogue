@@ -128,26 +128,7 @@ class Manager
             throw new MappingException('Tried to instantiate mapper on wrapped Entity');
         }
 
-        switch (true) {
-            case Support::isTraversable($entity):
-                if (!count($entity)) {
-                    throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
-                }
-
-                $entity = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
-                    ? $entity->current()
-                    : current($entity);
-
-                break;
-
-            case is_object($entity):
-                $entity = get_class($entity);
-                break;
-
-            case !is_string($entity):
-                throw new \InvalidArgumentException('Invalid mapper Entity type');
-                break;
-        }
+        $entity = $this->resolveEntityClass($entity);
 
         $entity = $this->getInverseMorphMap($entity);
 
@@ -157,6 +138,37 @@ class Manager
         } else {
             return $this->buildMapper($entity, $entityMap);
         }
+    }
+
+    /**
+     * This method resolve entity class from mappable instances or iterators
+     *
+     * @param \Analogue\ORM\Mappable|string|array|\Traversable $entity
+     * @return string
+     */
+    protected function resolveEntityClass($entity)
+    {
+        switch (true) {
+            case Support::isTraversable($entity):
+                if (!count($entity)) {
+                    throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
+                }
+
+                $firstEntityItem = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
+                    ? $entity->current()
+                    : current($entity);
+
+                return $this->resolveEntityClass($firstEntityItem);
+
+            case is_object($entity):
+                return get_class($entity);
+
+            case !is_string($entity):
+                throw new \InvalidArgumentException('Invalid mapper Entity type');
+                break;
+        }
+
+        return $entity;
     }
 
     /**
