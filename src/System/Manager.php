@@ -169,7 +169,7 @@ class Manager
                 throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
             }
 
-            $firstEntityItem = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
+            $firstEntityItem = ($entity instanceof \Iterator)
                 ? $entity->current()
                 : current($entity);
 
