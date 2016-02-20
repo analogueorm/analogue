@@ -6,9 +6,8 @@ if (! function_exists('analogue')) {
 
     /**
      * Return analogue's manager instance
-     *
-     * @param  array  $array
-     * @return array
+     * 
+     * @return \Analogue\ORM\System\Manager
      */
     function analogue()
     {
