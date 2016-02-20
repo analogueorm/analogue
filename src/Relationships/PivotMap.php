@@ -4,4 +4,6 @@ namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\EntityMap;
 
-class PivotMap extends EntityMap {}
+class PivotMap extends EntityMap
+{
+}

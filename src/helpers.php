@@ -26,7 +26,7 @@ if (! function_exists('mapper')) {
      * @param mixed $entityMap 
      * @return Mapper
      */
-    function mapper($entity,$entityMap = null)
+    function mapper($entity, $entityMap = null)
     {
         return Manager::getMapper($entity, $entityMap);
     }
