@@ -97,7 +97,7 @@ class Manager
      * 
      * @var boolean
      */
-    protected $strictMode = false;
+    protected $strictMode = true;
 
     /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
