@@ -5,13 +5,16 @@ namespace Analogue\ORM\System;
 use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
+use Illuminate\Support\Collection;
 use Analogue\ORM\System\Wrappers\Wrapper;
 use Illuminate\Contracts\Events\Dispatcher;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Drivers\Manager as DriverManager;
+use Analogue\ORM\Exceptions\EntityMapNotFoundException;
 
 /**
- * This class keeps track of instantiated mappers, and entity <-> entityMap associations
+ * This class is the entry point for registering Entities and
+ * instansiating Mappers
  */
 class Manager
 {
@@ -88,6 +91,15 @@ class Manager
     ];
 
     /**
+     * If strictMode is set to true, Manager will throw
+     * an exception if no entityMap class are registered
+     * for a given entity class.
+     * 
+     * @var boolean
+     */
+    protected $strictMode = false;
+
+    /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
      * @param Dispatcher                    $event
      */
@@ -145,30 +157,34 @@ class Manager
      *
      * @param \Analogue\ORM\Mappable|string|array|\Traversable $entity
      * @return string
+     *
+     * @throws \InvalidArgumentException
      */
     protected function resolveEntityClass($entity)
     {
-        switch (true) {
-            case Support::isTraversable($entity):
-                if (!count($entity)) {
-                    throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
-                }
+        // We first check if the entity is traversable and we'll resolve
+        // the entity based on the first item of the object.   
+        if ($this->isTraversable($entity)) {
+            if (! count($entity)) {
+                throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
+            }
 
-                $firstEntityItem = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
-                    ? $entity->current()
-                    : current($entity);
+            $firstEntityItem = ($entity instanceof \Iterator || $entity instanceof \IteratorAggregate)
+                ? $entity->current()
+                : current($entity);
 
-                return $this->resolveEntityClass($firstEntityItem);
-
-            case is_object($entity):
-                return get_class($entity);
-
-            case !is_string($entity):
-                throw new \InvalidArgumentException('Invalid mapper Entity type');
-                break;
+            return $this->resolveEntityClass($firstEntityItem);
+        }
+            
+        if (is_object($entity)) {
+            return get_class($entity);
         }
 
-        return $entity;
+        if (is_string($entity)) {
+            return $entity;
+        }
+     
+        throw new \InvalidArgumentException('Invalid entity type');
     }
 
     /**
@@ -228,6 +244,27 @@ class Manager
     }
 
     /**
+     * Return true if an object is an array or iterator
+     *
+     * @param  mixed $argument
+     * @return boolean
+     */
+    public function isTraversable($argument)
+    {
+        return $argument instanceof \Traversable || is_array($argument);
+    }
+
+    /**
+     * Set strict mode for entityMap instantiation
+     * 
+     * @param boolean $mode
+     */
+    public function setStrictMode($mode)
+    {
+        $this->strictMode = $mode;
+    }
+
+    /**
      * Register an entity
      *
      * @param  string|\Analogue\ORM\Mappable $entity    entity's class name
@@ -281,7 +318,9 @@ class Manager
             $map = $entity . 'Map';
             $map = new $map;
         } else {
-            // Generate an EntityMap object
+            if ($this->strictMode) {
+                throw new EntityMapNotFoundException("No EntityMap registered for $entity");
+            }
             $map = $this->getNewEntityMap();
         }
 

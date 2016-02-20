@@ -101,7 +101,7 @@ class Mapper
      */
     public function store($entity)
     {
-        if (Support::isTraversable($entity)) {
+        if ($this->manager->isTraversable($entity)) {
             return $this->storeCollection($entity);
         } else {
             return $this->storeEntity($entity);
@@ -194,7 +194,7 @@ class Mapper
      */
     public function delete($entity)
     {
-        if (Support::isTraversable($entity)) {
+        if ($this->manager->isTraversable($entity)) {
             return $this->deleteCollection($entity);
         } else {
             $this->deleteEntity($entity);
@@ -536,7 +536,7 @@ class Mapper
     {
         $commandClass = $this->customCommands[$command];
 
-        if (Support::isTraversable($entity)) {
+        if ($this->manager->isTraversable($entity)) {
             foreach ($entity as $instance) {
                 $this->executeSingleCustomCommand($commandClass, $instance);
             }
