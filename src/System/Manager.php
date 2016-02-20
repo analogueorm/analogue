@@ -2,6 +2,9 @@
 
 namespace Analogue\ORM\System;
 
+use Analogue\ORM\Entity;
+use Analogue\ORM\Plugins\AnaloguePluginInterface;
+use Analogue\ORM\ValueMap;
 use Exception;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Repository;
@@ -42,7 +45,7 @@ class Manager
     /**
      * Key value store of ValueObject Classes and corresponding map classes
      *
-     * @var array
+     * @var array|ValueMap[]
      */
     protected $valueClasses = [];
 
@@ -119,6 +122,7 @@ class Manager
      * @param  null|EntityMap                $entityMap
      * @throws MappingException
      * @return Mapper
+     * @throws \InvalidArgumentException
      */
     public static function getMapper($entity, $entityMap = null)
     {
@@ -231,7 +235,7 @@ class Manager
     /**
      * Check if the entity is already registered
      *
-     * @param  string|object $entity
+     * @param  string|Entity $entity
      * @return boolean
      */
     public function isRegisteredEntity($entity)
@@ -287,7 +291,7 @@ class Manager
             throw new MappingException("Class $entity does not exists");
         }
 
-        if (is_null($entityMap)) {
+        if ($entityMap === null) {
             $entityMap = $this->getEntityMapInstanceFor($entity);
         }
 
@@ -311,6 +315,7 @@ class Manager
      *
      * @param  string $entity
      * @return \Analogue\ORM\Mappable
+     * @throws EntityMapNotFoundException
      */
     protected function getEntityMapInstanceFor($entity)
     {
@@ -412,6 +417,8 @@ class Manager
         if (!array_key_exists($valueObject, $this->valueClasses)) {
             $this->registerValueObject($valueObject);
         }
+
+        /** @var ValueMap $valueMap */
         $valueMap = new $this->valueClasses[$valueObject];
 
         $valueMap->setClass($valueObject);
@@ -433,7 +440,7 @@ class Manager
             $valueObject = get_class($valueObject);
         }
 
-        if (is_null($valueMap)) {
+        if ($valueMap === null) {
             $valueMap = $valueObject . 'Map';
         }
 
@@ -465,6 +472,7 @@ class Manager
      */
     public function registerPlugin($plugin)
     {
+        /** @var AnaloguePluginInterface $plugin */
         $plugin = new $plugin($this);
 
         $this->events = array_merge($this->events, $plugin->getCustomEvents());
@@ -478,14 +486,15 @@ class Manager
      *
      * @param  string   $event
      * @param  \Closure $callback
-     * @throws \Exception
+     * @throws \LogicException
      * @return void
      */
     public function registerGlobalEvent($event, $callback)
     {
-        if (!in_array($event, $this->events)) {
-            throw new \Exception("Analogue : Event $event doesn't exist");
+        if (!in_array($event, $this->events, false)) {
+            throw new \LogicException("Analogue : Event $event doesn't exist");
         }
+
         $this->eventDispatcher->listen("analogue.{$event}.*", $callback);
     }
 
@@ -495,6 +504,7 @@ class Manager
      * @param  mixed $entity
      * @throws MappingException
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function store($entity)
     {
@@ -507,6 +517,7 @@ class Manager
      * @param  mixed $entity
      * @throws MappingException
      * @return \Illuminate\Support\Collection|null
+     * @throws \InvalidArgumentException
      */
     public function delete($entity)
     {
@@ -519,6 +530,7 @@ class Manager
      * @param  mixed $entity
      * @throws MappingException
      * @return Query
+     * @throws \InvalidArgumentException
      */
     public function query($entity)
     {
@@ -531,6 +543,7 @@ class Manager
      * @param  mixed $entity
      * @throws MappingException
      * @return Query
+     * @throws \InvalidArgumentException
      */
     public function globalQuery($entity)
     {
@@ -554,7 +567,7 @@ class Manager
      */
     public function getMorphMap($class)
     {
-        $key = array_search($class, $this->morphMap);
+        $key = array_search($class, $this->morphMap, false);
 
         return $key !== false ? $key : $class;
     }
