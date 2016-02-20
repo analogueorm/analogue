@@ -30,6 +30,9 @@
         "analogue/laravel-auth": "Analogue's authentication driver for Laravel."
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Analogue\\ORM\\": "src/"
         }
