@@ -149,7 +149,7 @@ class Manager
     protected function resolveEntityClass($entity)
     {
         switch (true) {
-            case Support::isTraversable($entity):
+            case $this->isTraversable($entity):
                 if (!count($entity)) {
                     throw new \InvalidArgumentException('Length of Entity collection must be greater than 0');
                 }
@@ -518,5 +518,16 @@ class Manager
         $key = array_search($class, $this->morphMap);
 
         return $key !== false ? $key : $class;
+    }
+
+    /**
+     * Return true if an object is an array or iterator
+     *
+     * @param mixed $argument
+     * @return boolean
+     */
+    public function isTraversable($argument)
+    {
+        return $argument instanceof \Traversable || is_array($argument);
     }
 }
