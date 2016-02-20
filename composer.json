@@ -32,7 +32,10 @@
     "autoload": {
         "psr-4": {
             "Analogue\\ORM\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true

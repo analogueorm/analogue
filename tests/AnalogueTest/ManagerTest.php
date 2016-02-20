@@ -10,7 +10,12 @@ class ManagerTest extends PHPUnit_Framework_TestCase
     {
         $class = get_class(get_analogue());
 
-        $this->assertEquals($class, 'Analogue\ORM\Analogue');
+        $this->assertEquals('Analogue\ORM\Analogue', $class);
+
+        // Test Helper Function
+        $class = get_class(analogue());
+
+        $this->assertEquals('Analogue\ORM\System\Manager', $class);
     }
 
     public function testMapperInit()
