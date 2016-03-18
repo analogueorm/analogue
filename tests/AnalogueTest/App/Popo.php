@@ -10,6 +10,8 @@ class Popo
 
     protected $user;
 
+    protected $user_id;
+
     public function __construct($name)
     {
         $this->name = $name;

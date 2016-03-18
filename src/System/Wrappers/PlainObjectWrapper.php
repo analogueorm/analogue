@@ -29,9 +29,9 @@ class PlainObjectWrapper extends Wrapper
     {
         $this->reflection = new ReflectionClass($popoEntity);
 
-        $this->attributeList = $this->getAttributeList();
-
         parent::__construct($popoEntity, $entityMap);
+
+        $this->attributeList = $this->getAttributeList();
     }
 
     /**
@@ -197,7 +197,7 @@ class PlainObjectWrapper extends Wrapper
          */
     public function hasAttribute($key)
     {
-        if (array_key_exists($key, $$this->attributeList)) {
+        if (array_key_exists($key, $this->attributeList)) {
             return true;
         } else {
             return false;
