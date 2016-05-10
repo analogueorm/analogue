@@ -186,7 +186,7 @@ class MorphTo extends BelongsTo
         //
         // Instead, we'll just add the object to the Entity's attribute
 
-        $this->parent->setEntityAttribute($this->relation, $entity);
+        $this->parent->setEntityAttribute($this->relation, $entity->getEntityObject());
     }
 
     /**
