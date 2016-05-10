@@ -205,7 +205,10 @@ class MorphTo extends BelongsTo
 
             $relatedKey = $this->relatedMap->getKeyName();
 
-            return [$foreignKey => $wrapper->getEntityAttribute($relatedKey)];
+            return [
+                $foreignKey => $wrapper->getEntityAttribute($relatedKey),
+                $this->morphType => $wrapper->getMap()->getMorphClass(),
+            ];
         } else {
             return [$foreignKey => null];
         }
