@@ -57,6 +57,16 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
+     * Returns the wrapped entity's map
+     *
+     * @return mixed
+     */
+    public function getMap()
+    {
+        return $this->entityMap;
+    }
+
+    /**
      * Set the lazyloading proxies on the wrapped entity objet
      *
      * @return void
