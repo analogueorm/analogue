@@ -50,16 +50,16 @@ class MapInitializer {
 
 		$class = new ReflectionClass(get_class($map));
 
-		foreach($guessedRelations as $methodName)
-		{
+		foreach($guessedRelations as $methodName) {
 			$method = $class->getMethod($methodName);
 
-			if($method->getNumberOfParameters() == 0) continue;
+			if($method->getNumberOfParameters() == 0) {
+				continue;
+			}
 
 			$params = $method->getParameters();
 
-			if ($params[0]->getClass()->implementsInterface('Analogue\ORM\Mappable'))
-			{
+			if ($params[0]->getClass() && $params[0]->getClass()->implementsInterface('Analogue\ORM\Mappable')) {
 				$relationships[] = $methodName;
 			}
 		}
