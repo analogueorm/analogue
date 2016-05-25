@@ -1,6 +1,7 @@
 <?php
 
 use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\Mapper;
 
 if (! function_exists('analogue')) {
 
