@@ -122,6 +122,14 @@ class EntityCollection extends Collection
      */
     public function contains($key, $value = null)
     {
+        if (func_num_args() == 2) {
+            return !$this->where($key, $value)->isEmpty();
+        }
+
+        if ($this->useAsCallable($key)) {
+            return !is_null($this->first($key));
+        }
+
         return !is_null($this->find($key));
     }
 
@@ -148,9 +156,9 @@ class EntityCollection extends Collection
             $class = get_class($entity);
 
             $mapper = Manager::getMapper($class);
-            
+
             $keyName = $mapper->getEntityMap()->getKeyName();
-            
+
             return $class . '.' . $entity->getEntityAttribute($keyName);
         },
         $this->items);
@@ -171,7 +179,7 @@ class EntityCollection extends Collection
             $class = get_class($item);
 
             $mapper = Manager::getMapper($class);
-            
+
             $keyName = $mapper->getEntityMap()->getKeyName();
 
             if (in_array($class . '.' . $item->$keyName, $hashes)) {
@@ -306,7 +314,7 @@ class EntityCollection extends Collection
     protected function getEntityKey($entity)
     {
         $keyName = Manager::getMapper($entity)->getEntityMap()->getKeyName();
-        
+
         $wrapper = $this->factory->make($entity);
 
         return $wrapper->getEntityAttribute($keyName);
