@@ -308,4 +308,16 @@ class HasManyThrough extends Relationship
     {
         return $this->farParentMap->getQualifiedKeyName();
     }
+
+    /**
+     * Run synchronization content if needed by the
+     * relation type.
+     *
+     * @param  array $actualContent
+     * @return void
+     */
+    public function sync(array $entities)
+    {
+        // N/A
+    }
 }
