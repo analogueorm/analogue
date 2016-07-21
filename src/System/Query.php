@@ -266,7 +266,7 @@ class Query
      */
     public function lists($column, $key = null)
     {
-        return $this->query->lists($column, $key);
+        return $this->query->pluck($column, $key);
     }
 
     /**
@@ -752,7 +752,7 @@ class Query
         $columns = $this->enforceIdColumn($columns);
 
         // Run the query
-        $results = $this->query->get($columns);
+        $results = $this->query->get($columns)->toArray();
 
         $builder = new EntityBuilder($this->mapper, array_keys($this->getEagerLoads()));
 

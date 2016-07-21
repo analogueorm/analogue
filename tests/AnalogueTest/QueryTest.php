@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase;
 use Analogue\ORM\EntityCollection;
 use AnalogueTest\App\Permission;
 use AnalogueTest\App\Role;
+use Illuminate\Support\Collection;
 
 class QueryTest extends PHPUnit_Framework_TestCase
 {
@@ -130,8 +131,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $mapper->store($c);
 
         $l = $mapper->query()->lists('label');
-
-        $this->assertTrue(is_array($l));
+        
+        $this->assertInstanceOf(Collection::class, $l);
     }
 
     public function testOrWhere()
@@ -199,7 +200,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             $q->whereLabel('momo');
         })->lists('label');
         
-        $this->assertEquals(['blue', 'green'], $roles);
+        $this->assertEquals(['blue', 'green'], $roles->toArray());
     }
 
     public function testPaginationWithDefaultValue()

@@ -179,11 +179,11 @@ class Manager
 
             return $this->resolveEntityClass($firstEntityItem);
         }
-            
+        
         if (is_object($entity)) {
             return get_class($entity);
         }
-
+        
         if (is_string($entity)) {
             return $entity;
         }

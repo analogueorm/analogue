@@ -88,7 +88,7 @@ class EntityCollectionTest extends PHPUnit_Framework_TestCase
         $entity3->id = 3;
         
         $c = new Collection([$entity1, $entity2]);
-
+        setDebugOn();
         $this->assertTrue($c->contains($entity1));
         $this->assertTrue($c->contains($entity2));
         $this->assertFalse($c->contains($entity3));

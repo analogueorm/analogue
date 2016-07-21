@@ -42,7 +42,8 @@ class EntityCollection extends Collection
             $key = $this->getEntityKey($key);
         }
 
-        return array_first($this->items, function ($itemKey, $entity) use ($key) {
+        return array_first($this->items, function ($entity, $itemKey) use ($key) {
+            
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }

@@ -14,14 +14,14 @@
     "authors": [
         {
             "name": "Rémi Collin",
-            "email": "remi@plateau.io"
+            "email": "rcollin2@gmail.com"
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/database": "~5.0",
-        "illuminate/events": "~5.0",
-        "illuminate/pagination": "~5.0"
+        "php": ">=5.5.9",
+        "illuminate/database": "~5.3",
+        "illuminate/events": "~5.3",
+        "illuminate/pagination": "~5.3"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
@@ -37,6 +37,6 @@
             "src/helpers.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
