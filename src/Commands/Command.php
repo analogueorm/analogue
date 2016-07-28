@@ -3,7 +3,7 @@
 namespace Analogue\ORM\Commands;
 
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\Drivers\QueryAdapter;
+use Illuminate\Database\Query\Builder;
 
 abstract class Command
 {
@@ -26,7 +26,7 @@ abstract class Command
      * @param Aggregate $aggregate
      * @param QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter $query
      */
-    public function __construct(Aggregate $aggregate, QueryAdapter $query)
+    public function __construct(Aggregate $aggregate, Builder $query)
     {
         $this->aggregate = $aggregate;
 

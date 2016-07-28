@@ -2,7 +2,6 @@
 
 namespace Analogue\ORM\System;
 
-use Analogue\ORM\Drivers\QueryAdapter;
 use Closure;
 use Exception;
 use Analogue\ORM\EntityCollection;

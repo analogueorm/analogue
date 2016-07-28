@@ -3,7 +3,6 @@
 namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * Illuminate Driver for Analogue ORM. If multiple DB connections are
@@ -36,9 +35,7 @@ class IlluminateDBAdapter implements DBAdapter
 
         $grammar = $connection->getQueryGrammar();
 
-        $queryBuilder = new QueryBuilder($connection, $grammar, $connection->getPostProcessor());
-
-        return new IlluminateQueryAdapter($queryBuilder);
+        return new IlluminateQueryBuilder($connection, $grammar, $connection->getPostProcessor());
     }
 
     /**
