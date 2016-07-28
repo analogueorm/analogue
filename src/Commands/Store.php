@@ -45,12 +45,7 @@ class Store extends Command
 
             $mapper->fireEvent('created', $entity, false);
         }
-        
-        /**
-         * We'll only run an update if the entity
-         * is actually dirty
-         */
-        if ($this->aggregate->isDirty()) {
+        else if ($this->aggregate->isDirty()) {
             if ($mapper->fireEvent('updating', $entity) === false) {
                 return false;
             }
