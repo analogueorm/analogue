@@ -88,7 +88,8 @@ class Entity extends ValueObject
      */
     protected function getMutatorMethod($key)
     {
-        return ucfirst($key) . 'Attribute';
+        $key = ucwords(str_replace(['-', '_'], ' ', $key));
+        return str_replace(' ', '', $key) . "Attribute";
     }
 
     /**
@@ -101,7 +102,7 @@ class Entity extends ValueObject
         // First, call the trait method before filtering
         // with Entity specific methods
         $attributes = $this->attributesToArray($this->attributes);
-        
+
         foreach ($this->attributes as $key => $attribute) {
             if (in_array($key, $this->hidden)) {
                 unset($attributes[$key]);
