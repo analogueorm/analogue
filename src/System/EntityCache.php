@@ -24,7 +24,7 @@ class EntityCache
 
     /**
      * Entity Map for the current Entity Type
-     * @var [type]
+     * @var \Analogue\ORM\EntityMap
      */
     protected $entityMap;
 
@@ -143,9 +143,9 @@ class EntityCache
     /**
      * Create a cachedRelationship instance which will hold related entity's hash and pivot attributes, if any.
      *
-     * @param               $parentKey
+     * @param  string       $parentKey
      * @param  string       $relation
-     * @param               $result
+     * @param  array        $result
      * @param  Relationship $relationship
      * @throws MappingException
      * @return CachedRelationship
@@ -295,7 +295,9 @@ class EntityCache
     }
 
     /**
-     * @param                     $relation
+     * Get pivot attributes for a relation
+     * 
+     * @param  string             $relation
      * @param  InternallyMappable $entity
      * @return array
      */
@@ -314,5 +316,18 @@ class EntityCache
         }
 
         return $values;
+    }
+
+    /**
+     * Clear the entity Cache. Use with caution as it could result
+     * in impredictable behaviour if the cached entities are stored
+     * after the cache clear operation. 
+     * 
+     * @return void
+     */
+    public function clear()
+    {   
+        $this->cache = [];
+        $this->pivotAttributes = [];
     }
 }
