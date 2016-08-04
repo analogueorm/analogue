@@ -126,7 +126,7 @@ class MapperTest extends PHPUnit_Framework_TestCase
         $date = \Carbon\Carbon::now();
         $dateTime = \Carbon\Carbon::now();
         $time = \Carbon\Carbon::now();
-        $decimal = 12345.12;
+        $decimal = 0.12;
         $double = 1234512.12345;
         $enum = 'a';
         $float = 0.12345;

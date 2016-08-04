@@ -103,6 +103,14 @@ class Manager
     protected $strictMode = true;
 
     /**
+     * We can add namespaces in this array where the manager
+     * will look for when auto registering entityMaps.
+     * 
+     * @var array
+     */
+    protected $customMapNamespaces = [];
+
+    /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
      * @param Dispatcher                    $event
      */
@@ -269,6 +277,23 @@ class Manager
     }
 
     /**
+     * Register a namespace in where Analogue
+     * will scan for EntityMaps & ValueMaps
+     *
+     * @param string $namespace
+     * @return void
+     */
+    public function registerMapNamespace($namespace)
+    {
+        // Add a trailing antislash to namespace if not present
+        if (substr("testers", -1) != "\\") {
+            $namespace = $namespace."\\";
+        }
+
+        $this->customMapNamespaces[] = $namespace;
+    }
+
+    /**
      * Register an entity
      *
      * @param  string|\Analogue\ORM\Mappable $entity    entity's class name
@@ -314,22 +339,67 @@ class Manager
      * Get the entity map instance for a custom entity
      *
      * @param  string $entity
-     * @return \Analogue\ORM\Mappable
-     * @throws EntityMapNotFoundException
+     * @return \Analogue\ORM\EntityMap
      */
     protected function getEntityMapInstanceFor($entity)
     {
         if (class_exists($entity . 'Map')) {
             $map = $entity . 'Map';
             $map = new $map;
-        } else {
-            if ($this->strictMode) {
-                throw new EntityMapNotFoundException("No EntityMap registered for $entity");
-            }
-            $map = $this->getNewEntityMap();
+            return $map;
         }
 
+        if ($map = $this->getMapFromNamespaces($entity)) {
+            return $map;
+        }
+                
+        if ($this->strictMode) {
+            throw new EntityMapNotFoundException("No Map registered for $entity");
+        }
+        
+        $map = $this->getNewEntityMap();
+
         return $map;
+    }
+
+    /**
+     * Scan through registered custom namespace
+     * for an Entity/ValueMap
+     * 
+     * @param  string $class
+     * @return ValueMap|EntityMap|boolean
+     */
+    protected function getMapFromNamespaces($class)
+    {
+        foreach ($this->customMapNamespaces as $namespace) {
+            if($map = $this->findMapInNamespace($class, $namespace)) {
+                return $map;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Look in a custom namespace for an Entity/ValueMap
+     * 
+     * @param  string $class
+     * @param  string $namespace
+     * @return ValueMap|EntityMap|boolean
+     */
+    protected function findMapInNamespace($class, $namespace)
+    {
+        $parts = explode("\\", $class);
+        
+        $baseClass = $parts[count($parts) - 1];
+
+        $expectedClass = $namespace.$baseClass.'Map';
+
+        if (class_exists($expectedClass)) {
+            return new $expectedClass;
+        }
+
+        return false;
     }
 
     /**
