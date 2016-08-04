@@ -1,6 +1,5 @@
 <?php
 
-
 class ProxyTest extends AnalogueTestCase 
 {
     public function setUp()

@@ -18,11 +18,9 @@ class HasOneTest extends AnalogueTestCase
         $blog = $this->factoryMakeUid(Blog::class);
         $mapper = $this->mapper($user);
         $user->blog = $blog;
-        setTddOn();
         $mapper->store($user);
-        setTddOff();
         $this->seeInDatabase('blogs', ['user_id' => $user->id]);
-        $this->assertEquals($user->id, $user->blog->user_id);
+        $this->assertEquals($user->id, $user->blog->user->id);
     }  
 
 }
