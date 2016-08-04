@@ -511,10 +511,18 @@ class Manager
         }
 
         if ($valueMap === null) {
-            $valueMap = $valueObject . 'Map';
+
+            // First, we'll look into registered namespaces for Entity Maps,
+            // if any. Then we'll fallback to the same namespace of the object
+            if(! $valueMap = $this->getMapFromNamespaces($valueObject)) {
+                $valueMap = $valueObject . 'Map';    
+            }
+            else {
+                $valueMap = get_class($valueMap);
+            }
         }
 
-        if (!class_exists($valueMap)) {
+        if (! class_exists($valueMap)) {
             throw new MappingException("$valueMap doesn't exists");
         }
 
