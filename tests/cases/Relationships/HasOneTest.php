@@ -20,6 +20,7 @@ class HasOneTest extends AnalogueTestCase
         $user->blog = $blog;
         $mapper->store($user);
         $this->seeInDatabase('blogs', ['user_id' => $user->id]);
+        
         $this->assertEquals($user->id, $user->blog->user->id);
     }  
 
