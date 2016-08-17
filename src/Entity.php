@@ -115,4 +115,24 @@ class Entity extends ValueObject
         }
         return $attributes;
     }
+
+    /**
+     * Fill an entity with key-value pairs
+     * 
+     * @param  array  $attributes 
+     * @return void
+     */
+    public function fill(array $attributes)
+    {
+        foreach ($attributes as $key => $attribute) {
+            
+            if ($this->hasSetMutator($key)) {
+                $method = 'set' . $this->getMutatorMethod($key);
+                $this->attributes[$key] = $this->$method($attribute);
+            }
+            else {
+                $this->attributes[$key] = $attribute;
+            }
+        }
+    }
 }
