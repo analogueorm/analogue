@@ -70,7 +70,7 @@ class EntityBuilder
      * @param  array $results
      * @return array
      */
-    public function build(array $results)
+    public function build($results)
     {
         $entities = [];
 
