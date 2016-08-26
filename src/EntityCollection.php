@@ -43,7 +43,7 @@ class EntityCollection extends Collection
         }
 
         return array_first($this->items, function ($entity, $itemKey) use ($key) {
-            
+
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }
@@ -383,10 +383,11 @@ class EntityCollection extends Collection
      * Return only unique items from the collection.
      *
      * @param  string|null $key
+     * @param  bool $strict
      * @throws MappingException
      * @return self
      */
-    public function unique($key = null)
+    public function unique($key = null, $strict = false)
     {
         $dictionary = $this->getDictionary();
 
