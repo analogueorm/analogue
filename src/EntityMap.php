@@ -654,7 +654,7 @@ class EntityMap
      */
     public function getInheritanceType()
     {
-        return $this->inheritanceType;
+        return property_exists($this, 'inheritanceType') ? $this->inheritanceType : null;
     }
 
     /**
@@ -665,7 +665,7 @@ class EntityMap
      */
     public function getDiscriminatorColumn()
     {
-        return $this->discriminatorColumn;
+        return property_exists($this, 'discriminatorColumn') ? $this->discriminatorColumn : null;
     }
 
     /**
@@ -675,7 +675,7 @@ class EntityMap
      */
     public function getDiscriminatorColumnMap()
     {
-        return $this->discriminatorColumnMap;
+        return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : null;
     }
 
     /**
