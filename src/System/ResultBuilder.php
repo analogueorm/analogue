@@ -108,7 +108,10 @@ class ResultBuilder
 
     /**
      * Given a result array, return the entity builder needed to correctly
-     * build the result into an entity.
+     * build the result into an entity. If no getDiscriminatorColumnMap property
+     * has been defined on the EntityMap, we'll assume that the value stored in
+     * the $type column is the fully qualified class name of the entity and
+     * we'll use it instead.
      *
      * @param  array  $result
      * @return EntityBuilder
@@ -116,7 +119,10 @@ class ResultBuilder
     protected function builderForResult(array $result) : EntityBuilder
     {
         $type = $result[$this->entityMap->getDiscriminatorColumn()];
-        $class = $this->entityMap->getDiscriminatorColumnMap()[$type];
+
+        $columnMap = $this->entityMap->getDiscriminatorColumnMap();
+
+        $class = isset($columnMap[$type]) ? $columnMap[$type]: $type;
 
         if (!isset($this->builders[$type])) {
             $this->builders[$type] = new EntityBuilder($this->manager->mapper($class), array_keys($this->eagerLoads));
