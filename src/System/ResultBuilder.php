@@ -7,24 +7,16 @@ use Analogue\ORM\System\Mapper;
 class ResultBuilder
 {
     /**
-     * An array of entity builder instances used to hydrate a result set.
-     *
-     * @var array
+     * An instance of the entity manager class.
+     * @var \Analogue\ORM\System\Manager
      */
-    protected $entityBuilders = [];
+    protected $manager;
 
     /**
-     * The mapper for the entity to build
+     * The default mapper used to build entities with.
      * @var \Analogue\ORM\System\Mapper
      */
-    protected $mapper;
-
-    /**
-     * The Entity Map for the entity to build.
-     *
-     * @var \Analogue\ORM\EntityMap
-     */
-    protected $entityMap;
+    protected $defaultMapper;
 
     /**
      * Relations that will be eager loaded on this query
@@ -32,6 +24,13 @@ class ResultBuilder
      * @var array
      */
     protected $eagerLoads;
+
+    /**
+     * The Entity Map for the entity to build.
+     *
+     * @var \Analogue\ORM\EntityMap
+     */
+    protected $entityMap;
 
     /**
      * An array of builders used by this class to build necessary
@@ -42,16 +41,19 @@ class ResultBuilder
     protected $builders = [];
 
     /**
-     * @param Mapper $mapper
-     * @param array  $eagerLoads
+     * @param Manager $manager
+     * @param Mapper  $defaultMapper
+     * @param array   $eagerLoads
      */
-    public function __construct(Mapper $mapper, array $eagerLoads)
+    public function __construct(Manager $manager, Mapper $defaultMapper, array $eagerLoads)
     {
-        $this->mapper = $mapper;
+        $this->manager = $manager;
+
+        $this->defaultMapper = $defaultMapper;
 
         $this->eagerLoads = $eagerLoads;
 
-        $this->entityMap = $mapper->getEntityMap();
+        $this->entityMap = $defaultMapper->getEntityMap();
     }
 
     /**
@@ -82,7 +84,7 @@ class ResultBuilder
      */
     protected function buildWithDefaultMapper($results)
     {
-        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
+        $builder = new EntityBuilder($this->defaulMapper, array_keys($this->eagerLoads));
 
         return collect($results)->map(function($item, $key) use ($builder) {
             return $builder->build((array) $item);
@@ -117,8 +119,7 @@ class ResultBuilder
         $class = $this->entityMap->getDiscriminatorColumnMap()[$type];
 
         if (!isset($this->builders[$type])) {
-            $manager = app('analogue');
-            $this->builders[$type] = new EntityBuilder($manager->mapper($class), array_keys($this->eagerLoads));
+            $this->builders[$type] = new EntityBuilder($this->manager->mapper($class), array_keys($this->eagerLoads));
         }
 
         return $this->builders[$type];
