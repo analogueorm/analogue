@@ -670,12 +670,13 @@ class EntityMap
 
     /**
      * Return the mapping of discriminator column values to
-     * entity class names that's used for table inheritance.
-     * @return string
+     * entity class names that are used for table inheritance.
+     *
+     * @return array
      */
     public function getDiscriminatorColumnMap()
     {
-        return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : null;
+        return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : [];
     }
 
     /**
