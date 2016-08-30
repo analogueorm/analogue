@@ -753,8 +753,8 @@ class Query
         // Run the query
         $results = $this->query->get($columns)->toArray();
 
-        // $builder = new EntityBuilder($this->mapper, array_keys($this->getEagerLoads()));
-        $builder = new ResultBuilder($this->mapper, array_keys($this->getEagerLoads()));
+        // Create a result builder.
+        $builder = new ResultBuilder(Manager::getInstance(), $this->mapper, array_keys($this->getEagerLoads()));
 
         return $builder->build($results);
     }
