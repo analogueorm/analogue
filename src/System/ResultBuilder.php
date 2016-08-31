@@ -84,7 +84,7 @@ class ResultBuilder
      */
     protected function buildWithDefaultMapper($results)
     {
-        $builder = new EntityBuilder($this->defaulMapper, array_keys($this->eagerLoads));
+        $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
         return collect($results)->map(function($item, $key) use ($builder) {
             return $builder->build((array) $item);
