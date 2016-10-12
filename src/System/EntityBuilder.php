@@ -65,48 +65,38 @@ class EntityBuilder
     }
 
     /**
-     * Convert a result set into an array of entities
+     * Convert an array of values into an entity.
      *
-     * @param  array $results
+     * @param  array $result
      * @return array
      */
-    public function build(array $results)
+    public function build(array $result)
     {
-        $entities = [];
-
-        //$prototype = $this->getWrapperPrototype();
-        //$prototype = $this->mapper->newInstance();
-
         $keyName = $this->entityMap->getKeyName();
 
         $tmpCache = [];
 
-        foreach ($results as $result) {
-            //$instance = clone $prototype;
-            $instance = $this->getWrapperInstance();
+        $instance = $this->getWrapperInstance();
 
-            $resultArray = (array) $result;
+        $tmpCache[$result[$keyName]] = $result;
 
-            $tmpCache[$resultArray[$keyName]] = $resultArray;
+        // Hydrate any embedded Value Object
+        $this->hydrateValueObjects($result);
 
-            // Hydrate any embedded Value Object
-            $this->hydrateValueObjects($resultArray);
+        $instance->setEntityAttributes($result);
 
-            $instance->setEntityAttributes($resultArray);
-
-            // Hydrate relation attributes with lazyloading proxies
-            if (count($this->lazyLoads) > 0) {
-                $proxies = $this->getLazyLoadingProxies($instance);
-                $instance->setEntityAttributes($resultArray + $proxies);
-            }
-
-            // Directly Unwrap the entity now that it has been hydrated
-            $entities[] = $instance->getObject();
+        // Hydrate relation attributes with lazyloading proxies
+        if (count($this->lazyLoads) > 0) {
+            $proxies = $this->getLazyLoadingProxies($instance);
+            $instance->setEntityAttributes($result + $proxies);
         }
+
+        // Directly Unwrap the entity now that it has been hydrated
+        $entity = $instance->getObject();
 
         $this->mapper->getEntityCache()->add($tmpCache);
 
-        return $entities;
+        return $entity;
     }
 
     /**
@@ -157,10 +147,10 @@ class EntityBuilder
             $voWrapper = $this->factory->make($valueObject);
 
             $voWrapper->setEntityAttribute($key, $attributes[$prefix . $key]);
-            
+
             unset($attributes[$prefix . $key]);
         }
-        
+
         $attributes[$localKey] = $valueObject;
     }
 
@@ -172,7 +162,7 @@ class EntityBuilder
     protected function prepareLazyLoading()
     {
         $relations = $this->entityMap->getRelationships();
-       
+
         return array_diff($relations, $this->eagerLoads);
     }
 
@@ -198,7 +188,7 @@ class EntityBuilder
                 $proxies[$relation] = new CollectionProxy($entity->getObject(), $relation);
             }
         }
-        
+
         return $proxies;
     }
 }

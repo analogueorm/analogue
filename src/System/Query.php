@@ -46,7 +46,7 @@ class Query
      * @var \Analogue\ORM\EntityMap
      */
     protected $entityMap;
-    
+
     /**
      * The relationships that should be eager loaded.
      *
@@ -255,7 +255,7 @@ class Query
             $results = $this->forPage($page, $count)->get();
         }
     }
-    
+
     /**
      * Get an array with the values of a given column.
      *
@@ -753,7 +753,8 @@ class Query
         // Run the query
         $results = $this->query->get($columns)->toArray();
 
-        $builder = new EntityBuilder($this->mapper, array_keys($this->getEagerLoads()));
+        // Create a result builder.
+        $builder = new ResultBuilder(Manager::getInstance(), $this->mapper, array_keys($this->getEagerLoads()));
 
         return $builder->build($results);
     }
@@ -852,7 +853,7 @@ class Query
 
             return call_user_func_array($this->macros[$method], $parameters);
         }
-        
+
         if (in_array($method, $this->blacklist)) {
             throw new Exception("Method $method doesn't exist");
         }

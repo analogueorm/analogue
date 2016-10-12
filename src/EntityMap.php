@@ -70,7 +70,7 @@ class EntityMap
      * @var array
      */
     protected $embeddables = [];
-        
+
     /**
      * Determine the relationships method used on the entity.
      * If not set, mapper will autodetect them
@@ -308,7 +308,7 @@ class EntityMap
     {
         $this->dateFormat = $format;
     }
-    
+
     /**
      * Get the date format to use with the current database connection
      *
@@ -369,7 +369,7 @@ class EntityMap
         if (!is_null($this->table)) {
             return $this->table;
         }
-        
+
         return str_replace('\\', '', snake_case(str_plural(class_basename($this->getClass()))));
     }
 
@@ -544,7 +544,7 @@ class EntityMap
     {
         return $this->primaryKey;
     }
-    
+
     /**
      * Set the primary key for the entity.
      *
@@ -555,7 +555,7 @@ class EntityMap
     {
         $this->primaryKey = $key;
     }
-    
+
     /**
      * Get the table qualified key name.
      *
@@ -648,6 +648,38 @@ class EntityMap
     }
 
     /**
+     * Return the inheritance type used by the entity.
+     *
+     * @return string|null
+     */
+    public function getInheritanceType()
+    {
+        return property_exists($this, 'inheritanceType') ? $this->inheritanceType : null;
+    }
+
+    /**
+     * Return the discriminator column name on the entity that's
+     * used for table inheritance.
+     *
+     * @return string
+     */
+    public function getDiscriminatorColumn()
+    {
+        return property_exists($this, 'discriminatorColumn') ? $this->discriminatorColumn : null;
+    }
+
+    /**
+     * Return the mapping of discriminator column values to
+     * entity class names that are used for table inheritance.
+     *
+     * @return array
+     */
+    public function getDiscriminatorColumnMap()
+    {
+        return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : [];
+    }
+
+    /**
      * Define a one-to-one relationship.
      *
      * @param         $entity
@@ -691,7 +723,7 @@ class EntityMap
         $relatedMapper = $this->manager->mapper($related);
 
         $table = $relatedMapper->getEntityMap()->getTable();
-        
+
         return new MorphOne($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
 
@@ -753,7 +785,7 @@ class EntityMap
         }
 
         list($type, $id) = $this->getMorphs($name, $type, $id);
-        
+
         $mapper = $this->manager->mapper(get_class($entity));
 
         // If the type value is null it is probably safe to assume we're eager loading
@@ -761,7 +793,7 @@ class EntityMap
         // there are multiple types in the morph and we can't use single queries.
         $factory = new Factory;
         $wrapper = $factory->make($entity);
-            
+
         if (is_null($class = $wrapper->getEntityAttribute($type))) {
             return new MorphTo(
                 $mapper, $entity, $id, null, $type, $name
@@ -776,7 +808,7 @@ class EntityMap
             $relatedMapper = $this->manager->mapper($class);
 
             $foreignKey = $relatedMapper->getEntityMap()->getKeyName();
-            
+
             return new MorphTo(
                 $relatedMapper, $entity, $id, $foreignKey, $type, $name
             );
@@ -856,7 +888,7 @@ class EntityMap
         $table = $relatedMapper->getEntityMap()->getTable();
 
         $localKey = $localKey ?: $this->getKeyName();
-        
+
         return new MorphMany($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
 
@@ -1027,7 +1059,7 @@ class EntityMap
         $morphClass = $this->manager->getMorphMap($this->getClass());
         return $this->morphClass ?: $morphClass;
     }
-    
+
     /**
      * Create a new Entity Collection instance.
      *
@@ -1082,7 +1114,7 @@ class EntityMap
         $mapMethods = get_class_methods($this);
 
         $parentsMethods = get_class_methods('Analogue\ORM\EntityMap');
-        
+
         return array_diff($mapMethods, $parentsMethods);
     }
 
@@ -1129,7 +1161,7 @@ class EntityMap
 
         // Instantiate a dummy entity which we will pass to relationship methods.
         $entity = unserialize(sprintf('O:%d:"%s":0:{}', strlen($entityClass), $entityClass));
-        
+
         foreach ($this->relationships as $relation) {
             $relationObject = $this->$relation($entity);
 
