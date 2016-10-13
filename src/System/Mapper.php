@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Illuminate\Container\Container;
 use ErrorException;
+use Doctrine\Instantiator\Instantiator;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -403,13 +404,11 @@ class Mapper
     {
         $class = $this->entityMap->getClass();
 
-        if($this->entityMap->activator() != null) {
-            $entity = $this->entityMap->activator();
-        } else {
-            $entity = $this->customClassInstance($class);
-        }
-
-        return $entity;
+        if($this->entityMap->useDependencyInjection()) {
+            return $this->newInstanceUsingDependencyInjection($class);
+        } 
+        
+        return $this->newInstanceUsingInstantiator($class);
     }
 
     /**
@@ -428,22 +427,16 @@ class Mapper
     }
 
     /**
-     * Use a trick to generate a class prototype that we
-     * can instantiate without calling the constructor.
+     * Return a new object instance using doctrine's instantiator
      *
-     * @param string|null $className
-     * @throws MappingException
+     * @param  string  $class
      * @return mixed
      */
-    protected function customClassInstance($className)
+    protected function newInstanceUsingInstantiator($class)
     {
-        if (!class_exists($className)) {
-            throw new MappingException("Tried to instantiate a non-existing Entity class : $className");
-        }
+        $instantiator = new \Doctrine\Instantiator\Instantiator();
 
-        $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
-
-        return $prototype;
+        return $instantiator->instantiate($class);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use TestApp\User;
 use TestApp\Blog;
+use TestApp\DI\Foo;
 use TestApp\NonMappedEntity;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
@@ -109,4 +110,13 @@ class MapperTest extends AnalogueTestCase
         //
     }
 
+    /** @test */
+    public function we_can_instantiate_an_entity_with_ioc_container()
+    {
+        $this->analogue->registerMapNamespace("TestApp\DI");
+        $fooMapper = $this->mapper(Foo::class);
+        $instance = $fooMapper->newInstance();
+        $this->assertInstanceOf(Foo::class, $instance);
+        $this->assertEquals(23, $instance->getBarValue());
+    }
 }
