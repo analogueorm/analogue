@@ -12,6 +12,8 @@ use Analogue\ORM\System\Wrappers\Wrapper;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
+use Illuminate\Container\Container;
+use ErrorException;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -395,25 +397,34 @@ class Mapper
     /**
      * Create a new instance of the mapped entity class
      *
-     * @param  array $attributes
      * @return mixed
      */
-    public function newInstance($attributes = [])
+    public function newInstance()
     {
         $class = $this->entityMap->getClass();
 
-        if ($this->entityMap->activator() != null) {
+        if($this->entityMap->activator() != null) {
             $entity = $this->entityMap->activator();
         } else {
             $entity = $this->customClassInstance($class);
         }
 
-        // prevent hydrating with an empty array
-        if (count($attributes) > 0) {
-            $entity->setEntityAttributes($attributes);
+        return $entity;
+    }
+
+    /**
+     * Return a new object instance using dependency injection
+     *
+     * @param  string  $class
+     * @return mixed
+     */
+    protected function newInstanceUsingDependencyInjection($class)
+    {
+        if(! class_exists(Container::class)) {
+            throw new ErrorException("Illuminate\Container\Container is required to use Dependency Injection");
         }
 
-        return $entity;
+        return Container::getInstance()->make($class);
     }
 
     /**

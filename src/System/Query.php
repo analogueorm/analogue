@@ -762,12 +762,11 @@ class Query
     /**
      * Get a new instance for the entity
      *
-     * @param  array  $attributes
      * @return \Analogue\ORM\Entity
      */
-    public function getEntityInstance(array $attributes = [])
+    public function getEntityInstance()
     {
-        return $this->mapper->newInstance($attributes);
+        return $this->mapper->newInstance();
     }
 
     /**

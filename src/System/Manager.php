@@ -256,6 +256,22 @@ class Manager
     }
 
     /**
+     * Check if a value class is already registered
+     *
+     * @param string|sdtClass $object
+     * @return boolean
+     * 
+     */
+    public function isRegisteredValueObject($object)
+    {
+        if (!is_string($object)) {
+            $object = get_class($object);
+        }
+
+        return array_key_exists($object, $this->valueClasses);
+    }
+
+    /**
      * Return true if an object is an array or iterator
      *
      * @param  mixed $argument

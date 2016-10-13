@@ -20,8 +20,18 @@ class HasOneTest extends AnalogueTestCase
         $user->blog = $blog;
         $mapper->store($user);
         $this->seeInDatabase('blogs', ['user_id' => $user->id]);
-        
-        $this->assertEquals($user->id, $user->blog->user->id);
-    }  
+        $this->seeInDatabase('blogs', ['id' => $blog->id]);
+    }
+
+    /** @test */
+    public function storing_a_related_entity_updates_its_id()
+    {
+        $user = $this->factoryCreateUid(User::class);
+        $blog = $this->factoryMakeUid(Blog::class);
+        $mapper = $this->mapper($user);
+        $user->blog = $blog;
+        $mapper->store($user);
+        $this->assertEquals($blog->id, $user->blog->id);
+    }
 
 }

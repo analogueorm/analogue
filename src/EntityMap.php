@@ -25,6 +25,8 @@ class EntityMap
 {
     /**
      * The mapping driver to use with this entity
+     *
+     * @var  string
      */
     protected $driver = 'illuminate';
 
@@ -250,6 +252,14 @@ class EntityMap
      * @var \Analogue\ORM\System\Manager
      */
     private $manager;
+
+    /**
+     * Set this property to true if the entity should be instantiated
+     * using the IoC Container
+     * 
+     * @var boolean
+     */
+    protected $dependencyInjection = false;
 
     /**
      * Set the Manager that will be used for relationship's mapper instantiations.
@@ -677,6 +687,17 @@ class EntityMap
     public function getDiscriminatorColumnMap()
     {
         return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : [];
+    }
+
+    /**
+     * Return true if the entity should be instanciated using
+     * the IoC Container
+     * 
+     * @return boolean
+     */
+    public function useDependencyInjection()
+    {
+        return $this->dependencyInjection;
     }
 
     /**
