@@ -165,4 +165,37 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
         }
         return $attributes;
     }
+
+    /**
+     * Create entity with arbitrary arguments
+     *
+     * @param array|string $argumentsOrPrimaryKey
+     * @return $this
+     * @throws MappingException
+     * @throws \InvalidArgumentException
+     */
+    public static function mock($argumentsOrPrimaryKey)
+    {
+        $arguments = $argumentsOrPrimaryKey;
+
+        if (!is_array($argumentsOrPrimaryKey)) {
+            $primaryKey = Manager::getInstance()
+                ->mapper(static::class)
+                ->getEntityMap()
+                ->getKeyName();
+
+            $arguments = [$primaryKey => $argumentsOrPrimaryKey];
+        }
+
+        $instance = (new \ReflectionClass(static::class))
+            ->newInstanceWithoutConstructor();
+
+        $arguments = $instance->attributesToArray($arguments);
+
+        foreach ($arguments as $key => $value) {
+            $instance->$key = $value;
+        }
+
+        return $instance;
+    }
 }
