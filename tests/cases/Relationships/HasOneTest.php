@@ -3,7 +3,7 @@
 use TestApp\Blog;
 use TestApp\User;
 
-class HasOneTest extends AnalogueTestCase 
+class HasOneTest extends DomainTestCase
 {
     public function setUp()
     {

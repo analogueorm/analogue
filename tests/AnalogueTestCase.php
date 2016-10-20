@@ -1,5 +1,6 @@
 <?php
 
+use DB;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Filesystem\ClassFinder;
@@ -23,7 +24,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         $this->app['config']->set('database.connections.sqlite.database', ':memory:');
 
         $this->app->singleton(Factory::class, function ($app) {
-            $faker = Faker::create();;
+            $faker = Faker::create();
             $analogueManager = $app->make('analogue');
             return Factory::construct($faker, __DIR__.'/factories', $analogueManager);
         });
@@ -87,41 +88,93 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
-    // Shortcuts
+    /**
+     * Get the mapper for a specific entity
+     * 
+     * @param  mixed $entity
+     * @return Mapper
+     */
     protected function mapper($entity) 
     {
         return $this->analogue->mapper($entity);
     }
 
+    /**
+     * Get the factory for a specific entity
+     * 
+     * @param  mixed $entityClass 
+     * @return FactoryBuilder
+     */
     protected function factory($entityClass) 
     {
         return analogue_factory($entityClass);
     }
 
+    /**
+     * Build an entity object
+     * 
+     * @param  string $entityClass 
+     * @param  array  $attributes  
+     * @return mixed  
+     */
     protected function factoryMake($entityClass, array $attributes = [] )
     {
         return $this->factory($entityClass)->make($attributes);
     }   
 
+     /**
+     * Build an entity object with a random ID
+     * 
+     * @param  string $entityClass 
+     * @param  array  $attributes  
+     * @return mixed  
+     */
     protected function factoryMakeUid($entityClass, array $attributes = [] )
     {
         $attributes['id'] = $this->randId();
         return $this->factory($entityClass)->make($attributes);
     }   
 
+    /**
+     * Create an entity object and persist it in database
+     * 
+     * @param  string $entityClass 
+     * @param  array  $attributes  
+     * @return mixed  
+     */
     protected function factoryCreate($entityClass, array $attributes = [] )
     {
         return $this->factory($entityClass)->create($attributes);
     }
 
+    /**
+     * Create an entity object with a random ID and persist it in database
+     * 
+     * @param  string $entityClass 
+     * @param  array  $attributes  
+     * @return mixed
+     */
     protected function factoryCreateUid($entityClass, array $attributes = [] )
     {
         $attributes['id'] = $this->randId();
         return $this->factory($entityClass)->create($attributes);
     }
 
+    /**
+     * Return Faker Factory
+     * 
+     * @return Faker
+     */
+    protected function faker()
+    {
+        return Faker::create();
+    }
 
-    /** Generate a random integer id for more pertinent tests */
+    /**
+     * Generate a random integer
+     * 
+     * @return integer
+     */
     protected function randId()
     {
         do {
@@ -131,6 +184,20 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $id;
     }
+
+    /**
+     * Run a raw insert statement
+     * 
+     * @param  string $table
+     * @param  array  $columns
+     * @return integer
+     */
+    protected function rawInsert($table, array $columns)
+    {
+        return DB::table($table)->insertGetId($columns);
+    }
+
+
 }   
 
 

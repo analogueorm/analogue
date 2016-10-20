@@ -46,7 +46,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/AnalogueTestCase.php"
+            "tests/AnalogueTestCase.php",
+            "tests/DomainTestCase.php"
         ],
         "psr-4": {
             "TestApp\\": "tests/src"

@@ -4,6 +4,7 @@ namespace TestApp\Maps;
 
 use TestApp\User;
 use TestApp\Blog;
+use TestApp\Group;
 use TestApp\Article;
 use TestApp\Identity;
 use Analogue\ORM\EntityMap;
@@ -22,5 +23,10 @@ class UserMap extends EntityMap
     public function articles(User $user)
     {
         return $this->hasManyThrough($user, Article::class, Blog::class);
+    }
+
+    public function groups(User $user)
+    {
+        return $this->belongsToMany($user, Group::class);
     }
 }
