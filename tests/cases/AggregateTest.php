@@ -159,17 +159,6 @@ class AggregateTest extends AnalogueTestCase {
     }
 
     /** @test */
-    public function updating_a_recursive_relationship_has_no_effect()
-    {
-        $user = $this->factoryMakeUid(User::class);
-        $blog = $this->factoryMakeUid(Blog::class);
-        $user->blog = $blog;
-        $this->mapper($user)->store($user);
-        $this->seeInDatabase('blogs', ['title' => $blog->title, "user_id" => $user->id]);
-        $this->assertEquals($blog->user->id, $user->id);
-    }
-
-    /** @test */
     public function setting_null_on_related_attribute_will_detach_relation()
     {
         $user = $this->factoryMake(User::class);

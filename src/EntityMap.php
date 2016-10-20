@@ -52,12 +52,37 @@ class EntityMap
     protected $primaryKey = 'id';
 
     /**
+     * Name of the entity's property that should
+     * contain the attributes, when $mapToProperties is false
+     * 
+     * @var string
+     */
+    protected $arrayName = 'attributes';
+
+    /**
      * Array containing a list of class attributes. Mandatory if the
      * mapped entity is a Plain PHP Object.
      *
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * Indicate if the entity's attributes should be mapped to the object's
+     * properties. If set to false, attributes will be assigned to an array
+     * defined by the $arrayName property of the EntityMap
+     * 
+     * @var boolean
+     */
+    protected $mapToProperties = false;
+
+    /**
+     * Attributes that should be casted to a specific type, like a Carbon date
+     * JSON, or a custom Value Object
+     * 
+     * @var array
+     */
+    protected $casts = [];
 
     /**
      * The Custom Domain Class to use with this mapping
@@ -69,6 +94,8 @@ class EntityMap
     /**
      * Attributes that should be treated as Value Objects
      *
+     * @deprecated 5.3 use $casts property instead
+     * 
      * @var array
      */
     protected $embeddables = [];

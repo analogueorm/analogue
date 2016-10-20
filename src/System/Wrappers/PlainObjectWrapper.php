@@ -21,7 +21,16 @@ class PlainObjectWrapper extends Wrapper
     protected $reflection;
 
     /**
+     * Attributes which have no existence on the actual entity
+     * but which exists in DB (eg : foreign key)
+     * 
+     * @var array
+     */
+    protected $virtualAttributes = [];
+
+    /**
      * PlainObjectWrapper constructor.
+     * 
      * @param $popoEntity
      * @param $entityMap
      */
@@ -89,8 +98,10 @@ class PlainObjectWrapper extends Wrapper
     }
 
     /**
+     * Get the property's value from reflection
+     * 
      * @param  string $name
-     * @return \ReflectionProperty
+     * @return \ReflectionProperty | null
      */
     protected function getMappedProperty($name)
     {
@@ -141,7 +152,9 @@ class PlainObjectWrapper extends Wrapper
      */
     public function getEntityAttributes()
     {
-        return $this->extract();
+        $properties = $this->extract();
+
+        return array_merge($properties, $this->virtualAttributes);
     }
 
     /**
@@ -155,6 +168,11 @@ class PlainObjectWrapper extends Wrapper
      */
     public function setEntityAttribute($key, $value)
     {
+        if(! $this->reflection->hasProperty($key)) {
+            $this->virtualAttributes[$key] = $value;
+            return;
+        }
+
         $property = $this->getMappedProperty($key);
 
         if ($property->isPublic()) {
@@ -173,10 +191,14 @@ class PlainObjectWrapper extends Wrapper
      * key-value pair
      *
      * @param  string $key
-     * @return mixed
+     * @return mixed|null
      */
     public function getEntityAttribute($key)
     {
+        if(! $this->reflection->hasProperty($key)) {
+            return $this->getVirtualAttribute($key);
+        }
+
         $property = $this->getMappedProperty($key);
 
         if ($property->isPublic()) {
@@ -189,15 +211,31 @@ class PlainObjectWrapper extends Wrapper
         return $value;
     }
 
-        /**
-         * Test if a given attribute exists
-         *
-         * @param  string  $key
-         * @return boolean
-         */
+    /**
+     * Return a virtual attributes
+     * 
+     * @param  string $key
+     * @return mixed
+     */
+    protected function getVirtualAttribute($key)
+    {
+        if(array_key_exists($key, $this->virtualAttributes)) {
+            return $this->virtualAttributes[$key];
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Test if a given attribute exists
+     *
+     * @param  string  $key
+     * @return boolean
+     */
     public function hasAttribute($key)
     {
-        if (array_key_exists($key, $this->attributeList)) {
+        if (in_array($key, $this->attributeList)) {
             return true;
         } else {
             return false;

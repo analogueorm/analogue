@@ -91,8 +91,11 @@ class Store extends Command
         $entitiesToCreate = $this->aggregate->getNonExistingRelated($relations);
 
         foreach ($entitiesToCreate as $aggregate) {
+            setTddOff();
             $this->createStoreCommand($aggregate)->execute();
+            setTddOn();
         }
+        
     }
 
     /**
@@ -130,7 +133,7 @@ class Store extends Command
         // Update any dirty relationship. This include relationships that already exists, have
         // dirty attributes / newly created related entities / dirty related entities.
         $dirtyRelatedAggregates = $aggregate->getDirtyRelationships();
-
+        
         foreach ($dirtyRelatedAggregates as $related) {
             $this->createStoreCommand($related)->execute();
         }
@@ -222,6 +225,7 @@ class Store extends Command
 
             $aggregate->setEntityAttribute($keyName, $id);
         }
+
     }
 
     /**

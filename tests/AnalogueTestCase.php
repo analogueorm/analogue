@@ -197,7 +197,30 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         return DB::table($table)->insertGetId($columns);
     }
 
+    /**
+     * Dump events, for debugging purpose
+     * 
+     * @return void
+     */
+    protected function logEvents()
+    {
+        $events = ['store',
+        'stored',
+        'creating',
+        'created',
+        'updating',
+        'updated',
+        'deleting',
+        'deleted',
+        ];
 
+        foreach($events as $event) {
+            $this->analogue->registerGlobalEvent($event, function($entity) use ($event) {
+                dump(get_class($entity). " ". $event);
+            });
+        }
+        
+    }
 }   
 
 

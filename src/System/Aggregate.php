@@ -414,6 +414,7 @@ class Aggregate implements InternallyMappable
         $nonExisting = [];
 
         foreach ($relationships as $relation) {
+
             if ($this->hasAttribute($relation) && array_key_exists($relation, $this->relationships)) {
                 $nonExisting = array_merge($nonExisting, $this->getNonExistingFromRelation($relation));
             }
@@ -443,14 +444,15 @@ class Aggregate implements InternallyMappable
 
     /**
      * Synchronize relationships if needed
+     *
+     * @param array
+     * @return void
      */
     public function syncRelationships(array $relationships)
     {
-        if ($this->exists()) {
-            foreach ($relationships as $relation) {
-                if (in_array($relation, $this->needSync)) {
-                    $this->synchronize($relation);
-                }
+        foreach ($relationships as $relation) {
+            if (in_array($relation, $this->needSync)) {
+                $this->synchronize($relation);
             }
         }
     }
@@ -459,12 +461,15 @@ class Aggregate implements InternallyMappable
      * Synchronize a relationship attribute
      *
      * @param $relation
+     * @return void
      */
     protected function synchronize($relation)
     {
         $actualContent = $this->relationships[$relation];
 
-        $this->entityMap->$relation($this->getEntityObject())->sync($actualContent);
+        $relationshipObject = $this->entityMap->$relation($this->getEntityObject());
+        $relationshipObject->setParent($this->wrappedEntity);
+        $relationshipObject->sync($actualContent);
     }
 
     /**
@@ -504,7 +509,8 @@ class Aggregate implements InternallyMappable
 
         foreach ($this->relationships as $relation) {
             foreach ($relation as $aggregate) {
-                if (!$aggregate->exists() || $aggregate->isDirty() || count($aggregate->getDirtyRelationships() > 0)) {
+
+                if (!$aggregate->exists() || $aggregate->isDirty() || count($aggregate->getDirtyRelationships()) > 0) {
                     $dirtyAggregates[] = $aggregate;
                 }
             }

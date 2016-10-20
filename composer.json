@@ -34,7 +34,9 @@
         "analogue/factory": "dev-master"
     },
     "suggest": {
-        "analogue/laravel-auth": "Analogue's authentication driver for Laravel."
+        "analogue/laravel-auth": "Analogue's authentication driver for Laravel.",
+        "analogue/factory": "Create simple dummy entities for your tests",
+        "analogue/mongodb": "MongoDB driver for Analogue ORM"
     },
     "autoload": {
         "psr-4": {

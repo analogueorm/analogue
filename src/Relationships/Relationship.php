@@ -286,6 +286,17 @@ abstract class Relationship
     }
 
     /**
+     * Set the parent model of the relation
+     * 
+     * @param InternallyMappable $parent 
+     * @return void
+     */
+    public function setParent(InternallyMappable $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
      * Get the fully qualified parent key name.
      *
      * @return string
