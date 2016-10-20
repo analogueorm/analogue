@@ -38,31 +38,6 @@ abstract class HasOneOrMany extends Relationship
     }
 
     /**
-     * @param \Analogue\ORM\Entity|EntityCollection $entity
-     * @return void
-     */
-    public function attachTo($entity)
-    {
-        if ($entity instanceof EntityCollection) {
-            $this->attachMany($entity);
-        }
-        $this->attachOne($entity);
-    }
-
-    /**
-     * @param $entityHash
-     * @return void
-     */
-    public function detachFrom($entityHash)
-    {
-        if (is_array($entityHash)) {
-            $this->detachMany($entityHash);
-            return;
-        }
-        $this->detachMany([$entityHash]);
-    }
-
-    /**
      * @param \Analogue\ORM\Entity $entity
      */
     public function attachOne($entity)

@@ -75,25 +75,6 @@ class BelongsToMany extends Relationship
     }
 
     /**
-     * @param  $related
-     * @return mixed
-     */
-    public function attachTo($related)
-    {
-    }
-
-    /**
-     * @param  $related
-     * @return mixed
-     */
-    public function detachFrom($related)
-    {
-        $ids = $this->getIdsFromHashes([$related]);
-
-        $this->detach($ids);
-    }
-
-    /**
      * @param $related
      */
     public function detachMany($related)

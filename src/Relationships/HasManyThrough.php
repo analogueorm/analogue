@@ -60,24 +60,6 @@ class HasManyThrough extends Relationship
     }
 
     /**
-     * @param $related
-     * @return mixed
-     */
-    public function attachTo($related)
-    {
-        // N/A
-    }
-
-    /**
-     * @param $related
-     * @return mixed
-     */
-    public function detachFrom($related)
-    {
-        // N/A
-    }
-
-    /**
      * Set the base constraints on the relation query.
      *
      * @return void

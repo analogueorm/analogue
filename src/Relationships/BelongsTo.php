@@ -57,24 +57,6 @@ class BelongsTo extends Relationship
     }
 
     /**
-     * @param  $related
-     * @return mixed
-     */
-    public function attachTo($related)
-    {
-        $this->associate($related);
-    }
-
-    /**
-     * @param $related
-     * @return Mappable
-     */
-    public function detachFrom($related)
-    {
-        return $this->dissociate($related); //todo
-    }
-
-    /**
      * Get the results of the relationship.
      *
      * @param  $relation
@@ -101,9 +83,7 @@ class BelongsTo extends Relationship
             // For belongs to relationships, which are essentially the inverse of has one
             // or has many relationships, we need to actually query on the primary key
             // of the related models matching on the foreign key that's on a parent.
-            $table = $this->relatedMap->getTable();
-
-            $this->query->where($table . '.' . $this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
+            $this->query->where($this->otherKey, '=', $this->parent->getEntityAttribute($this->foreignKey));
         }
     }
 
@@ -134,7 +114,7 @@ class BelongsTo extends Relationship
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
-        $key = $this->relatedMap->getTable() . '.' . $this->otherKey;
+        $key = $this->otherKey;
 
         $this->query->whereIn($key, $this->getEagerModelKeys($entities));
     }

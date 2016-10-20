@@ -123,18 +123,6 @@ abstract class Relationship
     }
 
     /**
-     * @param $related
-     * @return mixed
-     */
-    abstract public function attachTo($related);
-
-    /**
-     * @param $related
-     * @return mixed
-     */
-    abstract public function detachFrom($related);
-
-    /**
      * Indicate if the parent entity hold the foreign key for relation.
      *
      * @return boolean
