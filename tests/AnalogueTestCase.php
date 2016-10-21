@@ -1,6 +1,5 @@
 <?php
 
-use DB;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Filesystem\ClassFinder;

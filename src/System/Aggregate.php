@@ -535,7 +535,8 @@ class Aggregate implements InternallyMappable
 
     /**
      * Get Raw Entity's attributes, as they are represented
-     * in the database, including value objects & foreign keys
+     * in the database, including value objects, foreign keys,
+     * and discriminator column
      *
      * @return array
      */
@@ -547,11 +548,45 @@ class Aggregate implements InternallyMappable
             unset($attributes[$relation]);
         }
 
+        if($this->entityMap->getInheritanceType() == 'single_table') {
+            $attributes = $this->addDiscriminatorColumn($attributes);
+        }
+
         $attributes = $this->flattenEmbeddables($attributes);
 
         $foreignKeys = $this->getForeignKeyAttributes();
 
         return $attributes + $foreignKeys;
+    }
+
+    /**
+     * Add Discriminator Column if it doesn't exist on the actual entity
+     * 
+     * @param array $attributes
+     * @return array
+     */
+    protected function addDiscriminatorColumn($attributes)
+    {
+        $discriminatorColumn = $this->entityMap->getDiscriminatorColumn();
+        $entityClass = $this->entityMap->getClass();
+
+        if(! array_key_exists($discriminatorColumn, $attributes)) {
+            
+            // Use key if present in discriminatorMap
+            $map = $this->entityMap->getDiscriminatorColumnMap();
+
+            $type = array_search($entityClass, $map);
+
+            if($type === false) {
+                // Use entity FQDN if no corresponding key is set
+                $attributes[$discriminatorColumn] = $entityClass;
+            }
+            else {
+                $attributes[$discriminatorColumn] = $type;
+            }
+        }
+
+        return $attributes;
     }
 
     /**

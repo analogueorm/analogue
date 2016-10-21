@@ -289,6 +289,30 @@ class EntityMap
     protected $dependencyInjection = false;
 
     /**
+     * Set the usage of inheritance, possible values are :
+     * "single_table"
+     * null
+     * 
+     * @var string | null
+     */
+    protected $inheritanceType = null;
+
+    /**
+     * Discriminator column name
+     * 
+     * @var string
+     */
+    protected $discriminatorColumn = "type";
+
+    /**
+     * Allow using a string to define which entity type should be instantiated.
+     * If not set, analogue will uses entity's FQDN
+     * 
+     * @var array
+     */
+    protected $discriminatorColumnMap = [];
+
+    /**
      * Set the Manager that will be used for relationship's mapper instantiations.
      *
      * @param Manager $manager
@@ -691,7 +715,7 @@ class EntityMap
      */
     public function getInheritanceType()
     {
-        return property_exists($this, 'inheritanceType') ? $this->inheritanceType : null;
+        return $this->inheritanceType;
     }
 
     /**
@@ -702,7 +726,7 @@ class EntityMap
      */
     public function getDiscriminatorColumn()
     {
-        return property_exists($this, 'discriminatorColumn') ? $this->discriminatorColumn : null;
+        return $this->discriminatorColumn;
     }
 
     /**
@@ -713,7 +737,7 @@ class EntityMap
      */
     public function getDiscriminatorColumnMap()
     {
-        return property_exists($this, 'discriminatorColumnMap') ? $this->discriminatorColumnMap : [];
+        return $this->discriminatorColumnMap;
     }
 
     /**

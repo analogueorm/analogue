@@ -14,13 +14,14 @@ class AggregateTest extends AnalogueTestCase {
         $this->analogue->registerMapNamespace("TestApp\Maps");
     }
 
+    /** @test */
     public function we_can_use_custom_id()
     {
         $user = $this->factoryMake(User::class);
         $id = $this->randId();
         $user->id = $id;
         $this->mapper($user)->store($user);
-        
+        $this->seeInDatabase('users', ['id' => $id]);
     }
 
     /** @test */

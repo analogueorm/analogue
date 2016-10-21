@@ -91,9 +91,7 @@ class Store extends Command
         $entitiesToCreate = $this->aggregate->getNonExistingRelated($relations);
 
         foreach ($entitiesToCreate as $aggregate) {
-            setTddOff();
             $this->createStoreCommand($aggregate)->execute();
-            setTddOn();
         }
         
     }
