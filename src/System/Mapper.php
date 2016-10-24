@@ -95,6 +95,27 @@ class Mapper
     }
 
     /**
+     * Map results to a Collection
+     * 
+     * @param  [type] $results [description]
+     * @return [type]          [description]
+     */
+    public function map($results)
+    {
+        //
+    }
+
+    /**
+     * Return all records for a mapped object
+     * 
+     * @return EntityCollection
+     */
+    public function all()
+    {
+        return $this->query()->get();
+    }
+
+    /**
      * Persist an entity or an entity collection into the database
      *
      * @param  Mappable|\Traversable|array $entity

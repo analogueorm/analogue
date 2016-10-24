@@ -403,4 +403,21 @@ class EntityCollection extends Collection
     {
         return new Collection($this->items);
     }
+
+    public function toArray()
+    {
+        return array_values(parent::toArray());
+    }
+
+    /**
+     * Get the collection of items as JSON.
+     *
+     * @param  int  $options
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        $collection = new Collection(array_values($this->items));
+        return $collection->toJson($options);
+    }
 }
