@@ -22,10 +22,7 @@ class AnalogueServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $manager = $this->app->make('analogue');
-
-        $manager->registerPlugin('Analogue\ORM\Plugins\Timestamps\TimestampsPlugin');
-        $manager->registerPlugin('Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin');
+        //   
     }
 
     /**
@@ -49,7 +46,12 @@ class AnalogueServiceProvider extends ServiceProvider
 
             $event = $app->make('events');
 
-            return new Manager($driverManager, $event);
+            $manager = new Manager($driverManager, $event);
+
+            $manager->registerPlugin(\Analogue\ORM\Plugins\Timestamps\TimestampsPlugin::class);
+            $manager->registerPlugin(\Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin::class);
+
+            return $manager;
         });
     }
     
