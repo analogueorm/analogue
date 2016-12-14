@@ -8,6 +8,11 @@ abstract class DomainTestCase extends AnalogueTestCase
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");
+        
+        // All Classes taking part in STI must be explitely registered
+        // 
+        $this->analogue->register(TestApp\Vehicle::class,TestApp\Maps\VehicleMap::class);
+        $this->analogue->register(TestApp\Car::class,TestApp\Maps\CarMap::class);
     }
 
     /**

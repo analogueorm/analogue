@@ -256,6 +256,16 @@ class Manager
     }
 
     /**
+     * Return an array containing registered entities & entityMap instances
+     * 
+     * @return  array
+     */
+    public function getRegisteredEntities()
+    {
+        return $this->entityClasses;
+    }
+
+    /**
      * Check if a value class is already registered
      *
      * @param string|sdtClass $object
@@ -345,8 +355,6 @@ class Manager
         }
 
         $entityMap->setClass($entity);
-
-        $entityMap->setManager($this);
 
         $this->entityClasses[$entity] = $entityMap;
     }

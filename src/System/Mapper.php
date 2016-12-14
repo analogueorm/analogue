@@ -97,12 +97,13 @@ class Mapper
     /**
      * Map results to a Collection
      *
-     * @param  [type] $results [description]
-     * @return [type]          [description]
+     * @param  Collection $results 
+     * @return Collection          
      */
     public function map($results)
     {
-        //
+        // To implement, will allow decoupling result
+        // instantiation from Query class
     }
 
     /**
