@@ -77,14 +77,6 @@ class EntityMap
     protected $mapToProperties = false;
 
     /**
-     * Attributes that should be casted to a specific type, like a Carbon date
-     * JSON, or a custom Value Object
-     * 
-     * @var array
-     */
-    protected $casts = [];
-
-    /**
      * The Custom Domain Class to use with this mapping
      *
      * @var string|null
@@ -92,9 +84,7 @@ class EntityMap
     protected $class = null;
 
     /**
-     * Attributes that should be treated as Value Objects
-     *
-     * @deprecated 5.3 use $casts property instead
+     * Embedded Value Objects
      * 
      * @var array
      */
@@ -458,8 +448,6 @@ class EntityMap
      */
     public function setClass($class)
     {
-        // Throw exception if class not exists
-
         $this->class = $class;
     }
 
