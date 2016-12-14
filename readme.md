@@ -1,6 +1,6 @@
 # Analogue ORM 
-[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.1)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.1)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.1)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.1)
+[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.3)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.3)
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
@@ -56,8 +56,12 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 
 ##Changelog 
 
+####Version 5.3
+- Illuminate 5.3 Compatibility. 
+- now fully support Single Table Inheritance
+
 ####Version 5.1
-- Illuminate 5.1 Compatibility. 
+- Illuminate 5.1 + 5.2 Compatibility. 
 
 ####Version 5.0
 - Analogue version now mirrors illuminate version. 
