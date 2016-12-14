@@ -53,6 +53,10 @@ class AnalogueServiceProvider extends ServiceProvider
 
             return $manager;
         });
+
+        $this->app->bind(Manager::class, function ($app) {
+            return $app->make('analogue');
+        }); 
     }
     
     /**
