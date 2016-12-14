@@ -96,7 +96,7 @@ class Mapper
 
     /**
      * Map results to a Collection
-     * 
+     *
      * @param  [type] $results [description]
      * @return [type]          [description]
      */
@@ -107,7 +107,7 @@ class Mapper
 
     /**
      * Return all records for a mapped object
-     * 
+     *
      * @return EntityCollection
      */
     public function all()
@@ -179,7 +179,7 @@ class Mapper
      */
     protected function checkEntityType($entity)
     {
-        if (get_class($entity) != $this->entityMap->getClass()) {
+        if (get_class($entity) != $this->entityMap->getClass() && !is_subclass_of($entity, $this->entityMap->getClass())) {
             $expected = $this->entityMap->getClass();
             $actual = get_class($entity);
             throw new InvalidArgumentException("Expected : $expected, got $actual.");
@@ -427,8 +427,8 @@ class Mapper
 
         if($this->entityMap->useDependencyInjection()) {
             return $this->newInstanceUsingDependencyInjection($class);
-        } 
-        
+        }
+
         return $this->newInstanceUsingInstantiator($class);
     }
 
