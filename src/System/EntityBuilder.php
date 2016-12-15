@@ -80,7 +80,7 @@ class EntityBuilder
         $tmpCache = [];
 
         $instance = $this->getWrapperInstance();
-
+        
         $tmpCache[$result[$keyName]] = $result;
 
         // Hydrate any embedded Value Object
