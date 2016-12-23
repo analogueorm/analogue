@@ -70,7 +70,7 @@ class EntityBuilder
      * @param  array $results
      * @return array
      */
-    public function build(array $results)
+    public function build($results)
     {
         $entities = [];
 
@@ -91,6 +91,8 @@ class EntityBuilder
 
             // Hydrate any embedded Value Object
             $this->hydrateValueObjects($resultArray);
+
+            $resultArray = $this->entityMap->mapColumnsToAttributes($resultArray);
 
             $instance->setEntityAttributes($resultArray);
 

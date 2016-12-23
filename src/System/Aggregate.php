@@ -545,7 +545,7 @@ class Aggregate implements InternallyMappable
 
         $foreignKeys = $this->getForeignKeyAttributes();
 
-        return $attributes + $foreignKeys;
+        return $this->entityMap->mapAttributesToColumns($attributes + $foreignKeys);
     }
 
     /**
