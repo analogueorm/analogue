@@ -2,7 +2,6 @@
 
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Filesystem\ClassFinder;
 use Illuminate\Filesystem\Filesystem;
 use Analogue\Factory\Factory;
 use Faker\Factory as Faker;
