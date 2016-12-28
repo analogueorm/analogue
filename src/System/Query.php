@@ -150,7 +150,7 @@ class Query
             return $this->findMany($id, $columns);
         }
 
-        $this->query->where($this->entityMap->getQualifiedKeyName(), '=', $id);
+        $this->query->where($this->entityMap->getKeyName(), '=', $id);
 
         return $this->first($columns);
     }
@@ -168,7 +168,7 @@ class Query
             return new EntityCollection;
         }
 
-        $this->query->whereIn($this->entityMap->getQualifiedKeyName(), $id);
+        $this->query->whereIn($this->entityMap->getKeyName(), $id);
 
         return $this->get($columns);
     }
