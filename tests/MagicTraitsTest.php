@@ -29,4 +29,43 @@ class MagicTraitsTest extends AnalogueTestCase
 		$this->assertNull($entity->someUnexistingAttribute);
 
 	}
+
+	/** @test */
+	public function we_can_magically_set_unexisting_attributes()
+	{
+		$entity = new MagicEntity;
+		$entity->name = 'test';
+		$this->assertEquals('test', $entity->name);
+
+	}
+
+	/** @test */
+	public function we_can_magically_set_existing_attributes()
+	{
+		$entity = new MagicEntity;
+		$entity->attr1 = 'some other value';
+		$this->assertEquals('some other value', $entity->attr1);
+	}
+
+	/** @test */
+	public function we_can_cast_to_array()
+	{
+		$entity = new MagicEntity;
+		$array = $entity->toArray();
+		$this->assertEquals([
+				'attr1' => 'Some Value',
+				'attr2' => 'Some Value',
+			], $array);
+	}
+
+	/** @test */
+	public function we_can_cast_to_json()
+	{
+		$entity = new MagicEntity;
+		$json = $entity->toJson();
+		$this->assertEquals([
+				'attr1' => 'Some Value',
+				'attr2' => 'Some Value',
+			], json_decode($json, true));
+	}
 }
