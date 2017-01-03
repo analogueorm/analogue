@@ -12,7 +12,7 @@ trait MappableTrait
      * The Entity's Attributes
      * @var array
      */
-    protected $attributes = [];
+    //protected $attributes = [];
 
     /**
      * Method used by the mapper to set the object
