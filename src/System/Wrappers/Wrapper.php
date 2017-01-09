@@ -3,7 +3,7 @@
 namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\System\InternallyMappable;
-use Analogue\ORM\System\Proxies\EntityProxy;
+use Analogue\ORM\System\Proxies\ProxyFactory;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
@@ -26,6 +26,11 @@ abstract class Wrapper implements InternallyMappable
     protected $entityMap;
 
     /**
+     * @var \Analogue\ORM\System\Proxirs\ProxyFactory
+     */
+    protected $proxyFactory;
+
+    /**
      * Wrapper constructor.
      * @param $entity
      * @param $entityMap
@@ -34,6 +39,7 @@ abstract class Wrapper implements InternallyMappable
     {
         $this->entity = $entity;
         $this->entityMap = $entityMap;
+        $this->proxyFactory = new ProxyFactory;
     }
 
     /**
@@ -68,31 +74,47 @@ abstract class Wrapper implements InternallyMappable
 
     /**
      * Set the lazyloading proxies on the wrapped entity objet
-     *
+     * 
+     * @param  array  $relations  list of relations to be lazy loaded
+     * 
      * @return void
      */
-    public function setProxies()
+    public function setProxies(array $relations = null)
     {
         $attributes = $this->getEntityAttributes();
-        $singleRelations = $this->entityMap->getSingleRelationships();
-        $manyRelations = $this->entityMap->getManyRelationships();
-
         $proxies = [];
 
-        foreach ($this->entityMap->getRelationships() as $relation) {
-            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
-                if (in_array($relation, $singleRelations)) {
-                    $proxies[$relation] = new EntityProxy($this->getObject(), $relation);
-                }
-                if (in_array($relation, $manyRelations)) {
-                    $proxies[$relation] = new CollectionProxy($this->getObject(), $relation);
-                }
-            }
+        if(is_null($relations)) {
+            $relations = $this->getRelationsToProxy();
+        }
+
+        foreach ($relations as $relation) {
+            $targetClass = $this->entityMap->getTargettedClass($relation);
+            $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
         }
 
         foreach ($proxies as $key => $value) {
             $this->setEntityAttribute($key, $value);
         }
+    }
+
+    /**  
+     * Determine which relations we have to build proxy for
+     * 
+     * @return array
+     */
+    protected function getRelationsToProxy()
+    {
+        $proxies = [];
+        $attributes = $this->getEntityAttributes();
+
+        foreach ($this->entityMap->getRelationships() as $relation) {
+            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+                $proxies[] = $relation;
+            }
+        }
+
+        return $proxies;
     }
 
     /**

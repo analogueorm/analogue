@@ -2,170 +2,1037 @@
 
 namespace Analogue\ORM\System\Proxies;
 
-use ArrayAccess;
-use Countable;
-use JsonSerializable;
-use IteratorAggregate;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
-use Analogue\ORM\EntityCollection;
+use Closure;
+use CachingIterator;
+use Illuminate\Support\Collection;
+use ProxyManager\Proxy\ProxyInterface;
+use Analogue\ORM\System\Manager;
 
-/**
- * Class CollectionProxy
- *
- * @mixin EntityCollection
- */
-class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
+class CollectionProxy extends Collection implements ProxyInterface
 {
-    /**
-     * Underlying Lazyloaded collection
-     * @var EntityCollection
+    /** 
+     * Indicate if the relationship has been lazy loaded
+     * @var boolean
      */
-    protected $loadedCollection;
+    protected $relationshipLoaded = false;
 
     /**
-     * Added Items Collection
-     * @var EntityCollection
+     * A closure that will be used to feed the items of the collection
+     * 
+     * @var  Closure
      */
-    protected $addedItems;
+    protected $proxyInitializer;
 
-    /**
-     * @param mixed  $parentEntity
-     * @param string $relation relationship method handled by the proxy.
-     */
-    public function __construct($parentEntity, $relation)
-    {
-        $this->addedItems = new EntityCollection;
+    protected $addedItems = [];
 
-        parent::__construct($parentEntity, $relation);
-    }
-
-    /**
-     * Add an entity to the proxy collection, weither it's loaded or not
+	/**
+     * Create a new collection.
      *
      * @param mixed $entity
-     * @return self|void
+     * @param string $relation
+     * 
+     * @return void
      */
-    public function add($entity)
+    public function __construct($entity, $relation)
     {
-        if ($this->isLoaded()) {
-            return $this->loadedCollection->add($entity);
-        } else {
-            $this->addedItems->add($entity);
-        }
+        $this->parentEntity = $entity;
+        $this->relationshipMethod = $relation;
     }
 
     /**
-     * Check if Proxy collection has been lazy-loaded
+     * Force initialization of the proxy
      *
-     * @return boolean
+     * @return bool true if the proxy could be initialized
      */
-    public function isLoaded()
+    public function initializeProxy() : bool
     {
-        return !is_null($this->loadedCollection);
+        if($this->isProxyInitialized() ) return true;
+        
+        $relation = $this->relationshipMethod;
+        $entity = $this->parentEntity;
+
+        $entityMap = Manager::getMapper($entity)->getEntityMap();
+
+        $this->items = $entityMap->$relation($entity)->getResults($relation);
+
+        $this->relationshipLoaded = true;
+
+        return true;
     }
 
     /**
-     * Return the underlying collection
+     * Retrieves current initialization status of the proxy
      *
-     * @return EntityCollection
+     * @return bool
      */
-    public function getUnderlyingCollection()
+    public function isProxyInitialized() : bool
     {
-        return $this->loadedCollection;
+        return $this->relationshipLoaded;
     }
 
-    /**
-     * Return Items that has been added prior to lazy-loading
-     *
-     * @return EntityCollection
-     */
     public function getAddedItems()
     {
         return $this->addedItems;
     }
 
     /**
-     * Load the underlying relation
+     * Create a new collection instance if the value isn't one already.
      *
-     * @return void
+     * @param  mixed  $items
+     * @return static
      */
-    protected function loadOnce()
+    public static function make($items = [])
     {
-        if ($this->isLoaded()) {
-            return;
-        }
-        
-        $this->loadedCollection = $this->load();
+    	// What the use fot this in a proxy context.. ?? 
 
-        foreach ($this->addedItems as $entity) {
-            $this->loadedCollection->add($entity);
-        }
-
-        $this->addedItems = null;
-    }
-    
-    /**
-     * Count the number of items in the collection.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        $this->loadOnce();
-
-        return $this->getUnderlyingCollection()->count();
+        return new static($items);
     }
 
     /**
-     * Determine if an item exists at an offset.
+     * Get all of the items in the collection.
      *
-     * @param  mixed $key
-     * @return bool
+     * @return array
      */
-    public function offsetExists($key)
+    public function all()
     {
-        $this->loadOnce();
+    	$this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->offsetExists($key);
+        return parent::all();
     }
 
     /**
-     * Get an item at a given offset.
+     * Get the average value of a given key.
      *
-     * @param  mixed $key
+     * @param  callable|string|null  $callback
      * @return mixed
      */
-    public function offsetGet($key)
+    public function avg($callback = null)
     {
-        $this->loadOnce();
+        $this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->offsetGet($key);
+        return parent::avg($callback);
     }
 
     /**
-     * Set the item at a given offset.
+     * Get the median of a given key.
      *
-     * @param mixed $key
-     * @param mixed $value
+     * @param  null $key
+     * @return mixed|null
      */
-    public function offsetSet($key, $value)
+    public function median($key = null)
     {
-        $this->loadOnce();
+        $this->initializeProxy();
 
-        $this->getUnderlyingCollection()->offsetSet($key, $value);
+        return parent::median($key);
     }
 
     /**
-     * Unset the item at a given offset.
+     * Get the mode of a given key.
      *
-     * @param string $key
+     * @param  mixed  $key
+     * @return array
      */
-    public function offsetUnset($key)
+    public function mode($key = null)
     {
-        $this->loadOnce();
+        $this->initializeProxy();
 
-        $this->getUnderlyingCollection()->offsetUnset($key);
+        return parent::mode($key);
+    }
+
+    /**
+     * Collapse the collection of items into a single array.
+     *
+     * @return static
+     */
+    public function collapse()
+    {
+    	$this->initializeProxy();
+
+        return parent::collapse();
+    }
+
+    /**
+     * Determine if an item exists in the collection.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $value = null)
+    {
+        $this->initializeProxy();
+
+        return parent::contains($key, $value);
+    }
+
+    /**
+     * Determine if an item exists in the collection using strict comparison.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function containsStrict($key, $value = null)
+    {
+        $this->initializeProxy();
+
+        return parent::containsStrict($key, $value);
+    }
+
+    /**
+     * Get the items in the collection that are not present in the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function diff($items)
+    {
+        $this->initializeProxy();
+
+        return parent::diff($items);
+    }
+
+    /**
+     * Get the items in the collection whose keys are not present in the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function diffKeys($items)
+    {
+        $this->initializeProxy();
+
+        return parent::diffKeys($items);
+    }
+
+    /**
+     * Execute a callback over each item.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function each(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::each($callback);
+    }
+
+    /**
+     * Create a new collection consisting of every n-th element.
+     *
+     * @param  int  $step
+     * @param  int  $offset
+     * @return static
+     */
+    public function every($step, $offset = 0)
+    {
+        $this->initializeProxy();
+
+        return parent::every($step, $offset);
+    }
+
+    /**
+     * Get all items except for those with the specified keys.
+     *
+     * @param  mixed  $keys
+     * @return static
+     */
+    public function except($keys)
+    {
+        $this->initializeProxy();
+
+        return parent::except($keys);
+    }
+
+    /**
+     * Run a filter over each of the items.
+     *
+     * @param  callable|null  $callback
+     * @return static
+     */
+    public function filter(callable $callback = null)
+    {
+        $this->initializeProxy();
+
+        return parent::filter($callback);
+    }
+
+    /**
+     * Filter items by the given key value pair.
+     *
+     * @param  string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function where($key, $operator, $value = null)
+    {
+        $this->initializeProxy();
+
+        return parent::where($key, $operator, $value);
+    }
+
+    /**
+     * Filter items by the given key value pair using strict comparison.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return static
+     */
+    public function whereStrict($key, $value)
+    {
+        $this->initializeProxy();
+
+        return parent::whereStrict($key, $value);
+    }
+
+    /**
+     * Filter items by the given key value pair.
+     *
+     * @param  string  $key
+     * @param  mixed  $values
+     * @param  bool  $strict
+     * @return static
+     */
+    public function whereIn($key, $values, $strict = false)
+    {
+        $this->initializeProxy();
+
+        return parent::whereIn($key, $values, $strict);
+    }
+
+    /**
+     * Filter items by the given key value pair using strict comparison.
+     *
+     * @param  string  $key
+     * @param  mixed  $values
+     * @return static
+     */
+    public function whereInStrict($key, $values)
+    {
+    	$this->initializeProxy();
+
+        return parent::whereInStrict($key, $values);
+    }
+
+    /**
+     * Get the first item from the collection.
+     *
+     * @param  callable|null  $callback
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function first(callable $callback = null, $default = null)
+    {
+    	// TODO Consider partial loading
+    	$this->initializeProxy();
+
+        return parent::first($callback, $default);
+    }
+
+    /**
+     * Get a flattened array of the items in the collection.
+     *
+     * @param  int  $depth
+     * @return static
+     */
+    public function flatten($depth = INF)
+    {
+        $this->initializeProxy();
+
+        return parent::flatten($depth);
+    }
+
+    /**
+     * Flip the items in the collection.
+     *
+     * @return static
+     */
+    public function flip()
+    {
+        $this->initializeProxy();
+
+        return parent::flip();
+    }
+
+    /**
+     * Remove an item from the collection by key.
+     *
+     * @param  string|array  $keys
+     * @return $this
+     */
+    public function forget($keys)
+    {
+    	// TODO, we could consider these as 
+    	// 'pending deletion', the same way that
+    	// we treat added items
+        $this->initializeProxy();
+
+        return parent::forget($keys);
+    }
+
+    /**
+     * Get an item from the collection by key.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+    	// TODO : We could also consider partial loading
+    	// here
+        $this->initializeProxy();
+
+        return parent::get($key, $default);
+    }
+
+    /**
+     * Group an associative array by a field or using a callback.
+     *
+     * @param  callable|string  $groupBy
+     * @param  bool  $preserveKeys
+     * @return static
+     */
+    public function groupBy($groupBy, $preserveKeys = false)
+    {
+        $this->initializeProxy();
+
+        return parent::groupBy($groupBy, $preserveKeys);
+    }
+
+    /**
+     * Key an associative array by a field or using a callback.
+     *
+     * @param  callable|string  $keyBy
+     * @return static
+     */
+    public function keyBy($keyBy)
+    {
+        $this->initializeProxy();
+
+        return parent::keyBy($keyBy);
+    }
+
+    /**
+     * Determine if an item exists in the collection by key.
+     *
+     * @param  mixed  $key
+     * @return bool
+     */
+    public function has($key)
+    {
+    	// TODO : we could do automagic here by directly
+    	// calling the database if the collection hasn't 
+    	// been initialized yet. 
+    	// Potential issue is that several calls to this
+    	// could cause a lot queries vs a single get query.
+        $this->initializeProxy();
+
+        return parent::has($key);
+    }
+
+    /**
+     * Concatenate values of a given key as a string.
+     *
+     * @param  string  $value
+     * @param  string  $glue
+     * @return string
+     */
+    public function implode($value, $glue = null)
+    {
+        $this->initializeProxy();
+
+        return parent::implode($value, $glue);
+    }
+
+    /**
+     * Intersect the collection with the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function intersect($items)
+    {
+        $this->initializeProxy();
+
+        return parent::intersect($items);
+    }
+
+    /**
+     * Determine if the collection is empty or not.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        $this->initializeProxy();
+
+        return parent::isEmpty();
+    }
+
+    /**
+     * Get the keys of the collection items.
+     *
+     * @return static
+     */
+    public function keys()
+    {
+        $this->initializeProxy();
+
+        return parent::keys();
+    }
+
+    /**
+     * Get the last item from the collection.
+     *
+     * @param  callable|null  $callback
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function last(callable $callback = null, $default = null)
+    {
+    	// TODO : we could do partial loading there as well
+        $this->initializeProxy();
+
+        return parent::last($callback, $default);
+    }
+
+    /**
+     * Get the values of a given key.
+     *
+     * @param  string  $value
+     * @param  string|null  $key
+     * @return static
+     */
+    public function pluck($value, $key = null)
+    {
+    	// TODO : automagic call to QB if not initialized
+        $this->initializeProxy();
+
+        return parent::pluck($value, $key);
+    }
+
+    /**
+     * Run a map over each of the items.
+     *
+     * @param  callable  $callback
+     * @return static
+     */
+    public function map(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::map($callback);
+    }
+
+    /**
+     * Run an associative map over each of the items.
+     *
+     * The callback should return an associative array with a single key/value pair.
+     *
+     * @param  callable  $callback
+     * @return static
+     */
+    public function mapWithKeys(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::mapWithKeys($callback);
+    }
+
+    /**
+     * Map a collection and flatten the result by a single level.
+     *
+     * @param  callable  $callback
+     * @return static
+     */
+    public function flatMap(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::flatMap($callback);
+    }
+
+    /**
+     * Get the max value of a given key.
+     *
+     * @param  callable|string|null  $callback
+     * @return mixed
+     */
+    public function max($callback = null)
+    {
+        $this->initializeProxy();
+
+        return parent::max($callback);
+    }
+
+    /**
+     * Merge the collection with the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function merge($items)
+    {
+    	// TODO : Check if the EntityCollection
+    	// returns a native Collection, as it 
+    	// is what we want here
+        $this->initializeProxy();
+
+        return parent::merge($items);
+    }
+
+    /**
+     * Create a collection by using this collection for keys and another for its values.
+     *
+     * @param  mixed  $values
+     * @return static
+     */
+    public function combine($values)
+    {
+        // TODO : Check if the EntityCollection
+    	// returns a native Collection, as it 
+    	// is what we want here
+        $this->initializeProxy();
+
+        return parent::combine($values);
+    }
+
+    /**
+     * Union the collection with the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function union($items)
+    {
+        // TODO : Check if the EntityCollection
+    	// returns a native Collection, as it 
+    	// is what we want here
+        $this->initializeProxy();
+
+        return parent::union($items);
+    }
+
+    /**
+     * Get the min value of a given key.
+     *
+     * @param  callable|string|null  $callback
+     * @return mixed
+     */
+    public function min($callback = null)
+    {
+        // TODO : we could rely on the QB
+        // for thos, if initialization has not
+        // take place yet
+        $this->initializeProxy();
+
+        return parent::min($callback);
+    }
+
+    /**
+     * Get the items with the specified keys.
+     *
+     * @param  mixed  $keys
+     * @return static
+     */
+    public function only($keys)
+    {
+        // TODO : we could rely on the QB if
+        // the collection hasn't been initialized yet
+        $this->initializeProxy();
+
+        return parent::only($keys);
+    }
+
+    /**
+     * "Paginate" the collection by slicing it into a smaller collection.
+     *
+     * @param  int  $page
+     * @param  int  $perPage
+     * @return static
+     */
+    public function forPage($page, $perPage)
+    {
+    	// TODO : check possibility of partial loading
+    	// if not initialized
+        $this->initializeProxy();
+
+        return parent::forPage($page, $perPage);
+    }
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     *
+     * @param  callable|string  $callback
+     * @return static
+     */
+    public function partition($callback)
+    {
+        $this->initializeProxy();
+
+        return parent::partition($callback);
+    }
+
+    /**
+     * Pass the collection to the given callback and return the result.
+     *
+     * @param  callable $callback
+     * @return mixed
+     */
+    public function pipe(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::pipe($callback);
+    }
+
+    /**
+     * Get and remove the last item from the collection.
+     *
+     * @return mixed
+     */
+    public function pop()
+    {
+        $this->initializeProxy();
+
+        return parent::pop();
+    }
+
+    /**
+     * Push an item onto the beginning of the collection.
+     *
+     * @param  mixed  $value
+     * @param  mixed  $key
+     * @return $this
+     */
+    public function prepend($value, $key = null)
+    {
+    	// TODO : partial adding of values.
+    	// we could have a $prepended , and $pushed arrays
+    	// which we would combine at full initialization
+
+        $this->initializeProxy();
+
+        return parent::prepend($value, $key);
+    }
+
+    /**
+     * Push an item onto the end of the collection.
+     *
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function push($value)
+    {
+    	// TODO : partial adding of values.
+    	// we could have a $prepended , and $pushed arrays
+    	// which we would combine at full initialization
+  
+        $this->initializeProxy();
+
+        return parent::push($value);
+    }
+
+    /**
+     * Get and remove an item from the collection.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function pull($key, $default = null)
+    {
+    	// TODO : QB query if the collection
+    	// hasn't been initialized yet
+
+        $this->initializeProxy();
+
+        return parent::pull($key, $default);
+    }
+
+    /**
+     * Put an item in the collection by key.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function put($key, $value)
+    {
+        // TODO : Partial loading ?
+
+        $this->initializeProxy();
+
+        return parent::put($key, $value);
+    }
+
+    /**
+     * Get one or more items randomly from the collection.
+     *
+     * @param  int  $amount
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function random($amount = 1)
+    {
+    	// TODO : we could optimize this by only 
+    	// fetching the keys from the database
+    	// and performing partial loading
+
+        $this->initializeProxy();
+
+        return parent::random($amount);
+    }
+
+    /**
+     * Reduce the collection to a single value.
+     *
+     * @param  callable  $callback
+     * @param  mixed     $initial
+     * @return mixed
+     */
+    public function reduce(callable $callback, $initial = null)
+    {
+        $this->initializeProxy();
+
+        return parent::reduce($callback, $initial);
+    }
+
+    /**
+     * Create a collection of all elements that do not pass a given truth test.
+     *
+     * @param  callable|mixed  $callback
+     * @return static
+     */
+    public function reject($callback)
+    {
+        $this->initializeProxy();
+
+        return parent::reject($callback);
+    }
+
+    /**
+     * Reverse items order.
+     *
+     * @return static
+     */
+    public function reverse()
+    {
+        $this->initializeProxy();
+
+        return parent::reverse();
+    }
+
+    /**
+     * Search the collection for a given value and return the corresponding key if successful.
+     *
+     * @param  mixed  $value
+     * @param  bool   $strict
+     * @return mixed
+     */
+    public function search($value, $strict = false)
+    {
+        $this->initializeProxy();
+
+        return parent::search($value, $strict);
+    }
+
+    /**
+     * Get and remove the first item from the collection.
+     *
+     * @return mixed
+     */
+    public function shift()
+    {
+    	// Todo : Partial Removing
+    	// we could have a pending removal array
+        $this->initializeProxy();
+
+        return parent::shift();
+    }
+
+    /**
+     * Shuffle the items in the collection.
+     *
+     * @param int $seed
+     * @return static
+     */
+    public function shuffle($seed = null)
+    {
+    	$this->initializeProxy();
+
+        return parent::shuffle($seed);
+    }
+
+    /**
+     * Slice the underlying collection array.
+     *
+     * @param  int   $offset
+     * @param  int   $length
+     * @return static
+     */
+    public function slice($offset, $length = null)
+    {
+        $this->initializeProxy();
+
+        return parent::slice($offset, $length);
+    }
+
+    /**
+     * Split a collection into a certain number of groups.
+     *
+     * @param  int  $numberOfGroups
+     * @return static
+     */
+    public function split($numberOfGroups)
+    {
+        $this->initializeProxy();
+
+        return parent::split($numberOfGroups);
+    }
+
+    /**
+     * Chunk the underlying collection array.
+     *
+     * @param  int   $size
+     * @return static
+     */
+    public function chunk($size)
+    {
+    	// TODO : partial loading ?
+        $this->initializeProxy();
+
+        return parent::chunk($size);
+    }
+
+    /**
+     * Sort through each item with a callback.
+     *
+     * @param  callable|null  $callback
+     * @return static
+     */
+    public function sort(callable $callback = null)
+    {
+        $this->initializeProxy();
+
+        return parent::sort($callback);
+    }
+
+    /**
+     * Sort the collection using the given callback.
+     *
+     * @param  callable|string  $callback
+     * @param  int   $options
+     * @param  bool  $descending
+     * @return static
+     */
+    public function sortBy($callback, $options = SORT_REGULAR, $descending = false)
+    {
+        $this->initializeProxy();
+
+        return parent::sort($callback, $options, $descending);
+    }
+
+    /**
+     * Splice a portion of the underlying collection array.
+     *
+     * @param  int  $offset
+     * @param  int|null  $length
+     * @param  mixed  $replacement
+     * @return static
+     */
+    public function splice($offset, $length = null, $replacement = [])
+    {
+        $this->initializeProxy();
+
+        return parent::splice($offset, $length, $replacement);
+    }
+
+    /**
+     * Get the sum of the given values.
+     *
+     * @param  callable|string|null  $callback
+     * @return mixed
+     */
+    public function sum($callback = null)
+    {
+        $this->initializeProxy();
+
+        return parent::sum($callback);
+    }
+
+    /**
+     * Take the first or last {$limit} items.
+     *
+     * @param  int  $limit
+     * @return static
+     */
+    public function take($limit)
+    {	
+    	// TODO: partial loading
+        $this->initializeProxy();
+
+        return parent::take($limit);
+    }
+
+    /**
+     * Transform each item in the collection using a callback.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function transform(callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::transform($callback);
+    }
+
+    /**
+     * Return only unique items from the collection array.
+     *
+     * @param  string|callable|null  $key
+     * @param  bool  $strict
+     *
+     * @return static
+     */
+    public function unique($key = null, $strict = false)
+    {
+        $this->initializeProxy();
+
+        return parent::unique($key, $strict);
+    }
+
+    /**
+     * Reset the keys on the underlying array.
+     *
+     * @return static
+     */
+    public function values()
+    {
+        $this->initializeProxy();
+
+        return parent::values();
+    }
+
+    /**
+     * Zip the collection together with one or more arrays.
+     *
+     * e.g. new Collection([1, 2, 3])->zip([4, 5, 6]);
+     *      => [[1, 4], [2, 5], [3, 6]]
+     *
+     * @param  mixed ...$items
+     * @return static
+     */
+    public function zip($items)
+    {
+        $this->initializeProxy();
+
+        return parent::zip($items);
     }
 
     /**
@@ -175,9 +1042,13 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      */
     public function toArray()
     {
-        $this->loadOnce();
+    	// If this is called on all subsequent proxy, 
+    	// this would eventually trigger all lazy loading,
+    	// which is NOT what we would expect... 
+    	// TODO : must think of this. 
+        $this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->toArray();
+        return parent::toArray();
     }
 
     /**
@@ -187,22 +1058,30 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      */
     public function jsonSerialize()
     {
-        $this->loadOnce();
+        // If this is called on all subsequent proxy, 
+    	// this would eventually trigger all lazy loading,
+    	// which is NOT what we would expect... 
+    	// TODO : must think of this. 
+        $this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->jsonSerialize();
+        return parent::jsonSerialize();
     }
 
     /**
      * Get the collection of items as JSON.
      *
-     * @param  int $options
+     * @param  int  $options
      * @return string
      */
     public function toJson($options = 0)
     {
-        $this->loadOnce();
+        // If this is called on all subsequent proxy, 
+    	// this would eventually trigger all lazy loading,
+    	// which is NOT what we would expect... 
+    	// TODO : must think of this. 
+        $this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->toJson();
+        return parent::toJson($options);
     }
 
     /**
@@ -212,23 +1091,124 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
      */
     public function getIterator()
     {
-        $this->loadOnce();
+        $this->initializeProxy();
 
-        return $this->getUnderlyingCollection()->getIterator();
+        return parent::getIterator();
     }
 
+    /**
+     * Get a CachingIterator instance.
+     *
+     * @param  int  $flags
+     * @return \CachingIterator
+     */
+    public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING)
+    {
+        $this->initializeProxy();
+
+        return parent::getCachingIterator($flags);
+    }
 
     /**
-     * @param  $method
-     * @param  $parameters
+     * Count the number of items in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+    	// TODO rely on QB if not initialized
+        $this->initializeProxy();
+
+        return parent::getIterator();
+    }
+
+    /**
+     * Get a base Support collection instance from this collection.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function toBase()
+    {
+    	$this->initializeProxy();
+
+        return parent::toBase();
+    }
+
+    /**
+     * Determine if an item exists at an offset.
+     *
+     * @param  mixed  $key
+     * @return bool
+     */
+    public function offsetExists($key)
+    {
+    	// TODO rely on QB if no collection
+    	// initialized
+    	$this->initializeProxy();
+
+        return parent::offsetExists($key);
+    }
+
+    /**
+     * Get an item at a given offset.
+     *
+     * @param  mixed  $key
      * @return mixed
+     */
+    public function offsetGet($key)
+    {
+    	// TODO rely on partial init if no collection
+    	// initialized
+    	$this->initializeProxy();
+
+        return parent::offsetGet($key);
+    }
+
+    /**
+     * Set the item at a given offset.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+    	// TODO : think of the use of it into a ProxyCollection
+    	// context
+        $this->initializeProxy();
+
+        return parent::offsetSet($key, $value);
+    }
+
+    /**
+     * Unset the item at a given offset.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        // TODO : think of the use of it into a ProxyCollection
+    	// context
+        $this->initializeProxy();
+
+        return parent::offsetUnset($key);
+    }
+
+    /**
+     * Dynamically handle calls to the class.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
      */
     public function __call($method, $parameters)
     {
-        if (!$this->isLoaded()) {
-            $this->loadOnce();
-        }
+        $this->initializeProxy();
 
-        return call_user_func_array([$this->loadedCollection, $method], $parameters);
+        return parent::__call($method, $parameters);
     }
+
 }

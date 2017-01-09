@@ -58,6 +58,18 @@ class EntityTest extends AnalogueTestCase
     }
 
     /** @test */
+    public function all_proxies_are_created_when_mapping_an_entity_from_a_query()
+    {
+        $user = $this->factoryCreateUid(User::class);
+        $id = $user->id;
+        $mapper = $this->mapper($user);
+        $user = $mapper->find($id);
+        $this->assertInstanceOf(Blog::class, $user->blog);
+        $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->groups);
+        $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->articles);
+    }
+
+    /** @test */
     public function we_can_access_a_lazy_loaded_relationship()
     {
         $user = $this->factoryMake(User::class);
@@ -67,6 +79,7 @@ class EntityTest extends AnalogueTestCase
         $mapper->store($user);
         $id = $user->id;
         $user = $mapper->find($id);
+
         $this->assertInstanceOf(User::class, $user);
         $this->assertInstanceOf(Blog::class, $user->blog);
     }

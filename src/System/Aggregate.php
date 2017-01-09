@@ -5,9 +5,10 @@ namespace Analogue\ORM\System;
 use Analogue\ORM\Relationships\Pivot;
 use Illuminate\Support\Collection;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\Proxies\EntityProxy;
+//use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\Exceptions\MappingException;
+use ProxyManager\Proxy\LazyLoadingInterface;
 
 /**
  * This class is aimed to facilitate the handling of
@@ -168,15 +169,15 @@ class Aggregate implements InternallyMappable
             throw new MappingException("Entity's attribute $relation should not be array, or collection");
         }
 
-        if ($value instanceof EntityProxy && !$value->isLoaded()) {
+        if ($value instanceof LazyLoadingInterface && !$value->isProxyInitialized()) {
             $this->relationships[$relation] = [];
             return true;
         }
 
         // If the attribute is a loaded proxy, swap it for its
         // loaded entity.
-        if ($value instanceof EntityProxy && $value->isLoaded()) {
-            $value = $value->getUnderlyingObject();
+        if ($value instanceof LazyLoadingInterface && $value->isProxyInitialized()) {
+            $value = $value->getWrappedValueHolderValue();
         }
 
         if ($this->isParentOrRoot($value)) {
@@ -242,12 +243,12 @@ class Aggregate implements InternallyMappable
         // If the relation is a proxy, we test is the relation
         // has been lazy loaded, otherwise we'll just treat
         // the subset of newly added items.
-        if ($value instanceof CollectionProxy && $value->isLoaded()) {
+        if ($value instanceof CollectionProxy && $value->isProxyInitialized()) {
             $this->needSync[] = $relation;
-            $value = $value->getUnderlyingCollection();
+            //$value = $value->getUnderlyingCollection();
         }
 
-        if ($value instanceof CollectionProxy && !$value->isLoaded()) {
+        if ($value instanceof CollectionProxy && !$value->isProxyInitialized()) {
             $value = $value->getAddedItems();
         }
 

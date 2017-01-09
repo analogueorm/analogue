@@ -56,6 +56,7 @@ class AggregateTest extends AnalogueTestCase {
         $mapper = $this->mapper($user);
         $loadedUser = $mapper->find($id);
         $loadedUser->blog = $blog;
+
         $mapper->store($loadedUser);
         $this->seeInDatabase('blogs', ['user_id' => $user->id]);
     }
