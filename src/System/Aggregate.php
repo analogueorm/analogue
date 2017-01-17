@@ -23,6 +23,13 @@ class Aggregate implements InternallyMappable
      */
     protected $wrappedEntity;
 
+    /** 
+     * Class of the entity being aggregated
+     * 
+     * @var string
+     */
+    protected $class;
+
     /**
      * Parent Root Aggregate
      *
@@ -86,6 +93,8 @@ class Aggregate implements InternallyMappable
     {
         $factory = new Factory;
         
+        $this->class = get_class($entity);
+
         $this->wrappedEntity = $factory->make($entity);
 
         $this->parent = $parent;
@@ -94,9 +103,9 @@ class Aggregate implements InternallyMappable
 
         $this->root = $root;
 
-        $this->mapper = Manager::getMapper($entity);
+        $mapper = $this->getMapper($entity);
 
-        $this->entityMap = $this->mapper->getEntityMap();
+        $this->entityMap = $mapper->getEntityMap();
              
         $this->parseRelationships();
     }
@@ -376,7 +385,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getEntityCache()
     {
-        return $this->mapper->getEntityCache();
+        return $this->getMapper()->getEntityCache();
     }
 
     /**
@@ -676,7 +685,7 @@ class Aggregate implements InternallyMappable
             }
         }
 
-        if (!is_null($this->parent)) {
+        if ( ! is_null($this->parent)) {
             $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
         }
 
@@ -719,6 +728,8 @@ class Aggregate implements InternallyMappable
         $parentForeignRelations = $parentMap->getForeignRelationships();
         $parentPivotRelations = $parentMap->getPivotRelationships();
 
+        // The parentRelation is the name of the relationship
+        // methods on the parent entity map
         $parentRelation = $this->parentRelationship;
 
         if (in_array($parentRelation, $parentForeignRelations)
@@ -927,7 +938,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getCache()
     {
-        return $this->mapper->getEntityCache();
+        return $this->getMapper()->getEntityCache();
     }
 
     /**
@@ -997,7 +1008,7 @@ class Aggregate implements InternallyMappable
      */
     public function getMapper()
     {
-        return $this->mapper;
+        return Manager::getMapper($this->class);
     }
 
     /**

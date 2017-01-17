@@ -2,6 +2,7 @@
 
 use TestApp\User;
 use TestApp\Blog;
+use ProxyManager\Proxy\ProxyInterface;
 
 class ProxyTest extends AnalogueTestCase 
 {
@@ -15,8 +16,11 @@ class ProxyTest extends AnalogueTestCase
     public function proxies_are_setup_by_default()
     {
         $user = $this->factoryCreateUid(User::class);
-        $this->assertInstanceOf(\Analogue\ORM\System\Proxies\ProxyInterface::class, $user->getEntityAttribute('blog'));
-        $this->assertInstanceOf(\Analogue\ORM\System\Proxies\ProxyInterface::class, $user->getEntityAttribute('articles'));
+        $this->assertInstanceOf(Blog::class, $user->getEntityAttribute('blog'));
+        $this->assertInstanceOf(ProxyInterface::class, $user->getEntityAttribute('blog'));
+        $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->getEntityAttribute('articles'));
+        $this->assertInstanceOf(Illuminate\Support\Collection::class, $user->getEntityAttribute('articles'));
+        $this->assertInstanceOf(ProxyInterface::class, $user->getEntityAttribute('articles'));
     }
 
     /** @test */

@@ -15,6 +15,7 @@ class BelongsToManyTest extends DomainTestCase
         $group->id = $this->randId();
         $group->name = "test group";
         $user->groups->push($group);
+
         $mapper = $this->mapper($user);
         $mapper->store($user);
         $this->seeInDatabase('groups_users', [
@@ -130,7 +131,7 @@ class BelongsToManyTest extends DomainTestCase
         $userId = $this->createRelatedSet(3);
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
-
+        
         foreach($user->groups as $group) {
             $user->groups->pull($group->id);
         } 

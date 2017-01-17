@@ -89,8 +89,16 @@ abstract class Wrapper implements InternallyMappable
         }
 
         foreach ($relations as $relation) {
-            $targetClass = $this->entityMap->getTargettedClass($relation);
-            $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
+            // We first look if we need to build the proxy on the relationship.
+            // If the key is handled locally and we know it not to be set,
+            // we'll set the relationship to null
+            if (! $this->relationNeedsProxy($relation, $attributes))  {
+                $proxies[$relation] = null;
+            }
+            else {
+                $targetClass = $this->entityMap->getTargettedClass($relation);
+                $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
+            }
         }
 
         foreach ($proxies as $key => $value) {
@@ -99,7 +107,8 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**  
-     * Determine which relations we have to build proxy for
+     * Determine which relations we have to build proxy for, by parsing
+     * attributes and finding methods that aren't set.
      * 
      * @return array
      */
@@ -109,12 +118,40 @@ abstract class Wrapper implements InternallyMappable
         $attributes = $this->getEntityAttributes();
 
         foreach ($this->entityMap->getRelationships() as $relation) {
-            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+            if (!array_key_exists($relation, $attributes)) {
                 $proxies[] = $relation;
             }
         }
 
         return $proxies;
+    }
+
+    /**  
+     * Determine if the relation needs a proxy or not
+     * 
+     * @param  string $relation  
+     * @param  array $attributes 
+     * @return boolean
+     */
+    protected function relationNeedsProxy($relation, $attributes)
+    {
+        $localKey = $this->entityMap->getLocalKeys($relation);
+
+        if(is_null($localKey)) return true;
+
+        if(is_array($localKey)) {
+            $localKey = $localKey['id'];
+        }
+
+        if(! isset($attributes[$localKey])) {
+            return false;
+        }
+
+        if(is_null($attributes[$localKey])) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**

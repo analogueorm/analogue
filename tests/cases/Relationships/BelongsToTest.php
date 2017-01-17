@@ -24,6 +24,13 @@ class BelongsToTest extends DomainTestCase
     }
 
     /** @test */
+    public function relation_is_set_to_null_when_foreign_key_is_null()
+    {
+        $blog = $this->factoryCreateUid(Blog::class);
+        $this->assertNull($blog->user);
+    }
+
+    /** @test */
     public function related_entity_is_hydrated_into_object()
     {
         list($userId, $blogId) = $this->createRelatedRecords();
@@ -61,8 +68,10 @@ class BelongsToTest extends DomainTestCase
             'id' => $blogId,
             'title' => 'blog title',
         ]);
-        $user = $mapper->find($userId);
-        $this->assertEquals(null, $user->blog);
+
+        $mapper = $this->mapper(Blog::class);
+        $blog = $mapper->find($blogId);
+        $this->assertEquals(null, $blog->user);
     }
 
     protected function createRelatedRecords()

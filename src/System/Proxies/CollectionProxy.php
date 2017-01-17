@@ -4,24 +4,17 @@ namespace Analogue\ORM\System\Proxies;
 
 use Closure;
 use CachingIterator;
-use Illuminate\Support\Collection;
+use Analogue\ORM\EntityCollection;
 use ProxyManager\Proxy\ProxyInterface;
 use Analogue\ORM\System\Manager;
 
-class CollectionProxy extends Collection implements ProxyInterface
+class CollectionProxy extends EntityCollection implements ProxyInterface
 {
     /** 
      * Indicate if the relationship has been lazy loaded
      * @var boolean
      */
     protected $relationshipLoaded = false;
-
-    /**
-     * A closure that will be used to feed the items of the collection
-     * 
-     * @var  Closure
-     */
-    protected $proxyInitializer;
 
     protected $addedItems = [];
 
@@ -40,6 +33,17 @@ class CollectionProxy extends Collection implements ProxyInterface
     }
 
     /**
+     * Return Items that has been added without lady loading
+     * the underlying collection
+     *
+     * @return array
+     */
+    public function getAddedItems()
+    {
+        return $this->addedItems;
+    }
+
+    /**
      * Force initialization of the proxy
      *
      * @return bool true if the proxy could be initialized
@@ -53,7 +57,7 @@ class CollectionProxy extends Collection implements ProxyInterface
 
         $entityMap = Manager::getMapper($entity)->getEntityMap();
 
-        $this->items = $entityMap->$relation($entity)->getResults($relation);
+        $this->items = $entityMap->$relation($entity)->getResults($relation)->all() + $this->addedItems;
 
         $this->relationshipLoaded = true;
 
@@ -68,24 +72,6 @@ class CollectionProxy extends Collection implements ProxyInterface
     public function isProxyInitialized() : bool
     {
         return $this->relationshipLoaded;
-    }
-
-    public function getAddedItems()
-    {
-        return $this->addedItems;
-    }
-
-    /**
-     * Create a new collection instance if the value isn't one already.
-     *
-     * @param  mixed  $items
-     * @return static
-     */
-    public static function make($items = [])
-    {
-    	// What the use fot this in a proxy context.. ?? 
-
-        return new static($items);
     }
 
     /**
@@ -1118,8 +1104,8 @@ class CollectionProxy extends Collection implements ProxyInterface
     {
     	// TODO rely on QB if not initialized
         $this->initializeProxy();
-
-        return parent::getIterator();
+        
+        return parent::count();
     }
 
     /**

@@ -123,6 +123,7 @@ class Store extends Command
 
         // Create any related object that doesn't exist in the database.
         $foreignRelationships = $aggregate->getEntityMap()->getForeignRelationships();
+
         $this->createRelatedEntities($foreignRelationships);
 
         // Update any pivot tables that has been modified.

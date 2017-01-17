@@ -52,29 +52,28 @@ class EntityMap
     protected $primaryKey = 'id';
 
     /**
-     * Name of the entity's property that should
-     * contain the attributes, when $mapToProperties is false
+     * Name of the entity's array property that should
+     * contain the attributes
      * 
      * @var string
      */
     protected $arrayName = 'attributes';
 
     /**
-     * Array containing a list of class attributes. Mandatory if the
-     * mapped entity is a Plain PHP Object.
+     * Array containing the list of database columns to be mapped
+     * in the attributes array of the entity. 
      *
      * @var array
      */
     protected $attributes = [];
 
     /**
-     * Indicate if the entity's attributes should be mapped to the object's
-     * properties. If set to false, attributes will be assigned to an array
-     * defined by the $arrayName property of the EntityMap
-     * 
-     * @var boolean
+     * Array containing the list of database columns to be mapped
+     * to the entity's class properties. 
+     *
+     * @var array
      */
-    protected $mapToProperties = false;
+    protected $properties = [];
 
     /**
      * The Custom Domain Class to use with this mapping
@@ -118,6 +117,13 @@ class EntityMap
      * @var array
      */
     private $localRelations = [];
+
+    /** 
+     * List of local keys associated to local relation methods
+     * 
+     * @var array
+     */
+    private $localForeignKeys = [];
 
     /**
      * Relationships for which the key is stored in the Related Entity
@@ -468,6 +474,17 @@ class EntityMap
         return $this->localRelations;
     }
 
+    /**  
+     * Return the local keys associated to the relationship
+     * 
+     * @param  string $relation
+     * @return string | array | null
+     */
+    public function getLocalKeys($relation)
+    {
+        return isset($this->localForeignKeys[$relation]) ? $this->localForeignKeys[$relation] : null;
+    }
+
     /**
      * Relationships with foreign key in the related Entity record
      *
@@ -778,6 +795,8 @@ class EntityMap
             $foreignKey = snake_case($relation) . '_id';
         }
 
+        $this->localForeignKeys[$relation] = $foreignKey;
+
         $relatedMapper = Manager::getInstance()->mapper($related);
 
         $otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getKeyName();
@@ -811,6 +830,15 @@ class EntityMap
         $this->relatedClass[$relation] = null;
 
         list($type, $id) = $this->getMorphs($name, $type, $id);
+
+        // Store the foreign key in the entity map. 
+        // We might want to store the (key, type) as we might need it
+        // to build a MorphTo proxy
+        $this->localForeignKeys[$name] = [
+            "id" => $id,
+            "type" => $type
+        ];
+        
 
         $mapper = Manager::getInstance()->mapper(get_class($entity));
 
@@ -959,7 +987,7 @@ class EntityMap
         $this->relatedClasses[$relation] = $related;
         $this->manyRelations[] = $relation;
         $this->foreignRelations[] = $relation;
-        $this->pivotClasses[] = $relation;
+        $this->pivotRelations[] = $relation;
 
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
@@ -1003,7 +1031,7 @@ class EntityMap
         $this->relatedClasses[$relation] = $related;
         $this->manyRelations[] = $relation;
         $this->foreignRelations[] = $relation;
-        $this->pivotClasses[] = $relation;
+        $this->pivotRelations[] = $relation;
 
         // First, we will need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we will make the query

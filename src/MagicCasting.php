@@ -2,6 +2,10 @@
 
 namespace Analogue\ORM;
 
+use Carbon\Carbon;
+use ProxyManager\Proxy\ProxyInterface;
+use Illuminate\Contracts\Support\Arrayable;
+
 trait MagicCasting
 {
 
@@ -94,7 +98,7 @@ trait MagicCasting
         foreach ($sourceAttributes as $key => $attribute) {
             // If the attribute is a proxy, and hasn't be loaded, we discard
             // it from the returned set.
-            if ($attribute instanceof ProxyInterface && !$attribute->isLoaded()) {
+            if ($attribute instanceof ProxyInterface && !$attribute->isProxyInitialized()) {
                 continue;
             }
 
