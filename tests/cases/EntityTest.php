@@ -64,7 +64,6 @@ class EntityTest extends AnalogueTestCase
         $id = $user->id;
         $mapper = $this->mapper($user);
         $user = $mapper->find($id);
-        $this->assertInstanceOf(Blog::class, $user->blog);
         $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->groups);
         $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->articles);
     }

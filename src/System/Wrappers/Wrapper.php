@@ -135,6 +135,10 @@ abstract class Wrapper implements InternallyMappable
      */
     protected function relationNeedsProxy($relation, $attributes)
     {
+        if(in_array($relation, $this->entityMap->getRelationshipsWithoutProxy())) {
+            return false;
+        }
+
         $localKey = $this->entityMap->getLocalKeys($relation);
 
         if(is_null($localKey)) return true;

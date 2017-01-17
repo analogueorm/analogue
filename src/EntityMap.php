@@ -154,6 +154,14 @@ class EntityMap
      */
     private $relatedClasses = [];
 
+    /** 
+     * Some relation methods like embedded objects, or HasOne and MorphOne,
+     * will never have a proxy loaded on them. 
+     * 
+     * @var  array
+     */
+    private $nonProxyRelationships = [];
+
     /**
      * The number of models to return for pagination.
      *
@@ -444,6 +452,17 @@ class EntityMap
         return $this->relationships;
     }
 
+    /**  
+     * Get the relationships that will not have a proxy
+     * set on them
+     * 
+     * @return array
+     */
+    public function getRelationshipsWithoutProxy()
+    {
+        return $this->nonProxyRelationships;
+    }
+
     /**
      * Relationships of the Entity type
      *
@@ -732,6 +751,13 @@ class EntityMap
         $this->relatedClasses[$relation] = $related;
         $this->singleRelations[] = $relation;
         $this->foreignRelations[] = $relation;
+        $this->nonProxyRelationships[] = $relation;
+
+        // This relationship will always be eager loaded, as proxying it would
+        // mean having an object that doesn't actually exists.
+        if(! in_array($relation, $this->with)) {
+            $this->with[] = $relation;
+        }
 
         return new HasOne($relatedMapper, $entity, $relatedMap->getTable() . '.' . $foreignKey, $localKey);
     }
@@ -764,7 +790,14 @@ class EntityMap
         $this->relatedClasses[$relation] = $related;
         $this->singleRelations[] = $relation;
         $this->foreignRelations[] = $relation;
+        $this->nonProxyRelationships[] = $relation;
 
+        // This relationship will always be eager loaded, as proxying it would
+        // mean having an object that doesn't actually exists.
+        if(! in_array($relation, $this->with)) {
+            $this->with[] = $relation;
+        }
+        
         return new MorphOne($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
 
