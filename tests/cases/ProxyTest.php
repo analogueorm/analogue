@@ -31,6 +31,7 @@ class ProxyTest extends AnalogueTestCase
         $mapper = $this->mapper($user);
         $mapper->store($user);
         $loadedUser = $mapper->find($user->id);
+        dd($loadedUser);
         $this->assertEquals($blog->id, $loadedUser->blog->id);
     }
 

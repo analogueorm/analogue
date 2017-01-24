@@ -46,6 +46,7 @@ class HasOneTest extends DomainTestCase
 
         $loadedUser = $mapper->find($user->id);
         $this->assertNotInstanceOf(LazyLoadingInterface::class, $loadedUser->blog);
+        $this->assertInstanceOf(Blog::class, $loadedUser->blog);
     }
 
     /** @test */

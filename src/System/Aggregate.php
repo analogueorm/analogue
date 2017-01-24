@@ -1075,9 +1075,21 @@ class Aggregate implements InternallyMappable
 
     /**
      * Set the lazyloading proxies on the wrapped entity
+     * 
+     * @return  void
      */
     public function setProxies()
     {
         $this->wrappedEntity->setProxies();
+    }
+
+    /**  
+     * Hydrate the actual entity
+     * 
+     * @return void
+     */
+    public function hydrate()
+    {
+        $this->wrappedEntity->hydrate();
     }
 }

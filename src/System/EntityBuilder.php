@@ -3,8 +3,6 @@
 namespace Analogue\ORM\System;
 
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\Proxies\ProxyFactory;
-use Analogue\ORM\System\Proxies\CollectionProxy;
 
 /**
  * This class builds an array of Entity object(s) from a result set.
@@ -61,7 +59,7 @@ class EntityBuilder
         $this->entityMap = $mapper->getEntityMap();
 
         $this->eagerLoads = $eagerLoads;
-
+        
         $this->lazyLoads = $this->getRelationshipsToProxy();
 
         $this->factory = new Factory;
@@ -84,6 +82,8 @@ class EntityBuilder
         $tmpCache[$result[$keyName]] = $result;
 
         // Hydrate any embedded Value Object
+        // 
+        // TODO Move this to the wrapper instead
         $this->hydrateValueObjects($result);
 
         $instance->setEntityAttributes($result);
@@ -93,7 +93,8 @@ class EntityBuilder
             $instance->setProxies($this->lazyLoads);
         }
 
-        // Directly Unwrap the entity now that it has been hydrated
+        // Hydrate and return the instance
+        $instance->hydrate();
         $entity = $instance->getObject();
 
         $this->mapper->getEntityCache()->add($tmpCache);
@@ -168,33 +169,4 @@ class EntityBuilder
         return array_diff($relations, $this->eagerLoads);
     }
 
-    /**
-     * Build lazy loading proxies for the current entity
-     *
-     * @param InternallyMappable $entity
-     *
-     * @return array
-     */
-    protected function getLazyLoadingProxies(InternallyMappable $entity)
-    {
-        $proxies = [];
-
-        $singleRelations = $this->entityMap->getSingleRelationships();
-        $manyRelations = $this->entityMap->getManyRelationships();
-
-        $proxyFactory = new ProxyFactory;
-
-        foreach ($this->lazyLoads as $relation) {
-            if (in_array($relation, $singleRelations)) {
-                //$proxies[$relation] = new EntityProxy($entity->getObject(), $relation);
-                $targetClass = $this->entityMap->getTargetClass($relation);
-                $proxies[$relation] = $proxyFactory->make($entity->getObject(), $relation, $targetClass);
-            }
-            if (in_array($relation, $manyRelations)) {
-                $proxies[$relation] = new CollectionProxy($entity->getObject(), $relation);
-            }
-        }
-
-        return $proxies;
-    }
 }

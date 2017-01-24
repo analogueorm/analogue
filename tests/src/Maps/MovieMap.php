@@ -8,10 +8,13 @@ use TestApp\Realisator;
 
 class MovieMap extends EntityMap 
 {
-    protected $attributes = [
+    protected $properties = [
+    	'id',
         'title',
         'realisator',
     ];
+
+    protected $arrayName = null;
 
     public function realisator(Movie $movie)
     {

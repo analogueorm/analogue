@@ -600,17 +600,6 @@ class Query
     }
 
     /**
-     * Set the relationships being eagerly loaded.
-     *
-     * @param  array $eagerLoad
-     * @return void
-     */
-    public function setEagerLoads(array $eagerLoad)
-    {
-        $this->eagerLoad = $eagerLoad;
-    }
-
-    /**
      * Eager load the relationships for the entities.
      *
      * @param  array $entities
@@ -752,7 +741,7 @@ class Query
 
         // Run the query
         $results = $this->query->get($columns)->toArray();
-
+        
         // Create a result builder.
         $builder = new ResultBuilder(Manager::getInstance(), $this->mapper, array_keys($this->getEagerLoads()));
 

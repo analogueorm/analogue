@@ -53,9 +53,10 @@ class EntityMap
 
     /**
      * Name of the entity's array property that should
-     * contain the attributes
+     * contain the attributes. 
+     * If set to null, analogue will only hydrate object's properties
      * 
-     * @var string
+     * @var string|null
      */
     protected $arrayName = 'attributes';
 
@@ -270,7 +271,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes() : array
     {
         return $this->attributes;
     }
@@ -285,12 +286,32 @@ class EntityMap
         $this->attributes = $attributeNames;
     }
 
+    /**  
+     * Return true if the Entity has an 'attributes' array property
+     * 
+     * @return boolean
+     */
+    public function usesAttributesArray() : bool
+    {
+        return $this->arrayName === null ? false : true;
+    }
+
+    /**  
+     * Return the name of the Entity's attributes property
+     * 
+     * @return string|null
+     */
+    public function getAttributesArrayName()
+    {
+        return $this->arrayName;
+    }
+
     /**
      * Get all the attribute names for the class, including relationships, embeddables and primary key.
      *
      * @return array
      */
-    public function getCompiledAttributes()
+    public function getCompiledAttributes() : array
     {
         $key = $this->getKeyName();
 
@@ -318,7 +339,7 @@ class EntityMap
      *
      *  @return string
      */
-    public function getDateFormat()
+    public function getDateFormat() : string
     {
         return $this->dateFormat;
     }
@@ -338,7 +359,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getDriver()
+    public function getDriver() : string
     {
         return $this->driver;
     }
@@ -356,7 +377,7 @@ class EntityMap
     /**
      * Get the Database connection the Entity is stored on.
      *
-     * @return string
+     * @return string | null
      */
     public function getConnection()
     {
@@ -368,7 +389,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getTable()
+    public function getTable() : string
     {
         if (!is_null($this->table)) {
             return $this->table;
@@ -392,7 +413,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getSequence()
+    public function getSequence() : string
     {
         if (!is_null($this->sequence)) {
             return $this->sequence;
@@ -406,7 +427,7 @@ class EntityMap
      *
      * @return string namespaced class name
      */
-    public function getClass()
+    public function getClass() : string
     {
         return isset($this->class) ? $this->class : null;
     }
@@ -426,9 +447,30 @@ class EntityMap
      *
      * @return array
      */
-    public function getEmbeddables()
+    public function getEmbeddables() : array
     {
         return $this->embeddables;
+    }
+
+    /**  
+     * Return attributes that should be mapped to class properties
+     * 
+     * @return array
+     */
+    public function getProperties() : array
+    {
+        return $this->properties;
+    }
+
+    /**  
+     * Return the array property in which will be mapped all attributes
+     * that are not mapped to class properties.
+     * 
+     * @return string
+     */
+    public function getAttributesPropertyName() : string
+    {
+
     }
 
     /**
@@ -447,7 +489,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getRelationships()
+    public function getRelationships() : array
     {
         return $this->relationships;
     }
@@ -458,7 +500,7 @@ class EntityMap
      * 
      * @return array
      */
-    public function getRelationshipsWithoutProxy()
+    public function getRelationshipsWithoutProxy() : array
     {
         return $this->nonProxyRelationships;
     }
@@ -468,7 +510,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getSingleRelationships()
+    public function getSingleRelationships() : array
     {
         return $this->singleRelations;
     }
@@ -478,7 +520,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getManyRelationships()
+    public function getManyRelationships() : array
     {
         return $this->manyRelations;
     }
@@ -488,7 +530,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getLocalRelationships()
+    public function getLocalRelationships() : array
     {
         return $this->localRelations;
     }
@@ -509,7 +551,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getForeignRelationships()
+    public function getForeignRelationships() : array
     {
         return $this->foreignRelations;
     }
@@ -519,7 +561,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getPivotRelationships()
+    public function getPivotRelationships() : array
     {
         return $this->pivotRelations;
     }
@@ -554,7 +596,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getDynamicRelationships()
+    public function getDynamicRelationships() : array
     {
         return array_keys($this->dynamicRelationships);
     }
@@ -565,7 +607,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getEagerloadedRelationships()
+    public function getEagerloadedRelationships() : array
     {
         return $this->with;
     }
@@ -575,7 +617,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getKeyName()
+    public function getKeyName() : string
     {
         return $this->primaryKey;
     }
@@ -596,7 +638,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getQualifiedKeyName()
+    public function getQualifiedKeyName() : string
     {
         return $this->getTable() . '.' . $this->getKeyName();
     }
@@ -606,7 +648,7 @@ class EntityMap
      *
      * @return int
      */
-    public function getPerPage()
+    public function getPerPage() : int
     {
         return $this->perPage;
     }
@@ -627,7 +669,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function usesTimestamps()
+    public function usesTimestamps() : bool
     {
         return $this->timestamps;
     }
@@ -637,7 +679,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function usesSoftDeletes()
+    public function usesSoftDeletes() : bool
     {
         return $this->softDeletes;
     }
@@ -647,7 +689,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getCreatedAtColumn()
+    public function getCreatedAtColumn() : string
     {
         return $this->createdAtColumn;
     }
@@ -657,7 +699,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getUpdatedAtColumn()
+    public function getUpdatedAtColumn() : string
     {
         return $this->updatedAtColumn;
     }
@@ -667,7 +709,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getQualifiedDeletedAtColumn()
+    public function getQualifiedDeletedAtColumn() : string
     {
         return $this->deletedAtColumn;
     }
@@ -677,7 +719,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getForeignKey()
+    public function getForeignKey() : string
     {
         return snake_case(class_basename($this->getClass())) . '_id';
     }
@@ -698,7 +740,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getDiscriminatorColumn()
+    public function getDiscriminatorColumn() : string
     {
         return $this->discriminatorColumn;
     }
@@ -709,7 +751,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getDiscriminatorColumnMap()
+    public function getDiscriminatorColumnMap() : array
     {
         return $this->discriminatorColumnMap;
     }
@@ -720,7 +762,7 @@ class EntityMap
      * 
      * @return boolean
      */
-    public function useDependencyInjection()
+    public function useDependencyInjection() : bool
     {
         return $this->dependencyInjection;
     }
@@ -1287,7 +1329,7 @@ class EntityMap
     }
 
     /**
-     * Call dynamic relationship, if it exists
+     * Magic call to dynamic relationships
      *
      * @param  string $method
      * @param  array  $parameters

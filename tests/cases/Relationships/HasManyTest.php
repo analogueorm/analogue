@@ -2,6 +2,7 @@
 
 use TestApp\Blog;
 use TestApp\Article;
+use ProxyManager\Proxy\ProxyInterface;
 
 class HasManyTest extends DomainTestCase
 {
@@ -45,9 +46,10 @@ class HasManyTest extends DomainTestCase
 
         $mapper = $this->mapper(Blog::class);
         $mapper->store($blog);
-
+        setTddOn();
         $loadedBlog = $mapper->query()->with('articles')->first();
 
+        $this->assertNotInstanceOf(ProxyInterface::class, $loadedBlog->articles);
         $this->assertCount(2, $loadedBlog->articles);
     }
 

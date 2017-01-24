@@ -225,7 +225,7 @@ class EntityCache
      */
     protected function getEntityHash(InternallyMappable $entity)
     {
-        $class = get_class($entity->getObject());
+        $class = $entity->getEntityClass();
 
         $mapper = Manager::getMapper($class);
 

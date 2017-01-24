@@ -25,11 +25,41 @@ class ValueMap
     protected $attributes = [];
 
     /**
+     * @var  array
+     */
+    protected $properties = [];
+
+    protected $arrayName = null;
+
+    /**
      * @return array
      */
     public function getAttributes()
     {
         return $this->attributes;
+    }
+
+    /**  
+     * [getAttributesArrayName description]
+     * @return [type] [description]
+     */
+    public function getAttributesArrayName()
+    {
+        return $this->arrayName;
+    }
+
+    public function usesAttributesArray()
+    {
+        return $this->arrayName != null;
+    }
+
+    /**  
+     * 
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
     }
 
     /**

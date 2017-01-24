@@ -58,6 +58,9 @@ class Store extends Command
 
         $mapper->fireEvent('stored', $entity, false);
 
+        // Then we need to hydrate the actual entity
+        $this->aggregate->hydrate();
+
         return $entity;
     }
 
