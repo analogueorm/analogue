@@ -52,6 +52,27 @@ abstract class Wrapper implements InternallyMappable
         return get_class($this->entity);
     }
 
+    /**  
+     * Return the entity's primary key valuye
+     * 
+     * @return string
+     */
+    public function getEntityKey()
+    {
+        return $this->getEntityAttribute($this->entityMap->getKeyName());
+    }
+
+    /**  
+     * Return the Entity class/primary key couple, 
+     * which is used for internall operations. 
+     * 
+     * @return string
+     */
+    public function getEntityHash()
+    {
+        return $this->getEntityClass().'.'.$this->getEntityKey();
+    }
+
     /**
      * Returns the wrapped entity
      *

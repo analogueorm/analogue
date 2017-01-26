@@ -200,15 +200,8 @@ class BelongsToMany extends Relationship
 
         $entities = $this->query->addSelect($select)->getEntities();
 
-        $this->hydratePivotRelation($entities);
-
-        // If we actually found models we will also eager load any relationships that
-        // have been specified as needing to be eager loaded. This will solve the
-        // n + 1 query problem for the developer and also increase performance.
-        if (count($entities) > 0) {
-            $entities = $this->query->eagerLoadRelations($entities);
-        }
-
+        $entities = $this->hydratePivotRelation($entities);
+        
         return $this->relatedMap->newCollection($entities);
     }
 
@@ -220,17 +213,17 @@ class BelongsToMany extends Relationship
      */
     protected function hydratePivotRelation(array $entities)
     {
-        // To hydrate the pivot relationship, we will just gather the pivot attributes
-        // and create a new Pivot model, which is basically a dynamic model that we
-        // will set the attributes, table, and connections on so it they be used.
-
-        foreach ($entities as $entity) {
+        // TODO (note) We should definitely get rid of the pivot in a next
+        // release, as this is not quite relevant in a datamapper context. 
+        $host = $this;
+        return array_map(function($entity) use ($host) {
             $entityWrapper = $this->factory->make($entity);
 
             $pivot = $this->newExistingPivot($this->cleanPivotAttributes($entityWrapper));
-
             $entityWrapper->setEntityAttribute('pivot', $pivot);
-        }
+
+            return $entityWrapper->getObject();
+        }, $entities);
     }
 
     /**
@@ -401,64 +394,53 @@ class BelongsToMany extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param  array $results
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
-        $this->query->whereIn($this->getForeignKey(), $this->getKeys($entities));
+        $this->query->whereIn($this->getForeignKey(), $this->getKeysFromResults($results));
     }
 
     /**
-     * Initialize the relation on a set of eneities.
+     * Match Eagerly loaded relation to result
      *
-     * @param  array  $entities
-     * @param  string $relation
-     * @return array
-     */
-    public function initRelation(array $entities, $relation)
-    {
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
-
-            $entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
-        }
-
-        return $entities;
-    }
-
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param  array            $entities
-     * @param  EntityCollection $results
+     * @param  array            $results
      * @param  string           $relation
      * @return array
      */
-    public function match(array $entities, EntityCollection $results, $relation)
+    public function match(array $results, $relation)
     {
-        $dictionary = $this->buildDictionary($results);
+        $entities = $this->getEager();
+
+        // TODO; optimize this operation
+        $dictionary = $this->buildDictionary($entities);
 
         $keyName = $this->relatedMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 
+        $host = $this;
+
         // Once we have an array dictionary of child objects we can easily match the
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
-        foreach ($entities as $entity) {
-            $wrapper = $this->factory->make($entity);
+        return array_map(function($result) use ($dictionary, $keyName, $cache, $relation, $host) {
 
-            if (isset($dictionary[$key = $wrapper->getEntityAttribute($keyName)])) {
-                $collection = $this->relatedMap->newCollection($dictionary[$key]);
+            if (isset($dictionary[$key = $result[$keyName]])) {
+                $collection = $host->relatedMap->newCollection($dictionary[$key]);
 
-                $wrapper->setEntityAttribute($relation, $collection);
+                $result[$relation] = $collection;
 
-                $cache->cacheLoadedRelationResult($entity, $relation, $collection, $this);
+                // TODO Refactor this
+                $cache->cacheLoadedRelationResult($key, $relation, $collection, $this);
             }
-        }
+            else {
+                $result[$relation] = $host->relatedMap->newCollection();
+            }
+            return $result;
 
-        return $entities;
+        }, $results);
     }
 
     /**
@@ -478,7 +460,6 @@ class BelongsToMany extends Relationship
 
         foreach ($results as $entity) {
             $wrapper = $this->factory->make($entity);
-
             $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
         }
 

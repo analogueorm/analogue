@@ -613,7 +613,7 @@ class EntityMap
     }
 
     /**
-     * Get the primary key for the entity.
+     * Get the primary key attribute for the entity.
      *
      * @return string
      */
@@ -767,6 +767,78 @@ class EntityMap
         return $this->dependencyInjection;
     }
 
+    /**  
+     * Add a single relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addSingleRelation($relation)
+    {
+        if(! in_array($relation, $this->singleRelations)) {
+            $this->singleRelations[] = $relation;
+        }
+    }
+
+    /**  
+     * Add a foreign relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addForeignRelation($relation)
+    {
+        if(! in_array($relation, $this->foreignRelations)) {
+            $this->foreignRelations[] = $relation;
+        }
+    }
+
+    /**  
+     * Add a non proxy relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addNonProxyRelation($relation)
+    {
+        if(! in_array($relation, $this->nonProxyRelationships)) {
+            $this->nonProxyRelationships[] = $relation;
+        }
+    }
+
+    /**  
+     * Add a local relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addLocalRelation($relation)
+    {
+        if(! in_array($relation, $this->localRelations)) {
+            $this->localRelations[] = $relation;
+        }
+    }
+
+     /**  
+     * Add a many relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addManyRelation($relation)
+    {
+        if(! in_array($relation, $this->manyRelations)) {
+            $this->manyRelations[] = $relation;
+        }
+    }
+
+     /**  
+     * Add a pivot relation method name once
+     * 
+     * @param string  $relation
+     */
+    protected function addPivotRelation($relation)
+    {
+        if(! in_array($relation, $this->pivotRelations)) {
+            $this->pivotRelations[] = $relation;
+        }
+    }
+
     /**
      * Define a one-to-one relationship.
      *
@@ -791,9 +863,10 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->singleRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
-        $this->nonProxyRelationships[] = $relation;
+        
+        $this->addSingleRelation($relation);
+        $this->addForeignRelation($relation);
+        $this->addNonProxyRelation($relation);
 
         // This relationship will always be eager loaded, as proxying it would
         // mean having an object that doesn't actually exists.
@@ -830,9 +903,10 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->singleRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
-        $this->nonProxyRelationships[] = $relation;
+        
+        $this->addSingleRelation($relation);
+        $this->addForeignRelation($relation);
+        $this->addNonProxyRelation($relation);
 
         // This relationship will always be eager loaded, as proxying it would
         // mean having an object that doesn't actually exists.
@@ -860,8 +934,9 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->singleRelations[] = $relation;
-        $this->localRelations[] = $relation;
+        
+        $this->addSingleRelation($relation);
+        $this->addLocalRelation($relation);
 
         // If no foreign key was supplied, we can use a backtrace to guess the proper
         // foreign key name by using the name of the relationship function, which
@@ -899,9 +974,9 @@ class EntityMap
 
             $name = snake_case($caller['function']);
         }
-        $this->singleRelations[] = $name;
-        $this->localRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
+        $this->addSingleRelations($name);
+        $this->addLocalRelation($name);
+        $this->addForeignRelations($name);
         $this->relatedClass[$relation] = null;
 
         list($type, $id) = $this->getMorphs($name, $type, $id);
@@ -968,8 +1043,9 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
+        
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
 
         return new HasMany($relatedMapper, $entity, $table, $localKey);
     }
@@ -1002,8 +1078,9 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
+        
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
 
         return new HasManyThrough($relatedMapper, $entity, $throughMap, $firstKey, $secondKey);
     }
@@ -1036,8 +1113,9 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
+        
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
 
         return new MorphMany($relatedMapper, $entity, $table . '.' . $type, $table . '.' . $id, $localKey);
     }
@@ -1060,9 +1138,10 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
-        $this->pivotRelations[] = $relation;
+
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
+        $this->addPivotRelation($relation);
 
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
@@ -1104,9 +1183,10 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
-        $this->pivotRelations[] = $relation;
+
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
+        $this->addPivotRelation($relation);
 
         // First, we will need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we will make the query
@@ -1140,8 +1220,9 @@ class EntityMap
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
         $this->relatedClasses[$relation] = $related;
-        $this->manyRelations[] = $relation;
-        $this->foreignRelations[] = $relation;
+
+        $this->addManyRelation($relation);
+        $this->addForeignRelation($relation);
 
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 

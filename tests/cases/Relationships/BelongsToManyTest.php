@@ -3,6 +3,8 @@
 use TestApp\Group;
 use TestApp\User;
 use Illuminate\Support\Collection;
+use ProxyManager\Proxy\ProxyInterface;
+use Analogue\ORM\EntityCollection;
 
 class BelongsToManyTest extends DomainTestCase
 {
@@ -78,9 +80,12 @@ class BelongsToManyTest extends DomainTestCase
         $userId = $this->createRelatedSet(3);
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
+
         $group = $this->factoryCreateUid(Group::class);
         $user->groups->push($group);
+
         $mapper->store($user);
+
         $this->seeInDatabase('groups_users', [
             'user_id' => $user->id,
             'group_id' => $group->id,
@@ -208,6 +213,42 @@ class BelongsToManyTest extends DomainTestCase
             'user_id' => $user->id,
             'group_id' => $group->id,
         ]);
+    }
+
+    /** @test */
+    public function related_items_are_not_created_twice_when_storing_twice()
+    {
+        $database = $this->app->make('db');
+        $userId = $this->createRelatedSet(1);
+        $this->assertEquals(1, $database->table('groups_users')->count());
+        $mapper = $this->mapper(User::class);
+        $user = $mapper->with('groups')->whereId($userId)->first();
+        $mapper->store($user);
+        $this->assertEquals(1, $database->table('groups_users')->count());
+    }
+
+    /** @test */
+    public function belongs_to_many_relationship_can_be_eager_loaded()
+    {
+        $database = $this->app->make('db');
+        $userId = $this->createRelatedSet(1);
+        $this->assertEquals(1, $database->table('groups_users')->count());
+        $mapper = $this->mapper(User::class);
+        $user = $mapper->with('groups')->whereId($userId)->first();
+        $this->assertCount(1, $user->groups);
+        $this->assertInstanceOf(EntityCollection::class, $user->groups);
+        $this->assertNotInstanceOf(ProxyInterface::class, $user->groups);
+    }
+
+    /** @test */
+    public function empty_eagerloaded_belongs_to_many_relationship_is_an_empty_entity_collection()
+    {
+        $userId = $this->insertUser();
+        $mapper = $this->mapper(User::class);
+        $user = $mapper->with('groups')->whereId($userId)->first();
+        $this->assertInstanceOf(EntityCollection::class, $user->groups);
+        $this->assertNotInstanceOf(ProxyInterface::class, $user->groups);
+        $this->assertCount(0, $user->groups);
     }
 
     /**

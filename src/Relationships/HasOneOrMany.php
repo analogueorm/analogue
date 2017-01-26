@@ -132,73 +132,80 @@ abstract class HasOneOrMany extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param  array $results
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
-        $this->query->whereIn($this->foreignKey, $this->getKeys($entities, $this->localKey));
+        $this->query->whereIn($this->foreignKey, $this->getKeysFromResults($results, $this->localKey));
     }
 
     /**
-     * Match the eagerly loaded results to their single parents.
+     * Match the eagerly loaded relationship to the current result set
      *
-     * @param  array            $entities
-     * @param  EntityCollection $results
+     * @param  array            $results
      * @param  string           $relation
      * @return array
      */
-    public function matchOne(array $entities, EntityCollection $results, $relation)
+    public function matchOne(array $results, $relation)
     {
-        return $this->matchOneOrMany($entities, $results, $relation, 'one');
+        return $this->matchOneOrMany($results, $relation, 'one');
     }
 
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array            $entities
-     * @param  EntityCollection $results
+     * @param  array            $results
      * @param  string           $relation
      * @return array
      */
-    public function matchMany(array $entities, EntityCollection $results, $relation)
+    public function matchMany(array $results, $relation)
     {
-        return $this->matchOneOrMany($entities, $results, $relation, 'many');
+        return $this->matchOneOrMany($results, $relation, 'many');
     }
 
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array            $entities
-     * @param  EntityCollection $results
+     * @param  array            $results
      * @param  string           $relation
      * @param  string           $type
      * @return array
      */
-    protected function matchOneOrMany(array $entities, EntityCollection $results, $relation, $type)
+    protected function matchOneOrMany(array $results, $relation, $type)
     {
-        $dictionary = $this->buildDictionary($results);
+        $entities = $this->getEager();
+
+        $dictionary = $this->buildDictionary($entities);
 
         $cache = $this->parentMapper->getEntityCache();
+
+        $host = $this;
 
         // Once we have the dictionary we can simply spin through the parent models to
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
-
-            $key = $entity->getEntityAttribute($this->localKey);
+        return array_map(function($result) use ($dictionary, $cache, $type, $relation, $host) { 
+            
+            $key = $result[$host->localKey];
 
             if (isset($dictionary[$key])) {
-                $value = $this->getRelationValue($dictionary, $key, $type);
+                
+                $value = $host->getRelationValue($dictionary, $key, $type);
 
-                $entity->setEntityAttribute($relation, $value);
+                $result[$relation] = $value;
 
-                $cache->cacheLoadedRelationResult($entity, $relation, $value, $this);
+                // TODO : Refactor This
+                $cache->cacheLoadedRelationResult($key, $relation, $value, $this);
             }
-        }
+            else {
+                // TODO set an empty collection or entityCollection if type is many ? 
+                $result[$relation] = null;
+            }
 
-        return $entities;
+            return $result;
+
+        }, $results);
     }
 
     /**

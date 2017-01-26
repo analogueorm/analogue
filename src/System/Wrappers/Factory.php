@@ -26,28 +26,13 @@ class Factory
         $hydratorClass = $config->createFactory()->getHydratorClass();
         $hydrator      = new $hydratorClass();
         
-        // Get entity map
-        //$entityMap = $manager->mapper($object)->getEntityMap();
-        //
-        // TODO : Move value objects to EntityMap 
-        //
         if ($manager->isValueObject($object)) {
             $entityMap = $manager->getValueMap($object);
         } else {
             $entityMap = $manager->mapper($object)->getEntityMap();
         }
-        // 
+
         // Build Wrapper
         return new ObjectWrapper($object, $entityMap, $hydrator);
-        
-        
-        
-
-        /*if ($object instanceof Mappable) {
-            return new EntityWrapper($object, $entityMap);
-        } else {
-            return new PlainObjectWrapper($object, $entityMap);
-        }
-        */
     }
 }

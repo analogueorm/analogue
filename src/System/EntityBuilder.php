@@ -23,7 +23,7 @@ class EntityBuilder
     protected $entityMap;
 
     /**
-     * Relations that will be eager loaded on this query
+     * Relations that are eager loaded on this query
      *
      * @var array
      */
@@ -49,6 +49,7 @@ class EntityBuilder
 
     /**
      * EntityBuilder constructor.
+     * 
      * @param Mapper $mapper
      * @param array  $eagerLoads
      */
@@ -59,7 +60,7 @@ class EntityBuilder
         $this->entityMap = $mapper->getEntityMap();
 
         $this->eagerLoads = $eagerLoads;
-        
+
         $this->lazyLoads = $this->getRelationshipsToProxy();
 
         $this->factory = new Factory;
@@ -73,17 +74,13 @@ class EntityBuilder
      */
     public function build(array $result)
     {
-        $keyName = $this->entityMap->getKeyName();
-
-        $tmpCache = [];
-
         $instance = $this->getWrapperInstance();
         
-        $tmpCache[$result[$keyName]] = $result;
-
         // Hydrate any embedded Value Object
         // 
-        // TODO Move this to the wrapper instead
+        // TODO Move this to the result builder instead,
+        // as we'll handle this the same way as they were
+        // eager loaded relationships. 
         $this->hydrateValueObjects($result);
 
         $instance->setEntityAttributes($result);
@@ -96,8 +93,6 @@ class EntityBuilder
         // Hydrate and return the instance
         $instance->hydrate();
         $entity = $instance->getObject();
-
-        $this->mapper->getEntityCache()->add($tmpCache);
 
         return $entity;
     }
@@ -143,18 +138,18 @@ class EntityBuilder
         $embeddedAttributes = $map->getAttributes();
 
         $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
+        $voWrapper = $this->factory->make($valueObject);
 
         foreach ($embeddedAttributes as $key) {
-            $prefix = snake_case(class_basename($valueClass)) . '_';
 
-            $voWrapper = $this->factory->make($valueObject);
+            $prefix = snake_case(class_basename($valueClass)) . '_';
 
             $voWrapper->setEntityAttribute($key, $attributes[$prefix . $key]);
 
             unset($attributes[$prefix . $key]);
         }
 
-        $attributes[$localKey] = $valueObject;
+        $attributes[$localKey] = $voWrapper->getObject();
     }
 
     /**

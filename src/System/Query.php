@@ -126,14 +126,7 @@ class Query
     {
         $entities = $this->getEntities($columns);
 
-        // If we actually found models we will also eager load any relationships that
-        // have been specified as needing to be eager loaded, which will solve the
-        // n+1 query issue for the developers to avoid running a lot of queries.
-
-        if (count($entities) > 0) {
-            $entities = $this->eagerLoadRelations($entities);
-        }
-
+        // TODO Should move the call to new Collection on the result builder
         return $this->entityMap->newCollection($entities);
     }
 
@@ -525,68 +518,9 @@ class Query
             $relations = func_get_args();
         }
 
-        $eagers = $this->parseRelations($relations);
-
-        $this->eagerLoad = array_merge($this->eagerLoad, $eagers);
+        $this->eagerLoad = array_merge($this->eagerLoad, $relations);
 
         return $this;
-    }
-
-    /**
-     * Parse a list of relations into individuals.
-     *
-     * @param  array $relations
-     * @return array
-     */
-    protected function parseRelations(array $relations)
-    {
-        $results = [];
-
-        foreach ($relations as $name => $constraints) {
-            // If the "relation" value is actually a numeric key, we can assume that no
-            // constraints have been specified for the eager load and we'll just put
-            // an empty Closure with the loader so that we can treat all the same.
-            if (is_numeric($name)) {
-                $f = function () {};
-
-                list($name, $constraints) = [$constraints, $f];
-            }
-
-            // We need to separate out any nested includes. Which allows the developers
-            // to load deep relationships using "dots" without stating each level of
-            // the relationship with its own key in the array of eager load names.
-            $results = $this->parseNested($name, $results);
-
-            $results[$name] = $constraints;
-        }
-
-        return $results;
-    }
-
-
-    /**
-     * Parse the nested relationships in a relation.
-     *
-     * @param  string $name
-     * @param  array  $results
-     * @return array
-     */
-    protected function parseNested($name, $results)
-    {
-        $progress = [];
-
-        // If the relation has already been set on the result array, we will not set it
-        // again, since that would override any constraints that were already placed
-        // on the relationships. We will only set the ones that are not specified.
-        foreach (explode('.', $name) as $segment) {
-            $progress[] = $segment;
-
-            if (!isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {};
-            }
-        }
-
-        return $results;
     }
 
     /**
@@ -597,119 +531,6 @@ class Query
     public function getEagerLoads()
     {
         return $this->eagerLoad;
-    }
-
-    /**
-     * Eager load the relationships for the entities.
-     *
-     * @param  array $entities
-     * @return array
-     */
-    public function eagerLoadRelations($entities)
-    {
-        foreach ($this->eagerLoad as $name => $constraints) {
-            // For nested eager loads we'll skip loading them here and they will be set as an
-            // eager load on the query to retrieve the relation so that they will be eager
-            // loaded on that query, because that is where they get hydrated as models.
-            if (strpos($name, '.') === false) {
-                $entities = $this->loadRelation($entities, $name, $constraints);
-            }
-        }
-
-        return $entities;
-    }
-
-    /**
-     * Eagerly load the relationship on a set of entities.
-     *
-     * @param  array    $entities
-     * @param  string   $name
-     * @param  \Closure $constraints
-     * @return array
-     */
-    protected function loadRelation(array $entities, $name, Closure $constraints)
-    {
-        // First we will "back up" the existing where conditions on the query so we can
-        // add our eager constraints. Then we will merge the wheres that were on the
-        // query back to it in order that any where conditions might be specified.
-        $relation = $this->getRelation($name);
-
-        $relation->addEagerConstraints($entities);
-
-        call_user_func($constraints, $relation);
-
-        $entities = $relation->initRelation($entities, $name);
-
-        // Once we have the results, we just match those back up to their parent models
-        // using the relationship instance. Then we just return the finished arrays
-        // of models which have been eagerly hydrated and are readied for return.
-
-        $results = $relation->getEager();
-
-        return $relation->match($entities, $results, $name);
-    }
-
-    /**
-     * Get the relation instance for the given relation name.
-     *
-     * @param  string $relation
-     * @return \Analogue\ORM\Relationships\Relationship
-     */
-    public function getRelation($relation)
-    {
-        // We want to run a relationship query without any constrains so that we will
-        // not have to remove these where clauses manually which gets really hacky
-        // and is error prone while we remove the developer's own where clauses.
-        $query = Relationship::noConstraints(function () use ($relation) {
-            return $this->entityMap->$relation($this->getEntityInstance());
-        });
-
-        $nested = $this->nestedRelations($relation);
-
-        // If there are nested relationships set on the query, we will put those onto
-        // the query instances so that they can be handled after this relationship
-        // is loaded. In this way they will all trickle down as they are loaded.
-        if (count($nested) > 0) {
-            $query->getQuery()->with($nested);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Get the deeply nested relations for a given top-level relation.
-     *
-     * @param  string $relation
-     * @return array
-     */
-    protected function nestedRelations($relation)
-    {
-        $nested = [];
-
-        // We are basically looking for any relationships that are nested deeper than
-        // the given top-level relationship. We will just check for any relations
-        // that start with the given top relations and adds them to our arrays.
-        foreach ($this->eagerLoad as $name => $constraints) {
-            if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation . '.'))] = $constraints;
-            }
-        }
-
-        return $nested;
-    }
-
-    /**
-     * Determine if the relationship is nested.
-     *
-     * @param  string $name
-     * @param  string $relation
-     * @return bool
-     */
-    protected function isNested($name, $relation)
-    {
-        $dots = str_contains($name, '.');
-
-        return $dots && starts_with($name, $relation . '.');
     }
 
     /**
@@ -741,21 +562,11 @@ class Query
 
         // Run the query
         $results = $this->query->get($columns)->toArray();
-        
+
         // Create a result builder.
-        $builder = new ResultBuilder(Manager::getInstance(), $this->mapper, array_keys($this->getEagerLoads()));
+        $builder = new ResultBuilder($this->mapper); 
 
-        return $builder->build($results);
-    }
-
-    /**
-     * Get a new instance for the entity
-     *
-     * @return \Analogue\ORM\Entity
-     */
-    public function getEntityInstance()
-    {
-        return $this->mapper->newInstance();
+        return $builder->build($results, $this->getEagerLoads());
     }
 
     /**

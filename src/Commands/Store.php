@@ -141,6 +141,9 @@ class Store extends Command
         }
 
         // Now we can sync the related collections
+        // 
+        // TODO (note) : not sute this check is needed, as we can assume
+        // the aggregate exists in the Post Store Process
         if ($this->aggregate->exists()) {
             $this->aggregate->syncRelationships($foreignRelationships);
         }

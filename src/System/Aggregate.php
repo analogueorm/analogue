@@ -245,7 +245,7 @@ class Aggregate implements InternallyMappable
             return true;
         }
         
-        if (is_array($value) || $value instanceof Collection) {
+        if (is_array($value) || (! $value instanceof CollectionProxy && $value instanceof Collection)) {
             $this->needSync[] = $relation;
         }
 
@@ -257,7 +257,7 @@ class Aggregate implements InternallyMappable
             //$value = $value->getUnderlyingCollection();
         }
 
-        if ($value instanceof CollectionProxy && !$value->isProxyInitialized()) {
+        if ($value instanceof CollectionProxy && ! $value->isProxyInitialized()) {
             $value = $value->getAddedItems();
         }
 
@@ -335,7 +335,7 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityId()
     {
-        return $this->wrappedEntity->getEntityAttribute($this->entityMap->getKeyName());
+        return $this->wrappedEntity->getEntityKey();
     }
 
     /**

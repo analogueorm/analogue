@@ -10,4 +10,6 @@ class IdentityMap extends ValueMap
         'firstname',
         'lastname',
     ];
+
+    protected $arrayName = 'attributes';
 }
