@@ -1,29 +1,28 @@
 <?php
 
+use Illuminate\Support\Collection;
 use TestApp\Group;
 use TestApp\User;
-use Illuminate\Support\Collection;
 
 class BelongsToManyTest extends DomainTestCase
 {
-
     /** @test */
     public function we_can_store_a_many_to_many_relationship()
     {
         $user = $this->factoryMakeUid(User::class);
-        $group = new Group;
+        $group = new Group();
         $group->id = $this->randId();
-        $group->name = "test group";
+        $group->name = 'test group';
         $user->groups->push($group);
         $mapper = $this->mapper($user);
         $mapper->store($user);
         $this->seeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
         $this->seeInDatabase('groups', [
             'name' => 'test group',
-            'id' => $group->id,
+            'id'   => $group->id,
         ]);
     }
 
@@ -34,7 +33,7 @@ class BelongsToManyTest extends DomainTestCase
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
         $this->assertCount(3, $user->groups);
-        foreach($user->groups as $group) {
+        foreach ($user->groups as $group) {
             $this->assertInstanceOf(Group::class, $group);
         }
     }
@@ -43,33 +42,33 @@ class BelongsToManyTest extends DomainTestCase
     public function we_can_store_several_entities_in_a_many_to_many_relationship()
     {
         $user = $this->factoryMakeUid(User::class);
-        $groupA = new Group;
+        $groupA = new Group();
         $groupA->id = $this->randId();
-        $groupA->name = "test group A";
-        $groupB = new Group;
+        $groupA->name = 'test group A';
+        $groupB = new Group();
         $groupB->id = $this->randId();
-        $groupB->name = "test group B";
+        $groupB->name = 'test group B';
         $user->groups->push($groupA);
         $user->groups->push($groupB);
         $mapper = $this->mapper($user);
         $mapper->store($user);
         $this->seeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $groupA->id,
         ]);
         $this->seeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $groupB->id,
         ]);
         $this->seeInDatabase('groups', [
-            'id' => $groupA->id,
-            'name' => "test group A",
+            'id'   => $groupA->id,
+            'name' => 'test group A',
         ]);
         $this->seeInDatabase('groups', [
-            'id' => $groupB->id,
-            'name' => "test group B",
+            'id'   => $groupB->id,
+            'name' => 'test group B',
         ]);
-    }  
+    }
 
     /** @test */
     public function we_can_add_existing_items_to_a_many_to_many_relationship()
@@ -81,7 +80,7 @@ class BelongsToManyTest extends DomainTestCase
         $user->groups->push($group);
         $mapper->store($user);
         $this->seeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
         $user = $mapper->find($userId);
@@ -94,17 +93,17 @@ class BelongsToManyTest extends DomainTestCase
         $userId = $this->createRelatedSet(3);
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
-        $group = new Group;
+        $group = new Group();
         $group->id = $this->randId();
-        $group->name = "test group";
+        $group->name = 'test group';
         $user->groups->push($group);
         $mapper->store($user);
         $this->seeInDatabase('groups', [
-            'id' => $group->id,
-            'name' => "test group",
+            'id'   => $group->id,
+            'name' => 'test group',
         ]);
         $this->seeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
     }
@@ -131,9 +130,9 @@ class BelongsToManyTest extends DomainTestCase
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
 
-        foreach($user->groups as $group) {
+        foreach ($user->groups as $group) {
             $user->groups->pull($group->id);
-        } 
+        }
         $mapper->store($user);
 
         $this->dontSeeInDatabase('groups_users', [
@@ -148,7 +147,7 @@ class BelongsToManyTest extends DomainTestCase
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
 
-        $user->groups = new Collection;
+        $user->groups = new Collection();
         $mapper->store($user);
 
         $this->dontSeeInDatabase('groups_users', [
@@ -168,7 +167,7 @@ class BelongsToManyTest extends DomainTestCase
         $mapper->store($user);
 
         $this->dontSeeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
     }
@@ -185,7 +184,7 @@ class BelongsToManyTest extends DomainTestCase
         $mapper->store($user);
 
         $this->dontSeeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
         $user = $mapper->find($userId);
@@ -204,32 +203,30 @@ class BelongsToManyTest extends DomainTestCase
         $mapper->store($user);
 
         $this->dontSeeInDatabase('groups_users', [
-            'user_id' => $user->id,
+            'user_id'  => $user->id,
             'group_id' => $group->id,
         ]);
     }
 
     /**
-     * Create a random related set
-     * 
-     * @return integer
+     * Create a random related set.
+     *
+     * @return int
      */
     protected function createRelatedSet($relatedCount = 1)
     {
         $userId = $this->insertUser();
-        for($x = 1; $x<=$relatedCount; $x++)
-        {
+        for ($x = 1; $x <= $relatedCount; $x++) {
             $groupId = $this->rawInsert('groups', [
-                'id' => $this->randId(),
+                'id'   => $this->randId(),
                 'name' => $this->faker()->sentence,
             ]);
             $this->rawInsert('groups_users', [
-                'user_id' => $userId,
+                'user_id'  => $userId,
                 'group_id' => $groupId,
-            ]); 
+            ]);
         }
+
         return $userId;
     }
-
-
 }

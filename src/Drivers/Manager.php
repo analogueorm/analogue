@@ -10,7 +10,7 @@ class Manager
     protected $drivers = [];
 
     /**
-     * Add a Mapping Driver
+     * Add a Mapping Driver.
      *
      * @param DriverInterface $driver
      */
@@ -20,10 +20,11 @@ class Manager
     }
 
     /**
-     * Get the DBAdapter
+     * Get the DBAdapter.
      *
-     * @param  string $driver
-     * @param  string $connection connection name for drivers supporting multiple connection.
+     * @param string $driver
+     * @param string $connection connection name for drivers supporting multiple connection.
+     *
      * @return DriverInterface|void
      */
     public function getAdapter($driver, $connection = null)

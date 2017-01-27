@@ -27,7 +27,8 @@ class MorphPivot extends Pivot
     /**
      * Set the keys for a save update query.
      *
-     * @param  Query $query
+     * @param Query $query
+     *
      * @return Query
      */
     protected function setKeysForSaveQuery(Query $query)
@@ -40,7 +41,8 @@ class MorphPivot extends Pivot
     /**
      * Set the morph type for the pivot.
      *
-     * @param  string $morphType
+     * @param string $morphType
+     *
      * @return self
      */
     public function setMorphType($morphType)
@@ -53,7 +55,8 @@ class MorphPivot extends Pivot
     /**
      * Set the morph class for the pivot.
      *
-     * @param  string $morphClass
+     * @param string $morphClass
+     *
      * @return self
      */
     public function setMorphClass($morphClass)

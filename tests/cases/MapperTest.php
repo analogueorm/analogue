@@ -1,14 +1,11 @@
 <?php
 
-use TestApp\User;
-use TestApp\Blog;
-use TestApp\DI\Foo;
-use TestApp\NonMappedEntity;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 use Illuminate\Support\Collection;
-use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\Exceptions\EntityMapNotFoundException;
+use TestApp\Blog;
+use TestApp\DI\Foo;
+use TestApp\User;
 
 class MapperTest extends AnalogueTestCase
 {
@@ -98,7 +95,7 @@ class MapperTest extends AnalogueTestCase
         //
     }
 
-     /** @test */
+    /** @test */
     public function we_can_register_a_custom_event()
     {
         //

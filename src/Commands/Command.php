@@ -8,14 +8,14 @@ use Illuminate\Database\Query\Builder;
 abstract class Command
 {
     /**
-     * The aggregated entity on which the command is executed
+     * The aggregated entity on which the command is executed.
      *
      * @var \Analogue\ORM\System\Aggregate
      */
     protected $aggregate;
 
     /**
-     * Query Builder instance
+     * Query Builder instance.
      *
      * @var \Illuminate\Database\Query\Builder
      */
@@ -23,7 +23,8 @@ abstract class Command
 
     /**
      * Command constructor.
-     * @param Aggregate $aggregate
+     *
+     * @param Aggregate                                                 $aggregate
      * @param QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter $query
      */
     public function __construct(Aggregate $aggregate, Builder $query)

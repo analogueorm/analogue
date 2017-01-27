@@ -25,8 +25,9 @@ class HasMany extends HasOneOrMany
     /**
      * Initialize the relation on a set of entities.
      *
-     * @param  array  $entities
-     * @param  string $relation
+     * @param array  $entities
+     * @param string $relation
+     *
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -43,9 +44,10 @@ class HasMany extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array             $entities
-     * @param  EntityCollection  $results
-     * @param  string            $relation
+     * @param array            $entities
+     * @param EntityCollection $results
+     * @param string           $relation
+     *
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
