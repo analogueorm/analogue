@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "illuminate/database": "5.3.*",
+        "illuminate/database": "~5.3.0",
         "illuminate/events": "~5.3.0",
         "illuminate/pagination": "~5.3.0",
         "doctrine/instantiator": "^1.0",

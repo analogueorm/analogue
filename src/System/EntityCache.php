@@ -73,7 +73,8 @@ class EntityCache
 
             // Forget the ID field from the cache attributes
             // to prevent any side effect.
-            unset($result[$keyColumn]);
+            // TODO : remove primary key check from dirty attributes parsing
+            //unset($result[$keyColumn]);
             $cachedResults[$id] = $result;
         }
 
