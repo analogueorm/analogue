@@ -1,14 +1,15 @@
 <?php
 
 // Test debug helper
-if(! function_exists('tdd'))
-{
+if (!function_exists('tdd')) {
     $tdd_status = false;
 
     function tdd($expression)
     {
         global $tdd_status;
-        if($tdd_status) dd($expression);
+        if ($tdd_status) {
+            dd($expression);
+        }
     }
 
     function setTddOn()

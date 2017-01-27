@@ -2,48 +2,51 @@
 
 namespace Analogue\ORM\System\Proxies;
 
+use Analogue\ORM\EntityCollection;
 use ArrayAccess;
 use Countable;
-use JsonSerializable;
-use IteratorAggregate;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
-use Analogue\ORM\EntityCollection;
+use Illuminate\Contracts\Support\Jsonable;
+use IteratorAggregate;
+use JsonSerializable;
 
 /**
- * Class CollectionProxy
+ * Class CollectionProxy.
  *
  * @mixin EntityCollection
  */
 class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
     /**
-     * Underlying Lazyloaded collection
+     * Underlying Lazyloaded collection.
+     *
      * @var EntityCollection
      */
     protected $loadedCollection;
 
     /**
-     * Added Items Collection
+     * Added Items Collection.
+     *
      * @var EntityCollection
      */
     protected $addedItems;
 
     /**
      * @param mixed  $parentEntity
-     * @param string $relation relationship method handled by the proxy.
+     * @param string $relation     relationship method handled by the proxy.
      */
     public function __construct($parentEntity, $relation)
     {
-        $this->addedItems = new EntityCollection;
+        $this->addedItems = new EntityCollection();
 
         parent::__construct($parentEntity, $relation);
     }
 
     /**
-     * Add an entity to the proxy collection, weither it's loaded or not
+     * Add an entity to the proxy collection, weither it's loaded or not.
      *
      * @param mixed $entity
+     *
      * @return self|void
      */
     public function add($entity)
@@ -56,9 +59,9 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     }
 
     /**
-     * Check if Proxy collection has been lazy-loaded
+     * Check if Proxy collection has been lazy-loaded.
      *
-     * @return boolean
+     * @return bool
      */
     public function isLoaded()
     {
@@ -66,7 +69,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     }
 
     /**
-     * Return the underlying collection
+     * Return the underlying collection.
      *
      * @return EntityCollection
      */
@@ -76,7 +79,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     }
 
     /**
-     * Return Items that has been added prior to lazy-loading
+     * Return Items that has been added prior to lazy-loading.
      *
      * @return EntityCollection
      */
@@ -86,7 +89,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     }
 
     /**
-     * Load the underlying relation
+     * Load the underlying relation.
      *
      * @return void
      */
@@ -95,7 +98,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
         if ($this->isLoaded()) {
             return;
         }
-        
+
         $this->loadedCollection = $this->load();
 
         foreach ($this->addedItems as $entity) {
@@ -104,7 +107,7 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
 
         $this->addedItems = null;
     }
-    
+
     /**
      * Count the number of items in the collection.
      *
@@ -120,7 +123,8 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Determine if an item exists at an offset.
      *
-     * @param  mixed $key
+     * @param mixed $key
+     *
      * @return bool
      */
     public function offsetExists($key)
@@ -133,7 +137,8 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Get an item at a given offset.
      *
-     * @param  mixed $key
+     * @param mixed $key
+     *
      * @return mixed
      */
     public function offsetGet($key)
@@ -195,7 +200,8 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
     /**
      * Get the collection of items as JSON.
      *
-     * @param  int $options
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0)
@@ -217,10 +223,10 @@ class CollectionProxy extends Proxy implements ArrayAccess, Arrayable, Countable
         return $this->getUnderlyingCollection()->getIterator();
     }
 
-
     /**
      * @param  $method
      * @param  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)

@@ -33,5 +33,4 @@ class HasOneTest extends DomainTestCase
         $mapper->store($user);
         $this->assertEquals($blog->id, $user->blog->id);
     }
-
 }

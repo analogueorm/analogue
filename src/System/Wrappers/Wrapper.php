@@ -3,23 +3,23 @@
 namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\System\InternallyMappable;
-use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
+use Analogue\ORM\System\Proxies\EntityProxy;
 
 /**
- * The Wrapper Class provides a single interface access several Entity types
+ * The Wrapper Class provides a single interface access several Entity types.
  */
 abstract class Wrapper implements InternallyMappable
 {
     /**
-     * Original Entity Object
+     * Original Entity Object.
      *
      * @var mixed
      */
     protected $entity;
 
     /**
-     * Corresponding EntityMap
+     * Corresponding EntityMap.
      *
      * @var \Analogue\ORM\EntityMap
      */
@@ -27,6 +27,7 @@ abstract class Wrapper implements InternallyMappable
 
     /**
      * Wrapper constructor.
+     *
      * @param $entity
      * @param $entityMap
      */
@@ -37,7 +38,7 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Return the wrapped entity class
+     * Return the wrapped entity class.
      *
      * @return mixed
      */
@@ -47,7 +48,7 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Returns the wrapped entity
+     * Returns the wrapped entity.
      *
      * @return mixed
      */
@@ -57,7 +58,7 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Returns the wrapped entity's map
+     * Returns the wrapped entity's map.
      *
      * @return mixed
      */
@@ -67,7 +68,7 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Set the lazyloading proxies on the wrapped entity objet
+     * Set the lazyloading proxies on the wrapped entity objet.
      *
      * @return void
      */
@@ -98,18 +99,21 @@ abstract class Wrapper implements InternallyMappable
     /**
      * @param string $key
      * @param string $value
+     *
      * @return mixed
      */
     abstract public function setEntityAttribute($key, $value);
 
     /**
      * @param string $key
+     *
      * @return mixed
      */
     abstract public function getEntityAttribute($key);
 
     /**
      * @param array $attributes
+     *
      * @return mixed
      */
     abstract public function setEntityAttributes(array $attributes);
@@ -121,6 +125,7 @@ abstract class Wrapper implements InternallyMappable
 
     /**
      * @param string $key
+     *
      * @return mixed
      */
     abstract public function hasAttribute($key);

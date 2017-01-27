@@ -2,12 +2,12 @@
 
 namespace TestApp\Maps;
 
+use Analogue\ORM\EntityMap;
+use TestApp\Article;
 use TestApp\Blog;
 use TestApp\User;
-use TestApp\Article;
-use Analogue\ORM\EntityMap;
 
-class BlogMap extends EntityMap 
+class BlogMap extends EntityMap
 {
     public $timestamps = true;
 

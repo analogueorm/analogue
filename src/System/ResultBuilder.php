@@ -2,24 +2,24 @@
 
 namespace Analogue\ORM\System;
 
-use Analogue\ORM\System\Mapper;
-
 class ResultBuilder
 {
     /**
      * An instance of the entity manager class.
+     *
      * @var \Analogue\ORM\System\Manager
      */
     protected $manager;
 
     /**
      * The default mapper used to build entities with.
+     *
      * @var \Analogue\ORM\System\Mapper
      */
     protected $defaultMapper;
 
     /**
-     * Relations that will be eager loaded on this query
+     * Relations that will be eager loaded on this query.
      *
      * @var array
      */
@@ -57,9 +57,10 @@ class ResultBuilder
     }
 
     /**
-     * Convert a result set into an array of entities
+     * Convert a result set into an array of entities.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return \Illuminate\Support\Collection
      */
     public function build($results)
@@ -79,14 +80,15 @@ class ResultBuilder
      * Build an entity from results, using the default mapper on this builder.
      * This is the default build plan when no table inheritance is being used.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return Collection
      */
     protected function buildWithDefaultMapper($results)
     {
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
-        return collect($results)->map(function($item, $key) use ($builder) {
+        return collect($results)->map(function ($item, $key) use ($builder) {
             return $builder->build((array) $item);
         })->all();
     }
@@ -94,12 +96,13 @@ class ResultBuilder
     /**
      * Build an entity from results, using single table inheritance.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return Collection
      */
     protected function buildUsingSingleTableInheritance($results)
     {
-        return collect($results)->map(function($item, $key) {
+        return collect($results)->map(function ($item, $key) {
             $builder = $this->builderForResult((array) $item);
 
             return $builder->build((array) $item);
@@ -113,7 +116,8 @@ class ResultBuilder
      * the $type column is the fully qualified class name of the entity and
      * we'll use it instead.
      *
-     * @param  array  $result
+     * @param array $result
+     *
      * @return EntityBuilder
      */
     protected function builderForResult(array $result)
@@ -122,7 +126,7 @@ class ResultBuilder
 
         $columnMap = $this->entityMap->getDiscriminatorColumnMap();
 
-        $class = isset($columnMap[$type]) ? $columnMap[$type]: $type;
+        $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
 
         if (!isset($this->builders[$type])) {
             $this->builders[$type] = new EntityBuilder($this->manager->mapper($class), array_keys($this->eagerLoads));

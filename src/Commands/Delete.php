@@ -7,10 +7,11 @@ use Analogue\ORM\Exceptions\MappingException;
 class Delete extends Command
 {
     /**
-     * Execute the Delete Statement
+     * Execute the Delete Statement.
      *
      * @throws MappingException
      * @throws \InvalidArgumentException
+     *
      * @return false|void
      */
     public function execute()
@@ -26,7 +27,7 @@ class Delete extends Command
         }
 
         $keyName = $aggregate->getEntityMap()->getKeyName();
-        
+
         $id = $this->aggregate->getEntityId();
 
         if (is_null($id)) {

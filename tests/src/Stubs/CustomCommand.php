@@ -2,6 +2,6 @@
 
 namespace TestApp;
 
-class CustomCommand {
-    
+class CustomCommand
+{
 }

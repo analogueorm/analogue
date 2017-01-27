@@ -1,8 +1,9 @@
-<?php 
+<?php
 
-use TestApp\User;
-use TestApp\Blog;
+
 use TestApp\Article;
+use TestApp\Blog;
+use TestApp\User;
 
 class EntityTest extends AnalogueTestCase
 {
@@ -54,7 +55,7 @@ class EntityTest extends AnalogueTestCase
         $this->assertEquals('some-article', $article->slug);
 
         $user = $this->factoryMake(User::class, ['email' => 'Me@example.com']);
-        $this->assertEquals("me@example.com", $user->email);
+        $this->assertEquals('me@example.com', $user->email);
     }
 
     /** @test */
@@ -86,7 +87,4 @@ class EntityTest extends AnalogueTestCase
         $blog = $mapper->find($blog->id);
         $this->assertEquals(2, $blog->articles->count());
     }
-
-    
-
 }

@@ -5,14 +5,14 @@ namespace Analogue\ORM\System\Proxies;
 class EntityProxy extends Proxy
 {
     /**
-     * Underlying entity
+     * Underlying entity.
      *
      * @var mixed
      */
     protected $entity;
 
     /**
-     * Load the underlying relation
+     * Load the underlying relation.
      *
      * @return void
      */
@@ -22,7 +22,7 @@ class EntityProxy extends Proxy
     }
 
     /**
-     * Return the actual Entity
+     * Return the actual Entity.
      *
      * @return mixed
      */
@@ -36,9 +36,10 @@ class EntityProxy extends Proxy
     }
 
     /**
-     * Transparently passes get operation to underlying entity
+     * Transparently passes get operation to underlying entity.
      *
-     * @param  string $attribute
+     * @param string $attribute
+     *
      * @return mixed
      */
     public function __get($attribute)
@@ -51,10 +52,11 @@ class EntityProxy extends Proxy
     }
 
     /**
-     * Transparently passes set operation to underlying entity
+     * Transparently passes set operation to underlying entity.
      *
-     * @param  string $attribute [description]
+     * @param string $attribute [description]
      * @param  mixed
+     *
      * @return void
      */
     public function __set($attribute, $value)
@@ -67,10 +69,11 @@ class EntityProxy extends Proxy
     }
 
     /**
-     * Transparently Redirect non overrided calls to the lazy loaded Entity
+     * Transparently Redirect non overrided calls to the lazy loaded Entity.
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)

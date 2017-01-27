@@ -2,20 +2,21 @@
 
 namespace Analogue\ORM\Plugins\Timestamps;
 
-use Analogue\ORM\System\Mapper;
-use Carbon\Carbon;
 use Analogue\ORM\Plugins\AnaloguePlugin;
+use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
+use Carbon\Carbon;
 
 /**
- * Implements the Timestamps support on Analogue Entities
+ * Implements the Timestamps support on Analogue Entities.
  */
 class TimestampsPlugin extends AnaloguePlugin
 {
     /**
-     * Register the plugin
+     * Register the plugin.
      *
      * @throws \Exception
+     *
      * @return void
      */
     public function register()
@@ -25,28 +26,25 @@ class TimestampsPlugin extends AnaloguePlugin
 
             if ($entityMap->usesTimestamps()) {
                 $mapper->registerEvent('creating', function ($entity) use ($entityMap) {
-
-                    $factory = new Factory;
+                    $factory = new Factory();
                     $wrappedEntity = $factory->make($entity);
 
                     $createdAtField = $entityMap->getCreatedAtColumn();
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time = new Carbon;
+                    $time = new Carbon();
 
                     $wrappedEntity->setEntityAttribute($createdAtField, $time);
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
-
                 });
 
                 $mapper->registerEvent('updating', function ($entity) use ($entityMap) {
-
-                    $factory = new Factory;
+                    $factory = new Factory();
                     $wrappedEntity = $factory->make($entity);
 
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
-                    $time = new Carbon;
+                    $time = new Carbon();
 
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
                 });
@@ -55,7 +53,7 @@ class TimestampsPlugin extends AnaloguePlugin
     }
 
     /**
-     * Get custom events provided by the plugin
+     * Get custom events provided by the plugin.
      *
      * @return array
      */

@@ -13,6 +13,7 @@ class IlluminateConnectionProvider
 
     /**
      * IlluminateConnectionProvider constructor.
+     *
      * @param DatabaseManager $db
      */
     public function __construct(DatabaseManager $db)
@@ -21,9 +22,10 @@ class IlluminateConnectionProvider
     }
 
     /**
-     * Get a Database connection object
+     * Get a Database connection object.
      *
      * @param  $name
+     *
      * @return \Illuminate\Database\Connection
      */
     public function connection($name = null)
