@@ -50,8 +50,8 @@ class BelongsToTest extends DomainTestCase
         $mapper->store($user);
         $this->seeInDatabase('blogs', [
             'user_id' => $user->id,
-            'id' => $blogId,
-            'title' => 'new title',
+            'id'      => $blogId,
+            'title'   => 'new title',
         ]);
     }
 
@@ -65,8 +65,8 @@ class BelongsToTest extends DomainTestCase
         $mapper->store($user);
         $this->seeInDatabase('blogs', [
             'user_id' => null,
-            'id' => $blogId,
-            'title' => 'blog title',
+            'id'      => $blogId,
+            'title'   => 'blog title',
         ]);
 
         $mapper = $this->mapper(Blog::class);
@@ -78,10 +78,11 @@ class BelongsToTest extends DomainTestCase
     {
         $userId = $this->insertUser();
         $blogId = $this->rawInsert('blogs', [
-            'id' => $this->randId(),
+            'id'      => $this->randId(),
             'user_id' => $userId,
-            'title' => 'blog title',
+            'title'   => 'blog title',
         ]);
+
         return [$userId, $blogId];
     }
 }

@@ -9,12 +9,12 @@ use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Wrappers\Wrapper;
+use Doctrine\Instantiator\Instantiator;
+use ErrorException;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Illuminate\Container\Container;
-use ErrorException;
-use Doctrine\Instantiator\Instantiator;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -26,50 +26,49 @@ use Doctrine\Instantiator\Instantiator;
 class Mapper
 {
     /**
-     * The Manager instance
+     * The Manager instance.
      *
      * @var \Analogue\ORM\System\Manager
      */
     protected $manager;
 
     /**
-     * Instance of EntityMapper Object
+     * Instance of EntityMapper Object.
      *
      * @var \Analogue\ORM\EntityMap
      */
     protected $entityMap;
 
     /**
-     * The instance of db adapter
+     * The instance of db adapter.
      *
      * @var \Analogue\ORM\Drivers\DBAdapter
      */
     protected $adapter;
 
-
     /**
-     * Event dispatcher instance
+     * Event dispatcher instance.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $dispatcher;
 
     /**
-     * Entity Cache
+     * Entity Cache.
      *
-     * @var  \Analogue\ORM\System\EntityCache
+     * @var \Analogue\ORM\System\EntityCache
      */
     protected $cache;
 
     /**
-     * Global scopes
+     * Global scopes.
      *
      * @var array
      */
     protected $globalScopes = [];
 
     /**
-     * Custom Commands
+     * Custom Commands.
      *
      * @var array
      */
@@ -95,10 +94,11 @@ class Mapper
     }
 
     /**
-     * Map results to a Collection
+     * Map results to a Collection.
      *
-     * @param  Collection $results 
-     * @return Collection          
+     * @param Collection $results
+     *
+     * @return Collection
      */
     public function map($results)
     {
@@ -107,7 +107,7 @@ class Mapper
     }
 
     /**
-     * Return all records for a mapped object
+     * Return all records for a mapped object.
      *
      * @return EntityCollection
      */
@@ -117,11 +117,13 @@ class Mapper
     }
 
     /**
-     * Persist an entity or an entity collection into the database
+     * Persist an entity or an entity collection into the database.
      *
-     * @param  Mappable|\Traversable|array $entity
+     * @param Mappable|\Traversable|array $entity
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return Mappable|\Traversable|array
      */
     public function store($entity)
@@ -134,11 +136,13 @@ class Mapper
     }
 
     /**
-     * Store an entity collection inside a single DB Transaction
+     * Store an entity collection inside a single DB Transaction.
      *
-     * @param  \Traversable|array $entities
+     * @param \Traversable|array $entities
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return \Traversable|array
      */
     protected function storeCollection($entities)
@@ -155,11 +159,13 @@ class Mapper
     }
 
     /**
-     * Store a single entity into the database
+     * Store a single entity into the database.
      *
-     * @param  Mappable $entity
+     * @param Mappable $entity
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return \Analogue\ORM\Entity
      */
     protected function storeEntity($entity)
@@ -174,8 +180,10 @@ class Mapper
     /**
      * Check that the entity correspond to the current mapper.
      *
-     * @param  mixed $entity
+     * @param mixed $entity
+     *
      * @throws InvalidArgumentException
+     *
      * @return void
      */
     protected function checkEntityType($entity)
@@ -188,10 +196,12 @@ class Mapper
     }
 
     /**
-     * Convert an entity into an aggregate root
+     * Convert an entity into an aggregate root.
      *
-     * @param  mixed $entity
+     * @param mixed $entity
+     *
      * @throws MappingException
+     *
      * @return \Analogue\ORM\System\Aggregate
      */
     protected function aggregate($entity)
@@ -210,11 +220,13 @@ class Mapper
     }
 
     /**
-     * Delete an entity or an entity collection from the database
+     * Delete an entity or an entity collection from the database.
      *
      * @param  Mappable|\Traversable|array
+     *
      * @throws MappingException
      * @throws \InvalidArgumentException
+     *
      * @return \Traversable|array
      */
     public function delete($entity)
@@ -227,11 +239,13 @@ class Mapper
     }
 
     /**
-     * Delete an Entity Collection inside a single db transaction
+     * Delete an Entity Collection inside a single db transaction.
      *
-     * @param  \Traversable|array $entities
+     * @param \Traversable|array $entities
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return \Traversable|array
      */
     protected function deleteCollection($entities)
@@ -250,9 +264,11 @@ class Mapper
     /**
      * Delete a single entity from the database.
      *
-     * @param  Mappable $entity
+     * @param Mappable $entity
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return void
      */
     protected function deleteEntity($entity)
@@ -265,7 +281,7 @@ class Mapper
     }
 
     /**
-     * Return the entity map for this mapper
+     * Return the entity map for this mapper.
      *
      * @return EntityMap
      */
@@ -275,9 +291,9 @@ class Mapper
     }
 
     /**
-     * Get the entity cache for the current mapper
+     * Get the entity cache for the current mapper.
      *
-     * @return EntityCache  $entityCache
+     * @return EntityCache $entityCache
      */
     public function getEntityCache()
     {
@@ -285,12 +301,14 @@ class Mapper
     }
 
     /**
-     * Fire the given event for the entity
+     * Fire the given event for the entity.
      *
-     * @param  string               $event
-     * @param  \Analogue\ORM\Entity $entity
-     * @param  bool                 $halt
+     * @param string               $event
+     * @param \Analogue\ORM\Entity $entity
+     * @param bool                 $halt
+     *
      * @throws InvalidArgumentException
+     *
      * @return mixed
      */
     public function fireEvent($event, $entity, $halt = true)
@@ -299,7 +317,7 @@ class Mapper
             throw new InvalidArgumentException('Fired Event with invalid Entity Object');
         }
 
-        $event = "analogue.{$event}." . $this->entityMap->getClass();
+        $event = "analogue.{$event}.".$this->entityMap->getClass();
 
         $method = $halt ? 'until' : 'fire';
 
@@ -309,8 +327,9 @@ class Mapper
     /**
      * Register an entity event with the dispatcher.
      *
-     * @param  string   $event
-     * @param  \Closure $callback
+     * @param string   $event
+     * @param \Closure $callback
+     *
      * @return void
      */
     public function registerEvent($event, $callback)
@@ -321,9 +340,10 @@ class Mapper
     }
 
     /**
-     * Add a global scope to this mapper query builder
+     * Add a global scope to this mapper query builder.
      *
-     * @param  ScopeInterface $scope
+     * @param ScopeInterface $scope
+     *
      * @return void
      */
     public function addGlobalScope(ScopeInterface $scope)
@@ -334,7 +354,8 @@ class Mapper
     /**
      * Determine if the mapper has a global scope.
      *
-     * @param  \Analogue\ORM\System\ScopeInterface $scope
+     * @param \Analogue\ORM\System\ScopeInterface $scope
+     *
      * @return bool
      */
     public function hasGlobalScope($scope)
@@ -345,7 +366,8 @@ class Mapper
     /**
      * Get a global scope registered with the modal.
      *
-     * @param  \Analogue\ORM\System\ScopeInterface $scope
+     * @param \Analogue\ORM\System\ScopeInterface $scope
+     *
      * @return \Analogue\ORM\System\ScopeInterface|null
      */
     public function getGlobalScope($scope)
@@ -358,7 +380,8 @@ class Mapper
     /**
      * Get a new query instance without a given scope.
      *
-     * @param  \Analogue\ORM\System\ScopeInterface $scope
+     * @param \Analogue\ORM\System\ScopeInterface $scope
+     *
      * @return \Analogue\ORM\System\Query
      */
     public function newQueryWithoutScope($scope)
@@ -369,7 +392,7 @@ class Mapper
     }
 
     /**
-     * Get the Analogue Query Builder for this instance
+     * Get the Analogue Query Builder for this instance.
      *
      * @return \Analogue\ORM\System\Query
      */
@@ -384,6 +407,7 @@ class Mapper
      * Apply all of the global scopes to an Analogue Query builder.
      *
      * @param Query $query
+     *
      * @return \Analogue\ORM\System\Query
      */
     public function applyGlobalScopes($query)
@@ -406,7 +430,7 @@ class Mapper
     }
 
     /**
-     * Add a dynamic method that extends the mapper/repository
+     * Add a dynamic method that extends the mapper/repository.
      *
      * @param string $command
      */
@@ -418,7 +442,7 @@ class Mapper
     }
 
     /**
-     * Create a new instance of the mapped entity class
+     * Create a new instance of the mapped entity class.
      *
      * @return mixed
      */
@@ -426,7 +450,7 @@ class Mapper
     {
         $class = $this->entityMap->getClass();
 
-        if($this->entityMap->useDependencyInjection()) {
+        if ($this->entityMap->useDependencyInjection()) {
             return $this->newInstanceUsingDependencyInjection($class);
         }
 
@@ -434,14 +458,15 @@ class Mapper
     }
 
     /**
-     * Return a new object instance using dependency injection
+     * Return a new object instance using dependency injection.
      *
-     * @param  string  $class
+     * @param string $class
+     *
      * @return mixed
      */
     protected function newInstanceUsingDependencyInjection($class)
     {
-        if(! class_exists(Container::class)) {
+        if (!class_exists(Container::class)) {
             throw new ErrorException("Illuminate\Container\Container is required to use Dependency Injection");
         }
 
@@ -449,9 +474,10 @@ class Mapper
     }
 
     /**
-     * Return a new object instance using doctrine's instantiator
+     * Return a new object instance using doctrine's instantiator.
      *
-     * @param  string  $class
+     * @param string $class
+     *
      * @return mixed
      */
     protected function newInstanceUsingInstantiator($class)
@@ -462,7 +488,7 @@ class Mapper
     }
 
     /**
-     * Get an unscoped Analogue Query Builder for this instance
+     * Get an unscoped Analogue Query Builder for this instance.
      *
      * @return \Analogue\ORM\System\Query
      */
@@ -485,6 +511,7 @@ class Mapper
      * Remove all of the global scopes from an Analogue Query builder.
      *
      * @param Query $query
+     *
      * @return \Analogue\ORM\System\Query
      */
     public function removeGlobalScopes($query)
@@ -497,7 +524,7 @@ class Mapper
     }
 
     /**
-     * Return the manager instance
+     * Return the manager instance.
      *
      * @return \Analogue\ORM\System\Manager
      */
@@ -507,11 +534,13 @@ class Mapper
     }
 
     /**
-     * Dynamically handle calls to custom commands, or Redirects to query()
+     * Dynamically handle calls to custom commands, or Redirects to query().
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @throws \Exception
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -530,9 +559,11 @@ class Mapper
     }
 
     /**
-     * Check if this mapper supports this command
-     * @param  string $command
-     * @return boolean
+     * Check if this mapper supports this command.
+     *
+     * @param string $command
+     *
+     * @return bool
      */
     public function hasCustomCommand($command)
     {
@@ -540,7 +571,7 @@ class Mapper
     }
 
     /**
-     * Get all the custom commands registered on this mapper
+     * Get all the custom commands registered on this mapper.
      *
      * @return array
      */
@@ -550,12 +581,14 @@ class Mapper
     }
 
     /**
-     * Execute a custom command on an Entity
+     * Execute a custom command on an Entity.
      *
-     * @param  string                 $command
-     * @param  mixed|Collection|array $entity
+     * @param string                 $command
+     * @param mixed|Collection|array $entity
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return mixed
      */
     public function executeCustomCommand($command, $entity)
@@ -572,12 +605,14 @@ class Mapper
     }
 
     /**
-     * Execute a single command instance
+     * Execute a single command instance.
      *
-     * @param  string $commandClass
-     * @param  mixed  $entity
+     * @param string $commandClass
+     * @param mixed  $entity
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
+     *
      * @return mixed
      */
     protected function executeSingleCustomCommand($commandClass, $entity)
@@ -590,7 +625,7 @@ class Mapper
     }
 
     /**
-     * Get the Analogue Query Builder for this instance
+     * Get the Analogue Query Builder for this instance.
      *
      * @return \Analogue\ORM\System\Query
      */

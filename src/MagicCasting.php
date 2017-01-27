@@ -3,16 +3,16 @@
 namespace Analogue\ORM;
 
 use Carbon\Carbon;
-use ProxyManager\Proxy\ProxyInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use ProxyManager\Proxy\ProxyInterface;
 
 trait MagicCasting
 {
-
- 	/**
+    /**
      * Determine if the given attribute exists.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -23,7 +23,8 @@ trait MagicCasting
     /**
      * Get the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -34,8 +35,9 @@ trait MagicCasting
     /**
      * Set the value for a given offset.
      *
-     * @param  mixed $offset
-     * @param  mixed $value
+     * @param mixed $offset
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -46,7 +48,8 @@ trait MagicCasting
     /**
      * Unset the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -67,7 +70,8 @@ trait MagicCasting
     /**
      * Convert the entity instance to JSON.
      *
-     * @param  int $options
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0)
@@ -76,7 +80,7 @@ trait MagicCasting
     }
 
     /**
-     * Convert Mappable object to array;
+     * Convert Mappable object to array;.
      *
      * @return array
      */
@@ -86,9 +90,10 @@ trait MagicCasting
     }
 
     /**
-     * Transform the Object to array/json,
+     * Transform the Object to array/json,.
      *
-     * @param  array $sourceAttributes
+     * @param array $sourceAttributes
+     *
      * @return array
      */
     protected function attributesToArray(array $sourceAttributes)
@@ -113,6 +118,7 @@ trait MagicCasting
                 $attributes[$key] = $attribute;
             }
         }
+
         return $attributes;
     }
 }

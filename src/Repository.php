@@ -3,34 +3,35 @@
 namespace Analogue\ORM;
 
 use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\Mapper;
 use Exception;
 use InvalidArgumentException;
-use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
 
 /**
- * Class Repository
+ * Class Repository.
  *
  * @mixin Mapper
  */
 class Repository
 {
     /**
-     * The mapper object for the corresponding entity
+     * The mapper object for the corresponding entity.
      *
      * @var \Analogue\ORM\System\Mapper
      */
     protected $mapper;
 
     /**
-     * To build a repository, either provide :
+     * To build a repository, either provide :.
      *
      * - Mappable object's class name as a string
      * - Mappable object instance
      * - Instance of mapper
      *
-     * @param  Mapper         $mapper
-     * @param  EntityMap|null $entityMap (optional)
+     * @param Mapper         $mapper
+     * @param EntityMap|null $entityMap (optional)
+     *
      * @throws \InvalidArgumentException
      * @throws MappingException
      */
@@ -46,7 +47,7 @@ class Repository
     }
 
     /**
-     * Return all Entities from database
+     * Return all Entities from database.
      *
      * @return \Analogue\ORM\EntityCollection
      */
@@ -54,10 +55,12 @@ class Repository
     {
         return $this->mapper->get();
     }
-    
+
     /**
-     * Fetch a record from the database
-     * @param  integer $id
+     * Fetch a record from the database.
+     *
+     * @param int $id
+     *
      * @return \Analogue\ORM\Mappable
      */
     public function find($id)
@@ -68,7 +71,8 @@ class Repository
     /**
      * Get the first entity matching the given attributes.
      *
-     * @param  array  $attributes
+     * @param array $attributes
+     *
      * @return \Analogue\ORM\Mappable|null
      */
     public function firstMatching(array $attributes)
@@ -77,9 +81,10 @@ class Repository
     }
 
     /**
-     * Return all the entities matching the given attributes
+     * Return all the entities matching the given attributes.
      *
      * @param array $attributes
+     *
      * @return \Analogue\ORM\EntityCollection
      */
     public function allMatching(array $attributes)
@@ -88,9 +93,10 @@ class Repository
     }
 
     /**
-     * Return a paginator instance on the EntityCollection
+     * Return a paginator instance on the EntityCollection.
      *
      * @param int|null $perPage number of item per page (fallback on default setup in entity map)
+     *
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null)
@@ -99,11 +105,13 @@ class Repository
     }
 
     /**
-     * Delete an entity or an entity collection from the database
+     * Delete an entity or an entity collection from the database.
      *
-     * @param  Mappable|EntityCollection $entity
+     * @param Mappable|EntityCollection $entity
+     *
      * @throws MappingException
      * @throws \InvalidArgumentException
+     *
      * @return \Illuminate\Support\Collection|null
      */
     public function delete($entity)
@@ -114,9 +122,11 @@ class Repository
     /**
      * Persist an entity or an entity collection in the database.
      *
-     * @param  Mappable|EntityCollection|array $entity
+     * @param Mappable|EntityCollection|array $entity
+     *
      * @throws MappingException
      * @throws \InvalidArgumentException
+     *
      * @return Mappable|EntityCollection|array
      */
     public function store($entity)
@@ -125,11 +135,13 @@ class Repository
     }
 
     /**
-     * Make custom mapper custom commands available in repository
+     * Make custom mapper custom commands available in repository.
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @throws Exception
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -137,7 +149,7 @@ class Repository
         if ($this->mapper->hasCustomCommand($method)) {
             call_user_func_array([$this->mapper, $method], $parameters);
         } else {
-            throw new Exception("No method $method on " . get_class($this));
+            throw new Exception("No method $method on ".get_class($this));
         }
     }
 }

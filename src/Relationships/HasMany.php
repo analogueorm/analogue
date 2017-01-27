@@ -2,12 +2,10 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\EntityCollection;
-
 class HasMany extends HasOneOrMany
 {
     /**
-     * Lazy-Load the results of the relationship
+     * Lazy-Load the results of the relationship.
      *
      * @param  $relation
      *
@@ -25,8 +23,9 @@ class HasMany extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array             $$results
-     * @param  string            $relation
+     * @param array  $$results
+     * @param string $relation
+     *
      * @return array
      */
     public function match(array $results, $relation)

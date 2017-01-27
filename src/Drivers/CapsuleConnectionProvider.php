@@ -13,6 +13,7 @@ class CapsuleConnectionProvider
 
     /**
      * CapsuleConnectionProvider constructor.
+     *
      * @param Capsule $capsule
      */
     public function __construct(Capsule $capsule)
@@ -21,9 +22,10 @@ class CapsuleConnectionProvider
     }
 
     /**
-     * Get a Database connection object
+     * Get a Database connection object.
      *
      * @param  $name
+     *
      * @return \Illuminate\Database\Connection
      */
     public function connection($name = null)

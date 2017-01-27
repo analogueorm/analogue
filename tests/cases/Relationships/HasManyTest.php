@@ -1,22 +1,21 @@
 <?php
 
-use TestApp\Blog;
-use TestApp\Article;
 use ProxyManager\Proxy\ProxyInterface;
+use TestApp\Article;
+use TestApp\Blog;
 
 class HasManyTest extends DomainTestCase
 {
-
     /** @test */
     public function relationship_is_created_along_with_its_parent()
-    {   
+    {
         $blog = analogue_factory(Blog::class)->make();
         $article1 = analogue_factory(Article::class)->make();
         $article2 = analogue_factory(Article::class)->make();
 
         $articles = [
-        	$article1,
-        	$article2,
+            $article1,
+            $article2,
         ];
 
         $blog->articles = $articles;
@@ -25,24 +24,24 @@ class HasManyTest extends DomainTestCase
         $mapper->store($blog);
 
         $this->seeInDatabase('blogs', [
-        	'title' => $blog->title,
+            'title' => $blog->title,
         ]);
         $this->seeInDatabase('articles', [
-        	'title' => $article1->title,
-        	'slug' => $article1->slug,
-        	'content' => $article1->content,
+            'title'   => $article1->title,
+            'slug'    => $article1->slug,
+            'content' => $article1->content,
         ]);
         $this->seeInDatabase('articles', [
-        	'title' => $article2->title,
-        	'slug' => $article2->slug,
-        	'content' => $article2->content,
+            'title'   => $article2->title,
+            'slug'    => $article2->slug,
+            'content' => $article2->content,
         ]);
     }
 
     /** @test */
     public function relationship_can_be_eager_loaded()
-    {   
-    	list($blog, $article1, $article2) = $this->buildObjects();
+    {
+        list($blog, $article1, $article2) = $this->buildObjects();
 
         $mapper = $this->mapper(Blog::class);
         $mapper->store($blog);
@@ -55,8 +54,8 @@ class HasManyTest extends DomainTestCase
 
     /** @test */
     public function relationship_can_be_lazy_loaded()
-    {   
-    	list($blog, $article1, $article2) = $this->buildObjects();
+    {
+        list($blog, $article1, $article2) = $this->buildObjects();
 
         $mapper = $this->mapper(Blog::class);
         $mapper->store($blog);
@@ -68,13 +67,13 @@ class HasManyTest extends DomainTestCase
 
     protected function buildObjects()
     {
-    	$blog = analogue_factory(Blog::class)->make();
+        $blog = analogue_factory(Blog::class)->make();
         $article1 = analogue_factory(Article::class)->make();
         $article2 = analogue_factory(Article::class)->make();
 
         $articles = [
-        	$article1,
-        	$article2,
+            $article1,
+            $article2,
         ];
 
         $blog->articles = $articles;

@@ -6,5 +6,4 @@ use Analogue\ORM\Entity;
 
 class Vehicle extends Entity
 {
-
 }

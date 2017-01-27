@@ -1,12 +1,11 @@
 <?php
 
-use TestApp\User;
+use Analogue\ORM\Exceptions\EntityMapNotFoundException;
+use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\System\Mapper;
 use TestApp\Identity;
 use TestApp\NonMappedEntity;
-use Analogue\ORM\System\Mapper;
-use Analogue\ORM\Exceptions\MappingException;
-use Analogue\ORM\Exceptions\EntityMapNotFoundException;
-
+use TestApp\User;
 
 class ManagerTest extends AnalogueTestCase
 {
@@ -84,7 +83,7 @@ class ManagerTest extends AnalogueTestCase
     {
         $this->analogue->registerMapNamespace("TestApp\Maps");
         $this->analogue->setStrictMode(false);
-        $identity = new Identity('michael','jackson');
+        $identity = new Identity('michael', 'jackson');
         $this->setExpectedException(MappingException::class);
         $mapper = $this->analogue->mapper($identity);
     }
@@ -93,7 +92,7 @@ class ManagerTest extends AnalogueTestCase
     public function we_can_register_with_an_object_instance()
     {
         $this->analogue->registerMapNamespace("TestApp\Maps");
-        $user = new User;
+        $user = new User();
         $this->analogue->register($user);
     }
 

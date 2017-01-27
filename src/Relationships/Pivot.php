@@ -12,7 +12,7 @@ class Pivot extends Entity
     protected $exists;
 
     /**
-     * Pivot's table
+     * Pivot's table.
      *
      * @var string
      */
@@ -64,7 +64,7 @@ class Pivot extends Entity
     /**
      * Pivot uses timestamps ?
      *
-     * @var boolean
+     * @var bool
      */
     protected $timestamps;
 
@@ -121,8 +121,9 @@ class Pivot extends Entity
     /**
      * Set the key names for the pivot model instance.
      *
-     * @param  string $foreignKey
-     * @param  string $otherKey
+     * @param string $foreignKey
+     * @param string $otherKey
+     *
      * @return $this
      */
     public function setPivotKeys($foreignKey, $otherKey)
