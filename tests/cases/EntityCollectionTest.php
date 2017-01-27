@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 
 use TestApp\Blog;
 
@@ -13,7 +14,7 @@ class EntityCollectionTest extends DomainTestCase
     /** @test */
     public function we_can_convert_a_collection_to_array()
     {
-        for($x=0; $x<5;$x++) {
+        for ($x = 0; $x < 5; $x++) {
             $blog = $this->factoryCreateUid(Blog::class);
         }
         $mapper = $this->mapper(Blog::class);
@@ -24,7 +25,7 @@ class EntityCollectionTest extends DomainTestCase
     /** @test */
     public function we_can_convert_a_collection_to_json()
     {
-        for($x=0; $x<5;$x++) {
+        for ($x = 0; $x < 5; $x++) {
             $blog = $this->factoryCreateUid(Blog::class);
         }
         $mapper = $this->mapper(Blog::class);
@@ -32,5 +33,4 @@ class EntityCollectionTest extends DomainTestCase
         $json = $blogs->toJson();
         $this->assertCount(5, json_decode($json));
     }
-    
 }

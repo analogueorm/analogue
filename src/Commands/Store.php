@@ -2,11 +2,11 @@
 
 namespace Analogue\ORM\Commands;
 
-use Analogue\ORM\Mappable;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Proxies\CollectionProxy;
+use Analogue\ORM\System\Proxies\EntityProxy;
 
 /**
  * Persist entities & relationships to the
@@ -15,9 +15,10 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
 class Store extends Command
 {
     /**
-     * Persist the entity in the database
+     * Persist the entity in the database.
      *
      * @throws \InvalidArgumentException
+     *
      * @return false|mixed
      */
     public function execute()
@@ -32,7 +33,7 @@ class Store extends Command
 
         $this->preStoreProcess();
 
-        /**
+        /*
          * We will test the entity for existence
          * and run a creation if it doesn't exists
          */
@@ -44,8 +45,7 @@ class Store extends Command
             $this->insert();
 
             $mapper->fireEvent('created', $entity, false);
-        }
-        else if ($this->aggregate->isDirty()) {
+        } elseif ($this->aggregate->isDirty()) {
             if ($mapper->fireEvent('updating', $entity) === false) {
                 return false;
             }
@@ -66,9 +66,10 @@ class Store extends Command
 
     /**
      * Run all operations that have to occur before actually
-     * storing the entity
+     * storing the entity.
      *
      * @throws \InvalidArgumentException
+     *
      * @return void
      */
     protected function preStoreProcess()
@@ -83,10 +84,12 @@ class Store extends Command
     }
 
     /**
-     * Check for existence and create non-existing related entities
+     * Check for existence and create non-existing related entities.
      *
      * @param  array
+     *
      * @throws \InvalidArgumentException
+     *
      * @return void
      */
     protected function createRelatedEntities($relations)
@@ -96,13 +99,13 @@ class Store extends Command
         foreach ($entitiesToCreate as $aggregate) {
             $this->createStoreCommand($aggregate)->execute();
         }
-        
     }
 
     /**
-     * Create a new store command
+     * Create a new store command.
      *
-     * @param  Aggregate $aggregate
+     * @param Aggregate $aggregate
+     *
      * @return Store
      */
     protected function createStoreCommand(Aggregate $aggregate)
@@ -110,7 +113,7 @@ class Store extends Command
         // We gotta retrieve the corresponding query adapter to use.
         $mapper = $aggregate->getMapper();
 
-        return new Store($aggregate, $mapper->newQueryBuilder());
+        return new self($aggregate, $mapper->newQueryBuilder());
     }
 
     /**
@@ -118,6 +121,7 @@ class Store extends Command
      * is stored.
      *
      * @throws \InvalidArgumentException
+     *
      * @return void
      */
     protected function postStoreProcess()
@@ -135,19 +139,19 @@ class Store extends Command
         // Update any dirty relationship. This include relationships that already exists, have
         // dirty attributes / newly created related entities / dirty related entities.
         $dirtyRelatedAggregates = $aggregate->getDirtyRelationships();
-        
+
         foreach ($dirtyRelatedAggregates as $related) {
             $this->createStoreCommand($related)->execute();
         }
 
         // Now we can sync the related collections
-        // 
+        //
         // TODO (note) : not sute this check is needed, as we can assume
         // the aggregate exists in the Post Store Process
         if ($this->aggregate->exists()) {
             $this->aggregate->syncRelationships($foreignRelationships);
         }
-        
+
         // TODO be move it to the wrapper class
         // so it's the same code for the entity builder
         $aggregate->setProxies();
@@ -208,7 +212,7 @@ class Store extends Command
     }
 
     /**
-     * Execute an insert statement on the database
+     * Execute an insert statement on the database.
      *
      * @return void
      */
@@ -217,7 +221,7 @@ class Store extends Command
         $aggregate = $this->aggregate;
 
         $attributes = $aggregate->getRawAttributes();
-        
+
         $keyName = $aggregate->getEntityMap()->getKeyName();
 
         // Check if the primary key is defined in the attributes
@@ -230,11 +234,10 @@ class Store extends Command
 
             $aggregate->setEntityAttribute($keyName, $id);
         }
-
     }
 
     /**
-     * Run an update statement on the entity
+     * Run an update statement on the entity.
      *
      * @throws \InvalidArgumentException
      *

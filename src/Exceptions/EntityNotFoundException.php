@@ -16,7 +16,8 @@ class EntityNotFoundException extends RuntimeException
     /**
      * Set the affected Entity Map.
      *
-     * @param  string   $entity
+     * @param string $entity
+     *
      * @return $this
      */
     public function setEntity($entity)

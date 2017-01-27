@@ -2,17 +2,18 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Manager;
 use GeneratedHydrator\Configuration;
 
 class Factory
 {
     /**
-     * Build the wrapper corresponding to the object's type
+     * Build the wrapper corresponding to the object's type.
      *
-     * @param  mixed $object
+     * @param mixed $object
+     *
      * @throws \Analogue\ORM\Exceptions\MappingException
+     *
      * @return Wrapper
      */
     public function make($object)
@@ -22,10 +23,10 @@ class Factory
         // Instantiate hydrator. We'll need to optimize this and allow pre-generation
         // of these hydrator, and get it, ideally, from the entityMap or the Mapper class,
         // so it's only instantiated once
-        $config        = new Configuration(get_class($object));
+        $config = new Configuration(get_class($object));
         $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator      = new $hydratorClass();
-        
+        $hydrator = new $hydratorClass();
+
         if ($manager->isValueObject($object)) {
             $entityMap = $manager->getValueMap($object);
         } else {

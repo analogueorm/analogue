@@ -2,19 +2,20 @@
 
 namespace Analogue\ORM\System;
 
-use Closure;
 use Analogue\ORM\Relationships\Relationship;
+use Closure;
 
 class ResultBuilder
 {
     /**
      * The default mapper used to build entities with.
+     *
      * @var \Analogue\ORM\System\Mapper
      */
     protected $defaultMapper;
 
     /**
-     * Relations that will be eager loaded on this query
+     * Relations that will be eager loaded on this query.
      *
      * @var array
      */
@@ -36,8 +37,8 @@ class ResultBuilder
     protected $builders = [];
 
     /**
-     * @param Mapper  $defaultMapper
-     * @param array   $eagerLoads
+     * @param Mapper $defaultMapper
+     * @param array  $eagerLoads
      */
     public function __construct(Mapper $defaultMapper)
     {
@@ -46,31 +47,32 @@ class ResultBuilder
     }
 
     /**
-     * Convert a result set into an array of entities
+     * Convert a result set into an array of entities.
      *
-     * @param  array $results
-     * @param  array $eagerLoads  name of the relation to be eager loaded on the Entities
+     * @param array $results
+     * @param array $eagerLoads name of the relation to be eager loaded on the Entities
+     *
      * @return \Illuminate\Support\Collection
      */
     public function build(array $results, array $eagerLoads)
     {
         // First, we'll cast every single result to array
-        $results = array_map(function($item) {
+        $results = array_map(function ($item) {
             return (array) $item;
-        }, $results);     
+        }, $results);
 
-        // Then, we'll cache every single results as raw attributes, before 
+        // Then, we'll cache every single results as raw attributes, before
         // adding relationships, which will be cached when the relationship's
         // query takes place.
         $this->defaultMapper->getEntityCache()->add($results);
 
-        // Launch the queries related to eager loads, and match the 
+        // Launch the queries related to eager loads, and match the
         // current result set to these loaded relationships.
         $results = $this->queryEagerLoadedRelationships($results, $eagerLoads);
 
         // Note : Maybe we could use a PolymorphicResultBuilder, which would
-        // be shared by both STI and polymorphic relations, as they share the 
-        // same process. 
+        // be shared by both STI and polymorphic relations, as they share the
+        // same process.
 
         switch ($this->entityMap->getInheritanceType()) {
             case 'single_table':
@@ -83,9 +85,9 @@ class ResultBuilder
         }
     }
 
-    /**  
-     * Launch queries on eager loaded relationships
-     * 
+    /**
+     * Launch queries on eager loaded relationships.
+     *
      * @return array
      */
     protected function queryEagerLoadedRelationships(array $results, array $eagerLoads)
@@ -98,7 +100,8 @@ class ResultBuilder
     /**
      * Parse a list of relations into individuals.
      *
-     * @param  array $relations
+     * @param array $relations
+     *
      * @return array
      */
     protected function parseRelations(array $relations)
@@ -110,7 +113,8 @@ class ResultBuilder
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name)) {
-                $f = function () {};
+                $f = function () {
+                };
 
                 list($name, $constraints) = [$constraints, $f];
             }
@@ -129,8 +133,9 @@ class ResultBuilder
     /**
      * Parse the nested relationships in a relation.
      *
-     * @param  string $name
-     * @param  array  $results
+     * @param string $name
+     * @param array  $results
+     *
      * @return array
      */
     protected function parseNested($name, $results)
@@ -144,7 +149,8 @@ class ResultBuilder
             $progress[] = $segment;
 
             if (!isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {};
+                $results[$last] = function () {
+                };
             }
         }
 
@@ -152,9 +158,10 @@ class ResultBuilder
     }
 
     /**
-     * Eager load the relationships on a result set
+     * Eager load the relationships on a result set.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return array
      */
     public function eagerLoadRelations(array $results)
@@ -175,9 +182,10 @@ class ResultBuilder
     /**
      * Eagerly load the relationship on a set of entities.
      *
-     * @param  array    $results
-     * @param  string   $name
-     * @param  \Closure $constraints
+     * @param array    $results
+     * @param string   $name
+     * @param \Closure $constraints
+     *
      * @return array
      */
     protected function loadRelation(array $results, $name, Closure $constraints) : array
@@ -205,7 +213,8 @@ class ResultBuilder
     /**
      * Get the relation instance for the given relation name.
      *
-     * @param  string $relation
+     * @param string $relation
+     *
      * @return \Analogue\ORM\Relationships\Relationship
      */
     public function getRelation($relation)
@@ -232,7 +241,8 @@ class ResultBuilder
     /**
      * Get the deeply nested relations for a given top-level relation.
      *
-     * @param  string $relation
+     * @param string $relation
+     *
      * @return array
      */
     protected function nestedRelations($relation)
@@ -244,7 +254,7 @@ class ResultBuilder
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoads as $name => $constraints) {
             if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation . '.'))] = $constraints;
+                $nested[substr($name, strlen($relation.'.'))] = $constraints;
             }
         }
 
@@ -254,30 +264,31 @@ class ResultBuilder
     /**
      * Determine if the relationship is nested.
      *
-     * @param  string $name
-     * @param  string $relation
+     * @param string $name
+     * @param string $relation
+     *
      * @return bool
      */
     protected function isNested($name, $relation)
     {
         $dots = str_contains($name, '.');
 
-        return $dots && starts_with($name, $relation . '.');
+        return $dots && starts_with($name, $relation.'.');
     }
 
     /**
      * Build an entity from results, using the default mapper on this builder.
      * This is the default build plan when no table inheritance is being used.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return Collection
      */
     protected function buildWithDefaultMapper(array $results)
     {
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
-        return collect($results)->map(function($item, $key) use ($builder) {
-
+        return collect($results)->map(function ($item, $key) use ($builder) {
             return $builder->build($item);
         })->all();
     }
@@ -285,13 +296,15 @@ class ResultBuilder
     /**
      * Build an entity from results, using single table inheritance.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return Collection
      */
     protected function buildUsingSingleTableInheritance(array $results)
     {
-        return collect($results)->map(function($item, $key) {
+        return collect($results)->map(function ($item, $key) {
             $builder = $this->builderForResult($item);
+
             return $builder->build($item);
         })->all();
     }
@@ -303,7 +316,8 @@ class ResultBuilder
      * the $type column is the fully qualified class name of the entity and
      * we'll use it instead.
      *
-     * @param  array  $result
+     * @param array $result
+     *
      * @return EntityBuilder
      */
     protected function builderForResult(array $result)
@@ -312,11 +326,11 @@ class ResultBuilder
 
         $columnMap = $this->entityMap->getDiscriminatorColumnMap();
 
-        $class = isset($columnMap[$type]) ? $columnMap[$type]: $type;
+        $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
 
         if (!isset($this->builders[$type])) {
             $this->builders[$type] = new EntityBuilder(
-                Manager::getInstance()->mapper($class), 
+                Manager::getInstance()->mapper($class),
                 array_keys($this->eagerLoads)
             );
         }

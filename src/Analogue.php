@@ -2,12 +2,12 @@
 
 namespace Analogue\ORM;
 
-use Analogue\ORM\System\Manager;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Analogue\ORM\Drivers\Manager as DriverManager;
-use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\CapsuleConnectionProvider;
+use Analogue\ORM\Drivers\IlluminateDriver;
+use Analogue\ORM\Drivers\Manager as DriverManager;
+use Analogue\ORM\System\Manager;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Events\Dispatcher;
 
 /**
  * This class is a proxy to the Manager class, which allows
@@ -39,12 +39,13 @@ class Analogue
 
     /**
      * Analogue constructor.
+     *
      * @param array $connection
      */
     public function __construct(array $connection)
     {
         if (!static::$booted) {
-            static::$capsule = new Capsule;
+            static::$capsule = new Capsule();
 
             $this->addConnection($connection);
 
@@ -53,7 +54,7 @@ class Analogue
     }
 
     /**
-     * Boot Analogue
+     * Boot Analogue.
      *
      * @return Analogue
      */
@@ -63,18 +64,18 @@ class Analogue
             return $this;
         }
 
-        $dispatcher = new Dispatcher;
+        $dispatcher = new Dispatcher();
 
         $connectionProvider = new CapsuleConnectionProvider(static::$capsule);
 
         $illuminate = new IlluminateDriver($connectionProvider);
 
-        $driverManager = new DriverManager;
+        $driverManager = new DriverManager();
 
         $driverManager->addDriver($illuminate);
 
         static::$manager = new Manager($driverManager, $dispatcher);
-        
+
         static::$instance = $this;
 
         static::$booted = true;
@@ -83,7 +84,7 @@ class Analogue
     }
 
     /**
-     * Add a connection array to Capsule
+     * Add a connection array to Capsule.
      *
      * @param array  $config
      * @param string $name
@@ -94,9 +95,10 @@ class Analogue
     }
 
     /**
-     * Get a Database connection object
+     * Get a Database connection object.
      *
      * @param  $name
+     *
      * @return \Illuminate\Database\Connection
      */
     public function connection($name = null)
@@ -107,8 +109,9 @@ class Analogue
     /**
      * Dynamically handle static calls to the instance, Facade Style.
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public static function __callStatic($method, $parameters)
@@ -119,8 +122,9 @@ class Analogue
     /**
      * Dynamically handle calls to the Analogue Manager instance.
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)

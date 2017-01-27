@@ -2,25 +2,25 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Closure;
-use Carbon\Carbon;
-use Analogue\ORM\Mappable;
-use Analogue\ORM\System\Query;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Mappable;
 use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Mapper;
+use Analogue\ORM\System\Query;
 use Analogue\ORM\System\Wrappers\Factory;
+use Carbon\Carbon;
+use Closure;
 use Illuminate\Database\Query\Expression;
 
 /**
- * Class Relationship
+ * Class Relationship.
  *
  * @mixin Query
  */
 abstract class Relationship
 {
     /**
-     * The mapper instance for the related entity
+     * The mapper instance for the related entity.
      *
      * @var Mapper
      */
@@ -41,13 +41,14 @@ abstract class Relationship
     protected $parent;
 
     /**
-     * The parent entity map
+     * The parent entity map.
+     *
      * @var \Analogue\ORM\EntityMap
      */
     protected $parentMap;
 
     /**
-     * The Parent Mapper instance
+     * The Parent Mapper instance.
      *
      * @var Mapper
      */
@@ -61,7 +62,8 @@ abstract class Relationship
     protected $related;
 
     /**
-     * The related entity Map
+     * The related entity Map.
+     *
      * @var \Analogue\ORM\EntityMap
      */
     protected $relatedMap;
@@ -69,14 +71,14 @@ abstract class Relationship
     /**
      * Indicate if the parent entity hold the key for the relation.
      *
-     * @var boolean
+     * @var bool
      */
     protected static $ownForeignKey = false;
 
     /**
-     * Indicate if the relationships use a pivot table.*
+     * Indicate if the relationships use a pivot table.*.
      *
-     * @var boolean
+     * @var bool
      */
     protected static $hasPivot = false;
 
@@ -88,7 +90,7 @@ abstract class Relationship
     protected static $constraints = true;
 
     /**
-     * Wrapper factory
+     * Wrapper factory.
      *
      * @var \Analogue\ORM\System\Wrappers\Factory
      */
@@ -97,8 +99,9 @@ abstract class Relationship
     /**
      * Create a new relation instance.
      *
-     * @param  Mapper   $mapper
-     * @param  mixed    $parent
+     * @param Mapper $mapper
+     * @param mixed  $parent
+     *
      * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent)
@@ -107,7 +110,7 @@ abstract class Relationship
 
         $this->query = $mapper->getQuery();
 
-        $this->factory = new Factory;
+        $this->factory = new Factory();
 
         $this->parent = $this->factory->make($parent);
 
@@ -125,7 +128,7 @@ abstract class Relationship
     /**
      * Indicate if the parent entity hold the foreign key for relation.
      *
-     * @return boolean
+     * @return bool
      */
     public function ownForeignKey()
     {
@@ -133,9 +136,9 @@ abstract class Relationship
     }
 
     /**
-     * Indicate if the relationship uses a pivot table
+     * Indicate if the relationship uses a pivot table.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasPivot()
     {
@@ -152,17 +155,19 @@ abstract class Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $results
+     * @param array $results
+     *
      * @return void
      */
     abstract public function addEagerConstraints(array $results);
 
     /**
      * Match the eagerly loaded results to their parents, then return
-     * updated results
+     * updated results.
      *
-     * @param  array            $results
-     * @param  string           $relation
+     * @param array  $results
+     * @param string $relation
+     *
      * @return array
      */
     abstract public function match(array $results, $relation);
@@ -171,6 +176,7 @@ abstract class Relationship
      * Get the results of the relationship.
      *
      * @param string $relation relation name in parent's entity map
+     *
      * @return mixed
      */
     abstract public function getResults($relation);
@@ -188,8 +194,9 @@ abstract class Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  Query $query
-     * @param  Query $parent
+     * @param Query $query
+     * @param Query $parent
+     *
      * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
@@ -204,7 +211,8 @@ abstract class Relationship
     /**
      * Run a callback with constraints disabled on the relation.
      *
-     * @param  Closure $callback
+     * @param Closure $callback
+     *
      * @return mixed
      */
     public static function noConstraints(Closure $callback)
@@ -224,8 +232,9 @@ abstract class Relationship
     /**
      * Get all of the primary keys for an array of entities.
      *
-     * @param  array  $entities
-     * @param  string $key
+     * @param array  $entities
+     * @param string $key
+     *
      * @return array
      */
     protected function getKeys(array $entities, $key = null)
@@ -242,16 +251,16 @@ abstract class Relationship
             }
 
             return $value->getEntityAttribute($key);
-
         }, $entities)));
     }
 
-    /**  
-     * Get all the keys from a result set
-     * 
-     * @param  array  $results 
-     * @param  string  $key    
-     * @return array          
+    /**
+     * Get all the keys from a result set.
+     *
+     * @param array  $results
+     * @param string $key
+     *
+     * @return array
      */
     protected function getKeysFromResults(array $results, $key = null)
     {
@@ -275,7 +284,7 @@ abstract class Relationship
     }
 
     /**
-     * Get the base query builder
+     * Get the base query builder.
      *
      * @return \Analogue\ORM\Drivers\QueryAdapter
      */
@@ -295,9 +304,10 @@ abstract class Relationship
     }
 
     /**
-     * Set the parent model of the relation
-     * 
-     * @param InternallyMappable $parent 
+     * Set the parent model of the relation.
+     *
+     * @param InternallyMappable $parent
+     *
      * @return void
      */
     public function setParent(InternallyMappable $parent)
@@ -326,7 +336,7 @@ abstract class Relationship
     }
 
     /**
-     * Get the related mapper for the relation
+     * Get the related mapper for the relation.
      *
      * @return Mapper
      */
@@ -334,7 +344,6 @@ abstract class Relationship
     {
         return $this->relatedMapper;
     }
-
 
     /**
      * Get the name of the "created at" column.
@@ -369,7 +378,8 @@ abstract class Relationship
     /**
      * Wrap the given value with the parent query's grammar.
      *
-     * @param  string $value
+     * @param string $value
+     *
      * @return string
      */
     public function wrap($value)
@@ -378,21 +388,22 @@ abstract class Relationship
     }
 
     /**
-     * Get a fresh timestamp
+     * Get a fresh timestamp.
      *
      * @return Carbon
      */
     protected function freshTimestamp()
     {
-        return new Carbon;
+        return new Carbon();
     }
 
     /**
      * Cache the link between parent and related
      * into the mapper's Entity Cache.
      *
-     * @param  EntityCollection|Mappable $results  result of the relation query
-     * @param  string                    $relation name of the relation method on the parent entity
+     * @param EntityCollection|Mappable $results  result of the relation query
+     * @param string                    $relation name of the relation method on the parent entity
+     *
      * @return void
      */
     protected function cacheRelation($results, $relation)
@@ -403,7 +414,7 @@ abstract class Relationship
     }
 
     /**
-     * Return Pivot attributes when available on a relationship
+     * Return Pivot attributes when available on a relationship.
      *
      * @return array
      */
@@ -413,9 +424,10 @@ abstract class Relationship
     }
 
     /**
-     * Get a combo type.primaryKey
+     * Get a combo type.primaryKey.
      *
-     * @param  Mappable $entity
+     * @param Mappable $entity
+     *
      * @return string
      */
     protected function getEntityHash(Mappable $entity)
@@ -424,23 +436,25 @@ abstract class Relationship
 
         $keyName = Mapper::getMapper($class)->getEntityMap()->getKeyName();
 
-        return $class . '.' . $entity->getEntityAttribute($keyName);
+        return $class.'.'.$entity->getEntityAttribute($keyName);
     }
 
     /**
      * Run synchronization content if needed by the
      * relation type.
      *
-     * @param  array $actualContent
+     * @param array $actualContent
+     *
      * @return void
      */
     abstract public function sync(array $actualContent);
-    
+
     /**
      * Handle dynamic method calls to the relationship.
      *
-     * @param  string $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
