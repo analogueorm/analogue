@@ -2,14 +2,14 @@
 
 namespace TestApp\Maps;
 
-use TestApp\User;
+use Analogue\ORM\EntityMap;
+use TestApp\Article;
 use TestApp\Blog;
 use TestApp\Group;
-use TestApp\Article;
 use TestApp\Identity;
-use Analogue\ORM\EntityMap;
+use TestApp\User;
 
-class UserMap extends EntityMap 
+class UserMap extends EntityMap
 {
     public $timestamps = true;
 

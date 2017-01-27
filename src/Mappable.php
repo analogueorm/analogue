@@ -5,7 +5,7 @@ namespace Analogue\ORM;
 interface Mappable
 {
     /**
-     * Set the object attribute raw values (hydration)
+     * Set the object attribute raw values (hydration).
      *
      * @param array $attributes
      */

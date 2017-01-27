@@ -25,7 +25,7 @@ class ValueMap
     protected $attributes = [];
 
     /**
-     * @var  array
+     * @var array
      */
     protected $properties = [];
 
@@ -39,8 +39,9 @@ class ValueMap
         return $this->attributes;
     }
 
-    /**  
-     * [getAttributesArrayName description]
+    /**
+     * [getAttributesArrayName description].
+     *
      * @return [type] [description]
      */
     public function getAttributesArrayName()
@@ -53,8 +54,7 @@ class ValueMap
         return $this->arrayName != null;
     }
 
-    /**  
-     * 
+    /**
      * @return array
      */
     public function getProperties()

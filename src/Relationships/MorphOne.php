@@ -8,6 +8,7 @@ class MorphOne extends MorphOneOrMany
      * Get the results of the relationship.
      *
      * @param  $relation
+     *
      * @return mixed
      */
     public function getResults($relation)
@@ -22,8 +23,9 @@ class MorphOne extends MorphOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array            $results
-     * @param  string           $relation
+     * @param array  $results
+     * @param string $relation
+     *
      * @return array
      */
     public function match(array $results, $relation)

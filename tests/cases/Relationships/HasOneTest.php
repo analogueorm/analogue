@@ -1,8 +1,8 @@
 <?php
 
+use ProxyManager\Proxy\LazyLoadingInterface;
 use TestApp\Blog;
 use TestApp\User;
-use ProxyManager\Proxy\LazyLoadingInterface;;
 
 class HasOneTest extends DomainTestCase
 {
@@ -67,6 +67,5 @@ class HasOneTest extends DomainTestCase
         $mapper = $this->mapper($user);
         $mapper->store($user);
         $this->assertNull($user->blog);
-    }       
-
+    }
 }

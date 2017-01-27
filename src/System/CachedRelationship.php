@@ -4,19 +4,19 @@ namespace Analogue\ORM\System;
 
 /**
  * This class is intended to facilitate the handling of ManyToMany relationships
- * inside the cache
+ * inside the cache.
  */
 class CachedRelationship
 {
     /**
-     * The Hash of the related entity
+     * The Hash of the related entity.
      *
      * @var string
      */
     protected $hash;
 
     /**
-     * Pivot attributes, if any
+     * Pivot attributes, if any.
      *
      * @var array
      */
@@ -24,6 +24,7 @@ class CachedRelationship
 
     /**
      * CachedRelationship constructor.
+     *
      * @param $hash
      * @param array $pivotAttributes
      */
@@ -34,9 +35,9 @@ class CachedRelationship
     }
 
     /**
-     * Return true if any pivot attributes are present
+     * Return true if any pivot attributes are present.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasPivotAttributes()
     {
@@ -44,7 +45,7 @@ class CachedRelationship
     }
 
     /**
-     * Returns the hash of the related entity
+     * Returns the hash of the related entity.
      *
      * @return string
      */
@@ -54,7 +55,7 @@ class CachedRelationship
     }
 
     /**
-     * Get the cached values for the pivot attributes
+     * Get the cached values for the pivot attributes.
      *
      * @return array
      */
@@ -64,7 +65,7 @@ class CachedRelationship
     }
 
     /**
-     * Access to the hash for fast cache comparison
+     * Access to the hash for fast cache comparison.
      *
      * @return string
      */

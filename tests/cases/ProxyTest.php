@@ -1,10 +1,10 @@
 <?php
 
-use TestApp\User;
-use TestApp\Blog;
 use ProxyManager\Proxy\ProxyInterface;
+use TestApp\Blog;
+use TestApp\User;
 
-class ProxyTest extends AnalogueTestCase 
+class ProxyTest extends AnalogueTestCase
 {
     public function setUp()
     {
@@ -33,7 +33,4 @@ class ProxyTest extends AnalogueTestCase
         $loadedUser = $mapper->find($user->id);
         $this->assertEquals($blog->id, $loadedUser->blog->id);
     }
-
-
-
 }

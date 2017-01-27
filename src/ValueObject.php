@@ -3,9 +3,9 @@
 namespace Analogue\ORM;
 
 use ArrayAccess;
-use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable
 {
@@ -14,4 +14,3 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     use MagicSetters;
     use MagicCasting;
 }
-
