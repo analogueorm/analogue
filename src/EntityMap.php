@@ -413,7 +413,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getSequence() : string
+    public function getSequence()
     {
         if (!is_null($this->sequence)) {
             return $this->sequence;
