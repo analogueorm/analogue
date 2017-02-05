@@ -70,7 +70,7 @@ class EntityBuilder
      * @param  array $result
      * @return array
      */
-    public function build(array $result)
+    public function build($results)
     {
         $keyName = $this->entityMap->getKeyName();
 
@@ -83,7 +83,15 @@ class EntityBuilder
         // Hydrate any embedded Value Object
         $this->hydrateValueObjects($result);
 
-        $instance->setEntityAttributes($result);
+            $resultArray = $this->entityMap->mapColumnsToAttributes($resultArray);
+
+            $instance->setEntityAttributes($resultArray);
+
+            // Hydrate relation attributes with lazyloading proxies
+            if (count($this->lazyLoads) > 0) {
+                $proxies = $this->getLazyLoadingProxies($instance);
+                $instance->setEntityAttributes($resultArray + $proxies);
+            }
 
         // Hydrate relation attributes with lazyloading proxies
         if (count($this->lazyLoads) > 0) {
