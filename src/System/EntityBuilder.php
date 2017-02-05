@@ -73,7 +73,7 @@ class EntityBuilder
      * @param  array $result
      * @return array
      */
-    public function build($results)
+    public function build(array $result)
     {
         $keyName = $this->entityMap->getKeyName();
 
