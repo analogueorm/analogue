@@ -116,7 +116,7 @@ class ResultBuilder
      * @param  array  $result
      * @return EntityBuilder
      */
-    protected function builderForResult(array $result) : EntityBuilder
+    protected function builderForResult(array $result)
     {
         $type = $result[$this->entityMap->getDiscriminatorColumn()];
 

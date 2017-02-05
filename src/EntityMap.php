@@ -77,14 +77,6 @@ class EntityMap
     protected $mapToProperties = false;
 
     /**
-     * Attributes that should be casted to a specific type, like a Carbon date
-     * JSON, or a custom Value Object
-     * 
-     * @var array
-     */
-    protected $casts = [];
-
-    /**
      * The Custom Domain Class to use with this mapping
      *
      * @var string|null
@@ -92,9 +84,7 @@ class EntityMap
     protected $class = null;
 
     /**
-     * Attributes that should be treated as Value Objects
-     *
-     * @deprecated 5.3 use $casts property instead
+     * Embedded Value Objects
      * 
      * @var array
      */
@@ -274,13 +264,6 @@ class EntityMap
     protected $dateFormat;
 
     /**
-     * The Analogue's manager instance.
-     *
-     * @var \Analogue\ORM\System\Manager
-     */
-    private $manager;
-
-    /**
      * Set this property to true if the entity should be instantiated
      * using the IoC Container
      * 
@@ -311,16 +294,6 @@ class EntityMap
      * @var array
      */
     protected $discriminatorColumnMap = [];
-
-    /**
-     * Set the Manager that will be used for relationship's mapper instantiations.
-     *
-     * @param Manager $manager
-     */
-    public function setManager(Manager $manager)
-    {
-        $this->manager = $manager;
-    }
 
     /**
      * Return Domain class attributes, useful when mapping to a Plain PHP Object
@@ -475,8 +448,6 @@ class EntityMap
      */
     public function setClass($class)
     {
-        // Throw exception if class not exists
-
         $this->class = $class;
     }
 
@@ -765,7 +736,7 @@ class EntityMap
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
-        $relatedMapper = $this->manager->mapper($relatedClass);
+        $relatedMapper = Manager::getInstance()->mapper($relatedClass);
 
         $relatedMap = $relatedMapper->getEntityMap();
 
@@ -792,7 +763,7 @@ class EntityMap
 
         $localKey = $localKey ?: $this->getKeyName();
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $table = $relatedMapper->getEntityMap()->getTable();
 
@@ -828,7 +799,7 @@ class EntityMap
             $foreignKey = snake_case($relation) . '_id';
         }
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getKeyName();
 
@@ -858,7 +829,7 @@ class EntityMap
 
         list($type, $id) = $this->getMorphs($name, $type, $id);
 
-        $mapper = $this->manager->mapper(get_class($entity));
+        $mapper = Manager::getInstance()->mapper(get_class($entity));
 
         // If the type value is null it is probably safe to assume we're eager loading
         // the relationship. When that is the case we will pass in a dummy query as
@@ -876,8 +847,8 @@ class EntityMap
         // as a belongs-to style relationship since morph-to extends that class and
         // we will pass in the appropriate values so that it behaves as expected.
         else {
-            $class = $this->manager->getInverseMorphMap($class);
-            $relatedMapper = $this->manager->mapper($class);
+            $class = Manager::getInstance()->getInverseMorphMap($class);
+            $relatedMapper = Manager::getInstance()->mapper($class);
 
             $foreignKey = $relatedMapper->getEntityMap()->getKeyName();
 
@@ -901,7 +872,7 @@ class EntityMap
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $table = $relatedMapper->getEntityMap()->getTable() . '.' . $foreignKey;
 
@@ -923,9 +894,9 @@ class EntityMap
      */
     public function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
     {
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
-        $throughMapper = $this->manager->mapper($through);
+        $throughMapper = Manager::getInstance()->mapper($through);
 
 
         $firstKey = $firstKey ?: $this->getForeignKey();
@@ -955,7 +926,7 @@ class EntityMap
         // get the table and create the relationship instances for the developers.
         list($type, $id) = $this->getMorphs($name, $type, $id);
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $table = $relatedMapper->getEntityMap()->getTable();
 
@@ -990,7 +961,7 @@ class EntityMap
         // instances as well as the relationship instances we need for this.
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $relatedMap = $relatedMapper->getEntityMap();
 
@@ -1028,7 +999,7 @@ class EntityMap
         // instances, as well as the relationship instances we need for these.
         $foreignKey = $foreignKey ?: $name . '_id';
 
-        $relatedMapper = $this->manager->mapper($related);
+        $relatedMapper = Manager::getInstance()->mapper($related);
 
         $otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getForeignKey();
 
@@ -1128,7 +1099,7 @@ class EntityMap
      */
     public function getMorphClass()
     {
-        $morphClass = $this->manager->getMorphMap($this->getClass());
+        $morphClass = Manager::getInstance()->getMorphMap($this->getClass());
         return $this->morphClass ?: $morphClass;
     }
 

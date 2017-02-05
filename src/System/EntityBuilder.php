@@ -39,6 +39,11 @@ class EntityBuilder
     protected $lazyLoads;
 
     /**
+     * @var array
+     */
+    protected $casts;
+
+    /**
      * Entity Wrapper Factory
      * @var \Analogue\ORM\System\Wrappers\Factory
      */
@@ -58,8 +63,6 @@ class EntityBuilder
         $this->eagerLoads = $eagerLoads;
 
         $this->lazyLoads = $this->prepareLazyLoading();
-
-        $this->entityMap = $mapper->getEntityMap();
 
         $this->factory = new Factory;
     }
@@ -83,20 +86,13 @@ class EntityBuilder
         // Hydrate any embedded Value Object
         $this->hydrateValueObjects($result);
 
-            $resultArray = $this->entityMap->getAttributeNamesFromColumns($resultArray);
-
-            $instance->setEntityAttributes($resultArray);
-
-            // Hydrate relation attributes with lazyloading proxies
-            if (count($this->lazyLoads) > 0) {
-                $proxies = $this->getLazyLoadingProxies($instance);
-                $instance->setEntityAttributes($resultArray + $proxies);
-            }
-
-        // Hydrate relation attributes with lazyloading proxies
+        // Hydrate relationship attributes with lazyloading proxies
         if (count($this->lazyLoads) > 0) {
             $proxies = $this->getLazyLoadingProxies($instance);
             $instance->setEntityAttributes($result + $proxies);
+        }
+        else {
+            $instance->setEntityAttributes($result);
         }
 
         // Directly Unwrap the entity now that it has been hydrated
