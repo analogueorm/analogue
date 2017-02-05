@@ -1219,7 +1219,13 @@ class EntityMap
         return $array;
     }
 
-    public function mapColumnToAttribute($column_name)
+    /**
+     * Gets the entity attribute name of a given column in a table
+     * 
+     * @param string $column_name
+     * @return string
+     */
+    public function getAttributeNameForColumn($column_name)
     {
         $attributes = $this->getAttributes();
 
@@ -1232,7 +1238,13 @@ class EntityMap
         return $column_name;
     }
 
-    public function mapAttributeToColumn($attribute_name)
+    /**
+     * Gets the column name of a given entity attribute
+     * 
+     * @param string $column_name
+     * @return string
+     */
+    public function getColumnNameForAttribute($attribute_name)
     {
         $attributes = $this->getAttributes();
 

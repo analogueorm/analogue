@@ -82,7 +82,7 @@ class MorphTo extends BelongsTo
         foreach ($entities as $entity) {
             if ($entity->getEntityAttribute($this->morphType)) {
                 $foreign = $this->foreignKey;
-                $foreign = $this->relatedMap->mapColumnToAttribute($foreign);
+                $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
                 $this->dictionary[$entity->getEntityAttribute($this->morphType)][$entity->getEntityAttribute($foreign)][] = $entity;
             }
         }

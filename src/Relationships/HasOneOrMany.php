@@ -253,7 +253,7 @@ abstract class HasOneOrMany extends Relationship
 
         $foreign = $this->getPlainForeignKey();
 
-        $foreign = $this->relatedMap->mapColumnToAttribute($foreign);
+        $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
 
         // First we will create a dictionary of models keyed by the foreign key of the
         // relationship as this will allow us to quickly access all of the related

@@ -209,7 +209,7 @@ class HasManyThrough extends Relationship
 
         $foreign = $this->firstKey;
 
-        $foreign = $this->relatedMap->mapColumnToAttribute($foreign);
+        $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
 
         // First we will create a dictionary of entities keyed by the foreign key of the
         // relationship as this will allow us to quickly access all of the related
