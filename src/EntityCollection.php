@@ -385,7 +385,7 @@ class EntityCollection extends Collection
      * @throws MappingException
      * @return self
      */
-    public function unique($key = null)
+    public function unique($key = null, $strict = false)
     {
         $dictionary = $this->getDictionary();
 
