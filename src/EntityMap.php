@@ -1300,7 +1300,7 @@ class EntityMap
      * @param array $array
      * @return array
      */
-    public function mapColumnsToAttributes($array)
+    public function getAttributeNamesFromColumns($array)
     {
         $attributes = $this->getAttributes();
 
@@ -1371,7 +1371,7 @@ class EntityMap
      * @param array $array
      * @return array
      */
-    public function mapAttributesToColumns($array)
+    public function getColumnNamesFromAttributes($array)
     {
         $attributes = $this->getAttributes();
 

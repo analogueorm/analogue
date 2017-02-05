@@ -83,7 +83,7 @@ class EntityBuilder
         // Hydrate any embedded Value Object
         $this->hydrateValueObjects($result);
 
-            $resultArray = $this->entityMap->mapColumnsToAttributes($resultArray);
+            $resultArray = $this->entityMap->getAttributeNamesFromColumns($resultArray);
 
             $instance->setEntityAttributes($resultArray);
 
