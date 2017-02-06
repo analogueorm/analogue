@@ -130,18 +130,18 @@ class EntityCollection extends Collection
      *
      * @return bool
      */
-    public function contains($key, $value = null)
-    {
-        if (func_num_args() == 2) {
-            return !$this->where($key, $value)->isEmpty();
-        }
+    // public function contains($key, $value = null)
+    // {
+    //     if (func_num_args() == 2) {
+    //         return !$this->where($key, $value)->isEmpty();
+    //     }
 
-        if ($this->useAsCallable($key)) {
-            return !is_null($this->first($key));
-        }
+    //     if ($this->useAsCallable($key)) {
+    //         return !is_null($this->first($key));
+    //     }
 
-        return !is_null($this->find($key));
-    }
+    //     return !is_null($this->find($key));
+    // }
 
     /**
      * Fetch a nested element of the collection.

@@ -9,7 +9,7 @@ class CollectionProxyTest extends DomainTestCase
     /** @test */
     public function all_collection_methods_are_overloaded()
     {
-        // Ignoring methods that are mostly alias, or shortcuts
+        // Ignoring methods that are mostly static, alias, or shortcuts
         $ignoredMethods = [
             'average',
             'isNotEmpty',
@@ -20,6 +20,7 @@ class CollectionProxyTest extends DomainTestCase
             'hasMacro',
             '__callStatic',
             'make',
+            'proxy',
         ];
 
         $collectionClass = new ReflectionClass(Collection::class);

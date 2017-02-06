@@ -150,11 +150,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @return bool
      */
-    public function contains($key, $value = null)
+    public function contains($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
-        return parent::contains($key, $value);
+        return parent::contains($key, $operator, $value);
     }
 
     /**
@@ -222,11 +222,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @return static
      */
-    public function every($step, $offset = 0)
+    public function every($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
-        return parent::every($step, $offset);
+        return parent::every($key, $operator, $value);
     }
 
     /**
@@ -652,6 +652,20 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $this->initializeProxy();
 
         return parent::min($callback);
+    }
+
+    /**
+     * Create a new collection consisting of every n-th element.
+     *
+     * @param  int  $step
+     * @param  int  $offset
+     * @return static
+     */
+    public function nth($step, $offset = 0)
+    {
+        $this->initializeProxy();
+        
+        return parent::nth($step, $offset);
     }
 
     /**
@@ -1244,6 +1258,20 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $this->initializeProxy();
 
         return parent::offsetUnset($key);
+    }
+
+    
+    /**
+     * Dynamically access collection proxies.
+     *
+     * @param  string  $key
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __get($key)
+    {
+        parent::__get($key);
     }
 
     /**

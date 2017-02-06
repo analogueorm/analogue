@@ -19,9 +19,9 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "illuminate/database": "5.3.*|5.4.*",
-        "illuminate/events": "5.3.*|5.4.*",
-        "illuminate/pagination": "5.3.*|5.4.*",
+        "illuminate/database": "~5.4.0",
+        "illuminate/events": "~5.4.0",
+        "illuminate/pagination": "~5.4.0",
         "doctrine/instantiator": "^1.0",
         "ocramius/proxy-manager": "^2.0",
         "ocramius/generated-hydrator": "^2.0"
@@ -33,7 +33,8 @@
         "mockery/mockery": "0.9.*",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
-        "analogue/factory": "1.0.*"
+        "analogue/factory": "~1.1",
+        "laravel/browser-kit-testing": "^1.0"
     },
     "suggest": {
         "analogue/laravel-auth": "Analogue's authentication driver for Laravel.",
@@ -51,7 +52,8 @@
     "autoload-dev": {
         "classmap": [
             "tests/AnalogueTestCase.php",
-            "tests/DomainTestCase.php"
+            "tests/DomainTestCase.php",
+            "tests/ClassFinder.php"
         ],
         "psr-4": {
             "TestApp\\": "tests/src"

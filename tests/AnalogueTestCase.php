@@ -2,9 +2,8 @@
 
 use Analogue\Factory\Factory;
 use Faker\Factory as Faker;
-use Illuminate\Filesystem\ClassFinder;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
+use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
 
 abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 {
