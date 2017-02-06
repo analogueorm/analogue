@@ -657,14 +657,15 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Create a new collection consisting of every n-th element.
      *
-     * @param  int  $step
-     * @param  int  $offset
+     * @param int $step
+     * @param int $offset
+     *
      * @return static
      */
     public function nth($step, $offset = 0)
     {
         $this->initializeProxy();
-        
+
         return parent::nth($step, $offset);
     }
 
@@ -1260,14 +1261,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::offsetUnset($key);
     }
 
-    
     /**
      * Dynamically access collection proxies.
      *
-     * @param  string  $key
-     * @return mixed
+     * @param string $key
      *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function __get($key)
     {
