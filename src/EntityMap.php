@@ -140,6 +140,13 @@ class EntityMap
      */
     private $pivotRelations = [];
 
+    /** 
+     * Polymorphic relationships
+     * 
+     * @var array
+     */
+    private $polymorphicRelations = [];
+
     /**
      * Dynamic relationships.
      *
@@ -566,6 +573,17 @@ class EntityMap
         return $this->pivotRelations;
     }
 
+    /**  
+     * Return true if the relationship method is polymorphic
+     * 
+     * @param  string  $relation 
+     * @return boolean           
+     */
+    public function isPolymorphic($relation) : bool 
+    {
+        return in_array($relation, $this->polymorphicRelations);
+    }
+
     /**
      * Get the targetted type for a relationship. Return null if polymorphic.
      *
@@ -575,6 +593,10 @@ class EntityMap
      */
     public function getTargettedClass($relation)
     {
+        if(! array_key_exists($relation, $this->relatedClasses)) {
+            return null;
+        }
+
         return $this->relatedClasses[$relation];
     }
 
@@ -795,6 +817,18 @@ class EntityMap
     }
 
     /**
+     * Add a polymorphic relation method name once.
+     *
+     * @param string $relation
+     */
+    protected function addPolymorphicRelation($relation)
+    {
+        if (!in_array($relation, $this->polymorphicRelations)) {
+            $this->polymorphicRelations[] = $relation;
+        }
+    }
+
+    /**
      * Add a non proxy relation method name once.
      *
      * @param string $relation
@@ -985,10 +1019,12 @@ class EntityMap
 
             $name = snake_case($caller['function']);
         }
-        $this->addSingleRelations($name);
+        $this->addSingleRelation($name);
         $this->addLocalRelation($name);
-        $this->addForeignRelations($name);
-        $this->relatedClass[$relation] = null;
+        $this->addForeignRelation($name);
+        $this->addPolymorphicRelation($name);
+        
+        $this->relatedClass[$name] = null;
 
         list($type, $id) = $this->getMorphs($name, $type, $id);
 
@@ -1130,6 +1166,7 @@ class EntityMap
 
         $this->addManyRelation($relation);
         $this->addForeignRelation($relation);
+        $this->addPolymorphicRelation($relation);
 
         return new MorphMany($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
     }

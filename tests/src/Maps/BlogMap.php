@@ -6,6 +6,7 @@ use Analogue\ORM\EntityMap;
 use TestApp\Article;
 use TestApp\Blog;
 use TestApp\User;
+use TestApp\Comment;
 
 class BlogMap extends EntityMap
 {
@@ -19,5 +20,10 @@ class BlogMap extends EntityMap
     public function articles(Blog $blog)
     {
         return $this->hasMany($blog, Article::class);
+    }
+
+    public function comments(Blog $blog)
+    {
+    	return $this->morphMany($blog, Comment::class, 'commentable');
     }
 }
