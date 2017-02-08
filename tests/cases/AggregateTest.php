@@ -3,8 +3,8 @@
 use Illuminate\Support\Collection;
 use TestApp\Article;
 use TestApp\Blog;
-use TestApp\User;
 use TestApp\Group;
+use TestApp\User;
 
 class AggregateTest extends AnalogueTestCase
 {
@@ -172,9 +172,9 @@ class AggregateTest extends AnalogueTestCase
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
         $loadedUser = $mapper->find($user->id);
-        $loadedUser->groups->first()->name = "New Group Name";
+        $loadedUser->groups->first()->name = 'New Group Name';
         $mapper->store($loadedUser);
-        $this->seeInDatabase('groups', ['name' => "New Group Name"]);
+        $this->seeInDatabase('groups', ['name' => 'New Group Name']);
     }
 
     /** @test */
@@ -189,9 +189,9 @@ class AggregateTest extends AnalogueTestCase
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
         $loadedUser = $mapper->with('groups')->whereId($user->id)->first();
-        $loadedUser->groups->first()->name = "New Group Name";
+        $loadedUser->groups->first()->name = 'New Group Name';
         $mapper->store($loadedUser);
-        $this->seeInDatabase('groups', ['name' => "New Group Name"]);
+        $this->seeInDatabase('groups', ['name' => 'New Group Name']);
     }
 
     /** @test */

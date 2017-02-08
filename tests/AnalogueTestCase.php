@@ -232,16 +232,16 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
-    /**  
-     * Log all queries
-     * 
+    /**
+     * Log all queries.
+     *
      * @return void
      */
     protected function logQueries()
     {
         $db = $this->app->make('db');
         $db->listen(function ($query) {
-          dump($query->sql);
+            dump($query->sql);
         });
     }
 }
