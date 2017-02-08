@@ -7,10 +7,8 @@ use TestApp\Comment;
 
 class CommentMap extends EntityMap
 {
-
-	public function commentable(Comment $comment)
+    public function commentable(Comment $comment)
     {
         return $this->morphTo($comment);
     }
-
 }

@@ -140,9 +140,9 @@ class EntityMap
      */
     private $pivotRelations = [];
 
-    /** 
-     * Polymorphic relationships
-     * 
+    /**
+     * Polymorphic relationships.
+     *
      * @var array
      */
     private $polymorphicRelations = [];
@@ -573,13 +573,14 @@ class EntityMap
         return $this->pivotRelations;
     }
 
-    /**  
-     * Return true if the relationship method is polymorphic
-     * 
-     * @param  string  $relation 
-     * @return boolean           
+    /**
+     * Return true if the relationship method is polymorphic.
+     *
+     * @param string $relation
+     *
+     * @return bool
      */
-    public function isPolymorphic($relation) : bool 
+    public function isPolymorphic($relation) : bool
     {
         return in_array($relation, $this->polymorphicRelations);
     }
@@ -593,8 +594,8 @@ class EntityMap
      */
     public function getTargettedClass($relation)
     {
-        if(! array_key_exists($relation, $this->relatedClasses)) {
-            return null;
+        if (!array_key_exists($relation, $this->relatedClasses)) {
+            return;
         }
 
         return $this->relatedClasses[$relation];
@@ -1022,7 +1023,7 @@ class EntityMap
         $this->addSingleRelation($name);
         $this->addLocalRelation($name);
         $this->addPolymorphicRelation($name);
-        
+
         $this->relatedClass[$name] = null;
 
         list($type, $id) = $this->getMorphs($name, $type, $id);

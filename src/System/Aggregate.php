@@ -714,7 +714,7 @@ class Aggregate implements InternallyMappable
         if (!is_null($this->parent)) {
             $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
         }
-        
+
         return $foreignKeys;
     }
 

@@ -6,8 +6,8 @@ use Analogue\ORM\Entity;
 
 class Comment extends Entity
 {
-	public function __construct($text)
-	{
-		$this->text = $text;
-	}
+    public function __construct($text)
+    {
+        $this->text = $text;
+    }
 }
