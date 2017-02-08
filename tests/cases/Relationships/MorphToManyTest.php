@@ -1,35 +1,34 @@
 <?php
 
-use TestApp\Tag;
-use TestApp\Blog;
 use Analogue\ORM\System\Proxies\CollectionProxy;
+use TestApp\Blog;
+use TestApp\Tag;
 
 class MorphToManyTest extends DomainTestCase
 {
- 	/** @test */
+    /** @test */
     public function relationship_is_created_along_with_its_parent()
     {
         $blog = $this->factoryMakeUid(Blog::class);
         $tags = [
-        	new Tag('Tag 1'),
-        	new Tag('Tag 2'),
+            new Tag('Tag 1'),
+            new Tag('Tag 2'),
         ];
         $blog->tags = $tags;
         $mapper = $this->mapper($blog);
 
         $mapper->store($blog);
-        
+
         $this->seeInDatabase('tags', [
-        	'text' => 'Tag 1',
+            'text' => 'Tag 1',
         ]);
         $this->seeInDatabase('tags', [
-        	'text' => 'Tag 2',
+            'text' => 'Tag 2',
         ]);
         $this->seeInDatabase('taggables', [
-        	'taggable_id' => $blog->id,
-        	'taggable_type' => Blog::class,
+            'taggable_id'   => $blog->id,
+            'taggable_type' => Blog::class,
         ]);
-        
     }
 
     /** @test */
@@ -37,8 +36,8 @@ class MorphToManyTest extends DomainTestCase
     {
         $blog = $this->factoryMakeUid(Blog::class);
         $tags = [
-        	new Tag('Tag 1'),
-        	new Tag('Tag 2'),
+            new Tag('Tag 1'),
+            new Tag('Tag 2'),
         ];
         $blog->tags = $tags;
         $mapper = $this->mapper($blog);
@@ -54,10 +53,10 @@ class MorphToManyTest extends DomainTestCase
     /** @test */
     public function relationship_can_be_lazy_loaded()
     {
-    	$blog = $this->factoryMakeUid(Blog::class);
+        $blog = $this->factoryMakeUid(Blog::class);
         $tags = [
-        	new Tag('Tag 1'),
-        	new Tag('Tag 2'),
+            new Tag('Tag 1'),
+            new Tag('Tag 2'),
         ];
         $blog->tags = $tags;
         $mapper = $this->mapper($blog);

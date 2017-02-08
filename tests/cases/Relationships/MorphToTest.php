@@ -1,27 +1,26 @@
 <?php
 
-use TestApp\Comment;
-use TestApp\Blog;
 use ProxyManager\Proxy\LazyLoadingInterface;
+use TestApp\Blog;
+use TestApp\Comment;
 
 class MorphToTest extends DomainTestCase
 {
     /** @test */
     public function we_can_store_a_related_entity()
     {
-    	$comment = new Comment('Comment 1');
+        $comment = new Comment('Comment 1');
         $blog = $this->factoryMakeUid(Blog::class);
         $comment->commentable = $blog;
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
-        
+
         $this->seeInDatabase('comments', [
-        	'text' => 'Comment 1',
-        	'commentable_id' => $blog->id,
-        	'commentable_type' => Blog::class,
+            'text'             => 'Comment 1',
+            'commentable_id'   => $blog->id,
+            'commentable_type' => Blog::class,
         ]);
     }
-
 
     public function relationship_can_be_eager_loaded()
     {
@@ -32,7 +31,7 @@ class MorphToTest extends DomainTestCase
         $mapper->store($comment);
         $loadedComment = $mapper->with('commentable')->whereId($comment->id)->first();
 
-        $this->assertInstanceOf(Blog::class,$loadedComment->commentable);
+        $this->assertInstanceOf(Blog::class, $loadedComment->commentable);
         $this->assertEquals($blog->id, $loadedComment->commentable->id);
         $this->assertNotInstanceOf(LazyLoadingInterface::class, $loadedComment->commentable);
     }
@@ -47,11 +46,11 @@ class MorphToTest extends DomainTestCase
         $loadedComment = $mapper->with('commentable')->whereId($comment->id)->first();
 
         $this->assertInstanceOf(LazyLoadingInterface::class, $loadedComment->commentable);
-        $this->assertInstanceOf(Blog::class,$loadedComment->commentable);
+        $this->assertInstanceOf(Blog::class, $loadedComment->commentable);
         $this->assertEquals($blog->id, $loadedComment->commentable->id);
     }
 
-     /** @test */
+    /** @test */
     public function relation_is_set_to_null_when_foreign_key_is_null()
     {
         $comment = new Comment('Comment 1');
@@ -71,7 +70,7 @@ class MorphToTest extends DomainTestCase
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
         $this->seeInDatabase('blogs', [
-            'id' => $blog->id,
+            'id'    => $blog->id,
             'title' => 'New Title',
         ]);
     }
@@ -84,13 +83,13 @@ class MorphToTest extends DomainTestCase
         $comment->commentable = $blog;
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
-        
+
         $comment->commentable = null;
         $mapper->store($comment);
 
         $this->seeInDatabase('comments', [
-            'id' => $comment->id,
-            'commentable_id' => null,
+            'id'               => $comment->id,
+            'commentable_id'   => null,
             'commentable_type' => null,
         ]);
     }

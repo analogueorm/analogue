@@ -126,17 +126,19 @@ abstract class Wrapper implements InternallyMappable
         }
     }
 
-    /**  
-     * Get Target class to proxy for a one to one
-     * 
-     * @param  string $relation   
-     * @param  array  $attributes 
-     * @return string             
+    /**
+     * Get Target class to proxy for a one to one.
+     *
+     * @param string $relation
+     * @param array  $attributes
+     *
+     * @return string
      */
-    protected function getClassToProxy($relation, array $attributes) 
+    protected function getClassToProxy($relation, array $attributes)
     {
-        if($this->entityMap->isPolymorphic($relation)) {
+        if ($this->entityMap->isPolymorphic($relation)) {
             $localTypeAttribute = $this->entityMap->getLocalKeys($relation)['type'];
+
             return $attributes[$localTypeAttribute];
         }
 
