@@ -31,6 +31,8 @@
         "laravel/laravel": "5.3.*|5.4.*",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
+        "symfony/css-selector": "2.8.*|3.0.*",
+        "symfony/dom-crawler": "2.8.*|3.0.*",
         "analogue/factory": "~1.1",
         "laravel/browser-kit-testing": "^1.0"
     },

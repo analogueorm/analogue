@@ -86,6 +86,11 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
+    protected function db()
+    {
+        return $this->app->make('db');
+    }
+
     /**
      * Get the mapper for a specific entity.
      *

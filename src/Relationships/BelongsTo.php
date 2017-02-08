@@ -32,13 +32,6 @@ class BelongsTo extends Relationship
     protected $relation;
 
     /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = true;
-
-    /**
      * Create a new belongs to relationship instance.
      *
      * @param Mapper   $mapper

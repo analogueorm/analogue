@@ -37,13 +37,6 @@ class MorphTo extends BelongsTo
     protected $withTrashed = false;
 
     /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = true;
-
-    /**
      * Create a new belongs to relationship instance.
      *
      * @param Mapper                 $mapper
@@ -98,7 +91,7 @@ class MorphTo extends BelongsTo
      */
     public function match(array $results, $relation)
     {
-        return $entities;
+        return $results;
     }
 
     /**

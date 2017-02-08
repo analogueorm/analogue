@@ -714,7 +714,7 @@ class Aggregate implements InternallyMappable
         if (!is_null($this->parent)) {
             $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
         }
-
+        
         return $foreignKeys;
     }
 
@@ -767,7 +767,7 @@ class Aggregate implements InternallyMappable
             // Call Relationship's method on parent map
             $relationship = $parentMap->$parentRelation($parentObject);
 
-            return $relationship->getForeignKeyValuePair();
+            return $relationship->getForeignKeyValuePair($parentObject);
         } else {
             return [];
         }

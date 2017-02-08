@@ -7,6 +7,7 @@ use TestApp\Article;
 use TestApp\Blog;
 use TestApp\User;
 use TestApp\Comment;
+use TestApp\Tag;
 
 class BlogMap extends EntityMap
 {
@@ -25,5 +26,15 @@ class BlogMap extends EntityMap
     public function comments(Blog $blog)
     {
     	return $this->morphMany($blog, Comment::class, 'commentable');
+    }
+
+    public function topComment(Blog $blog)
+    {
+    	return $this->morphOne($blog, Comment::class, 'commentable');
+    }
+
+    public function tags(Blog $blog)
+    {
+        return $this->morphToMany($blog, Tag::class, 'taggable');
     }
 }

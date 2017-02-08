@@ -69,13 +69,6 @@ abstract class Relationship
     protected $relatedMap;
 
     /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = false;
-
-    /**
      * Indicate if the relationships use a pivot table.*.
      *
      * @var bool
@@ -123,16 +116,6 @@ abstract class Relationship
         $this->relatedMap = $mapper->getEntityMap();
 
         $this->addConstraints();
-    }
-
-    /**
-     * Indicate if the parent entity hold the foreign key for relation.
-     *
-     * @return bool
-     */
-    public function ownForeignKey()
-    {
-        return static::$ownForeignKey;
     }
 
     /**

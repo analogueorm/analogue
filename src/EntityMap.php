@@ -1021,7 +1021,6 @@ class EntityMap
         }
         $this->addSingleRelation($name);
         $this->addLocalRelation($name);
-        $this->addForeignRelation($name);
         $this->addPolymorphicRelation($name);
         
         $this->relatedClass[$name] = null;
@@ -1166,7 +1165,6 @@ class EntityMap
 
         $this->addManyRelation($relation);
         $this->addForeignRelation($relation);
-        $this->addPolymorphicRelation($relation);
 
         return new MorphMany($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
     }
