@@ -60,7 +60,7 @@ class EntityBuilder
         $this->mapper = $mapper;
 
         $this->entityMap = $mapper->getEntityMap();
-
+        
         $this->eagerLoads = $eagerLoads;
 
         $this->lazyLoads = $this->getRelationshipsToProxy();
@@ -78,7 +78,7 @@ class EntityBuilder
     public function build(array $result)
     {
         $instance = $this->getWrapperInstance();
-
+        
         // Hydrate any embedded Value Object
         //
         // TODO Move this to the result builder instead,

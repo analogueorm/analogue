@@ -914,7 +914,7 @@ class EntityMap
             $this->with[] = $relation;
         }
 
-        return new HasOne($relatedMapper, $entity, $relatedMap->getTable().'.'.$foreignKey, $localKey);
+        return new HasOne($relatedMapper, $entity, /*$relatedMap->getTable().'.'*/$foreignKey, $localKey);
     }
 
     /**
@@ -939,7 +939,7 @@ class EntityMap
 
         $relatedMapper = Manager::getInstance()->mapper($related);
 
-        $table = $relatedMapper->getEntityMap()->getTable();
+        //$table = $relatedMapper->getEntityMap()->getTable();
 
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -956,7 +956,7 @@ class EntityMap
             $this->with[] = $relation;
         }
 
-        return new MorphOne($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
+        return new MorphOne($relatedMapper, $entity, /*$table.'.'.*/$type, /*$table.'.'.*/$id, $localKey);
     }
 
     /**
@@ -1083,8 +1083,6 @@ class EntityMap
 
         $relatedMapper = Manager::getInstance()->mapper($related);
 
-        $table = $relatedMapper->getEntityMap()->getTable().'.'.$foreignKey;
-
         $localKey = $localKey ?: $this->getKeyName();
 
         // Add the relation to the definition in map
@@ -1095,7 +1093,7 @@ class EntityMap
         $this->addManyRelation($relation);
         $this->addForeignRelation($relation);
 
-        return new HasMany($relatedMapper, $entity, $table, $localKey);
+        return new HasMany($relatedMapper, $entity, $foreignKey, $localKey);
     }
 
     /**
@@ -1114,7 +1112,6 @@ class EntityMap
     public function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
     {
         $relatedMapper = Manager::getInstance()->mapper($related);
-
         $throughMapper = Manager::getInstance()->mapper($through);
 
         $firstKey = $firstKey ?: $this->getForeignKey();
@@ -1167,7 +1164,7 @@ class EntityMap
         $this->addManyRelation($relation);
         $this->addForeignRelation($relation);
 
-        return new MorphMany($relatedMapper, $entity, $table.'.'.$type, $table.'.'.$id, $localKey);
+        return new MorphMany($relatedMapper, $entity, /*$table.'.'.*/$type, /*$table.'.'.*/$id, $localKey);
     }
 
     /**

@@ -196,16 +196,12 @@ class ResultBuilder
         $relation = $this->getRelation($name);
 
         $relation->addEagerConstraints($results);
-
+        
         call_user_func($constraints, $relation);
 
         // Once we have the results, we just match those back up to their parent models
         // using the relationship instance. Then we just return the finished arrays
         // of models which have been eagerly hydrated and are readied for return.
-
-        // Same, this step isn't necessary, as we take the inverse approach than Eloquent :
-        // filling the attributes before hydration, for more efficiency
-        //$relationshipResults = $relation->getEager();
 
         return $relation->match($results, $name);
     }
