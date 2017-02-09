@@ -709,13 +709,38 @@ class Aggregate implements InternallyMappable
             if ($this->isActualRelationships($relation)) {
                 $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromRelation($relation);
             }
+            else {
+                $foreignKeys = $foreignKeys + $this->getNullForeignKeyFromRelation($relation);
+            }
+            
         }
 
         if (!is_null($this->parent)) {
-            $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
+            $foreignKeys = $this->getForeignKeyAttributesFromParent() + $foreignKeys;
         }
 
         return $foreignKeys;
+    }
+
+    /**
+     * Get a null foreign key value pair for an empty relationship
+     * @param  [type] $relation [description]
+     * @return [type]           [description]
+     */
+    protected function getNullForeignKeyFromRelation($relation) : array
+    {
+        $key = $this->entityMap->getLocalKeys($relation);
+
+        // If the relation is polymorphic, we'll set both key and type
+        // to null
+        if(is_array($key)) {
+            return [
+                $key['type'] => null,
+                $key['id'] => null,
+            ];
+        }
+
+        return [$key => null];
     }
 
     /**
@@ -728,18 +753,20 @@ class Aggregate implements InternallyMappable
      */
     protected function getForeignKeyAttributesFromRelation($relation)
     {
-        $localRelations = $this->entityMap->getLocalRelationships();
+        // This check is not necessary as they are filtered beforehand
+        //$localRelations = $this->entityMap->getLocalRelationships();
 
-        if (in_array($relation, $localRelations)) {
+        //if (in_array($relation, $localRelations)) {
             // Call Relationship's method
             $relationship = $this->entityMap->$relation($this->getEntityObject());
 
             $relatedAggregate = $this->relationships[$relation][0];
 
             return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
-        } else {
+        /*} else {
+            dd("ok");
             return [];
-        }
+        }*/
     }
 
     /**

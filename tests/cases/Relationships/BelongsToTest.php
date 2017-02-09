@@ -74,6 +74,28 @@ class BelongsToTest extends DomainTestCase
         $this->assertEquals(null, $blog->user);
     }
 
+    /** @test */
+    public function foreign_key_is_set_to_null_when_storing_from_relationship()
+    {
+        list($userId, $blogId) = $this->createRelatedRecords();
+        $this->seeInDatabase('blogs', [
+            'user_id' => $userId,
+            'id'      => $blogId,
+            'title'   => 'blog title',
+        ]);
+        $mapper = $this->mapper(Blog::class);
+        $blog = $mapper->find($blogId);
+        $this->assertInstanceOf(User::class, $blog->user);
+        $blog->user = null;
+        setTddOn();
+        $mapper->store($blog);
+        $this->seeInDatabase('blogs', [
+            'user_id' => null,
+            'id'      => $blogId,
+            'title'   => 'blog title',
+        ]);
+    }
+
     protected function createRelatedRecords()
     {
         $userId = $this->insertUser();
