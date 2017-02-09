@@ -708,11 +708,9 @@ class Aggregate implements InternallyMappable
             // in the entity's attributes
             if ($this->isActualRelationships($relation)) {
                 $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromRelation($relation);
-            }
-            else {
+            } else {
                 $foreignKeys = $foreignKeys + $this->getNullForeignKeyFromRelation($relation);
             }
-            
         }
 
         if (!is_null($this->parent)) {
@@ -723,9 +721,11 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Get a null foreign key value pair for an empty relationship
-     * @param  [type] $relation [description]
-     * @return [type]           [description]
+     * Get a null foreign key value pair for an empty relationship.
+     *
+     * @param [type] $relation [description]
+     *
+     * @return [type] [description]
      */
     protected function getNullForeignKeyFromRelation($relation) : array
     {
@@ -733,10 +733,10 @@ class Aggregate implements InternallyMappable
 
         // If the relation is polymorphic, we'll set both key and type
         // to null
-        if(is_array($key)) {
+        if (is_array($key)) {
             return [
                 $key['type'] => null,
-                $key['id'] => null,
+                $key['id']   => null,
             ];
         }
 
@@ -760,9 +760,9 @@ class Aggregate implements InternallyMappable
             // Call Relationship's method
             $relationship = $this->entityMap->$relation($this->getEntityObject());
 
-            $relatedAggregate = $this->relationships[$relation][0];
+        $relatedAggregate = $this->relationships[$relation][0];
 
-            return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
+        return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
         /*} else {
             dd("ok");
             return [];

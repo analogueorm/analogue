@@ -196,7 +196,7 @@ class ResultBuilder
         $relation = $this->getRelation($name);
 
         $relation->addEagerConstraints($results);
-        
+
         call_user_func($constraints, $relation);
 
         // Once we have the results, we just match those back up to their parent models
