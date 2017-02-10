@@ -31,7 +31,7 @@
         "laravel/laravel": "5.1.*",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "analogue/factory": "~1.1",
+        "analogue/factory": "dev-master",
         "laravel/browser-kit-testing": "^1.0"
     },
     "suggest": {
@@ -60,6 +60,6 @@
             "tests/helpers.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
