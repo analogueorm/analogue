@@ -3,6 +3,7 @@ language: php
 php:
   - 7.0
   - 7.1
+  - nightly
 
 matrix:
   fast_finish: true
@@ -13,3 +14,17 @@ before_script:
 
 script:
   - phpunit
+
+allow_failures:
+    - php: nightly
+    - php: hhvm
+
+env:
+  - LARAVEL_VERSION="5.1.*"
+  - LARAVEL_VERSION="5.2.*"
+  - LARAVEL_VERSION="5.3.*"
+  - LARAVEL_VERSION="5.4.*"
+  
+install:
+   - composer require laravel/laravel:${LARAVEL_VERSION}
+
