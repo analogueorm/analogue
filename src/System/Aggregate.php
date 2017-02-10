@@ -587,8 +587,8 @@ class Aggregate implements InternallyMappable
         $attributes = $this->flattenEmbeddables($attributes);
 
         $foreignKeys = $this->getForeignKeyAttributes();
-
-        return $attributes + $foreignKeys;
+        
+        return $foreignKeys + $attributes;
     }
 
     /**
@@ -753,20 +753,12 @@ class Aggregate implements InternallyMappable
      */
     protected function getForeignKeyAttributesFromRelation($relation)
     {
-        // This check is not necessary as they are filtered beforehand
-        //$localRelations = $this->entityMap->getLocalRelationships();
-
-        //if (in_array($relation, $localRelations)) {
-            // Call Relationship's method
-            $relationship = $this->entityMap->$relation($this->getEntityObject());
+        // Call Relationship's method
+        $relationship = $this->entityMap->$relation($this->getEntityObject());
 
         $relatedAggregate = $this->relationships[$relation][0];
 
         return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
-        /*} else {
-            dd("ok");
-            return [];
-        }*/
     }
 
     /**

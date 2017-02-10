@@ -87,7 +87,7 @@ class BelongsToTest extends DomainTestCase
         $blog = $mapper->find($blogId);
         $this->assertInstanceOf(User::class, $blog->user);
         $blog->user = null;
-        setTddOn();
+
         $mapper->store($blog);
         $this->seeInDatabase('blogs', [
             'user_id' => null,

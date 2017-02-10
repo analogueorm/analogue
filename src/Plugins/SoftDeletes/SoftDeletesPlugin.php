@@ -35,6 +35,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
             else {
                 $mapper = $payload[0];
             }
+            
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesSoftDeletes()) {
