@@ -20,8 +20,17 @@ class TimestampsPlugin extends AnaloguePlugin
      */
     public function register()
     {
-        $this->manager->registerGlobalEvent('initialized', function ($event, $payload) {
-            $mapper = $payload[0];
+        $this->manager->registerGlobalEvent('initialized', function ($event, $payload = null) {
+            
+            // Cross Compatible Event handling with 5.3
+            // TODO : find a replacement event handler
+            if(is_null($payload)) {
+                $mapper = $event;
+            }
+            else {
+                $mapper = $payload[0];
+            }
+
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesTimestamps()) {
