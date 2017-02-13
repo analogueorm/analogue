@@ -5,7 +5,6 @@ namespace Analogue\ORM\System;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\System\Proxies\CollectionProxy;
-//use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\LazyLoadingInterface;

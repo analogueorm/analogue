@@ -12,6 +12,8 @@ use Analogue\ORM\Relationships\MorphMany;
 use Analogue\ORM\Relationships\MorphOne;
 use Analogue\ORM\Relationships\MorphTo;
 use Analogue\ORM\Relationships\MorphToMany;
+use Analogue\ORM\Relationships\EmbedsOne;
+use Analogue\ORM\Relationships\EmbedsMany;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Exception;
@@ -169,6 +171,13 @@ class EntityMap
      * @var array
      */
     private $nonProxyRelationships = [];
+
+    /**
+     * Relation methods that are embedded objects
+     * 
+     * @var array
+     */
+    private $embeddedRelations = [];
 
     /**
      * The number of models to return for pagination.
@@ -574,6 +583,16 @@ class EntityMap
     }
 
     /**
+     * Return an array containing all embedded relationships
+     * 
+     * @return array
+     */
+    public function getEmbeddedRelationships() : array
+    {
+        return $this->embeddedRelations;
+    }
+
+    /**
      * Return true if the relationship method is polymorphic.
      *
      * @param string $relation
@@ -875,6 +894,56 @@ class EntityMap
         if (!in_array($relation, $this->pivotRelations)) {
             $this->pivotRelations[] = $relation;
         }
+    }
+
+    /**
+     * Add an embedded relation
+     * 
+     * @param string $relation
+     */
+    protected function addEmbeddedRelation($relation)
+    {
+        if (!in_array($relation, $this->embeddedRelations)) {
+            $this->pivotRelations[] = $relation;
+        }
+    }
+
+    /**
+     * Define an Embedded Object
+     * 
+     * @param  mixed $entity 
+     * @param  string $related 
+     * @return EmbedsOne
+     */
+    public function embedsOne($entity, string $relatedClass) : EmbedsOne
+    {
+        $parentClass = get_class($entity);
+
+        // Add the relation to the definition in map
+        list(, $caller) = debug_backtrace(false);
+        $relation = $caller['function'];
+        $this->addEmbeddedRelation($relation);
+        $this->addNonProxyRelation($relation);
+        return new EmbedsOne($parentClass, $relatedClass);
+    }
+
+    /**
+     * Define an Embedded Collection
+     * 
+     * @param  mixed $entity 
+     * @param  string $related 
+     * @return EmbedsOne
+     */
+    public function embedsMany($entity, string $relatedClass) : EmbedsMany
+    {
+        $parentClass = get_class($entity);
+
+        // Add the relation to the definition in map
+        list(, $caller) = debug_backtrace(false);
+        $relation = $caller['function'];
+        $this->addEmbeddedRelation($relation);
+        $this->addNonProxyRelation($relation);
+        return new EmbedsMany($parentClass, $relatedClass);
     }
 
     /**

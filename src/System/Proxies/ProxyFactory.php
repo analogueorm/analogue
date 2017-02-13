@@ -29,7 +29,7 @@ class ProxyFactory
             return new CollectionProxy($entity, $relation);
         }
 
-        throw new MappingException('Could not identity relation '.$relation);
+        throw new MappingException("Could not identify relation '$relation'");
     }
 
     /**
