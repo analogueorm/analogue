@@ -110,10 +110,10 @@ abstract class Wrapper implements InternallyMappable
         }
 
         foreach ($relations as $relation) {
-            
+
             // First, we check that the relation has not been already
-            // set, in which case, we'll just pass. 
-            if(array_key_exists($relation, $attributes) && ! is_null($attributes[$relation])) {
+            // set, in which case, we'll just pass.
+            if (array_key_exists($relation, $attributes) && !is_null($attributes[$relation])) {
                 continue;
             }
 

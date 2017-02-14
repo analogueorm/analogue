@@ -104,13 +104,12 @@ class Mapper
     {
         $builder = new ResultBuilder($this);
 
-        if($results instanceof collection)
-        {
+        if ($results instanceof collection) {
             // Get underlying collection array
             $results = $results->all();
         }
 
-        if(! is_array($results)) {
+        if (!is_array($results)) {
             throw new InvalidArgumentException("'results' should be an array or collection.");
         }
 
@@ -124,7 +123,7 @@ class Mapper
         // query takes place.
         $this->getEntityCache()->add($results);
 
-        $entities =  $builder->build($results, $eagerLoads);
+        $entities = $builder->build($results, $eagerLoads);
 
         return $this->entityMap->newCollection($entities);
     }

@@ -586,7 +586,7 @@ class Aggregate implements InternallyMappable
         $attributes = $this->flattenEmbeddables($attributes);
 
         $foreignKeys = $this->getForeignKeyAttributes();
-        
+
         return $foreignKeys + $attributes;
     }
 
@@ -657,10 +657,10 @@ class Aggregate implements InternallyMappable
         //*********************
         // New implementation
         // *****************->
-        
+
         $embeddedRelations = $this->entityMap->getEmbeddedRelationships();
 
-        foreach($embeddedRelations as $relation) {
+        foreach ($embeddedRelations as $relation) {
 
             // Spawn a new instance we can pass to the relationship methdod
             $parentInstance = $this->getMapper()->newInstance();
@@ -672,7 +672,6 @@ class Aggregate implements InternallyMappable
             unset($attributes[$relation]);
 
             $attributes = $relationInstance->normalize($embeddedObject) + $attributes;
-            
         }
 
         return $attributes;

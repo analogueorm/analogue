@@ -8,17 +8,16 @@ use TestApp\ImageSize;
 
 class ImageMap extends EntityMap
 {
-	protected $arrayName = null;
+    protected $arrayName = null;
 
-	protected $properties = [
-		'id',
-		'url',
-		'size',
-	];
+    protected $properties = [
+        'id',
+        'url',
+        'size',
+    ];
 
-	public function size(Image $image)
-	{
-		return $this->embedsOne(ImageSize::class);
-	}	
-
+    public function size(Image $image)
+    {
+        return $this->embedsOne(ImageSize::class);
+    }
 }

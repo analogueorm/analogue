@@ -5,6 +5,8 @@ namespace Analogue\ORM;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Relationships\BelongsTo;
 use Analogue\ORM\Relationships\BelongsToMany;
+use Analogue\ORM\Relationships\EmbedsMany;
+use Analogue\ORM\Relationships\EmbedsOne;
 use Analogue\ORM\Relationships\HasMany;
 use Analogue\ORM\Relationships\HasManyThrough;
 use Analogue\ORM\Relationships\HasOne;
@@ -12,8 +14,6 @@ use Analogue\ORM\Relationships\MorphMany;
 use Analogue\ORM\Relationships\MorphOne;
 use Analogue\ORM\Relationships\MorphTo;
 use Analogue\ORM\Relationships\MorphToMany;
-use Analogue\ORM\Relationships\EmbedsOne;
-use Analogue\ORM\Relationships\EmbedsMany;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Exception;
@@ -173,8 +173,8 @@ class EntityMap
     private $nonProxyRelationships = [];
 
     /**
-     * Relation methods that are embedded objects
-     * 
+     * Relation methods that are embedded objects.
+     *
      * @var array
      */
     private $embeddedRelations = [];
@@ -510,8 +510,8 @@ class EntityMap
     }
 
     /**
-     * Return all relationships that are not embedded objects
-     * 
+     * Return all relationships that are not embedded objects.
+     *
      * @return array
      */
     public function getNonEmbeddedRelationships() : array
@@ -593,8 +593,8 @@ class EntityMap
     }
 
     /**
-     * Return an array containing all embedded relationships
-     * 
+     * Return an array containing all embedded relationships.
+     *
      * @return array
      */
     public function getEmbeddedRelationships() : array
@@ -907,8 +907,8 @@ class EntityMap
     }
 
     /**
-     * Add an embedded relation
-     * 
+     * Add an embedded relation.
+     *
      * @param string $relation
      */
     protected function addEmbeddedRelation($relation)
@@ -919,15 +919,16 @@ class EntityMap
     }
 
     /**
-     * Define an Embedded Object
-     * 
-     * @param  mixed $entity 
-     * @param  string $related 
+     * Define an Embedded Object.
+     *
+     * @param mixed  $entity
+     * @param string $related
+     *
      * @return EmbedsOne
      */
     public function embedsOne(string $relatedClass) : EmbedsOne
     {
-         $parentClass = $this->getClass();
+        $parentClass = $this->getClass();
 
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -940,10 +941,11 @@ class EntityMap
     }
 
     /**
-     * Define an Embedded Collection
-     * 
-     * @param  mixed $entity 
-     * @param  string $related 
+     * Define an Embedded Collection.
+     *
+     * @param mixed  $entity
+     * @param string $related
+     *
      * @return EmbedsOne
      */
     public function embedsMany(string $relatedClass) : EmbedsMany
@@ -956,7 +958,7 @@ class EntityMap
 
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
-        
+
         return new EmbedsMany($parentClass, $relatedClass, $relation);
     }
 

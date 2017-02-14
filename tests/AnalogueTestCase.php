@@ -1,10 +1,10 @@
 <?php
 
 use Analogue\Factory\Factory;
+use DB;
 use Faker\Factory as Faker;
 use Illuminate\Filesystem\Filesystem;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
-use DB;
 use Schema;
 
 abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
@@ -23,10 +23,9 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     {
         parent::setUp();
 
-        if($this->useSqlite) {
+        if ($this->useSqlite) {
             $this->setupSqlite();
-        }
-        else {
+        } else {
             $this->setupMysql();
         }
 
@@ -50,7 +49,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     }
 
     protected function setupMysql()
-    {          
+    {
         $this->app['config']->set('database.default', 'mysql');
         $this->app['config']->set('database.connections.mysql.username', 'root');
         $this->app['config']->set('database.connections.mysql.database', $this->testDbName);
@@ -64,25 +63,25 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 
     protected function createTestDatabase()
     {
-        $conn = new PDO("mysql:host=localhost", "root", "");
+        $conn = new PDO('mysql:host=localhost', 'root', '');
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "CREATE DATABASE IF NOT EXISTS ".$this->testDbName;
+        $sql = 'CREATE DATABASE IF NOT EXISTS '.$this->testDbName;
         $conn->exec($sql);
         $conn = null;
     }
 
     protected function dropTestDatabase()
     {
-        $conn = new PDO("mysql:host=localhost", "root", "");
+        $conn = new PDO('mysql:host=localhost', 'root', '');
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "DROP DATABASE ".$this->testDbName;
+        $sql = 'DROP DATABASE '.$this->testDbName;
         $conn->exec($sql);
         $conn = null;
     }
 
     public function tearDown()
     {
-        if(!$this->useSqlite) {
+        if (!$this->useSqlite) {
             $this->dropTestDatabase();
         }
 

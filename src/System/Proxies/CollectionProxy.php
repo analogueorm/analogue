@@ -1040,7 +1040,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Pass the collection to the given callback and then return it.
      *
-     * @param  callable  $callback
+     * @param callable $callback
+     *
      * @return $this
      */
     public function tap(callable $callback)

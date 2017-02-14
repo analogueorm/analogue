@@ -25,7 +25,6 @@ class CreateImagesTable extends Migration
             $table->integer('h')->nullable();
             $table->json('size')->nullable();
         });
-
     }
 
     /**
@@ -36,6 +35,5 @@ class CreateImagesTable extends Migration
     public function down()
     {
         Schema::drop('images');
-        
     }
 }
