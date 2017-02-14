@@ -29,13 +29,12 @@ class SoftDeletesPlugin extends AnaloguePlugin
 
             // Cross Compatible Event handling with 5.3
             // TODO : find a replacement event handler
-            if(is_null($payload)) {
+            if (is_null($payload)) {
                 $mapper = $event;
-            }
-            else {
+            } else {
                 $mapper = $payload[0];
             }
-            
+
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesSoftDeletes()) {

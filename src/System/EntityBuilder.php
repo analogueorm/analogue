@@ -87,7 +87,7 @@ class EntityBuilder
         $this->hydrateValueObjects($result);
 
         $wrapper->setEntityAttributes($result);
-        
+
         // Hydrate relationship attributes with lazyloading proxies
         if (count($this->lazyLoads) > 0) {
             $wrapper->setProxies($this->lazyLoads);

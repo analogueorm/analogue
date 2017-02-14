@@ -3,17 +3,15 @@
 namespace TestApp\Maps;
 
 use Analogue\ORM\EntityMap;
-use TestApp\Image;
-use TestApp\ImageSize;
 
 class ImageSizeMap extends EntityMap
 {
-	protected $arrayName = null;
-	
-	protected $primaryKey = null;
+    protected $arrayName = null;
 
-	protected $properties = [
-		'width',
-		'height',
-	];
+    protected $primaryKey = null;
+
+    protected $properties = [
+        'width',
+        'height',
+    ];
 }

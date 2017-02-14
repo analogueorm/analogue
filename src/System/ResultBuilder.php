@@ -57,13 +57,13 @@ class ResultBuilder
     public function build(array $results, array $eagerLoads)
     {
         // Parse embedded relations and build corresponding entities using the default
-        // mapper. 
+        // mapper.
         $results = $this->buildEmbeddedRelationships($results);
-        
+
         // Launch the queries related to eager loads, and match the
         // current result set to these loaded relationships.
         $results = $this->queryEagerLoadedRelationships($results, $eagerLoads);
-        
+
         // Note : Maybe we could use a PolymorphicResultBuilder, which would
         // be shared by both STI and polymorphic relations, as they share the
         // same process.
@@ -80,9 +80,10 @@ class ResultBuilder
     }
 
     /**
-     * Build embedded objects and match them to the result set
-     * 
-     * @param  array  $results 
+     * Build embedded objects and match them to the result set.
+     *
+     * @param array $results
+     *
      * @return array
      */
     protected function buildEmbeddedRelationships(array $results) : array
@@ -91,7 +92,7 @@ class ResultBuilder
         $instance = $this->defaultMapper->newInstance();
         $embeddeds = $entityMap->getEmbeddedRelationships();
 
-        foreach($embeddeds as $embedded) {
+        foreach ($embeddeds as $embedded) {
             $results = $entityMap->$embedded($instance)->match($results, $embedded);
         }
 

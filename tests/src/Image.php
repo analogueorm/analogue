@@ -2,38 +2,37 @@
 
 namespace TestApp;
 
-
 class Image
 {
-	protected $id;
+    protected $id;
 
-	protected $url;
-	
-	protected $size;
+    protected $url;
 
-	public function __construct($imageUrl, ImageSize $size)
-	{
-		$this->url = $imageUrl;
-		$this->size = $size;
-	}
+    protected $size;
 
-	public function getUrl()
-	{
-		return $this->url;
-	}
+    public function __construct($imageUrl, ImageSize $size)
+    {
+        $this->url = $imageUrl;
+        $this->size = $size;
+    }
 
-	public function getSize()
-	{
-		return $this->size;
-	}
+    public function getUrl()
+    {
+        return $this->url;
+    }
 
-	public function setSize(ImageSize $size)
-	{
-		$this->size = $size;
-	}
+    public function getSize()
+    {
+        return $this->size;
+    }
 
-	public function setNullSize()
-	{
-		$this->size = null;
-	}
+    public function setSize(ImageSize $size)
+    {
+        $this->size = $size;
+    }
+
+    public function setNullSize()
+    {
+        $this->size = null;
+    }
 }
