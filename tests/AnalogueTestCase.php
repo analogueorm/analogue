@@ -4,10 +4,16 @@ use Analogue\Factory\Factory;
 use Faker\Factory as Faker;
 use Illuminate\Filesystem\Filesystem;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
+use DB;
+use Schema;
 
 abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 {
     use InteractsWithDatabase;
+
+    protected $useSqlite = false;
+
+    protected $testDbName = 'analogue_test_db';
 
     protected $analogue;
 
@@ -17,8 +23,12 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     {
         parent::setUp();
 
-        $this->app['config']->set('database.default', 'sqlite');
-        $this->app['config']->set('database.connections.sqlite.database', ':memory:');
+        if($this->useSqlite) {
+            $this->setupSqlite();
+        }
+        else {
+            $this->setupMysql();
+        }
 
         $this->app->singleton(Factory::class, function ($app) {
             $faker = Faker::create();
@@ -31,6 +41,52 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         $this->analogue->setStrictMode(true);
 
         $this->migrateDatabase();
+    }
+
+    protected function setupSqlite()
+    {
+        $this->app['config']->set('database.default', 'sqlite');
+        $this->app['config']->set('database.connections.sqlite.database', ':memory:');
+    }
+
+    protected function setupMysql()
+    {          
+        $this->app['config']->set('database.default', 'mysql');
+        $this->app['config']->set('database.connections.mysql.username', 'root');
+        $this->app['config']->set('database.connections.mysql.database', $this->testDbName);
+        $this->app['config']->set('database.connections.mysql.charset', 'utf8');
+        $this->app['config']->set('database.connections.mysql.collation', 'utf8_unicode_ci');
+
+        Schema::defaultStringLength(191);
+
+        $this->createTestDatabase();
+    }
+
+    protected function createTestDatabase()
+    {
+        $conn = new PDO("mysql:host=localhost", "root", "");
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "CREATE DATABASE IF NOT EXISTS ".$this->testDbName;
+        $conn->exec($sql);
+        $conn = null;
+    }
+
+    protected function dropTestDatabase()
+    {
+        $conn = new PDO("mysql:host=localhost", "root", "");
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "DROP DATABASE ".$this->testDbName;
+        $conn->exec($sql);
+        $conn = null;
+    }
+
+    public function tearDown()
+    {
+        if(!$this->useSqlite) {
+            $this->dropTestDatabase();
+        }
+
+        parent::tearDown();
     }
 
     /**
