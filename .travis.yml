@@ -1,5 +1,8 @@
 language: php
 
+dist: trusty
+sudo: required
+
 php:
   - 7.0
   - 7.1
