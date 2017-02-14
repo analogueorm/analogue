@@ -124,6 +124,30 @@ class EmbedsOne extends EmbeddedRelationship
      */
     public function normalize($object) : array
     {
+        return $this->asArray ? $this->normalizeAsArray($object) : $this->normalizeAsAttributes($object);
+    }
+
+    /**
+     * Normalize object an array containing raw attributes
+     * 
+     * @param  mixed  $object 
+     * @return array
+     */
+    protected function normalizeAsArray($object) : array
+    {
+        $wrapper = $this->factory->make($object);
+
+        return [$this->relation => $wrapper->getEntityAttributes()];
+    }
+
+    /**
+     * Normalize object as parent's attributes
+     * 
+     * @param  mixed $object
+     * @return array
+     */
+    protected function normalizeAsAttributes($object) : array
+    {
         if (is_null($object)) {
             return $this->nullObjectAttributes();
         }

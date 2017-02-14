@@ -926,13 +926,14 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    protected function embedsOne(string $relatedClass) : EmbedsOne
+    protected function embedsOne(string $relatedClass, $relation = null) : EmbedsOne
     {
         $parentClass = $this->getClass();
 
-        // Add the relation to the definition in map
-        list(, $caller) = debug_backtrace(false);
-        $relation = $caller['function'];
+        if(is_null($relation)) {
+            list(, $caller) = debug_backtrace(false);
+            $relation = $caller['function'];
+        }
 
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
@@ -948,13 +949,14 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    protected function embedsMany(string $relatedClass) : EmbedsMany
+    protected function embedsMany(string $relatedClass, $relation = null) : EmbedsMany
     {
         $parentClass = $this->getClass();
 
-        // Add the relation to the definition in map
-        list(, $caller) = debug_backtrace(false);
-        $relation = $caller['function'];
+        if(is_null($relation)) {
+            list(, $caller) = debug_backtrace(false);
+            $relation = $caller['function'];
+        }
 
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);

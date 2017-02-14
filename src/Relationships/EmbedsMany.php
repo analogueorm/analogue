@@ -3,7 +3,7 @@
 namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\Exceptions\MappingException;
-use Analogue\Support\Collection;
+use Illuminate\Support\Collection;
 
 class EmbedsMany extends EmbedsOne
 {
@@ -74,7 +74,41 @@ class EmbedsMany extends EmbedsOne
      *
      * @return array $columns
      */
-    abstract public function normalize($object) : array
+    public function normalize($objects) : array
     {
+    	if(! $this->asArray) {
+    		throw new MappingException("Cannot normalize an embedsMany relation as row columns");
+    	}
+
+    	return $this->normalizeAsArray($objects);
+    }
+
+    /**
+     * Normalize object an array containing raw attributes
+     * 
+     * @param  mixed  $object 
+     * @return array
+     */
+    protected function normalizeAsArray($objects) : array
+    {
+    	$key = $this->relation;
+
+    	if(! is_array($objects) && ! $objects instanceof Collection) {
+    		throw new MappingException("column '$key' should be of type array or collection");
+    	}
+
+    	if($objects instanceof Collection ) {
+    		$objects = $objects->all();
+    	}
+    	
+    	$normalizedObjects = [];
+
+    	foreach($objects as $object) {
+    		$wrapper = $this->factory->make($object);	
+    		$normalizedObjects[] = $wrapper->getEntityAttributes();
+    	}
+        
+
+        return [$key => $normalizedObjects];
     }
 }
