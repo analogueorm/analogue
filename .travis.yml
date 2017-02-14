@@ -3,7 +3,6 @@ language: php
 php:
   - 7.0
   - 7.1
-  - nightly
 
 matrix:
   fast_finish: true
@@ -14,9 +13,6 @@ before_script:
 
 script:
   - phpunit
-
-allow_failures:
-  - nightly
 
 env:
   - LARAVEL_VERSION="5.4"
