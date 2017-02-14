@@ -59,11 +59,11 @@ class ResultBuilder
         // Parse embedded relations and build corresponding entities using the default
         // mapper. 
         $results = $this->buildEmbeddedRelationships($results);
-
+        
         // Launch the queries related to eager loads, and match the
         // current result set to these loaded relationships.
         $results = $this->queryEagerLoadedRelationships($results, $eagerLoads);
-
+        
         // Note : Maybe we could use a PolymorphicResultBuilder, which would
         // be shared by both STI and polymorphic relations, as they share the
         // same process.

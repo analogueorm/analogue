@@ -66,7 +66,7 @@ abstract class EmbeddedRelationship
 		$this->parentClass = $parentClass;
 		$this->relatedClass = $relatedClass;
 		$this->relation = $relation;
-		$this->setDefaultPrefix();
+		$this->prefix = $relation."_";
 		$this->factory = new Factory;
 	}
 
@@ -95,14 +95,6 @@ abstract class EmbeddedRelationship
 	}	
 
 	/**
-	 * Set the default prefix for the embedded attributes
-	 */
-	protected function setDefaultPrefix()
-	{
-		$this->prefix = class_basename($this->relatedClass)."_";
-	}
-
-	/**
 	 * Set parent's attribute prefix
 	 *
 	 * @param string $prefix
@@ -122,6 +114,62 @@ abstract class EmbeddedRelationship
 	public function getPrefix() : string
 	{
 		return $this->prefix;
+	}
+
+	/**
+	 * Get the embedded object's attributes that will be
+	 * hydrated using parent's entity attributes
+	 * 
+	 * @return array
+	 */
+	protected function getEmbeddedObjectAttributes() : array
+	{
+		$entityMap = $this->getRelatedMapper()->getEntityMap();
+
+		$attributes = $entityMap->getAttributes();
+		$properties = $entityMap->getProperties();
+
+		return array_merge($attributes, $properties);
+	}
+
+	/**
+	 * Get the corresponding attribute on parent's attributes
+	 * 
+	 * @param  string $key
+	 * @return string
+	 */
+	protected function getParentAttributeKey($key) : string
+	{
+		return $this->getPrefixedAttributeKey($this->getMappedParentAttribute($key));
+	}
+
+
+	/**
+	 * Get attribute name from the parent, if a map has been
+	 * defined 
+	 * 
+	 * @param  srring $attributeKey 
+	 * @return string
+	 */
+	protected function getMappedParentAttribute(string $key) : string
+	{
+		if(array_key_exists($key, $this->columnMap)) {
+			return $this->columnMap[$key];
+		}
+		else {
+			return $key;
+		}
+	}
+
+	/**
+	 * Return the name of the attribute with key
+	 * 
+	 * @param  string $attributeKey 
+	 * @return string
+	 */
+	protected function getPrefixedAttributeKey(string $attributeKey) : string
+	{
+		return $this->prefix.$attributeKey;
 	}
 
 	/**
@@ -145,6 +193,8 @@ abstract class EmbeddedRelationship
 		// TODO : find a way to support eager load within an embedded
 		// object. 	
 		$eagerLoads = [];
+
+		return $resultBuilder->build([$attributes], $eagerLoads)[0];
 	}
 
 
@@ -173,20 +223,7 @@ abstract class EmbeddedRelationship
 	 */
 	protected function getRelatedMapper()
 	{
-		return Manager::getInstance()->mapper($this->parentClass);
+		return Manager::getInstance()->mapper($this->relatedClass);
 	}
 
-	/**
-	 * Return Object wrapper for related entity
-	 * 
-	 * @return Wrapper
-	 */
-	protected function getWrapper($instance = null) : Wrapper
-	{
-		if(is_null($instance)) {
-			$instance = $this->getRelatedMapper()->newInstance();
-		}
-
-		return $this->factory->make($instance);
-	}
 }

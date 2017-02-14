@@ -77,7 +77,7 @@ class EntityBuilder
      */
     public function build(array $result)
     {
-        $instance = $this->getWrapperInstance();
+        $wrapper = $this->getWrapperInstance();
 
         // Hydrate any embedded Value Object
         //
@@ -86,16 +86,16 @@ class EntityBuilder
         // eager loaded relationships.
         $this->hydrateValueObjects($result);
 
-        $instance->setEntityAttributes($result);
-
+        $wrapper->setEntityAttributes($result);
+        
         // Hydrate relationship attributes with lazyloading proxies
         if (count($this->lazyLoads) > 0) {
-            $instance->setProxies($this->lazyLoads);
+            $wrapper->setProxies($this->lazyLoads);
         }
 
         // Hydrate and return the instance
-        $instance->hydrate();
-        $entity = $instance->getObject();
+        $wrapper->hydrate();
+        $entity = $wrapper->getObject();
 
         return $entity;
     }

@@ -925,7 +925,8 @@ class EntityMap
 
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
-        return new EmbedsOne($parentClass, $relatedClass);
+
+        return new EmbedsOne($parentClass, $relatedClass, $relation);
     }
 
     /**
@@ -942,9 +943,11 @@ class EntityMap
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
+
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
-        return new EmbedsMany($parentClass, $relatedClass);
+        
+        return new EmbedsMany($parentClass, $relatedClass, $relation);
     }
 
     /**

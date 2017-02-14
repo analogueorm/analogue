@@ -110,7 +110,13 @@ abstract class Wrapper implements InternallyMappable
         }
 
         foreach ($relations as $relation) {
-            // We first look if we need to build the proxy on the relationship.
+            
+            // First, we check that the relation has not been already
+            // set, in which case, we'll just pass. 
+            if(array_key_exists($relation, $attributes) && ! is_null($attributes[$relation])) {
+                continue;
+            }
+
             // If the key is handled locally and we know it not to be set,
             // we'll set the relationship to null
             if (!$this->relationNeedsProxy($relation, $attributes)) {
