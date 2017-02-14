@@ -56,15 +56,9 @@ class ResultBuilder
      */
     public function build(array $results, array $eagerLoads)
     {
-        // First, we'll cast every single result to array
-        $results = array_map(function ($item) {
-            return (array) $item;
-        }, $results);
-
-        // Then, we'll cache every single results as raw attributes, before
-        // adding relationships, which will be cached when the relationship's
-        // query takes place.
-        $this->defaultMapper->getEntityCache()->add($results);
+        // Parse embedded relations and build corresponding entities using the default
+        // mapper. 
+        $results = $this->buildEmbeddedRelationships($results);
 
         // Launch the queries related to eager loads, and match the
         // current result set to these loaded relationships.
@@ -86,11 +80,30 @@ class ResultBuilder
     }
 
     /**
+     * Build embedded objects and match them to the result set
+     * 
+     * @param  array  $results 
+     * @return array
+     */
+    protected function buildEmbeddedRelationships(array $results) : array
+    {
+        $entityMap = $this->entityMap;
+        $instance = $this->defaultMapper->newInstance();
+        $embeddeds = $entityMap->getEmbeddedRelationships();
+
+        foreach($embeddeds as $embedded) {
+            $results = $entityMap->$embedded($instance)->match($results, $embedded);
+        }
+
+        return $results;
+    }
+
+    /**
      * Launch queries on eager loaded relationships.
      *
      * @return array
      */
-    protected function queryEagerLoadedRelationships(array $results, array $eagerLoads)
+    protected function queryEagerLoadedRelationships(array $results, array $eagerLoads) : array
     {
         $this->eagerLoads = $this->parseRelations($eagerLoads);
 

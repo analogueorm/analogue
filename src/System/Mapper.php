@@ -96,14 +96,37 @@ class Mapper
     /**
      * Map results to a Collection.
      *
-     * @param Collection $results
+     * @param array|Collection $results
      *
      * @return Collection
      */
-    public function map($results)
+    public function map($results, array $eagerLoads = []) : Collection
     {
-        // To implement, will allow decoupling result
-        // instantiation from Query class
+        $builder = new ResultBuilder($this);
+
+        if($results instanceof collection)
+        {
+            // Get underlying collection array
+            $results = $results->all();
+        }
+
+        if(! is_array($results)) {
+            throw new InvalidArgumentException("'results' should be an array or collection.");
+        }
+
+        // First, we'll cast every single result to array
+        $results = array_map(function ($item) {
+            return (array) $item;
+        }, $results);
+
+        // Then, we'll cache every single results as raw attributes, before
+        // adding relationships, which will be cached when the relationship's
+        // query takes place.
+        $this->getEntityCache()->add($results);
+
+        $entities =  $builder->build($results, $eagerLoads);
+
+        return $this->entityMap->newCollection($entities);
     }
 
     /**

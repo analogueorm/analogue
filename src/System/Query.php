@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 
 /**
  * Analogue Query builder.
@@ -123,12 +124,9 @@ class Query
      *
      * @return \Analogue\ORM\EntityCollection
      */
-    public function get($columns = ['*'])
+    public function get($columns = ['*']) : Collection
     {
-        $entities = $this->getEntities($columns);
-
-        // TODO Should move the call to new Collection on the result builder
-        return $this->entityMap->newCollection($entities);
+        return $this->getEntities($columns);
     }
 
     /**
@@ -588,12 +586,15 @@ class Query
         $columns = $this->enforceIdColumn($columns);
 
         // Run the query
-        $results = $this->query->get($columns)->toArray();
+        $results = $this->query->get($columns);
+
+        // Pass result set to the mapper and return the EntityCollection
+        return $this->mapper->map($results, $this->getEagerLoads());
 
         // Create a result builder.
-        $builder = new ResultBuilder($this->mapper);
+        //$builder = new ResultBuilder($this->mapper);
 
-        return $builder->build($results, $this->getEagerLoads());
+        //return $builder->build($results, $this->getEagerLoads());
     }
 
     /**

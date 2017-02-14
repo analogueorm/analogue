@@ -11,7 +11,7 @@ class ImageMapNoPrefix extends ImageMap
 
 	public function size(Image $image)
 	{
-		return $this->embedsOne($image, ImageSize::class)
+		return $this->embedsOne(ImageSize::class)
 			->setPrefix('');
 	}	
 

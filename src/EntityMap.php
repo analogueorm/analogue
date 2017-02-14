@@ -904,7 +904,7 @@ class EntityMap
     protected function addEmbeddedRelation($relation)
     {
         if (!in_array($relation, $this->embeddedRelations)) {
-            $this->pivotRelations[] = $relation;
+            $this->embeddedRelations[] = $relation;
         }
     }
 
@@ -915,13 +915,14 @@ class EntityMap
      * @param  string $related 
      * @return EmbedsOne
      */
-    public function embedsOne($entity, string $relatedClass) : EmbedsOne
+    public function embedsOne(string $relatedClass) : EmbedsOne
     {
-        $parentClass = get_class($entity);
+         $parentClass = $this->getClass();
 
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
+
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
         return new EmbedsOne($parentClass, $relatedClass);
@@ -934,9 +935,9 @@ class EntityMap
      * @param  string $related 
      * @return EmbedsOne
      */
-    public function embedsMany($entity, string $relatedClass) : EmbedsMany
+    public function embedsMany(string $relatedClass) : EmbedsMany
     {
-        $parentClass = get_class($entity);
+        $parentClass = $this->getClass();
 
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);

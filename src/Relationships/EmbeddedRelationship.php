@@ -3,6 +3,9 @@
 namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\ResultBuilder;
+use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\Wrappers\Wrapper;
 
 abstract class EmbeddedRelationship
 {
@@ -19,6 +22,13 @@ abstract class EmbeddedRelationship
 	 * @var string
 	 */
 	protected $relatedClass;
+
+	/**
+	 * The relation attribute on the parent object
+	 * 
+	 * @var string
+	 */
+	protected $relation;
 
 	/**
 	 * If set to true, embedded Object's attributes will
@@ -44,11 +54,20 @@ abstract class EmbeddedRelationship
 	 */
 	protected $columnMap = [];
 
-	public function __construct(string $parentClass, string $relatedClass)
+	/**
+     * Wrapper factory.
+     *
+     * @var \Analogue\ORM\System\Wrappers\Factory
+     */
+    protected $factory;
+
+	public function __construct(string $parentClass, string $relatedClass, string $relation)
 	{
 		$this->parentClass = $parentClass;
 		$this->relatedClass = $relatedClass;
+		$this->relation = $relation;
 		$this->setDefaultPrefix();
+		$this->factory = new Factory;
 	}
 
 	/**
@@ -111,7 +130,23 @@ abstract class EmbeddedRelationship
 	 * 
 	 * @return array
 	 */
-	abstract public function match(array $results, string $relation) : array;
+	abstract public function match(array $results) : array;
+
+	/**
+	 * Build an embedded object instance
+	 * 
+	 * @param  array  $attributes
+	 * @return mixed
+	 */
+	protected function buildEmbeddedObject(array $attributes)
+	{
+		$resultBuilder = new ResultBuilder($this->getRelatedMapper());
+
+		// TODO : find a way to support eager load within an embedded
+		// object. 	
+		$eagerLoads = [];
+	}
+
 
 	/**
 	 * Transform embedded object into db column(s)
@@ -139,5 +174,19 @@ abstract class EmbeddedRelationship
 	protected function getRelatedMapper()
 	{
 		return Manager::getInstance()->mapper($this->parentClass);
+	}
+
+	/**
+	 * Return Object wrapper for related entity
+	 * 
+	 * @return Wrapper
+	 */
+	protected function getWrapper($instance = null) : Wrapper
+	{
+		if(is_null($instance)) {
+			$instance = $this->getRelatedMapper()->newInstance();
+		}
+
+		return $this->factory->make($instance);
 	}
 }
