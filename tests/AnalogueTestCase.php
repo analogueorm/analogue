@@ -1,17 +1,15 @@
 <?php
 
 use Analogue\Factory\Factory;
-use DB;
 use Faker\Factory as Faker;
 use Illuminate\Filesystem\Filesystem;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
-use Schema;
 
 abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 {
     use InteractsWithDatabase;
 
-    protected $useSqlite = false;
+    protected $useSqlite = true;
 
     protected $testDbName = 'analogue_test_db';
 
@@ -65,6 +63,8 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     {
         $conn = new PDO('mysql:host=localhost', 'root', '');
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = 'DROP DATABASE IF EXISTS '.$this->testDbName;
+        $conn->exec($sql);
         $sql = 'CREATE DATABASE IF NOT EXISTS '.$this->testDbName;
         $conn->exec($sql);
         $conn = null;
