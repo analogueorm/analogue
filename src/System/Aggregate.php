@@ -575,7 +575,7 @@ class Aggregate implements InternallyMappable
     {
         $attributes = $this->wrappedEntity->getEntityAttributes();
 
-        foreach ($this->entityMap->getRelationships() as $relation) {
+        foreach ($this->entityMap->getNonEmbeddedRelationships() as $relation) {
             unset($attributes[$relation]);
         }
 
@@ -629,6 +629,7 @@ class Aggregate implements InternallyMappable
      */
     protected function flattenEmbeddables($attributes)
     {
+        // TODO : deprecate old implementation
         $embeddables = $this->entityMap->getEmbeddables();
 
         foreach ($embeddables as $localKey => $embed) {
@@ -651,6 +652,27 @@ class Aggregate implements InternallyMappable
             }
 
             $attributes = array_merge($attributes, $valueObjectAttributes);
+        }
+
+        //*********************
+        // New implementation
+        // *****************->
+        
+        $embeddedRelations = $this->entityMap->getEmbeddedRelationships();
+
+        foreach($embeddedRelations as $relation) {
+
+            // Spawn a new instance we can pass to the relationship methdod
+            $parentInstance = $this->getMapper()->newInstance();
+            $relationInstance = $this->entityMap->$relation($parentInstance);
+
+            // Extract the object from the attributes
+            $embeddedObject = $attributes[$relation];
+
+            unset($attributes[$relation]);
+
+            $attributes = $relationInstance->normalize($embeddedObject) + $attributes;
+            
         }
 
         return $attributes;

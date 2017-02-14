@@ -66,15 +66,7 @@ class EmbedsOne extends EmbeddedRelationship
 	 */
 	protected function matchAsAttributes(array $attributes) : array
 	{
-		// Get attributes that belongs to the embedded object
-		$embeddedAttributeKeys = $this->getEmbeddedObjectAttributes();
-
-		$attributesMap = [];
-
-		// Build a dictionnary for corresponding object attributes => parent attributes
-		foreach($embeddedAttributeKeys as $key) {
-			$attributesMap[$key] = $this->getParentAttributeKey($key);
-		}
+		$attributesMap = $this->getAttributesDictionnary();
 
 		// Get the subset that only the embedded object is concerned with and, convert it back
 		// to embedded object attributes keys
@@ -99,6 +91,25 @@ class EmbedsOne extends EmbeddedRelationship
 		return $attributes;
 	}
 
+	/**
+	 * Return a dictionnary of attributes key on parent Entity
+	 * 
+	 * @return array
+	 */
+	protected function getAttributesDictionnary() : array
+	{
+		// Get attributes that belongs to the embedded object
+		$embeddedAttributeKeys = $this->getEmbeddedObjectAttributes();
+
+		$attributesMap = [];
+
+		// Build a dictionnary for corresponding object attributes => parent attributes
+		foreach($embeddedAttributeKeys as $key) {
+			$attributesMap[$key] = $this->getParentAttributeKey($key);
+		}
+
+		return $attributesMap;
+	}
 
 	/**
 	 * Transform embedded object into DB column(s)
@@ -108,6 +119,40 @@ class EmbedsOne extends EmbeddedRelationship
 	 */
 	public function normalize($object) : array
 	{
+		if(is_null($object)) {
+			return $this->nullObjectAttributes();
+		}
 
+		$attributesMap = $this->getAttributesDictionnary();
+
+		$wrapper = $this->factory->make($object);
+
+		$normalizedAttributes = [];
+
+		foreach($attributesMap as $embedKey => $parentKey)
+		{
+			$normalizedAttributes[$parentKey] = $wrapper->getEntityAttribute($embedKey);
+		}
+
+		return $normalizedAttributes;
+	}
+
+	/**
+	 * Set all object attributes to null
+	 * 
+	 * @return array
+	 */
+	protected function nullObjectAttributes() : array
+	{
+		$attributesMap = $this->getAttributesDictionnary();
+
+		$normalizedAttributes = [];
+
+		foreach($attributesMap as $embedKey => $parentKey)
+		{
+			$normalizedAttributes[$parentKey] = null;
+		}
+
+		return $normalizedAttributes;
 	}
 }

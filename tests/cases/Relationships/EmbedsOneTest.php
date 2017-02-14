@@ -15,6 +15,7 @@ class EmbedsOneTest extends DomainTestCase
 	{
 		$this->analogue->register(Image::class, ImageMap::class);
 		$image = $this->createImage();
+
 		$mapper = $this->mapper($image);
 		$mapper->store($image);
 		$this->seeInDatabase('images', [
@@ -52,7 +53,7 @@ class EmbedsOneTest extends DomainTestCase
 	/** @test */
 	public function we_can_store_an_embedded_object_with_custom_mapping()
 	{
-		$this->analogue->register(Image::class, ImageMapCustomPrefix::class);
+		$this->analogue->register(Image::class, ImageMapCustomMap::class);
 		$image = $this->createImage();
 		$mapper = $this->mapper($image);
 		$mapper->store($image);
@@ -63,7 +64,8 @@ class EmbedsOneTest extends DomainTestCase
 	}
 
 	/** @test */
-	public function we_can_store_an_embedded_object_in_a_json_array()
+	// Note available in Sqlite
+	/*public function we_can_store_an_embedded_object_in_a_json_array()
 	{
 		$this->analogue->register(Image::class, ImageMapArray::class);
 		$image = $this->createImage();
@@ -75,7 +77,7 @@ class EmbedsOneTest extends DomainTestCase
 				'height' => 500,
 			],
 		]);
-	}
+	}*/
 
 	/** @test */
 	public function we_can_hydrate_embedded_object_with_default_mapping()
@@ -138,8 +140,8 @@ class EmbedsOneTest extends DomainTestCase
 		$this->assertEquals(500, $image->getSize()->getWidth());
 	}
 
-	/** @test */
-	public function we_can_hydrate_embedded_object_with_array_mapping()
+	// NOT AVAILABLE IN SQLITE
+	/*public function we_can_hydrate_embedded_object_with_array_mapping()
 	{
 		$this->analogue->register(Image::class, ImageMapArray::class);
 		$id = $this->createImageRecord([
@@ -150,7 +152,38 @@ class EmbedsOneTest extends DomainTestCase
 		$this->assertInstanceOf(ImageSize::class, $image->getSize());
 		$this->assertEquals(500, $image->getSize()->getHeight());
 		$this->assertEquals(500, $image->getSize()->getWidth());
+	}*/
+
+	/** @test */
+	public function embedded_object_attributes_get_updated_if_dirty()
+	{
+		$this->analogue->register(Image::class, ImageMap::class);
+		$image = $this->createImage();
+		$mapper = $this->mapper($image);
+		$mapper->store($image);
+		$image->setSize(new ImageSize(1000, 1000));
+		$mapper->store($image);
+		$this->seeInDatabase('images', [
+			'size_width' => 1000,
+			'size_height' => 1000,
+		]);
 	}
+
+	/** @test */
+	public function embedded_object_attributes_get_nulled_if_relationshiped_nulled()
+	{
+		$this->analogue->register(Image::class, ImageMap::class);
+		$image = $this->createImage();
+		$mapper = $this->mapper($image);
+		$mapper->store($image);
+		$image->setNullSize();
+		$mapper->store($image);
+		$this->seeInDatabase('images', [
+			'size_width' => null,
+			'size_height' => null,
+		]);
+	}
+
 
 	protected function dumpImages()
 	{

@@ -31,4 +31,9 @@ class Image
 	{
 		$this->size = $size;
 	}
+
+	public function setNullSize()
+	{
+		$this->size = null;
+	}
 }

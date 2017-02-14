@@ -510,6 +510,16 @@ class EntityMap
     }
 
     /**
+     * Return all relationships that are not embedded objects
+     * 
+     * @return array
+     */
+    public function getNonEmbeddedRelationships() : array
+    {
+        return array_diff($this->relationships, $this->embeddedRelations);
+    }
+
+    /**
      * Get the relationships that will not have a proxy
      * set on them.
      *
