@@ -16,8 +16,7 @@ script:
   - phpunit
 
 allow_failures:
-    - php: nightly
-    - php: hhvm
+  - nightly
 
 env:
   - LARAVEL_VERSION="5.4"
