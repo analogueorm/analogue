@@ -926,7 +926,7 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    public function embedsOne(string $relatedClass) : EmbedsOne
+    protected function embedsOne(string $relatedClass) : EmbedsOne
     {
         $parentClass = $this->getClass();
 
@@ -948,7 +948,7 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    public function embedsMany(string $relatedClass) : EmbedsMany
+    protected function embedsMany(string $relatedClass) : EmbedsMany
     {
         $parentClass = $this->getClass();
 
@@ -974,7 +974,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasOne
      */
-    public function hasOne($entity, $related, $foreignKey = null, $localKey = null)
+    protected function hasOne($entity, $related, $foreignKey = null, $localKey = null)
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
@@ -1016,7 +1016,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphOne
      */
-    public function morphOne($entity, $related, $name, $type = null, $id = null, $localKey = null)
+    protected function morphOne($entity, $related, $name, $type = null, $id = null, $localKey = null)
     {
         list($type, $id) = $this->getMorphs($name, $type, $id);
 
@@ -1057,7 +1057,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\BelongsTo
      */
-    public function belongsTo($entity, $related, $foreignKey = null, $otherKey = null)
+    protected function belongsTo($entity, $related, $foreignKey = null, $otherKey = null)
     {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -1095,7 +1095,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphTo
      */
-    public function morphTo($entity, $name = null, $type = null, $id = null)
+    protected function morphTo($entity, $name = null, $type = null, $id = null)
     {
         // If no name is provided, we will use the backtrace to get the function name
         // since that is most likely the name of the polymorphic interface. We can
@@ -1162,7 +1162,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasMany
      */
-    public function hasMany($entity, $related, $foreignKey = null, $localKey = null)
+    protected function hasMany($entity, $related, $foreignKey = null, $localKey = null)
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
@@ -1194,7 +1194,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasManyThrough
      */
-    public function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
+    protected function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
     {
         $relatedMapper = Manager::getInstance()->mapper($related);
         $throughMapper = Manager::getInstance()->mapper($through);
@@ -1228,7 +1228,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphMany
      */
-    public function morphMany($entity, $related, $name, $type = null, $id = null, $localKey = null)
+    protected function morphMany($entity, $related, $name, $type = null, $id = null, $localKey = null)
     {
         // Here we will gather up the morph type and ID for the relationship so that we
         // can properly query the intermediate table of a relation. Finally, we will
@@ -1266,7 +1266,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\BelongsToMany
      */
-    public function belongsToMany($entity, $related, $table = null, $foreignKey = null, $otherKey = null)
+    protected function belongsToMany($entity, $related, $table = null, $foreignKey = null, $otherKey = null)
     {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -1313,7 +1313,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphToMany
      */
-    public function morphToMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
+    protected function morphToMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
     {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -1352,7 +1352,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphToMany
      */
-    public function morphedByMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null)
+    protected function morphedByMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null)
     {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
