@@ -309,7 +309,14 @@ class EntityMap
      */
     public function usesAttributesArray() : bool
     {
-        return $this->arrayName === null ? false : true;
+        if ($this->arrayName === null) {
+            return false;
+        }
+        if ($this->attributes === null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
