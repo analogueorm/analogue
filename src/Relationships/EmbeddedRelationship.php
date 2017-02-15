@@ -61,9 +61,9 @@ abstract class EmbeddedRelationship
      */
     protected $factory;
 
-    public function __construct(string $parentClass, string $relatedClass, string $relation)
+    public function __construct($parent, string $relatedClass, string $relation)
     {
-        $this->parentClass = $parentClass;
+        $this->parentClass = get_class($parent);
         $this->relatedClass = $relatedClass;
         $this->relation = $relation;
         $this->prefix = $relation.'_';

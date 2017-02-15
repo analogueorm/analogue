@@ -926,10 +926,8 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    protected function embedsOne(string $relatedClass, $relation = null) : EmbedsOne
+    protected function embedsOne($parent, string $relatedClass, $relation = null) : EmbedsOne
     {
-        $parentClass = $this->getClass();
-
         if(is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
             $relation = $caller['function'];
@@ -938,7 +936,7 @@ class EntityMap
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
 
-        return new EmbedsOne($parentClass, $relatedClass, $relation);
+        return new EmbedsOne($parent, $relatedClass, $relation);
     }
 
     /**
@@ -949,10 +947,8 @@ class EntityMap
      *
      * @return EmbedsOne
      */
-    protected function embedsMany(string $relatedClass, $relation = null) : EmbedsMany
+    protected function embedsMany($parent, string $relatedClass, $relation = null) : EmbedsMany
     {
-        $parentClass = $this->getClass();
-
         if(is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
             $relation = $caller['function'];
@@ -961,7 +957,7 @@ class EntityMap
         $this->addEmbeddedRelation($relation);
         $this->addNonProxyRelation($relation);
 
-        return new EmbedsMany($parentClass, $relatedClass, $relation);
+        return new EmbedsMany($parent, $relatedClass, $relation);
     }
 
     /**
