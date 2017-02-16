@@ -105,10 +105,10 @@ abstract class Wrapper implements InternallyMappable
         $attributes = $this->getEntityAttributes();
         $proxies = [];
 
-        if (is_null($relations)) {
+        //if (is_null($relations)) {
             $relations = $this->getRelationsToProxy();
-        }
-
+        //}
+        //dump($relations);
         // Before calling the relationship methods, we'll set the relationship
         // method to null, to avoid hydration error on class properties
         foreach ($relations as $relation) {
