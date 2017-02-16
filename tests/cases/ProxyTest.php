@@ -3,6 +3,7 @@
 use ProxyManager\Proxy\ProxyInterface;
 use TestApp\Blog;
 use TestApp\User;
+use TestApp\PlainProxy;
 
 class ProxyTest extends AnalogueTestCase
 {
@@ -33,4 +34,16 @@ class ProxyTest extends AnalogueTestCase
         $loadedUser = $mapper->find($user->id);
         $this->assertEquals($blog->id, $loadedUser->blog->id);
     }
+
+    /** @test */
+    public function proxies_are_set_on_plain_object_class_properties()
+    {
+        $user = $this->factoryCreateUid(User::class);
+        $proxy = new PlainProxy($user, $user);
+        $mapper = $this->mapper($proxy);
+        $proxy = $mapper->store($proxy);
+        setTddOn();
+        $loadedProxy = $mapper->find($proxy->getId());
+        $this->assertInstanceOf(ProxyInterface::class, $loadedProxy->getRelated());
+    }   
 }

@@ -12,8 +12,6 @@ class MixedEntity
 
     protected $property;
 
-    //protected $attributes = [];
-
     public function setProperty($property)
     {
         $this->property = $property;
