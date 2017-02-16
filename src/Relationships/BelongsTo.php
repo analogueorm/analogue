@@ -2,10 +2,10 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\Mappable;
-use Analogue\ORM\System\Query;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Mapper;
+use Analogue\ORM\System\Query;
 use Illuminate\Database\Query\Expression;
 
 class BelongsTo extends Relationship
@@ -34,7 +34,7 @@ class BelongsTo extends Relationship
     /**
      * Indicate if the parent entity hold the key for the relation.
      *
-     * @var boolean
+     * @var bool
      */
     protected static $ownForeignKey = true;
 
@@ -90,15 +90,16 @@ class BelongsTo extends Relationship
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  Query $query
-     * @param  Query $parent
+     * @param Query $query
+     * @param Query $parent
+     *
      * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
         $query->select(new Expression('count(*)'));
 
-        $otherKey = $this->wrap($query->getTable() . '.' . $this->otherKey);
+        $otherKey = $this->wrap($query->getTable().'.'.$this->otherKey);
 
         return $query->where($this->getQualifiedForeignKey(), '=', new Expression($otherKey));
     }
@@ -106,7 +107,8 @@ class BelongsTo extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param array $entities
+     *
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -122,7 +124,8 @@ class BelongsTo extends Relationship
     /**
      * Gather the keys from an array of related models.
      *
-     * @param  array $entities
+     * @param array $entities
+     *
      * @return array
      */
     protected function getEagerModelKeys(array $entities)
@@ -153,8 +156,9 @@ class BelongsTo extends Relationship
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array  $entities
-     * @param  string $relation
+     * @param array  $entities
+     * @param string $relation
+     *
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -170,9 +174,10 @@ class BelongsTo extends Relationship
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array            $entities
-     * @param  EntityCollection $results
-     * @param  string           $relation
+     * @param array            $entities
+     * @param EntityCollection $results
+     * @param string           $relation
+     *
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
@@ -210,7 +215,7 @@ class BelongsTo extends Relationship
         if (count($entities) > 1) {
             throw new MappingException("Single Relationship shouldn't be synced with more than one entity");
         }
-        
+
         if (count($entities) == 1) {
             return $this->associate($entities[0]);
         }
@@ -221,7 +226,8 @@ class BelongsTo extends Relationship
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  mixed $entity
+     * @param mixed $entity
+     *
      * @return void
      */
     public function associate($entity)
@@ -255,9 +261,9 @@ class BelongsTo extends Relationship
     }
 
     /**
-     * Get the foreign key value pair for a related object
+     * Get the foreign key value pair for a related object.
      *
-     * @param  mixed $related
+     * @param mixed $related
      *
      * @return array
      */
@@ -283,7 +289,7 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedForeignKey()
     {
-        return $this->parentMap->getTable() . '.' . $this->foreignKey;
+        return $this->parentMap->getTable().'.'.$this->foreignKey;
     }
 
     /**
@@ -303,6 +309,6 @@ class BelongsTo extends Relationship
      */
     public function getQualifiedOtherKeyName()
     {
-        return $this->relatedMap->getTable() . '.' . $this->otherKey;
+        return $this->relatedMap->getTable().'.'.$this->otherKey;
     }
 }

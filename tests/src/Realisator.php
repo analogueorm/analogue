@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 class Realisator
 {
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -24,7 +24,7 @@ class Realisator
     public function __construct($name)
     {
         $this->name = $name;
-        $this->movies = new Collection;
+        $this->movies = new Collection();
     }
 
     public function addMovie(Movie $movie)
@@ -36,5 +36,4 @@ class Realisator
     {
         return $this->name;
     }
-
 }

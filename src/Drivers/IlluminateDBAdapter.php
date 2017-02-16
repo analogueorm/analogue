@@ -17,6 +17,7 @@ class IlluminateDBAdapter implements DBAdapter
 
     /**
      * IlluminateDBAdapter constructor.
+     *
      * @param Connection $connection
      */
     public function __construct(Connection $connection)
@@ -25,7 +26,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Return a new Query instance for this driver
+     * Return a new Query instance for this driver.
      *
      * @return QueryAdapter
      */
@@ -39,7 +40,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Get the date format supported by the current connection
+     * Get the date format supported by the current connection.
      *
      * @return string
      */
@@ -50,6 +51,7 @@ class IlluminateDBAdapter implements DBAdapter
 
     /**
      * Start a DB transaction on driver that supports it.
+     *
      * @return void
      */
     public function beginTransaction()
@@ -59,6 +61,7 @@ class IlluminateDBAdapter implements DBAdapter
 
     /**
      * Commit a DB transaction on driver that supports it.
+     *
      * @return void
      */
     public function commit()
@@ -67,7 +70,8 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Rollback a DB transaction
+     * Rollback a DB transaction.
+     *
      * @return void
      */
     public function rollback()

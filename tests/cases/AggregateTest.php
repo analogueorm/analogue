@@ -1,13 +1,12 @@
 <?php
 
-use TestApp\User;
-use TestApp\Blog;
-use TestApp\Article;
 use Illuminate\Support\Collection;
+use TestApp\Article;
+use TestApp\Blog;
+use TestApp\User;
 
-class AggregateTest extends AnalogueTestCase {
-
-    
+class AggregateTest extends AnalogueTestCase
+{
     public function setUp()
     {
         parent::setUp();
@@ -139,9 +138,9 @@ class AggregateTest extends AnalogueTestCase {
         $user = $this->factoryMake(User::class);
         $blog = $this->factoryCreate(Blog::class);
         $user->blog = $blog;
-        $blog->title = "New Title";
+        $blog->title = 'New Title';
         $this->mapper($user)->store($user);
-        $this->seeInDatabase('blogs', ['title' => "New Title"]);
+        $this->seeInDatabase('blogs', ['title' => 'New Title']);
     }
 
     /** @test */
@@ -154,9 +153,9 @@ class AggregateTest extends AnalogueTestCase {
         $user->blog = $blog;
         $mapper = $this->mapper(User::class);
         $mapper->store($user);
-        $article->title = "New Title";
+        $article->title = 'New Title';
         $mapper->store($user);
-        $this->seeInDatabase('articles', ['title' => "New Title"]);        
+        $this->seeInDatabase('articles', ['title' => 'New Title']);
     }
 
     /** @test */
@@ -170,6 +169,4 @@ class AggregateTest extends AnalogueTestCase {
         $this->mapper($user)->store($user);
         $this->seeInDatabase('blogs', ['title' => $blog->title, 'user_id' => null]);
     }
-
-
 }

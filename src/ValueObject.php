@@ -2,12 +2,12 @@
 
 namespace Analogue\ORM;
 
+use Analogue\ORM\System\Proxies\ProxyInterface;
 use ArrayAccess;
 use Carbon\Carbon;
-use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
-use Analogue\ORM\System\Proxies\ProxyInterface;
+use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 
 class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, Arrayable
 {
@@ -16,7 +16,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Dynamically retrieve attributes on the entity.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -27,8 +28,9 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Dynamically set attributes on the entity.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function __set($key, $value)
@@ -39,7 +41,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Determine if an attribute exists on the entity.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return bool
      */
     public function __isset($key)
@@ -50,7 +53,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Unset an attribute on the entity.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return void
      */
     public function __unset($key)
@@ -58,11 +62,11 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
         unset($this->attributes[$key]);
     }
 
-    
     /**
      * Determine if the given attribute exists.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -73,7 +77,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Get the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -84,8 +89,9 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Set the value for a given offset.
      *
-     * @param  mixed $offset
-     * @param  mixed $value
+     * @param mixed $offset
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -96,7 +102,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Unset the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -117,7 +124,8 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     /**
      * Convert the entity instance to JSON.
      *
-     * @param  int $options
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0)
@@ -126,7 +134,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     }
 
     /**
-     * Convert Mappable object to array;
+     * Convert Mappable object to array;.
      *
      * @return array
      */
@@ -136,9 +144,10 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
     }
 
     /**
-     * Transform the Object to array/json,
+     * Transform the Object to array/json,.
      *
-     * @param  array $sourceAttributes
+     * @param array $sourceAttributes
+     *
      * @return array
      */
     protected function attributesToArray(array $sourceAttributes)
@@ -163,6 +172,7 @@ class ValueObject implements Mappable, ArrayAccess, Jsonable, JsonSerializable, 
                 $attributes[$key] = $attribute;
             }
         }
+
         return $attributes;
     }
 }

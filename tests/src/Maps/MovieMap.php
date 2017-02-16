@@ -6,7 +6,7 @@ use Analogue\ORM\EntityMap;
 use TestApp\Movie;
 use TestApp\Realisator;
 
-class MovieMap extends EntityMap 
+class MovieMap extends EntityMap
 {
     protected $attributes = [
         'title',

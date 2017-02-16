@@ -24,11 +24,12 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param  Mapper                 $mapper
-     * @param  \Analogue\ORM\Mappable $parent
-     * @param  string                 $type
-     * @param  string                 $id
-     * @param  string                 $localKey
+     * @param Mapper                 $mapper
+     * @param \Analogue\ORM\Mappable $parent
+     * @param string                 $type
+     * @param string                 $id
+     * @param string                 $localKey
+     *
      * @throws \Analogue\ORM\Exceptions\MappingException
      */
     public function __construct(Mapper $mapper, $parent, $type, $id, $localKey)
@@ -56,8 +57,9 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Get the relationship count query.
      *
-     * @param  Query $query
-     * @param  Query $parent
+     * @param Query $query
+     * @param Query $parent
+     *
      * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
@@ -70,7 +72,8 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param array $entities
+     *
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -111,7 +114,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     }
 
     /**
-     * Get the foreign key as value pair for this relation
+     * Get the foreign key as value pair for this relation.
      *
      * @return array
      */
@@ -119,7 +122,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
     {
         return [
             $this->getPlainForeignKey() => $this->getParentKey(),
-            $this->getPlainMorphType() => $this->morphClass,
+            $this->getPlainMorphType()  => $this->morphClass,
         ];
     }
 }
