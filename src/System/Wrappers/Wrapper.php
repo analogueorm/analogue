@@ -131,7 +131,6 @@ abstract class Wrapper implements InternallyMappable
                 $targetClass = $this->getClassToProxy($relation, $attributes);
                 $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
             }
-            //tdd($relations);
         }
 
         foreach ($proxies as $key => $value) {

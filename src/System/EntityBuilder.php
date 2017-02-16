@@ -31,13 +31,6 @@ class EntityBuilder
     protected $eagerLoads;
 
     /**
-     * Relations that will be lazy loaded on this query.
-     *
-     * @var array
-     */
-    protected $lazyLoads;
-
-    /**
      * @var array
      */
     protected $casts;
@@ -63,8 +56,6 @@ class EntityBuilder
 
         $this->eagerLoads = $eagerLoads;
 
-        $this->lazyLoads = $this->getRelationshipsToProxy();
-
         $this->factory = new Factory();
     }
 
@@ -88,11 +79,8 @@ class EntityBuilder
 
         $wrapper->setEntityAttributes($result);
 
-        // Hydrate relationship attributes with lazyloading proxies
-        if (count($this->lazyLoads) > 0) {
-            $wrapper->setProxies($this->lazyLoads);
-        }
-
+        $wrapper->setProxies();
+        
         // Hydrate and return the instance
         $wrapper->hydrate();
         $entity = $wrapper->getObject();
@@ -157,17 +145,5 @@ class EntityBuilder
         }
 
         $attributes[$localKey] = $voWrapper->getObject();
-    }
-
-    /**
-     * Deduce the relationships for which we will build lazy loading proxies.
-     *
-     * @return array
-     */
-    protected function getRelationshipsToProxy()
-    {
-        $relations = $this->entityMap->getRelationships();
-
-        return array_diff($relations, $this->eagerLoads);
     }
 }

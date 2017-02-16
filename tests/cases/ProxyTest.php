@@ -42,7 +42,6 @@ class ProxyTest extends AnalogueTestCase
         $proxy = new PlainProxy($user, $user);
         $mapper = $this->mapper($proxy);
         $proxy = $mapper->store($proxy);
-        setTddOn();
         $loadedProxy = $mapper->find($proxy->getId());
         $this->assertInstanceOf(ProxyInterface::class, $loadedProxy->getRelated());
     }   
