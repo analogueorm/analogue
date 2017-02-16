@@ -31,3 +31,18 @@ if (! function_exists('mapper')) {
         return Manager::getMapper($entity, $entityMap);
     }
 }
+
+
+if (! function_exists('is_asociative_array')) {
+
+    /**
+     * Checks if an array is an asociative array
+     * 
+     * @param array $array
+     * @return bool
+     */
+    function is_asociative_array(array $array)
+    {
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
+    }
+}

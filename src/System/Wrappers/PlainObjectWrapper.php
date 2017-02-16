@@ -105,6 +105,7 @@ class PlainObjectWrapper extends Wrapper
      */
     protected function getMappedProperty($name)
     {
+        $name = $this->entityMap->getAttributeNameForColumn($name);
         return $this->reflection->getProperty($name);
     }
 
@@ -125,8 +126,9 @@ class PlainObjectWrapper extends Wrapper
                 $this->entity->$name = $attributes[$name];
             } else {
                 $property->setAccessible(true);
-
-                $property->setValue($this->entity, $attributes[$name]);
+                if (isset($attributes[$name])) {
+                    $property->setValue($this->entity, $attributes[$name]);
+                }
             }
         }
     }
