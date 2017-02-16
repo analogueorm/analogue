@@ -1093,6 +1093,20 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
+     * Apply the callback if the value is truthy.
+     *
+     * @param  bool  $value
+     * @param  callable  $callback
+     * @return mixed
+     */
+    public function when($value, callable $callback)
+    {
+        $this->initializeProxy();
+
+        return parent::when($value, $callback);
+    }
+
+    /**
      * Zip the collection together with one or more arrays.
      *
      * e.g. new Collection([1, 2, 3])->zip([4, 5, 6]);
