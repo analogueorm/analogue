@@ -35,20 +35,20 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new has many relationship instance.
      *
-     * @param Mapper                $mapper
-     * @param  \Analogue\ORM\Entity $parent
-     * @param  string               $name
-     * @param  string               $table
-     * @param  string               $foreignKey
-     * @param  string               $otherKey
-     * @param  string|null          $relationName
-     * @param  bool                 $inverse
+     * @param Mapper               $mapper
+     * @param \Analogue\ORM\Entity $parent
+     * @param string               $name
+     * @param string               $table
+     * @param string               $foreignKey
+     * @param string               $otherKey
+     * @param string|null          $relationName
+     * @param bool                 $inverse
      */
     public function __construct(Mapper $mapper, $parent, $name, $table, $foreignKey, $otherKey, $relationName = null, $inverse = false)
     {
         $this->inverse = $inverse;
-        
-        $this->morphType = $name . '_type';
+
+        $this->morphType = $name.'_type';
 
         $this->morphClass = $inverse ? $mapper->getEntityMap()->getClass() : get_class($parent);
 
@@ -64,7 +64,7 @@ class MorphToMany extends BelongsToMany
     {
         parent::setWhere();
 
-        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
+        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
 
         return $this;
     }
@@ -72,35 +72,38 @@ class MorphToMany extends BelongsToMany
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param  Query $query
-     * @param  Query $parent
+     * @param Query $query
+     * @param Query $parent
+     *
      * @return Query
      */
     public function getRelationCountQuery(Query $query, Query $parent)
     {
         $query = parent::getRelationCountQuery($query, $parent);
 
-        return $query->where($this->table . '.' . $this->morphType, $this->morphClass);
+        return $query->where($this->table.'.'.$this->morphType, $this->morphClass);
     }
 
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param array $entities
+     *
      * @return void
      */
     public function addEagerConstraints(array $entities)
     {
         parent::addEagerConstraints($entities);
 
-        $this->query->where($this->table . '.' . $this->morphType, $this->morphClass);
+        $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
     }
 
     /**
      * Create a new pivot attachment record.
      *
-     * @param  int  $id
-     * @param  bool $timed
+     * @param int  $id
+     * @param bool $timed
+     *
      * @return array
      */
     protected function createAttachRecord($id, $timed)
@@ -114,6 +117,7 @@ class MorphToMany extends BelongsToMany
      * Create a new query builder for the pivot table.
      *
      * @throws \InvalidArgumentException
+     *
      * @return \Illuminate\Database\Query\Builder
      */
     protected function newPivotQuery()
@@ -126,8 +130,9 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new pivot model instance.
      *
-     * @param  array $attributes
-     * @param  bool  $exists
+     * @param array $attributes
+     * @param bool  $exists
+     *
      * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
@@ -142,7 +147,7 @@ class MorphToMany extends BelongsToMany
     }
 
     /**
-     * Return Pivot attributes when available on a relationship
+     * Return Pivot attributes when available on a relationship.
      *
      * @return array
      */

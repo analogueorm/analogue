@@ -3,13 +3,13 @@
 namespace Analogue\ORM\System\Wrappers;
 
 /**
- * Simple Wrapper for Mappable objects
+ * Simple Wrapper for Mappable objects.
  */
 class EntityWrapper extends Wrapper
 {
     /**
      * Method used by the mapper to set the object
-     * attribute raw values (hydration)
+     * attribute raw values (hydration).
      *
      * @param array $attributes
      *
@@ -33,7 +33,7 @@ class EntityWrapper extends Wrapper
 
     /**
      * Method used by the mapper to set raw
-     * key-value pair
+     * key-value pair.
      *
      * @param string $key
      * @param string $value
@@ -51,26 +51,29 @@ class EntityWrapper extends Wrapper
 
     /**
      * Method used by the mapper to get single
-     * key-value pair
+     * key-value pair.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return mixed|null
      */
     public function getEntityAttribute($key)
     {
         if ($this->hasAttribute($key)) {
             $attributes = $this->entity->getEntityAttributes();
+
             return $attributes[$key];
         } else {
-            return null;
+            return;
         }
     }
 
     /**
-     * Test if a given attribute exists
+     * Test if a given attribute exists.
      *
-     * @param  string $key
-     * @return boolean
+     * @param string $key
+     *
+     * @return bool
      */
     public function hasAttribute($key)
     {

@@ -15,16 +15,16 @@ abstract class Proxy implements ProxyInterface
     protected $relation;
 
     /**
-     * Reference to parent entity object
+     * Reference to parent entity object.
      *
      * @var \Analogue\ORM\System\InternallyMappable
      */
     protected $parentEntity;
 
     /**
-     * Lazy loaded relation flag
+     * Lazy loaded relation flag.
      *
-     * @var boolean
+     * @var bool
      */
     protected $loaded = false;
 
@@ -40,9 +40,10 @@ abstract class Proxy implements ProxyInterface
     }
 
     /**
-     * Call the relationship method on the underlying entity map
+     * Call the relationship method on the underlying entity map.
      *
      * @throws MappingException
+     *
      * @return mixed
      */
     public function load()
@@ -55,9 +56,9 @@ abstract class Proxy implements ProxyInterface
     }
 
     /**
-     * Return true if the underlying relation has been lazy loaded
+     * Return true if the underlying relation has been lazy loaded.
      *
-     * @return boolean
+     * @return bool
      */
     public function isLoaded()
     {
@@ -65,11 +66,13 @@ abstract class Proxy implements ProxyInterface
     }
 
     /**
-     * Return the Query Builder on the relation
+     * Return the Query Builder on the relation.
      *
-     * @param  \Analogue\ORM\System\InternallyMappable  $entity
-     * @param  string $relation
+     * @param \Analogue\ORM\System\InternallyMappable $entity
+     * @param string                                  $relation
+     *
      * @throws MappingException
+     *
      * @return \Analogue\ORM\System\Query
      */
     protected function query($entity, $relation)
@@ -80,10 +83,12 @@ abstract class Proxy implements ProxyInterface
     }
 
     /**
-     * Get the mapper instance for the entity
+     * Get the mapper instance for the entity.
      *
-     * @param  \Analogue\ORM\System\InternallyMappable $entity
+     * @param \Analogue\ORM\System\InternallyMappable $entity
+     *
      * @throws MappingException
+     *
      * @return \Analogue\ORM\System\Mapper
      */
     protected function getMapper($entity)

@@ -2,8 +2,8 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\System\Mapper;
 use Illuminate\Support\Collection as BaseCollection;
 
 class MorphTo extends BelongsTo
@@ -39,7 +39,7 @@ class MorphTo extends BelongsTo
     /**
      * Indicate if the parent entity hold the key for the relation.
      *
-     * @var boolean
+     * @var bool
      */
     protected static $ownForeignKey = true;
 
@@ -63,7 +63,8 @@ class MorphTo extends BelongsTo
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $entities
+     * @param array $entities
+     *
      * @return void
      */
     public function addEagerConstraints(array $entities)
@@ -72,9 +73,10 @@ class MorphTo extends BelongsTo
     }
 
     /**
-     * Build a dictionary with the entities
+     * Build a dictionary with the entities.
      *
-     * @param  EntityCollection $entities
+     * @param EntityCollection $entities
+     *
      * @return void
      */
     protected function buildDictionary(EntityCollection $entities)
@@ -91,9 +93,10 @@ class MorphTo extends BelongsTo
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array            $entities
-     * @param  EntityCollection $results
-     * @param  string           $relation
+     * @param array            $entities
+     * @param EntityCollection $results
+     * @param string           $relation
+     *
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)
@@ -105,6 +108,7 @@ class MorphTo extends BelongsTo
      * Get the results of the relationship.
      *
      * @throws \Analogue\ORM\Exceptions\MappingException
+     *
      * @return EntityCollection
      */
     public function getEager()
@@ -119,8 +123,9 @@ class MorphTo extends BelongsTo
     /**
      * Match the results for a given type to their parents.
      *
-     * @param  string           $type
-     * @param  EntityCollection $results
+     * @param string           $type
+     * @param EntityCollection $results
+     *
      * @return void
      */
     protected function matchToMorphParents($type, EntityCollection $results)
@@ -142,8 +147,10 @@ class MorphTo extends BelongsTo
     /**
      * Get all of the relation results for a type.
      *
-     * @param  string $type
+     * @param string $type
+     *
      * @throws \Analogue\ORM\Exceptions\MappingException
+     *
      * @return EntityCollection
      */
     protected function getResultsByType($type)
@@ -160,7 +167,8 @@ class MorphTo extends BelongsTo
     /**
      * Gather all of the foreign keys for a given type.
      *
-     * @param  string $type
+     * @param string $type
+     *
      * @return BaseCollection
      */
     protected function gatherKeysByType($type)
@@ -169,14 +177,14 @@ class MorphTo extends BelongsTo
 
         return BaseCollection::make($this->dictionary[$type])->map(function ($entities) use ($foreign) {
             return head($entities)->{$foreign};
-
         })->unique();
     }
 
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  mixed $entity
+     * @param mixed $entity
+     *
      * @return void
      */
     public function associate($entity)
@@ -192,9 +200,9 @@ class MorphTo extends BelongsTo
     }
 
     /**
-     * Get the foreign key value pair for a related object
+     * Get the foreign key value pair for a related object.
      *
-     * @var mixed $related
+     * @var mixed
      *
      * @return array
      */
@@ -208,7 +216,7 @@ class MorphTo extends BelongsTo
             $relatedKey = $this->relatedMap->getKeyName();
 
             return [
-                $foreignKey => $wrapper->getEntityAttribute($relatedKey),
+                $foreignKey      => $wrapper->getEntityAttribute($relatedKey),
                 $this->morphType => $wrapper->getMap()->getMorphClass(),
             ];
         } else {
