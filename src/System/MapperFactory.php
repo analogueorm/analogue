@@ -2,9 +2,9 @@
 
 namespace Analogue\ORM\System;
 
+use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\EntityMap;
 use Illuminate\Contracts\Events\Dispatcher;
-use Analogue\ORM\Drivers\Manager as DriverManager;
 
 /**
  * Build a mapper instance from an EntityMap object, doing the
@@ -14,21 +14,21 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
 class MapperFactory
 {
     /**
-     * Manager instance
+     * Manager instance.
      *
      * @var \Analogue\ORM\System\Manager
      */
     protected $manager;
 
     /**
-     * DriverManager instance
+     * DriverManager instance.
      *
      * @var \Analogue\ORM\Drivers\Manager
      */
     protected $drivers;
 
     /**
-     * Event dispatcher instance
+     * Event dispatcher instance.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
@@ -36,6 +36,7 @@ class MapperFactory
 
     /**
      * MapperFactory constructor.
+     *
      * @param DriverManager $drivers
      * @param Dispatcher    $dispatcher
      * @param Manager       $manager
@@ -50,32 +51,33 @@ class MapperFactory
     }
 
     /**
-     * Return a new Mapper instance
+     * Return a new Mapper instance.
      *
-     * @param  string    $entityClass
-     * @param  EntityMap $entityMap
+     * @param string    $entityClass
+     * @param EntityMap $entityMap
+     *
      * @return Mapper
      */
     public function make($entityClass, EntityMap $entityMap)
     {
         $driver = $entityMap->getDriver();
-        
+
         $connection = $entityMap->getConnection();
 
         $adapter = $this->drivers->getAdapter($driver, $connection);
-        
+
         $entityMap->setDateFormat($adapter->getDateFormat());
 
         $mapper = new Mapper($entityMap, $adapter, $this->dispatcher, $this->manager);
 
         // Fire Initializing Event
         $mapper->fireEvent('initializing', $mapper);
-        
+
         // Proceed necessary parsing on the EntityMap object
         $entityMap->initialize();
 
         // Apply Inheritance scope, if necessary
-        if($entityMap->getInheritanceType() == 'single_table') {
+        if ($entityMap->getInheritanceType() == 'single_table') {
             $scope = new SingleTableInheritanceScope($entityMap);
             $mapper->addGlobalScope($scope);
         }

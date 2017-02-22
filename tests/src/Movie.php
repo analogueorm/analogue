@@ -5,7 +5,7 @@ namespace TestApp;
 class Movie
 {
     /**
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -33,5 +33,4 @@ class Movie
     {
         return $this->realisator;
     }
-
 }

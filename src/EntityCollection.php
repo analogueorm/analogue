@@ -5,13 +5,13 @@ namespace Analogue\ORM;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class EntityCollection extends Collection
 {
     /**
-     * Wrapper Factory
+     * Wrapper Factory.
      *
      * @var \Analogue\ORM\System\Wrappers\Factory
      */
@@ -19,11 +19,12 @@ class EntityCollection extends Collection
 
     /**
      * EntityCollection constructor.
+     *
      * @param array|null $entities
      */
     public function __construct(array $entities = null)
     {
-        $this->factory = new Factory;
+        $this->factory = new Factory();
 
         parent::__construct($entities);
     }
@@ -31,9 +32,11 @@ class EntityCollection extends Collection
     /**
      * Find an entity in the collection by key.
      *
-     * @param  mixed $key
-     * @param  mixed $default
+     * @param mixed $key
+     * @param mixed $default
+     *
      * @throws MappingException
+     *
      * @return \Analogue\ORM\Entity
      */
     public function find($key, $default = null)
@@ -43,7 +46,6 @@ class EntityCollection extends Collection
         }
 
         return array_first($this->items, function ($entity, $itemKey) use ($key) {
-
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }
@@ -51,7 +53,8 @@ class EntityCollection extends Collection
     /**
      * Add an entity to the collection.
      *
-     * @param  Mappable $entity
+     * @param Mappable $entity
+     *
      * @return $this
      */
     public function add($entity)
@@ -62,10 +65,12 @@ class EntityCollection extends Collection
     }
 
     /**
-     * Remove an entity from the collection
+     * Remove an entity from the collection.
      *
      * @param $entity
+     *
      * @throws MappingException
+     *
      * @return mixed
      */
     public function remove($entity)
@@ -78,7 +83,8 @@ class EntityCollection extends Collection
     /**
      * Push an item onto the end of the collection.
      *
-     * @param  mixed $value
+     * @param mixed $value
+     *
      * @return void
      */
     public function push($value)
@@ -89,8 +95,9 @@ class EntityCollection extends Collection
     /**
      * Put an item in the collection by key.
      *
-     * @param  mixed $key
-     * @param  mixed $value
+     * @param mixed $key
+     * @param mixed $value
+     *
      * @return void
      */
     public function put($key, $value)
@@ -101,8 +108,9 @@ class EntityCollection extends Collection
     /**
      * Set the item at a given offset.
      *
-     * @param  mixed $key
-     * @param  mixed $value
+     * @param mixed $key
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetSet($key, $value)
@@ -115,29 +123,10 @@ class EntityCollection extends Collection
     }
 
     /**
-     * Determine if a key exists in the collection.
-     *
-     * @param  mixed      $key
-     * @param  mixed|null $value
-     * @return bool
-     */
-    public function contains($key, $value = null)
-    {
-        if (func_num_args() == 2) {
-            return !$this->where($key, $value)->isEmpty();
-        }
-
-        if ($this->useAsCallable($key)) {
-            return !is_null($this->first($key));
-        }
-
-        return !is_null($this->find($key));
-    }
-
-    /**
      * Fetch a nested element of the collection.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return self
      */
     public function fetch($key)
@@ -146,9 +135,10 @@ class EntityCollection extends Collection
     }
 
     /**
-     * Generic function for returning class.key value pairs
+     * Generic function for returning class.key value pairs.
      *
      * @throws MappingException
+     *
      * @return string
      */
     public function getEntityHashes()
@@ -160,16 +150,18 @@ class EntityCollection extends Collection
 
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            return $class . '.' . $entity->getEntityAttribute($keyName);
+            return $class.'.'.$entity->getEntityAttribute($keyName);
         },
         $this->items);
     }
 
     /**
-     * Get a subset of the collection from entity hashes
+     * Get a subset of the collection from entity hashes.
      *
-     * @param  array $hashes
+     * @param array $hashes
+     *
      * @throws MappingException
+     *
      * @return array
      */
     public function getSubsetByHashes(array $hashes)
@@ -183,7 +175,7 @@ class EntityCollection extends Collection
 
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            if (in_array($class . '.' . $item->$keyName, $hashes)) {
+            if (in_array($class.'.'.$item->$keyName, $hashes)) {
                 $subset[] = $item;
             }
         }
@@ -194,8 +186,10 @@ class EntityCollection extends Collection
     /**
      * Merge the collection with the given items.
      *
-     * @param  array $items
+     * @param array $items
+     *
      * @throws MappingException
+     *
      * @return self
      */
     public function merge($items)
@@ -212,12 +206,13 @@ class EntityCollection extends Collection
     /**
      * Diff the collection with the given items.
      *
-     * @param  \ArrayAccess|array $items
+     * @param \ArrayAccess|array $items
+     *
      * @return self
      */
     public function diff($items)
     {
-        $diff = new static;
+        $diff = new static();
 
         $dictionary = $this->getDictionary($items);
 
@@ -233,13 +228,15 @@ class EntityCollection extends Collection
     /**
      * Intersect the collection with the given items.
      *
-     * @param  \ArrayAccess|array $items
+     * @param \ArrayAccess|array $items
+     *
      * @throws MappingException
+     *
      * @return self
      */
     public function intersect($items)
     {
-        $intersect = new static;
+        $intersect = new static();
 
         $dictionary = $this->getDictionary($items);
 
@@ -255,7 +252,8 @@ class EntityCollection extends Collection
     /**
      * Returns only the models from the collection with the specified keys.
      *
-     * @param  mixed $keys
+     * @param mixed $keys
+     *
      * @return self
      */
     public function only($keys)
@@ -268,7 +266,8 @@ class EntityCollection extends Collection
     /**
      * Returns all models in the collection except the models with specified keys.
      *
-     * @param  mixed $keys
+     * @param mixed $keys
+     *
      * @return self
      */
     public function except($keys)
@@ -281,8 +280,10 @@ class EntityCollection extends Collection
     /**
      * Get a dictionary keyed by primary keys.
      *
-     * @param  \ArrayAccess|array $items
+     * @param \ArrayAccess|array $items
+     *
      * @throws MappingException
+     *
      * @return array
      */
     public function getDictionary($items = null)
@@ -300,6 +301,7 @@ class EntityCollection extends Collection
 
     /**
      * @throws MappingException
+     *
      * @return array
      */
     public function getEntityKeys()
@@ -309,7 +311,9 @@ class EntityCollection extends Collection
 
     /**
      * @param $entity
+     *
      * @throws MappingException
+     *
      * @return mixed
      */
     protected function getEntityKey($entity)
@@ -324,8 +328,10 @@ class EntityCollection extends Collection
     /**
      * Get the max value of a given key.
      *
-     * @param  string|null $key
+     * @param string|null $key
+     *
      * @throws MappingException
+     *
      * @return mixed
      */
     public function max($key = null)
@@ -341,8 +347,10 @@ class EntityCollection extends Collection
     /**
      * Get the min value of a given key.
      *
-     * @param  string|null $key
+     * @param string|null $key
+     *
      * @throws MappingException
+     *
      * @return mixed
      */
     public function min($key = null)
@@ -358,8 +366,9 @@ class EntityCollection extends Collection
     /**
      * Get an array with the values of a given key.
      *
-     * @param  string $value
-     * @param  string|null $key
+     * @param string      $value
+     * @param string|null $key
+     *
      * @return self
      */
     public function pluck($value, $key = null)
@@ -370,8 +379,9 @@ class EntityCollection extends Collection
     /**
      * Alias for the "pluck" method.
      *
-     * @param  string $value
-     * @param  string|null $key
+     * @param string      $value
+     * @param string|null $key
+     *
      * @return self
      */
     public function lists($value, $key = null)
@@ -382,9 +392,11 @@ class EntityCollection extends Collection
     /**
      * Return only unique items from the collection.
      *
-     * @param  string|null $key
-     * @param  bool $strict
+     * @param string|null $key
+     * @param bool        $strict
+     *
      * @throws MappingException
+     *
      * @return self
      */
     public function unique($key = null, $strict = false)
@@ -412,12 +424,14 @@ class EntityCollection extends Collection
     /**
      * Get the collection of items as JSON.
      *
-     * @param  int  $options
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0)
     {
         $collection = new Collection(array_values($this->items));
+
         return $collection->toJson($options);
     }
 }

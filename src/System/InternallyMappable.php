@@ -5,7 +5,7 @@ namespace Analogue\ORM\System;
 interface InternallyMappable
 {
     /**
-     * Set the object attribute raw values (hydration)
+     * Set the object attribute raw values (hydration).
      *
      * @param array $attributes
      */
@@ -19,23 +19,28 @@ interface InternallyMappable
     public function getEntityAttributes();
 
     /**
-     * Set the raw entity attributes
+     * Set the raw entity attributes.
+     *
      * @param string $key
      * @param string $value
      */
     public function setEntityAttribute($key, $value);
 
     /**
-     * Return the entity's attribute
-     * @param  string $key
+     * Return the entity's attribute.
+     *
+     * @param string $key
+     *
      * @return mixed
      */
     public function getEntityAttribute($key);
 
     /**
-     * Does the entity posses the given attribute
-     * @param  string  $key
-     * @return boolean
+     * Does the entity posses the given attribute.
+     *
+     * @param string $key
+     *
+     * @return bool
      */
     public function hasAttribute($key);
 }

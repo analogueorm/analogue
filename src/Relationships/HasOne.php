@@ -10,6 +10,7 @@ class HasOne extends HasOneOrMany
      * Get the results of the relationship.
      *
      * @param $relation
+     *
      * @return mixed
      */
     public function getResults($relation)
@@ -31,12 +32,12 @@ class HasOne extends HasOneOrMany
         return $this->query->first();
     }
 
-
     /**
      * Initialize the relation on a set of entities.
      *
-     * @param  \Analogue\ORM\Entity[] $entities
-     * @param  string $relation
+     * @param \Analogue\ORM\Entity[] $entities
+     * @param string                 $relation
+     *
      * @return array
      */
     public function initRelation(array $entities, $relation)
@@ -51,9 +52,10 @@ class HasOne extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  \Analogue\ORM\Entity[] $entities
-     * @param  EntityCollection       $results
-     * @param  string                 $relation
+     * @param \Analogue\ORM\Entity[] $entities
+     * @param EntityCollection       $results
+     * @param string                 $relation
+     *
      * @return array
      */
     public function match(array $entities, EntityCollection $results, $relation)

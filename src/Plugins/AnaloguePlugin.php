@@ -7,7 +7,7 @@ use Analogue\ORM\System\Manager;
 abstract class AnaloguePlugin implements AnaloguePluginInterface
 {
     /**
-     * Manager instance
+     * Manager instance.
      *
      * @var Manager
      */
@@ -15,6 +15,7 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface
 
     /**
      * AnaloguePlugin constructor.
+     *
      * @param Manager $manager
      */
     public function __construct(Manager $manager)
@@ -23,14 +24,14 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface
     }
 
     /**
-     * Boot the plugin
+     * Boot the plugin.
      *
      * @return void
      */
     abstract public function register();
 
     /**
-     * Get custom events provided by the plugin
+     * Get custom events provided by the plugin.
      *
      * @return array
      */

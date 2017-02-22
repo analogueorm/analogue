@@ -4,19 +4,20 @@ namespace Analogue\ORM;
 
 /**
  * Share behaviour of Entities/ValueObjects and allow
- * implementing mapping for custom classes
+ * implementing mapping for custom classes.
  */
 trait MappableTrait
 {
     /**
-     * The Entity's Attributes
+     * The Entity's Attributes.
+     *
      * @var array
      */
     protected $attributes = [];
 
     /**
      * Method used by the mapper to set the object
-     * attribute raw values (hydration)
+     * attribute raw values (hydration).
      *
      * @param array $attributes
      *
@@ -40,7 +41,7 @@ trait MappableTrait
 
     /**
      * Method used by the mapper to set raw
-     * key-value pair
+     * key-value pair.
      *
      * @param string $key
      * @param string $value
@@ -54,9 +55,10 @@ trait MappableTrait
 
     /**
      * Method used by the mapper to get single
-     * key-value pair
+     * key-value pair.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return mixed|null
      */
     public function getEntityAttribute($key)
@@ -64,7 +66,7 @@ trait MappableTrait
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
         } else {
-            return null;
+            return;
         }
     }
 }
