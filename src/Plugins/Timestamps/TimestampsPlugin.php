@@ -3,7 +3,6 @@
 namespace Analogue\ORM\Plugins\Timestamps;
 
 use Analogue\ORM\Plugins\AnaloguePlugin;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
 use Carbon\Carbon;
 
