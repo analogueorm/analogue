@@ -1,8 +1,10 @@
 # Analogue ORM 
-[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.3)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.3)
-[![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
+[![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
+[![License](https://poser.pugx.org/analogue/orm/license)](https://packagist.org/packages/analogue/orm)
+[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=dev-master)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.4)
+[![StyleCI](https://styleci.io/repos/27265369/shield?branch=dev-master)](https://styleci.io/repos/27265369)
+
 
 **Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
@@ -56,6 +58,10 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 
 ##Changelog 
 
+####Version 5.4
+- Illuminate 5.4 Compatibility
+- Add Abillity to map DB columns that name are not equals to the name of the attribute
+
 ####Version 5.3
 - Illuminate 5.3 Compatibility. 
 - now fully support Single Table Inheritance
@@ -92,4 +98,3 @@ Check the [wiki](https://github.com/analogueorm/analogue/wiki) for full document
 ## Licence
 
 This package is licensed under the [MIT License](http://opensource.org/licenses/MIT).
-
