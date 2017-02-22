@@ -136,7 +136,6 @@ abstract class Wrapper implements InternallyMappable
         foreach ($proxies as $key => $value) {
             $this->setEntityAttribute($key, $value);
         }
-
     }
 
     /**

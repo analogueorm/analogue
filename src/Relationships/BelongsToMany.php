@@ -205,7 +205,7 @@ class BelongsToMany extends Relationship
         $select = $this->getSelectColumns($columns);
 
         $entities = $this->query->addSelect($select)->get()->all();
-        
+
         $entities = $this->hydratePivotRelation($entities);
 
         return $this->relatedMap->newCollection($entities);

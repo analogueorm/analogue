@@ -1095,8 +1095,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Apply the callback if the value is truthy.
      *
-     * @param  bool  $value
-     * @param  callable  $callback
+     * @param bool     $value
+     * @param callable $callback
+     *
      * @return mixed
      */
     public function when($value, callable $callback)

@@ -76,7 +76,7 @@ class SingleTableInheritanceScope implements ScopeInterface
      * @return void
      */
     public function apply(Query $query)
-    {   
+    {
         $query->whereIn($this->column, $this->types);
     }
 

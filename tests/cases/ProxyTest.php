@@ -2,8 +2,8 @@
 
 use ProxyManager\Proxy\ProxyInterface;
 use TestApp\Blog;
-use TestApp\User;
 use TestApp\PlainProxy;
+use TestApp\User;
 
 class ProxyTest extends AnalogueTestCase
 {
@@ -44,5 +44,5 @@ class ProxyTest extends AnalogueTestCase
         $proxy = $mapper->store($proxy);
         $loadedProxy = $mapper->find($proxy->getId());
         $this->assertInstanceOf(ProxyInterface::class, $loadedProxy->getRelated());
-    }   
+    }
 }
