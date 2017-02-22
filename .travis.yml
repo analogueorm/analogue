@@ -16,4 +16,4 @@ before_script:
   - travis_retry composer install --prefer-source --no-interaction
 
 script:
-  - phpunit
+  - vendor/bin/phpunit
