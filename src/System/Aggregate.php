@@ -802,7 +802,7 @@ class Aggregate implements InternallyMappable
             && !in_array($parentRelation, $parentPivotRelations)
         ) {
             $parentObject = $this->parent->getEntityObject();
-
+            
             // Call Relationship's method on parent map
             $relationship = $parentMap->$parentRelation($parentObject);
 

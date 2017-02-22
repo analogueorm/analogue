@@ -38,7 +38,7 @@ class BelongsToMany extends Relationship
      *
      * @var string
      */
-    protected $relationName;
+    protected $relation;
 
     /**
      * The pivot table columns to retrieve.
@@ -62,14 +62,14 @@ class BelongsToMany extends Relationship
      * @param string   $table
      * @param string   $foreignKey
      * @param string   $otherKey
-     * @param string   $relationName
+     * @param string   $relation
      */
-    public function __construct(Mapper $mapper, $parent, $table, $foreignKey, $otherKey, $relationName = null)
+    public function __construct(Mapper $mapper, $parent, $table, $foreignKey, $otherKey, $relation)
     {
         $this->table = $table;
         $this->otherKey = $otherKey;
         $this->foreignKey = $foreignKey;
-        $this->relationName = $relationName;
+        $this->relation = $relation;
 
         parent::__construct($mapper, $parent);
     }
@@ -936,6 +936,6 @@ class BelongsToMany extends Relationship
      */
     public function getRelationName()
     {
-        return $this->relationName;
+        return $this->relation;
     }
 }
