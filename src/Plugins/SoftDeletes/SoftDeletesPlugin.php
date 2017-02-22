@@ -24,7 +24,8 @@ class SoftDeletesPlugin extends AnaloguePlugin
         $host = $this;
 
         // Hook any mapper init and check the mapping include soft deletes.
-        $this->manager->registerGlobalEvent('initialized', function (Mapper $mapper) use ($host) {
+        $this->manager->registerGlobalEvent('initialized', function ($name, array $data) use ($host) {
+            $mapper = $data[0];
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesSoftDeletes()) {
