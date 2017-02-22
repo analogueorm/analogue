@@ -128,9 +128,10 @@ class EmbedsOne extends EmbeddedRelationship
     }
 
     /**
-     * Normalize object an array containing raw attributes
-     * 
-     * @param  mixed  $object 
+     * Normalize object an array containing raw attributes.
+     *
+     * @param mixed $object
+     *
      * @return array
      */
     protected function normalizeAsArray($object) : array
@@ -141,9 +142,10 @@ class EmbedsOne extends EmbeddedRelationship
     }
 
     /**
-     * Normalize object as parent's attributes
-     * 
-     * @param  mixed $object
+     * Normalize object as parent's attributes.
+     *
+     * @param mixed $object
+     *
      * @return array
      */
     protected function normalizeAsAttributes($object) : array

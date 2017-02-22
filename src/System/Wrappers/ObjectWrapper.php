@@ -83,7 +83,7 @@ class ObjectWrapper extends Wrapper
     public function hydrate()
     {
         $properties = $this->propertiesFromAttributes($this->attributes) + $this->unmanagedProperties;
-        
+
         $this->hydrator->hydrate($properties, $this->entity);
     }
 
