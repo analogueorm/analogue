@@ -1,7 +1,9 @@
 # Analogue ORM 
+[![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
+[![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
+[![License](https://poser.pugx.org/analogue/orm/license)](https://packagist.org/packages/analogue/orm)
 [![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.4)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.4)
-[![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
 
 **Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
