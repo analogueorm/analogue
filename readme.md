@@ -1,6 +1,6 @@
 # Analogue ORM 
-[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.3)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.3)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.3)
+[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.4)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.4)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/analogueorm/analogue/badges/quality-score.png?b=5.4)](https://scrutinizer-ci.com/g/analogueorm/analogue/?branch=5.4)
 [![Latest Version](https://img.shields.io/github/release/analogueorm/analogue.svg?style=flat-square)](https://github.com/analogueorm/analogue/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
@@ -55,6 +55,10 @@ composer require analogue/orm
 See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ##Changelog 
+
+####Version 5.4
+- Illuminate 5.4 Compatibility
+- Add Abillity to map DB columns that name are not equals to the name of the attribute
 
 ####Version 5.3
 - Illuminate 5.3 Compatibility. 
