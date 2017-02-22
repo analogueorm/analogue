@@ -487,6 +487,8 @@ class BelongsToMany extends Relationship
     {
         $foreign = $this->foreignKey;
 
+        $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
+
         // First we will build a dictionary of child models keyed by the foreign key
         // of the relation so that we will easily and quickly match them to their
         // parents without having a possibly slow inner loops for every models.

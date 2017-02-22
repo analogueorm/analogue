@@ -223,6 +223,10 @@ class Store extends Command
         } else {
             $sequence = $aggregate->getEntityMap()->getSequence();
 
+            if (empty($attributes[$keyName])) {
+                unset($attributes[$keyName]);
+            }
+
             $id = $this->query->insertGetId($attributes, $sequence);
 
             $aggregate->setEntityAttribute($keyName, $id);
