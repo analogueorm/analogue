@@ -743,28 +743,23 @@ class Aggregate implements InternallyMappable
     /**
      * Get a null foreign key value pair for an empty relationship.
      *
-     * @param [type] $relation [description]
+     * @param string  $relation 
      *
-     * @return [type] [description]
+     * @return array
      */
     protected function getNullForeignKeyFromRelation($relation) : array
     {
         $key = $this->entityMap->getLocalKeys($relation);
 
+        if (is_array($key)) {
+            return $this->entityMap->getEmptyValueForLocalKey($relation);
+        }
+
         if(is_null($key)) {
             throw new MappingException("Foreign key for relation $relation cannot be null");
         }
 
-        // If the relation is polymorphic, we'll set both key and type
-        // to null
-        if (is_array($key)) {
-            return [
-                $key['type'] => null,
-                $key['id']   => null,
-            ];
-        }
-
-        return [$key => null];
+        return [$key => $this->entityMap->getEmptyValueForLocalKey($relation)];
     }
 
     /**

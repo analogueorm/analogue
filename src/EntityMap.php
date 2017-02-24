@@ -548,6 +548,17 @@ class EntityMap
     }
 
     /**
+     * Return true if relationship is single
+     * 
+     * @param  string  $relation 
+     * @return boolean           
+     */
+    public function isSingleRelationship(string $relation) : bool
+    {
+        return in_array($relation, $this->singleRelations);
+    }
+
+    /**
      * Relationships of type Collection.
      *
      * @return array
@@ -555,6 +566,59 @@ class EntityMap
     public function getManyRelationships() : array
     {
         return $this->manyRelations;
+    }
+
+    /**
+     * Return true if relationship is single
+     * 
+     * @param  string  $relation 
+     * @return boolean           
+     */
+    public function isManyRelationship(string $relation) : bool
+    {
+        return in_array($relation, $this->manyRelations);
+    }
+
+    /**
+     * Return empty value for a given relationship
+     * 
+     * @param  string $relation 
+     * @return mixed
+     */
+    public function getEmptyValueForRelationship(string $relation)
+    {
+        if($this->isSingleRelationship($relation)) {
+            return null;
+        }
+
+        if($this->isManyRelationship($relation)) {
+            return new Collection;
+        }
+
+        throw new MappingException("Cannot determine defaut value of $relation");
+    }
+
+    /**
+     * Return empty value for a local foreign key
+     * 
+     * @param  string $relation 
+     * @return mixed
+     */
+    public function getEmptyValueForLocalKey(string $relation)
+    {
+        if($this->isPolymorphic($relation)) {
+            $key = $this->localForeignKeys[$relation];
+            return [
+                $key['type'] => null,
+                $key['id']   => null,
+            ];
+        }
+
+        if($this->isManyRelationship($relation)) {
+            return [];
+        }
+
+        return null;
     }
 
     /**
