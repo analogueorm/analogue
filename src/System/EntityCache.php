@@ -65,7 +65,7 @@ class EntityCache
     public function add(array $results)
     {
         $cachedResults = [];
-
+        
         $keyColumn = $this->entityMap->getKeyName();
 
         foreach ($results as $result) {

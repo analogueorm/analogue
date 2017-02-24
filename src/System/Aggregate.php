@@ -751,6 +751,10 @@ class Aggregate implements InternallyMappable
     {
         $key = $this->entityMap->getLocalKeys($relation);
 
+        if(is_null($key)) {
+            throw new MappingException("Foreign key for relation $relation cannot be null");
+        }
+
         // If the relation is polymorphic, we'll set both key and type
         // to null
         if (is_array($key)) {

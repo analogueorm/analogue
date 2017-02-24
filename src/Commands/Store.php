@@ -257,7 +257,7 @@ class Store extends Command
         $query = $query->where($keyName, '=', $this->aggregate->getEntityId());
 
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
-
+        
         if (count($dirtyAttributes) > 0) {
             $query->update($dirtyAttributes);
         }

@@ -98,63 +98,63 @@ class EntityMap
      *
      * @var array
      */
-    private $relationships = [];
+    protected $relationships = [];
 
     /**
      * Relationships that should be treated as collection.
      *
      * @var array
      */
-    private $manyRelations = [];
+    protected $manyRelations = [];
 
     /**
      * Relationships that should be treated as single entity.
      *
      * @var array
      */
-    private $singleRelations = [];
+    protected $singleRelations = [];
 
     /**
      * Relationships for which the key is stored in the Entity itself.
      *
      * @var array
      */
-    private $localRelations = [];
+    protected $localRelations = [];
 
     /**
      * List of local keys associated to local relation methods.
      *
      * @var array
      */
-    private $localForeignKeys = [];
+    protected $localForeignKeys = [];
 
     /**
      * Relationships for which the key is stored in the Related Entity.
      *
      * @var array
      */
-    private $foreignRelations = [];
+    protected $foreignRelations = [];
 
     /**
      * Relationships which use a pivot record.
      *
      * @var array
      */
-    private $pivotRelations = [];
+    protected $pivotRelations = [];
 
     /**
      * Polymorphic relationships.
      *
      * @var array
      */
-    private $polymorphicRelations = [];
+    protected $polymorphicRelations = [];
 
     /**
      * Dynamic relationships.
      *
      * @var array
      */
-    private $dynamicRelationships = [];
+    protected $dynamicRelationships = [];
 
     /**
      * Targetted class for the relationship method. value is set to `null` for
@@ -162,7 +162,7 @@ class EntityMap
      *
      * @var array
      */
-    private $relatedClasses = [];
+    protected $relatedClasses = [];
 
     /**
      * Some relation methods like embedded objects, or HasOne and MorphOne,
@@ -170,14 +170,14 @@ class EntityMap
      *
      * @var array
      */
-    private $nonProxyRelationships = [];
+    protected $nonProxyRelationships = [];
 
     /**
      * Relation methods that are embedded objects.
      *
      * @var array
      */
-    private $embeddedRelations = [];
+    protected $embeddedRelations = [];
 
     /**
      * The number of models to return for pagination.

@@ -1097,9 +1097,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @param  bool  $value
      * @param  callable  $callback
+     * @param  callable  $default
      * @return mixed
      */
-    public function when($value, callable $callback)
+    public function when($value, callable $callback, callable $default = NULL)
     {
         $this->initializeProxy();
 
