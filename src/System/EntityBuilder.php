@@ -80,7 +80,7 @@ class EntityBuilder
         $wrapper->setEntityAttributes($result);
 
         $wrapper->setProxies();
-        
+
         // Hydrate and return the instance
         $wrapper->hydrate();
         $entity = $wrapper->getObject();

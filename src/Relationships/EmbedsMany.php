@@ -76,38 +76,38 @@ class EmbedsMany extends EmbedsOne
      */
     public function normalize($objects) : array
     {
-    	if(! $this->asArray) {
-    		throw new MappingException("Cannot normalize an embedsMany relation as row columns");
-    	}
+        if (!$this->asArray) {
+            throw new MappingException('Cannot normalize an embedsMany relation as row columns');
+        }
 
-    	return $this->normalizeAsArray($objects);
+        return $this->normalizeAsArray($objects);
     }
 
     /**
-     * Normalize object an array containing raw attributes
-     * 
-     * @param  mixed  $object 
+     * Normalize object an array containing raw attributes.
+     *
+     * @param mixed $object
+     *
      * @return array
      */
     protected function normalizeAsArray($objects) : array
     {
-    	$key = $this->relation;
+        $key = $this->relation;
 
-    	if(! is_array($objects) && ! $objects instanceof Collection) {
-    		throw new MappingException("column '$key' should be of type array or collection");
-    	}
+        if (!is_array($objects) && !$objects instanceof Collection) {
+            throw new MappingException("column '$key' should be of type array or collection");
+        }
 
-    	if($objects instanceof Collection ) {
-    		$objects = $objects->all();
-    	}
-    	
-    	$normalizedObjects = [];
+        if ($objects instanceof Collection) {
+            $objects = $objects->all();
+        }
 
-    	foreach($objects as $object) {
-    		$wrapper = $this->factory->make($object);	
-    		$normalizedObjects[] = $wrapper->getEntityAttributes();
-    	}
-        
+        $normalizedObjects = [];
+
+        foreach ($objects as $object) {
+            $wrapper = $this->factory->make($object);
+            $normalizedObjects[] = $wrapper->getEntityAttributes();
+        }
 
         return [$key => $normalizedObjects];
     }

@@ -231,7 +231,7 @@ class Store extends Command
             $sequence = $aggregate->getEntityMap()->getSequence();
 
             // Prevent inserting with a null ID
-            if(array_key_exists($keyName, $attributes)) {
+            if (array_key_exists($keyName, $attributes)) {
                 unset($attributes[$keyName]);
             }
 

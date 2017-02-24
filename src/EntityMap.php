@@ -935,7 +935,7 @@ class EntityMap
      */
     public function embedsOne($parent, string $relatedClass, $relation = null) : EmbedsOne
     {
-        if(is_null($relation)) {
+        if (is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
             $relation = $caller['function'];
         }
@@ -956,7 +956,7 @@ class EntityMap
      */
     public function embedsMany($parent, string $relatedClass, $relation = null) : EmbedsMany
     {
-        if(is_null($relation)) {
+        if (is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
             $relation = $caller['function'];
         }

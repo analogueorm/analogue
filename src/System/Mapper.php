@@ -191,7 +191,7 @@ class Mapper
      * @return \Analogue\ORM\Entity
      */
     protected function storeEntity($entity)
-    {   
+    {
         $this->checkEntityType($entity);
 
         $store = new Store($this->aggregate($entity), $this->newQueryBuilder());
