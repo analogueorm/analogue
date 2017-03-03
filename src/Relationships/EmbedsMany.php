@@ -40,8 +40,12 @@ class EmbedsMany extends EmbedsOne
         // which should be an array.
         $key = $this->relation;
 
-        if (!array_key_exists($key, $attributes) && !is_array($key)) {
-            throw new MappingException("'$key' column should be an array");
+        if (!array_key_exists($key, $attributes)) {
+            $attributes[$key] = [];
+        }
+
+        if (!is_array($attributes[$key])) {
+            throw new MappingException("'$key' column should be an array, actual :".$attributes[$key]);
         }
 
         $attributes[$key] = $this->buildEmbeddedCollection($attributes[$key]);

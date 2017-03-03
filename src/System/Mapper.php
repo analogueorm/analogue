@@ -104,7 +104,7 @@ class Mapper
     {
         $builder = new ResultBuilder($this);
 
-        if ($results instanceof collection) {
+        if ($results instanceof Collection) {
             // Get underlying collection array
             $results = $results->all();
         }
@@ -117,6 +117,10 @@ class Mapper
         $results = array_map(function ($item) {
             return (array) $item;
         }, $results);
+
+        // Then, we'll pass the results to the Driver's provided transformer, so
+        // any DB specific value can be casted before hydration
+        $results = $this->adapter->fromDatabase($results);
 
         // Then, we'll cache every single results as raw attributes, before
         // adding relationships, which will be cached when the relationship's

@@ -590,11 +590,6 @@ class Query
 
         // Pass result set to the mapper and return the EntityCollection
         return $this->mapper->map($results, $this->getEagerLoads());
-
-        // Create a result builder.
-        //$builder = new ResultBuilder($this->mapper);
-
-        //return $builder->build($results, $this->getEagerLoads());
     }
 
     /**
