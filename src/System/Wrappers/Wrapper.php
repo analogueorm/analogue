@@ -2,10 +2,8 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
-use Illuminate\Support\Collection;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\ProxyFactory;
-use Analogue\ORM\Exceptions\MappingException;
 
 /**
  * The Wrapper Class provides a single interface access several Entity types.
@@ -128,7 +126,7 @@ abstract class Wrapper implements InternallyMappable
             // If the key is handled locally and we know it not to be set,
             // we'll set the relationship to null value
             if (!$this->relationNeedsProxy($relation, $attributes)) {
-                $proxies[$relation] =$this->entityMap->getEmptyValueForRelationship($relation);
+                $proxies[$relation] = $this->entityMap->getEmptyValueForRelationship($relation);
             } else {
                 $targetClass = $this->getClassToProxy($relation, $attributes);
                 $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
