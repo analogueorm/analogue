@@ -81,14 +81,14 @@ class IlluminateDBAdapter implements DBAdapter
 
     /**
      * Parse result from database and return an array of results
-     * casted to analogue compatible values
-     * 
-     * @param  array  $rows 
+     * casted to analogue compatible values.
+     *
+     * @param array $rows
+     *
      * @return array
      */
     public function fromDatabase(array $rows) : array
     {
         return $rows;
     }
-
 }
