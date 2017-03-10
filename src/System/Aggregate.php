@@ -1026,7 +1026,7 @@ class Aggregate implements InternallyMappable
         $dirty = [];
 
         foreach ($attributes as $key => $value) {
-            if ($this->isRelation($key) || $key == 'pivot') {
+            if ($this->isActualRelation($key) || $key == 'pivot') {
                 continue;
             }
 
@@ -1046,9 +1046,9 @@ class Aggregate implements InternallyMappable
      *
      * @return bool
      */
-    protected function isRelation($key)
+    protected function isActualRelation($key)
     {
-        return in_array($key, $this->entityMap->getRelationships());
+        return in_array($key, $this->entityMap->getNonEmbeddedRelationships());
     }
 
     /**

@@ -95,7 +95,7 @@ class EmbedsMany extends EmbedsOne
      * @return array
      */
     protected function normalizeAsArray($objects) : array
-    {
+    {   
         $key = $this->relation;
 
         if (!is_array($objects) && !$objects instanceof Collection) {
