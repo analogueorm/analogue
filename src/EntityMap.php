@@ -548,10 +548,11 @@ class EntityMap
     }
 
     /**
-     * Return true if relationship is single
-     * 
-     * @param  string  $relation 
-     * @return boolean           
+     * Return true if relationship is single.
+     *
+     * @param string $relation
+     *
+     * @return bool
      */
     public function isSingleRelationship(string $relation) : bool
     {
@@ -569,10 +570,11 @@ class EntityMap
     }
 
     /**
-     * Return true if relationship is single
-     * 
-     * @param  string  $relation 
-     * @return boolean           
+     * Return true if relationship is single.
+     *
+     * @param string $relation
+     *
+     * @return bool
      */
     public function isManyRelationship(string $relation) : bool
     {
@@ -580,45 +582,46 @@ class EntityMap
     }
 
     /**
-     * Return empty value for a given relationship
-     * 
-     * @param  string $relation 
+     * Return empty value for a given relationship.
+     *
+     * @param string $relation
+     *
      * @return mixed
      */
     public function getEmptyValueForRelationship(string $relation)
     {
-        if($this->isSingleRelationship($relation)) {
-            return null;
+        if ($this->isSingleRelationship($relation)) {
+            return;
         }
 
-        if($this->isManyRelationship($relation)) {
-            return new Collection;
+        if ($this->isManyRelationship($relation)) {
+            return new Collection();
         }
 
         throw new MappingException("Cannot determine defaut value of $relation");
     }
 
     /**
-     * Return empty value for a local foreign key
-     * 
-     * @param  string $relation 
+     * Return empty value for a local foreign key.
+     *
+     * @param string $relation
+     *
      * @return mixed
      */
     public function getEmptyValueForLocalKey(string $relation)
     {
-        if($this->isPolymorphic($relation)) {
+        if ($this->isPolymorphic($relation)) {
             $key = $this->localForeignKeys[$relation];
+
             return [
                 $key['type'] => null,
                 $key['id']   => null,
             ];
         }
 
-        if($this->isManyRelationship($relation)) {
+        if ($this->isManyRelationship($relation)) {
             return [];
         }
-
-        return null;
     }
 
     /**

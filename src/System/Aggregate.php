@@ -743,7 +743,7 @@ class Aggregate implements InternallyMappable
     /**
      * Get a null foreign key value pair for an empty relationship.
      *
-     * @param string  $relation 
+     * @param string $relation
      *
      * @return array
      */
@@ -755,7 +755,7 @@ class Aggregate implements InternallyMappable
             return $this->entityMap->getEmptyValueForLocalKey($relation);
         }
 
-        if(is_null($key)) {
+        if (is_null($key)) {
             throw new MappingException("Foreign key for relation $relation cannot be null");
         }
 
