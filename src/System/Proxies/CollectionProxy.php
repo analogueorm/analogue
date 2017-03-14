@@ -5,8 +5,8 @@ namespace Analogue\ORM\System\Proxies;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\Manager;
 use CachingIterator;
-use ProxyManager\Proxy\ProxyInterface;
 use Illuminate\Support\Collection;
+use ProxyManager\Proxy\ProxyInterface;
 
 class CollectionProxy extends EntityCollection implements ProxyInterface
 {
@@ -78,8 +78,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Return a base Collection with current items
-     * 
+     * Return a base Collection with current items.
+     *
      * @return \Illuminate\Support\Collection
      */
     protected function toBaseCollection() : Collection
@@ -211,7 +211,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function diffKeys($items)
     {
         $this->initializeProxy();
-        
+
         $parent = $this->toBaseCollection();
 
         return $parent->diffKeys($items);
@@ -301,9 +301,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Filter items by the given key value pair.
      *
-     * @param  string  $key
-     * @param  mixed  $values
-     * @param  bool  $strict
+     * @param string $key
+     * @param mixed  $values
+     * @param bool   $strict
+     *
      * @return static
      */
     public function whereNotIn($key, $values, $strict = false)
@@ -344,7 +345,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function whereIn($key, $values, $strict = false)
     {
         $this->initializeProxy();
-        
+
         $parent = $this->toBaseCollection();
 
         return $parent->whereIn($key, $values, $strict);
@@ -991,7 +992,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function shuffle($seed = null)
     {
         $this->initializeProxy();
-        
+
         $parent = $this->toBaseCollection();
 
         return $parent->shuffle($seed);
