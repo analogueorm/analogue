@@ -6,6 +6,7 @@ use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\Manager;
 use CachingIterator;
 use ProxyManager\Proxy\ProxyInterface;
+use Illuminate\Support\Collection;
 
 class CollectionProxy extends EntityCollection implements ProxyInterface
 {
@@ -77,6 +78,16 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
+     * Return a base Collection with current items
+     * 
+     * @return \Illuminate\Support\Collection
+     */
+    protected function toBaseCollection() : Collection
+    {
+        return new Collection($this->items);
+    }
+
+    /**
      * Get all of the items in the collection.
      *
      * @return array
@@ -139,7 +150,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::collapse();
+        $parent = $this->toBaseCollection();
+
+        return $parent->collapse();
     }
 
     /**
@@ -183,7 +196,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::diff($items);
+        $parent = $this->toBaseCollection();
+
+        return $parent->diff($items);
     }
 
     /**
@@ -196,8 +211,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function diffKeys($items)
     {
         $this->initializeProxy();
+        
+        $parent = $this->toBaseCollection();
 
-        return parent::diffKeys($items);
+        return $parent->diffKeys($items);
     }
 
     /**
@@ -226,7 +243,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::every($key, $operator, $value);
+        $parent = $this->toBaseCollection();
+
+        return $parent->every($key, $operator, $value);
     }
 
     /**
@@ -240,7 +259,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::except($keys);
+        $parent = $this->toBaseCollection();
+
+        return $parent->except($keys);
     }
 
     /**
@@ -254,7 +275,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::filter($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->filter($callback);
     }
 
     /**
@@ -270,7 +293,26 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::where($key, $operator, $value);
+        $parent = $this->toBaseCollection();
+
+        return $parent->where($key, $operator, $value);
+    }
+
+    /**
+     * Filter items by the given key value pair.
+     *
+     * @param  string  $key
+     * @param  mixed  $values
+     * @param  bool  $strict
+     * @return static
+     */
+    public function whereNotIn($key, $values, $strict = false)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->whereNotIn($key, $values, $strict);
     }
 
     /**
@@ -285,7 +327,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::whereStrict($key, $value);
+        $parent = $this->toBaseCollection();
+
+        return $parent->whereStrict($key, $value);
     }
 
     /**
@@ -300,8 +344,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function whereIn($key, $values, $strict = false)
     {
         $this->initializeProxy();
+        
+        $parent = $this->toBaseCollection();
 
-        return parent::whereIn($key, $values, $strict);
+        return $parent->whereIn($key, $values, $strict);
     }
 
     /**
@@ -316,7 +362,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::whereInStrict($key, $values);
+        $parent = $this->toBaseCollection();
+
+        return $parent->whereInStrict($key, $values);
     }
 
     /**
@@ -346,7 +394,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::flatten($depth);
+        $parent = $this->toBaseCollection();
+
+        return $parent->flatten($depth);
     }
 
     /**
@@ -358,7 +408,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::flip();
+        $parent = $this->toBaseCollection();
+
+        return $parent->flip();
     }
 
     /**
@@ -407,7 +459,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::groupBy($groupBy, $preserveKeys);
+        $parent = $this->toBaseCollection();
+
+        return $parent->groupBy($groupBy, $preserveKeys);
     }
 
     /**
@@ -421,7 +475,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::keyBy($keyBy);
+        $parent = $this->toBaseCollection();
+
+        return $parent->keyBy($keyBy);
     }
 
     /**
@@ -469,7 +525,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::intersect($items);
+        $parent = $this->toBaseCollection();
+
+        return $parent->intersect($items);
     }
 
     /**
@@ -493,7 +551,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::keys();
+        $parent = $this->toBaseCollection();
+
+        return $parent->keys();
     }
 
     /**
@@ -525,7 +585,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         // TODO : automagic call to QB if not initialized
         $this->initializeProxy();
 
-        return parent::pluck($value, $key);
+        $parent = $this->toBaseCollection();
+
+        return $parent->pluck($value, $key);
     }
 
     /**
@@ -539,7 +601,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::map($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->map($callback);
     }
 
     /**
@@ -555,7 +619,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::mapWithKeys($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->mapWithKeys($callback);
     }
 
     /**
@@ -569,7 +635,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::flatMap($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->flatMap($callback);
     }
 
     /**
@@ -595,12 +663,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function merge($items)
     {
-        // TODO : Check if the EntityCollection
-        // returns a native Collection, as it
-        // is what we want here
         $this->initializeProxy();
 
-        return parent::merge($items);
+        $parent = $this->toBaseCollection();
+
+        return $parent->merge($items);
     }
 
     /**
@@ -612,12 +679,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function combine($values)
     {
-        // TODO : Check if the EntityCollection
-        // returns a native Collection, as it
-        // is what we want here
         $this->initializeProxy();
 
-        return parent::combine($values);
+        $parent = $this->toBaseCollection();
+
+        return $parent->combine($values);
     }
 
     /**
@@ -629,12 +695,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function union($items)
     {
-        // TODO : Check if the EntityCollection
-        // returns a native Collection, as it
-        // is what we want here
         $this->initializeProxy();
 
-        return parent::union($items);
+        $parent = $this->toBaseCollection();
+
+        return $parent->union($items);
     }
 
     /**
@@ -666,7 +731,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::nth($step, $offset);
+        $parent = $this->toBaseCollection();
+
+        return $parent->nth($step, $offset);
     }
 
     /**
@@ -682,7 +749,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         // the collection hasn't been initialized yet
         $this->initializeProxy();
 
-        return parent::only($keys);
+        $parent = $this->toBaseCollection();
+
+        return $parent->only($keys);
     }
 
     /**
@@ -699,7 +768,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         // if not initialized
         $this->initializeProxy();
 
-        return parent::forPage($page, $perPage);
+        $parent = $this->toBaseCollection();
+
+        return $parent->forPage($page, $perPage);
     }
 
     /**
@@ -713,7 +784,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::partition($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->partition($callback);
     }
 
     /**
@@ -860,7 +933,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::reject($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->reject($callback);
     }
 
     /**
@@ -872,7 +947,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::reverse();
+        $parent = $this->toBaseCollection();
+
+        return $parent->reverse();
     }
 
     /**
@@ -914,8 +991,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function shuffle($seed = null)
     {
         $this->initializeProxy();
+        
+        $parent = $this->toBaseCollection();
 
-        return parent::shuffle($seed);
+        return $parent->shuffle($seed);
     }
 
     /**
@@ -930,7 +1009,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::slice($offset, $length);
+        $parent = $this->toBaseCollection();
+
+        return $parent->slice($offset, $length);
     }
 
     /**
@@ -944,7 +1025,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::split($numberOfGroups);
+        $parent = $this->toBaseCollection();
+
+        return $parent->split($numberOfGroups);
     }
 
     /**
@@ -959,7 +1042,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         // TODO : partial loading ?
         $this->initializeProxy();
 
-        return parent::chunk($size);
+        $parent = $this->toBaseCollection();
+
+        return $parent->chunk($size);
     }
 
     /**
@@ -973,7 +1058,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::sort($callback);
+        $parent = $this->toBaseCollection();
+
+        return $parent->sort($callback);
     }
 
     /**
@@ -989,7 +1076,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::sort($callback, $options, $descending);
+        $parent = $this->toBaseCollection();
+
+        return $parent->sort($callback, $options, $descending);
     }
 
     /**
@@ -1005,7 +1094,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::splice($offset, $length, $replacement);
+        $parent = $this->toBaseCollection();
+
+        return $parent->splice($offset, $length, $replacement);
     }
 
     /**
@@ -1034,7 +1125,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         // TODO: partial loading
         $this->initializeProxy();
 
-        return parent::take($limit);
+        $parent = $this->toBaseCollection();
+
+        return $parent->take($limit);
     }
 
     /**
@@ -1077,7 +1170,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::unique($key, $strict);
+        $parent = $this->toBaseCollection();
+
+        return $parent->unique($key, $strict);
     }
 
     /**
@@ -1089,7 +1184,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::values();
+        $parent = $this->toBaseCollection();
+
+        return $parent->values();
     }
 
     /**
@@ -1122,7 +1219,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::zip($items);
+        $parent = $this->toBaseCollection();
+
+        return $parent->zip($items);
     }
 
     /**

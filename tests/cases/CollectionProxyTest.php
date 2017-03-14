@@ -21,6 +21,7 @@ class CollectionProxyTest extends DomainTestCase
             '__callStatic',
             'make',
             'proxy',
+            'whereNotInStrict',
         ];
 
         $collectionClass = new ReflectionClass(Collection::class);
