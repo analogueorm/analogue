@@ -52,7 +52,7 @@ class MapperTest extends AnalogueTestCase
         $user = $this->factoryMake(User::class);
         $blog = $this->factoryMake(Blog::class);
         $mapper = $this->mapper($user);
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $mapper->store(new Collection([$user, $blog]));
     }
 
