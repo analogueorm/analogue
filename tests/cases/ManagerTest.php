@@ -18,7 +18,7 @@ class ManagerTest extends AnalogueTestCase
     /** @test */
     public function we_cant_register_a_non_extisting_class()
     {
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $this->analogue->mapper(\Some\Entity::class);
     }
 
@@ -26,7 +26,7 @@ class ManagerTest extends AnalogueTestCase
     public function we_cant_register_without_a_map_in_strict_mode()
     {
         $this->assertFalse($this->analogue->isRegisteredEntity(NonMappedEntity::class));
-        $this->setExpectedException(EntityMapNotFoundException::class);
+        $this->expectException(EntityMapNotFoundException::class);
         $this->analogue->register(NonMappedEntity::class);
     }
 
@@ -44,7 +44,7 @@ class ManagerTest extends AnalogueTestCase
     {
         $this->analogue->setStrictMode(false);
         $this->analogue->register(NonMappedEntity::class);
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $this->analogue->register(NonMappedEntity::class);
     }
 
@@ -84,7 +84,7 @@ class ManagerTest extends AnalogueTestCase
         $this->analogue->registerMapNamespace("TestApp\Maps");
         $this->analogue->setStrictMode(false);
         $identity = new Identity('michael', 'jackson');
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $mapper = $this->analogue->mapper($identity);
     }
 
