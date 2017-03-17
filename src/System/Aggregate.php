@@ -8,6 +8,7 @@ use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\LazyLoadingInterface;
+use ProxyManager\Proxy\ProxyInterface;
 
 /**
  * This class is aimed to facilitate the handling of
@@ -724,6 +725,16 @@ class Aggregate implements InternallyMappable
         $foreignKeys = [];
 
         foreach ($this->entityMap->getLocalRelationships() as $relation) {
+
+            // If the actual relationship is a non-loaded proxy, we'll simply retrieve
+            // the foreign key pair without parsing the actual object. This will allow
+            // user to modify the actual related ID's directly by updating the corresponding
+            // attribute.
+            if($this->isNonLoadedProxy($relation)) {
+                $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromNonLoadedRelation($relation);
+                continue;   
+            }
+            
             // check if relationship has been parsed, meaning it has an actual object
             // in the entity's attributes
             if ($this->isActualRelationships($relation)) {
@@ -778,6 +789,32 @@ class Aggregate implements InternallyMappable
         $relatedAggregate = $this->relationships[$relation][0];
 
         return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
+    }
+
+    /**
+     * Return an associative array containing the key-value pair(s) from
+     * the foreign key attribute
+     *
+     * @param string $relation
+     *
+     * @return array
+     */
+    protected function getForeignKeyAttributesFromNonLoadedRelation($relation)
+    {
+        $key = $this->entityMap->getLocalKeys($relation);
+        
+        // We'll treat single and composite keys (polymorphic) the same way. 
+        if (! is_array($key)) {
+            $keys = [$key];
+        }
+
+        $foreignKey = [];
+
+        foreach($keys as $key) {
+            $foreignKey[$key] = $this->getEntityAttribute($key);
+        }
+
+        return $foreignKey;
     }
 
     /**
@@ -1049,6 +1086,19 @@ class Aggregate implements InternallyMappable
     protected function isActualRelation($key)
     {
         return in_array($key, $this->entityMap->getNonEmbeddedRelationships());
+    }
+
+    /**
+     * Return true if attribute is a non-loaded proxy
+     * 
+     * @param  string  $key 
+     * @return boolean      
+     */
+    protected function isNonLoadedProxy($key)
+    {
+        $relation = $this->getEntityAttribute($key);
+        
+        return $relation instanceof ProxyInterface && ! $relation->isProxyInitialized();
     }
 
     /**
