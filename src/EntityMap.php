@@ -216,14 +216,14 @@ class EntityMap
     public $timestamps = false;
 
     /**
-     * The name of the "created at" column.
+     * The name of the "created at" attribute.
      *
      * @var string
      */
     protected $createdAtColumn = 'created_at';
 
     /**
-     * The name of the "updated at" column.
+     * The name of the "updated at" attribute.
      *
      * @var string
      */
@@ -237,7 +237,7 @@ class EntityMap
     public $softDeletes = false;
 
     /**
-     * The name of the "deleted at" column.
+     * The name of the "deleted at" attribute.
      *
      * @var string
      */
