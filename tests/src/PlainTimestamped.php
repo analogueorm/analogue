@@ -4,7 +4,6 @@ namespace TestApp;
 
 class PlainTimestamped {
 
-	protected $table = "timestampeds";
 
 	protected $id;
 
