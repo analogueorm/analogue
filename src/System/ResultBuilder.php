@@ -56,6 +56,9 @@ class ResultBuilder
      */
     public function build(array $results, array $eagerLoads)
     {
+        // First, we'll cache the raw result set 
+        $this->cacheResults($results);
+
         // Parse embedded relations and build corresponding entities using the default
         // mapper.
         $results = $this->buildEmbeddedRelationships($results);
@@ -77,6 +80,52 @@ class ResultBuilder
                 return $this->buildWithDefaultMapper($results);
                 break;
         }
+    }
+
+    /**
+     * Cache result set
+     * 
+     * @param  array  $results 
+     * @return void
+     */
+    protected function cacheResults(array $results) 
+    {
+        switch ($this->entityMap->getInheritanceType()) {
+            case 'single_table':
+                
+                $this->cacheSingleTableInheritanceResults($results);
+                break;
+
+            default:
+                $mapper = $this->defaultMapper; 
+                 // When hydrating EmbeddedValue object, they'll likely won't 
+                // have a primary key set. 
+                if(! is_null($mapper->getEntityMap()->getKeyName())) {
+                    $mapper->getEntityCache()->add($results);
+                }
+                break;
+        }
+    
+    }
+
+    /**
+     * Cache results from a STI result set
+     * 
+     * @param  array  $results 
+     * @return void
+     */
+    protected function cacheSingleTableInheritanceResults(array $results)
+    {
+        foreach($results as $result) {
+            $mapper = $this->getMapperForSingleRow($result);
+            
+            // When hydrating EmbeddedValue object, they'll likely won't 
+            // have a primary key set. 
+            if(! is_null($mapper->getEntityMap()->getKeyName())) {
+                $mapper->getEntityCache()->add([$result]);
+            }
+        }
+        
     }
 
     /**
@@ -296,12 +345,6 @@ class ResultBuilder
      */
     protected function buildWithDefaultMapper(array $results)
     {
-        // When hydrating EmbeddedValue object, they'll likely won't 
-        // have a primary key set. 
-        if(! is_null($this->defaultMapper->getEntityMap()->getKeyName())) {
-            $this->defaultMapper->getEntityCache()->add($results);
-        }
-
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
         return collect($results)->map(function ($item, $key) use ($builder) {
@@ -339,18 +382,8 @@ class ResultBuilder
     protected function builderForResult(array $result)
     {
         $type = $result[$this->entityMap->getDiscriminatorColumn()];
-
-        $columnMap = $this->entityMap->getDiscriminatorColumnMap();
-
-        $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
-
-        $mapper = Manager::getInstance()->mapper($class);
-
-        // When hydrating EmbeddedValue object, they'll likely won't 
-        // have a primary key set. 
-        if(! is_null($mapper->getEntityMap()->getKeyName())) {
-            $mapper->getEntityCache()->add([$result]);
-        }
+        
+        $mapper = $this->getMapperForSingleRow($result);
 
         if (!isset($this->builders[$type])) {
             $this->builders[$type] = new EntityBuilder(
@@ -362,4 +395,20 @@ class ResultBuilder
         return $this->builders[$type];
     }
 
+    /**
+     * Get mapper corresponding to the result type
+     * 
+     * @param  array  $result 
+     * @return Mapper
+     */
+    protected function getMapperForSingleRow(array $result) : Mapper
+    {
+        $type = $result[$this->entityMap->getDiscriminatorColumn()];
+
+        $columnMap = $this->entityMap->getDiscriminatorColumnMap();
+
+        $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
+
+        return Manager::getInstance()->mapper($class);
+    }
 }

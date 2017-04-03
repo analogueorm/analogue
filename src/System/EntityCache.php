@@ -75,7 +75,7 @@ class EntityCache
             // to prevent any side effect.
             // TODO : remove primary key check from dirty attributes parsing
             //unset($result[$keyColumn]);
-            $cachedResults[$id] = $result;
+            $cachedResults[$id] = $this->rawResult($result);
         }
 
         if (count($this->cache) == 0) {
@@ -83,6 +83,19 @@ class EntityCache
         } else {
             $this->mergeCacheResults($cachedResults);
         }
+    }
+
+    /**
+     * Return result without any collection or object
+     * 
+     * @param  array  $result
+     * @return 
+     */
+    protected function rawResult(array $result) : array
+    {
+        return array_filter($result, function($attribute) {
+            return ! is_object($attribute);
+        });
     }
 
     /**
@@ -121,9 +134,9 @@ class EntityCache
      *
      * @return void
      */
-    protected function mergeCacheResults($entities)
+    protected function mergeCacheResults(array $results)
     {
-        foreach ($entities as $key => $entity) {
+        foreach ($results as $key => $entity) {
             $this->cache[$key] = $entity;
         }
     }
