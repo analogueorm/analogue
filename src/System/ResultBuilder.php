@@ -296,9 +296,9 @@ class ResultBuilder
      */
     protected function buildWithDefaultMapper(array $results)
     {
-        // When hydrating EmbeddedValue object, they'll likely won't 
-        // have a primary key set. 
-        if(! is_null($this->defaultMapper->getEntityMap()->getKeyName())) {
+        // When hydrating EmbeddedValue object, they'll likely won't
+        // have a primary key set.
+        if (!is_null($this->defaultMapper->getEntityMap()->getKeyName())) {
             $this->defaultMapper->getEntityCache()->add($results);
         }
 
@@ -346,9 +346,9 @@ class ResultBuilder
 
         $mapper = Manager::getInstance()->mapper($class);
 
-        // When hydrating EmbeddedValue object, they'll likely won't 
-        // have a primary key set. 
-        if(! is_null($mapper->getEntityMap()->getKeyName())) {
+        // When hydrating EmbeddedValue object, they'll likely won't
+        // have a primary key set.
+        if (!is_null($mapper->getEntityMap()->getKeyName())) {
             $mapper->getEntityCache()->add([$result]);
         }
 
@@ -361,5 +361,4 @@ class ResultBuilder
 
         return $this->builders[$type];
     }
-
 }

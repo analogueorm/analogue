@@ -17,7 +17,6 @@ class CreateTables extends Migration
             $table->datetime('created_at')->nullable();
             $table->integer('updated_at')->nullable();
         });
-
     }
 
     /**

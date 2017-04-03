@@ -2,27 +2,26 @@
 
 namespace TestApp;
 
-class PlainTimestamped {
+class PlainTimestamped
+{
+    protected $id;
 
+    protected $createdAt;
 
-	protected $id;
+    protected $updatedAt;
 
-	protected $createdAt;
+    public function id()
+    {
+        return $this->id;
+    }
 
-	protected $updatedAt;
+    public function createdAt()
+    {
+        return $this->createdAt;
+    }
 
-	public function id()
-	{
-		return $this->id;
-	}
-
-	public function createdAt()
-	{
-		return $this->createdAt;
-	}
-
-	public function updatedAt()
-	{
-		return $this->updatedAt;
-	}
+    public function updatedAt()
+    {
+        return $this->updatedAt;
+    }
 }
