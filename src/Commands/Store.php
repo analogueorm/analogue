@@ -259,6 +259,7 @@ class Store extends Command
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
 
         if (count($dirtyAttributes) > 0) {
+
             $query->update($dirtyAttributes);
         }
     }

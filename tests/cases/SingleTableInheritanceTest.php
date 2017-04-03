@@ -62,4 +62,5 @@ class SingleTableInheritanceTest extends DomainTestCase
         $results = $carMapper->get();
         $this->assertCount(1, $results);
     }
+
 }

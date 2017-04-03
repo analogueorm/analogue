@@ -1058,6 +1058,7 @@ class Aggregate implements InternallyMappable
     public function getDirtyRawAttributes()
     {
         $attributes = $this->getRawAttributes();
+
         $cachedAttributes = $this->getCachedRawAttributes(array_keys($attributes));
 
         $dirty = [];

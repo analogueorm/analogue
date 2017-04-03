@@ -296,6 +296,12 @@ class ResultBuilder
      */
     protected function buildWithDefaultMapper(array $results)
     {
+        // When hydrating EmbeddedValue object, they'll likely won't 
+        // have a primary key set. 
+        if(! is_null($this->defaultMapper->getEntityMap()->getKeyName())) {
+            $this->defaultMapper->getEntityCache()->add($results);
+        }
+
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
         return collect($results)->map(function ($item, $key) use ($builder) {
@@ -338,13 +344,22 @@ class ResultBuilder
 
         $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
 
+        $mapper = Manager::getInstance()->mapper($class);
+
+        // When hydrating EmbeddedValue object, they'll likely won't 
+        // have a primary key set. 
+        if(! is_null($mapper->getEntityMap()->getKeyName())) {
+            $mapper->getEntityCache()->add([$result]);
+        }
+
         if (!isset($this->builders[$type])) {
             $this->builders[$type] = new EntityBuilder(
-                Manager::getInstance()->mapper($class),
+                $mapper,
                 array_keys($this->eagerLoads)
             );
         }
 
         return $this->builders[$type];
     }
+
 }

@@ -125,7 +125,7 @@ class Mapper
         // Then, we'll cache every single results as raw attributes, before
         // adding relationships, which will be cached when the relationship's
         // query takes place.
-        $this->getEntityCache()->add($results);
+        //$this->getEntityCache()->add($results);
 
         $entities = $builder->build($results, $eagerLoads);
 

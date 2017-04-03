@@ -47,9 +47,10 @@ class EntityMap
     protected $table = null;
 
     /**
-     * The primary key for the model.
+     * The primary key for the model. If the model is an Embedded Value object
+     * primary key is set to null.
      *
-     * @var string
+     * @var string | null
      */
     protected $primaryKey = 'id';
 
@@ -742,9 +743,9 @@ class EntityMap
     /**
      * Get the primary key attribute for the entity.
      *
-     * @return string
+     * @return string | null
      */
-    public function getKeyName() : string
+    public function getKeyName()
     {
         return $this->primaryKey;
     }
