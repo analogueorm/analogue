@@ -395,6 +395,7 @@ class ResultBuilder
         return $this->builders[$type];
     }
 
+
     /**
      * Get mapper corresponding to the result type
      * 
@@ -411,4 +412,5 @@ class ResultBuilder
 
         return Manager::getInstance()->mapper($class);
     }
+
 }

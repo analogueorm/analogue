@@ -730,11 +730,11 @@ class Aggregate implements InternallyMappable
             // the foreign key pair without parsing the actual object. This will allow
             // user to modify the actual related ID's directly by updating the corresponding
             // attribute.
-            if($this->isNonLoadedProxy($relation)) {
+            if ($this->isNonLoadedProxy($relation)) {
                 $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromNonLoadedRelation($relation);
-                continue;   
+                continue;
             }
-            
+
             // check if relationship has been parsed, meaning it has an actual object
             // in the entity's attributes
             if ($this->isActualRelationships($relation)) {
@@ -793,7 +793,7 @@ class Aggregate implements InternallyMappable
 
     /**
      * Return an associative array containing the key-value pair(s) from
-     * the foreign key attribute
+     * the foreign key attribute.
      *
      * @param string $relation
      *
@@ -802,15 +802,15 @@ class Aggregate implements InternallyMappable
     protected function getForeignKeyAttributesFromNonLoadedRelation($relation)
     {
         $key = $this->entityMap->getLocalKeys($relation);
-        
-        // We'll treat single and composite keys (polymorphic) the same way. 
-        if (! is_array($key)) {
+
+        // We'll treat single and composite keys (polymorphic) the same way.
+        if (!is_array($key)) {
             $keys = [$key];
         }
 
         $foreignKey = [];
 
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $foreignKey[$key] = $this->getEntityAttribute($key);
         }
 
@@ -1090,16 +1090,17 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Return true if attribute is a non-loaded proxy
-     * 
-     * @param  string  $key 
-     * @return boolean      
+     * Return true if attribute is a non-loaded proxy.
+     *
+     * @param string $key
+     *
+     * @return bool
      */
     protected function isNonLoadedProxy($key)
     {
         $relation = $this->getEntityAttribute($key);
-        
-        return $relation instanceof ProxyInterface && ! $relation->isProxyInitialized();
+
+        return $relation instanceof ProxyInterface && !$relation->isProxyInitialized();
     }
 
     /**

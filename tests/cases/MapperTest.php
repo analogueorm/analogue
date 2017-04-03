@@ -1,6 +1,5 @@
 <?php
 
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 use Illuminate\Support\Collection;
 use TestApp\Blog;

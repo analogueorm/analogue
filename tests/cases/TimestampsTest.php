@@ -1,14 +1,14 @@
 <?php
 
-use TestApp\Timestamped;
 use TestApp\PlainTimestamped;
+use TestApp\Timestamped;
 
 class TimestampsTest extends DomainTestCase
 {
     /** @test */
     public function timestamps_are_automatically_saved_on_entity()
     {
-        $object = new Timestamped;
+        $object = new Timestamped();
         $mapper = $this->mapper($object);
 
         $mapper->store($object);
@@ -20,7 +20,7 @@ class TimestampsTest extends DomainTestCase
     /** @test */
     public function timestamps_are_automatically_saved_on_object()
     {
-        $object = new PlainTimestamped;
+        $object = new PlainTimestamped();
         $mapper = $this->mapper($object);
 
         $mapper->store($object);
