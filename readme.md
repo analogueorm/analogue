@@ -32,7 +32,7 @@ If you intend to build applications following the **DDD** approach, **Analogue**
 
 Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more details.
 
-##Features
+## Features
 
 - Framework agnostic
 - Lazy loading
@@ -55,27 +55,27 @@ composer require analogue/orm
 
 See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
-##Changelog 
+## Changelog 
 
-####Version 5.4
+#### Version 5.4
 - Illuminate 5.4 Compatibility
 - Add Abillity to map DB columns that name are not equals to the name of the attribute
 
-####Version 5.3
+#### Version 5.3
 - Illuminate 5.3 Compatibility. 
 - now fully support Single Table Inheritance
 
-####Version 5.1
+#### Version 5.1
 - Illuminate 5.1 + 5.2 Compatibility. 
 
-####Version 5.0
+#### Version 5.0
 - Analogue version now mirrors illuminate version. 
 
-####Version 2.1.3
+#### Version 2.1.3
 - Mutator feature in base Entity class
 - Ability to add entities to a proxy collection without lazyloading it.
 
-###Version 2.1
+### Version 2.1
 
 - Package is now framework agnostic.
 - Now support any plain object that implements Mappable interface.
@@ -86,7 +86,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 - Base Entity class Supports hidden attributes
 - Many workflow related improvements.
 
-###Version 2.0
+### Version 2.0
 
 - Laravel 5 Support.
 
