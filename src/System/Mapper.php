@@ -75,6 +75,24 @@ class Mapper
     protected $customCommands = [];
 
     /**
+     * Available Analogue Events.
+     *
+     * @var array
+     */
+    protected $events = [
+        'initializing' => \Analogue\ORM\Events\Initializing::class,
+        'initialized' => \Analogue\ORM\Events\Initialized::class,
+        'storing' => \Analogue\ORM\Events\Storing::class,
+        'stored' => \Analogue\ORM\Events\Stored::class,
+        'creating' => \Analogue\ORM\Events\Creating::class,
+        'created' => \Analogue\ORM\Events\Created::class,
+        'updating' => \Analogue\ORM\Events\Updating::class,
+        'updated' => \Analogue\ORM\Events\Updated::class,
+        'deleting' => \Analogue\ORM\Events\Deleting::class,
+        'deleted' => \Analogue\ORM\Events\Deleted::class,
+    ];
+
+    /**
      * @param EntityMap  $entityMap
      * @param DBAdapter  $adapter
      * @param Dispatcher $dispatcher
@@ -343,11 +361,18 @@ class Mapper
             throw new InvalidArgumentException('Fired Event with invalid Entity Object');
         }
 
-        $event = "analogue.{$event}.".$this->entityMap->getClass();
+        $eventName = "analogue.{$event}.".$this->entityMap->getClass();
 
         $method = $halt ? 'until' : 'fire';
 
-        return $this->dispatcher->$method($event, $entity);
+        if (! array_key_exists($event, $this->events)) {
+            throw new \LogicException("Analogue : Event $event doesn't exist");
+        }
+
+        $eventClass = $this->events[$event];
+        $event = new $eventClass($entity);
+
+        return $this->dispatcher->$method($eventName, $event);
     }
 
     /**

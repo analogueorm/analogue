@@ -5,6 +5,7 @@ namespace Analogue\ORM\Plugins\Timestamps;
 use Analogue\ORM\Plugins\AnaloguePlugin;
 use Analogue\ORM\System\Wrappers\Factory;
 use Carbon\Carbon;
+use Analogue\ORM\System\InternallyMappable;
 
 /**
  * Implements the Timestamps support on Analogue Entities.
@@ -27,15 +28,15 @@ class TimestampsPlugin extends AnaloguePlugin
             if (is_null($payload)) {
                 $mapper = $event;
             } else {
-                $mapper = $payload[0];
+                $mapper = $payload[0]->mapper;
             }
 
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesTimestamps()) {
-                $mapper->registerEvent('creating', function ($entity) use ($entityMap) {
-                    $factory = new Factory();
-                    $wrappedEntity = $factory->make($entity);
+                $mapper->registerEvent('creating', function ($event) use ($entityMap) {
+                    $entity = $event->entity;
+                    $wrappedEntity = $this->getMappable($entity);
 
                     $createdAtField = $entityMap->getCreatedAtColumn();
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
@@ -46,9 +47,9 @@ class TimestampsPlugin extends AnaloguePlugin
                     $wrappedEntity->setEntityAttribute($updatedAtField, $time);
                 });
 
-                $mapper->registerEvent('updating', function ($entity) use ($entityMap) {
-                    $factory = new Factory();
-                    $wrappedEntity = $factory->make($entity);
+                $mapper->registerEvent('updating', function ($event) use ($entityMap) {
+                    $entity = $event->entity;
+                    $wrappedEntity = $this->getMappable($entity);
 
                     $updatedAtField = $entityMap->getUpdatedAtColumn();
 
@@ -58,6 +59,23 @@ class TimestampsPlugin extends AnaloguePlugin
                 });
             }
         });
+    }
+
+    /**
+     * Return internally mappable if not mappable
+     * 
+     * @param  mixed $entity
+     * @return InternallyMappable
+     */
+    protected function getMappable($entity) : InternallyMappable
+    {
+        if(! $entity instanceof InternallyMappable) {
+            $factory = new Factory();
+            $wrappedEntity = $factory->make($entity);
+            return $wrappedEntity;
+        }
+
+        return $entity;
     }
 
     /**

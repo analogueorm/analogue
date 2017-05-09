@@ -18,6 +18,13 @@ class ObjectWrapper extends Wrapper
     protected $attributes = [];
 
     /**
+     * All properties on the original object
+     * 
+     * @var array
+     */
+    protected $properties = [];
+
+    /**
      * Object properties that are not a part of the entity attributes,
      * but which are needed to correctly hydrate the Object.
      *
@@ -43,7 +50,9 @@ class ObjectWrapper extends Wrapper
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
         $this->hydrator = $hydrator;
+        
         parent::__construct($entity, $entityMap);
+        
         $this->attributes = $this->dehydrate($entity);
     }
 
@@ -54,7 +63,7 @@ class ObjectWrapper extends Wrapper
      */
     public function getObject()
     {
-        $this->hydrate();
+        //$this->hydrate();
 
         return $this->entity;
     }
@@ -70,6 +79,8 @@ class ObjectWrapper extends Wrapper
     {
         $properties = $this->hydrator->extract($entity);
 
+        $this->properties = $properties;
+
         $this->unmanagedProperties = array_except($properties, $this->getManagedProperties());
 
         return $this->attributesFromProperties($properties);
@@ -80,9 +91,16 @@ class ObjectWrapper extends Wrapper
      *
      * @return mixed
      */
-    public function hydrate()
+    protected function hydrate()
     {
         $properties = $this->propertiesFromAttributes($this->attributes) + $this->unmanagedProperties;
+
+        // In some case, attributes will miss some properties, so we'll just complete the hydration
+        // set with the orginal's object properties
+        $missingProperties = array_diff_key($this->properties, $properties);
+        foreach(array_keys($missingProperties) as $missingKey) {
+            $properties[$missingKey] = $this->properties[$missingKey];
+        }
 
         $this->hydrator->hydrate($properties, $this->entity);
     }
@@ -177,6 +195,8 @@ class ObjectWrapper extends Wrapper
     public function setEntityAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
+        $this->hydrate();
     }
 
     /**
@@ -187,6 +207,8 @@ class ObjectWrapper extends Wrapper
      */
     public function getEntityAttributes() : array
     {
+        $this->attributes = $this->dehydrate($this->entity);
+
         return $this->attributes;
     }
 
@@ -201,7 +223,11 @@ class ObjectWrapper extends Wrapper
      */
     public function setEntityAttribute($key, $value)
     {
+        $this->attributes = $this->dehydrate($this->entity);
+
         $this->attributes[$key] = $value;
+
+        $this->hydrate();
     }
 
     /**
@@ -214,6 +240,8 @@ class ObjectWrapper extends Wrapper
      */
     public function getEntityAttribute($key)
     {
+        $this->attributes = $this->dehydrate($this->entity);
+
         if ($this->hasAttribute($key)) {
             return $this->attributes[$key];
         } else {
@@ -230,6 +258,8 @@ class ObjectWrapper extends Wrapper
      */
     public function hasAttribute($key) : bool
     {
+        $this->attributes = $this->dehydrate($this->entity);
+
         return array_key_exists($key, $this->attributes) ? true : false;
     }
 }

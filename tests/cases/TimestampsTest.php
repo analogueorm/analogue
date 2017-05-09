@@ -18,7 +18,7 @@ class TimestampsTest extends DomainTestCase
     }
 
     /** @test */
-    public function timestamps_are_automatically_saved_on_object()
+    public function timestamps_are_automatically_saved_on_plain_php_object()
     {
         $object = new PlainTimestamped();
         $mapper = $this->mapper($object);
@@ -28,4 +28,5 @@ class TimestampsTest extends DomainTestCase
         $this->assertNotNull($object->updatedAt());
         $this->assertNotNull($object->createdAt());
     }
+
 }

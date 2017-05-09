@@ -574,6 +574,8 @@ class Aggregate implements InternallyMappable
      */
     public function getRawAttributes()
     {
+        //$this->wrappedEntity->refresh();
+
         $attributes = $this->wrappedEntity->getEntityAttributes();
 
         foreach ($this->entityMap->getNonEmbeddedRelationships() as $relation) {
@@ -1212,13 +1214,4 @@ class Aggregate implements InternallyMappable
         $this->wrappedEntity->setProxies();
     }
 
-    /**
-     * Hydrate the actual entity.
-     *
-     * @return void
-     */
-    public function hydrate()
-    {
-        $this->wrappedEntity->hydrate();
-    }
 }

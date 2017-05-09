@@ -6,9 +6,9 @@ class PlainTimestamped
 {
     protected $id;
 
-    protected $createdAt;
+    protected $created_at;
 
-    protected $updatedAt;
+    protected $updated_at;
 
     public function id()
     {
@@ -17,11 +17,11 @@ class PlainTimestamped
 
     public function createdAt()
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
     public function updatedAt()
     {
-        return $this->updatedAt;
+        return $this->updated_at;
     }
 }

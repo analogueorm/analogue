@@ -87,8 +87,16 @@ class EntityMap
     protected $class = null;
 
     /**
-     * Embedded Value Objects.
+     * The event map for the entity.
      *
+     * @var array
+     */
+    protected $events = [];
+
+    /**
+     * Embedded Value Objects.
+     * 
+     * @deprecated use embedsOne, embedsMany relationships instead
      * @var array
      */
     protected $embeddables = [];
@@ -484,6 +492,16 @@ class EntityMap
     public function getProperties() : array
     {
         return $this->properties;
+    }
+
+    /**
+     * Return event map for the Entity
+     * 
+     * @return array
+     */
+    public function getEvents() : array
+    {
+        return $this->events;
     }
 
     /**
