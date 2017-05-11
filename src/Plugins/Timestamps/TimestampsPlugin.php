@@ -43,8 +43,10 @@ class TimestampsPlugin extends AnaloguePlugin
 
                     $time = new Carbon();
 
-                    $wrappedEntity->setEntityAttribute($createdAtField, $time);
-                    $wrappedEntity->setEntityAttribute($updatedAtField, $time);
+                    if(is_null($wrappedEntity->getEntityAttribute($createdAtField))) {
+                        $wrappedEntity->setEntityAttribute($createdAtField, $time);
+                        $wrappedEntity->setEntityAttribute($updatedAtField, $time);
+                    }
                 });
 
                 $mapper->registerEvent('updating', function ($event) use ($entityMap) {
