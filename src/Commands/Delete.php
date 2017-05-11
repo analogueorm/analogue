@@ -37,8 +37,5 @@ class Delete extends Command
         $this->query->where($keyName, '=', $id)->delete();
 
         $mapper->fireEvent('deleted', $entity, false);
-
-        // Once the Entity is successfully deleted, we'll just set the primary key to null.
-        $aggregate->setEntityAttribute($keyName, null);
     }
 }

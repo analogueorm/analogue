@@ -70,9 +70,19 @@ class MapperTest extends AnalogueTestCase
         $userA = $this->factoryCreate(User::class);
         $userB = $this->factoryCreate(User::class);
         $mapper = $this->mapper($userA);
+
         $mapper->delete([$userA, $userB]);
         $this->notSeeInDatabase('users', ['name' => $userA->name]);
         $this->notSeeInDatabase('users', ['name' => $userB->name]);
+    }
+
+    /** @test */
+    public function deleting_an_object_retains_its_id_on_entity()
+    {
+        $userA = $this->factoryCreate(User::class);
+        $mapper = $this->mapper($userA);
+        $mapper->delete($userA);
+        $this->assertNotNull($userA->id);
     }
 
     /** @test */
