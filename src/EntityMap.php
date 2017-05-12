@@ -18,6 +18,7 @@ use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Exception;
 use ReflectionClass;
+use Illuminate\Support\Collection;
 
 /**
  * The Entity Map defines the Mapping behaviour of an Entity,
