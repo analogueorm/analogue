@@ -738,6 +738,22 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
+     * Intersect the collection with the given items by key.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function intersectKey($items)
+    {
+
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->intersectKey($items);
+    }
+
+    /**
      * Union the collection with the given items.
      *
      * @param mixed $items

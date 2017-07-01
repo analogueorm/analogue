@@ -26,6 +26,7 @@ class CollectionProxyTest extends DomainTestCase
             'mapSpread',
             'mapToGroups',
             'concat',
+            'unless',
         ];
 
         $collectionClass = new ReflectionClass(Collection::class);
