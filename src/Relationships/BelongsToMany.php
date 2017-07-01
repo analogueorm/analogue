@@ -431,7 +431,7 @@ class BelongsToMany extends Relationship
         // TODO; optimize this operation
         $dictionary = $this->buildDictionary($entities);
 
-        $keyName = $this->relatedMap->getKeyName();
+        $keyName = $this->parentMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 

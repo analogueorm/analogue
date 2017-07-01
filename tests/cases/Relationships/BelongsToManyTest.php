@@ -5,6 +5,8 @@ use Illuminate\Support\Collection;
 use ProxyManager\Proxy\ProxyInterface;
 use TestApp\Group;
 use TestApp\User;
+use TestApp\CustomUser;
+use TestApp\CustomGroup;
 
 class BelongsToManyTest extends DomainTestCase
 {
@@ -248,6 +250,50 @@ class BelongsToManyTest extends DomainTestCase
         $this->assertInstanceOf(EntityCollection::class, $user->groups);
         $this->assertNotInstanceOf(ProxyInterface::class, $user->groups);
         $this->assertCount(0, $user->groups);
+    }
+
+    /** @test */
+    public function we_can_use_a_many_to_many_relationship_on_entities_with_custom_primary_keys()
+    {
+        $user = new CustomUser();
+        $user->name = 'Test User';
+        $groupA = new CustomGroup();
+        $groupA->name = 'Test Group A';
+        $groupB = new CustomGroup();
+        $groupB->name = 'Test Group B';
+        $user->groups = [$groupA, $groupB];
+        $mapper = $this->mapper(CustomUser::class);
+        $mapper->store($user);
+
+        $this->seeInDatabase('custom_users', [
+            'name' => 'Test User',
+        ]);
+        $this->seeInDatabase('custom_groups', [
+            'name' => 'Test Group A',
+        ]);
+        $this->seeInDatabase('custom_groups', [
+            'name' => 'Test Group B',
+        ]);
+
+        // Test lazy loading
+        $users = $mapper->get();
+        $this->assertCount(1, $users);
+        $this->assertCount(2, $users->first()->groups);
+
+        // Test Inverse Lazy Loading
+        $groups = $this->mapper(CustomGroup::class)->get();
+        $this->assertCount(2, $groups);
+        $this->assertCount(1, $groups->first()->users);
+
+        // Test Inverse Eager Loading
+        $groups = $this->mapper(CustomGroup::class)->with('users')->get();
+        $this->assertCount(2, $groups);
+        $this->assertCount(1, $groups->first()->users);
+
+        // Test Eager loading
+        $users = $mapper->with('groups')->get();
+        $this->assertCount(1, $users);
+        $this->assertCount(2, $users->first()->groups);
     }
 
     /**

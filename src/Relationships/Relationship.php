@@ -248,7 +248,7 @@ abstract class Relationship
     protected function getKeysFromResults(array $results, $key = null)
     {
         if (is_null($key)) {
-            $key = $this->relatedMap->getKeyName();
+            $key = $this->parentMap->getKeyName();
         }
 
         return array_unique(array_values(array_map(function ($value) use ($key) {

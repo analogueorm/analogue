@@ -1529,9 +1529,7 @@ class EntityMap
      */
     public function newCollection(array $entities = [])
     {
-        $collection = new EntityCollection($entities, $this);
-
-        return $collection->keyBy($this->getKeyName());
+        return new EntityCollection($entities, $this);
     }
 
     /**

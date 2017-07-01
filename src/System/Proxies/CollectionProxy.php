@@ -31,6 +31,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->parentEntity = $entity;
         $this->relationshipMethod = $relation;
+        parent::__construct();
     }
 
     /**
@@ -685,6 +686,52 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $parent = $this->toBaseCollection();
 
         return $parent->combine($values);
+    }
+
+    /**
+     * Create a new collection by invoking the callback a given amount of times.
+     *
+     * @param  int  $amount
+     * @param  callable  $callback
+     * @return static
+     */
+    public static function times($amount, callable $callback = null)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->times($amount, $callback);
+    }
+
+    /**
+     * Cross join with the given lists, returning all possible permutations.
+     *
+     * @param  mixed  ...$lists
+     * @return static
+     */
+    public function crossJoin(...$lists)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->times(func_num_args());
+    }
+
+    /**
+     * Get the items in the collection whose keys and values are not present in the given items.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function diffAssoc($items)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->diffAssoc($items);
     }
 
     /**
