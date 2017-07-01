@@ -213,7 +213,6 @@ class BelongsToManyTest extends DomainTestCase
     /** @test */
     public function we_can_use_a_many_to_many_relationship_on_entities_with_custom_primary_keys()
     {
-        $this->logQueries();
         $user = new CustomUser;
         $user->name = "Test User";
         $groupA = new CustomGroup;
@@ -223,6 +222,7 @@ class BelongsToManyTest extends DomainTestCase
         $user->groups = [$groupA, $groupB];
         $mapper = $this->mapper(CustomUser::class);
         $mapper->store($user);
+        
         $this->seeInDatabase('custom_users', [
             'name' => 'Test User',
         ]);
@@ -238,9 +238,18 @@ class BelongsToManyTest extends DomainTestCase
         $this->assertCount(1, $users);
         $this->assertCount(2, $users->first()->groups);
 
+        // Test Inverse Lazy Loading
+        $groups = $this->mapper(CustomGroup::class)->get();
+        $this->assertCount(2, $groups);
+        $this->assertCount(1, $groups->first()->users);
+        setTddOn();
+        // Test Inverse Eager Loading
+        $groups = $this->mapper(CustomGroup::class)->with('users')->get();
+        $this->assertCount(2, $groups);
+        $this->assertCount(1, $groups->first()->users);
+        setTddOff();
         // Test Eager loading
         $users = $mapper->with('groups')->get();
-
         $this->assertCount(1, $users);
         $this->assertCount(2, $users->first()->groups);
     }

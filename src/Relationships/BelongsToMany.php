@@ -111,7 +111,7 @@ class BelongsToMany extends Relationship
     public function getResults($relation)
     {
         $results = $this->get();
-
+        tdd($results);
         $this->cacheRelation($results, $relation);
 
         return $results;
@@ -205,17 +205,21 @@ class BelongsToMany extends Relationship
         $select = $this->getSelectColumns($columns);
 
         $entities = $this->query->addSelect($select)->getEntities();
-
+        
         $this->hydratePivotRelation($entities);
 
-        // If we actually found models we will also eager load any relationships that
+        // If we actually found models we will also eager load any relationnships that
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($entities) > 0) {
             $entities = $this->query->eagerLoadRelations($entities);
         }
 
-        return $this->relatedMap->newCollection($entities);
+        $results = $this->relatedMap->newCollection($entities);
+
+        //tdd($results);
+
+        return $results;
     }
 
     /**
@@ -454,7 +458,7 @@ class BelongsToMany extends Relationship
     {
         $dictionary = $this->buildDictionary($results);
 
-        $keyName = $this->relatedMap->getKeyName();
+        $keyName = $this->parentMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 
@@ -462,9 +466,11 @@ class BelongsToMany extends Relationship
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($entities as $entity) {
+
             $wrapper = $this->factory->make($entity);
 
             if (isset($dictionary[$key = $wrapper->getEntityAttribute($keyName)])) {
+
                 $collection = $this->relatedMap->newCollection($dictionary[$key]);
 
                 $wrapper->setEntityAttribute($relation, $collection);
@@ -484,7 +490,7 @@ class BelongsToMany extends Relationship
      * @return array
      */
     protected function buildDictionary(EntityCollection $results)
-    {
+    {   
         $foreign = $this->foreignKey;
 
         $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
@@ -499,7 +505,7 @@ class BelongsToMany extends Relationship
 
             $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
         }
-
+        
         return $dictionary;
     }
 

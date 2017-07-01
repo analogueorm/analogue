@@ -250,7 +250,7 @@ abstract class Relationship
     protected function getKeys(array $entities, $key = null)
     {
         if (is_null($key)) {
-            $key = $this->relatedMap->getKeyName();
+            $key = $this->parentMap->getKeyName();
         }
 
         $host = $this;
@@ -259,7 +259,7 @@ abstract class Relationship
             if (!$value instanceof InternallyMappable) {
                 $value = $host->factory->make($value);
             }
-
+            
             return $value->getEntityAttribute($key);
         }, $entities)));
     }
