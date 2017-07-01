@@ -81,15 +81,15 @@ class Mapper
      */
     protected $events = [
         'initializing' => \Analogue\ORM\Events\Initializing::class,
-        'initialized' => \Analogue\ORM\Events\Initialized::class,
-        'storing' => \Analogue\ORM\Events\Storing::class,
-        'stored' => \Analogue\ORM\Events\Stored::class,
-        'creating' => \Analogue\ORM\Events\Creating::class,
-        'created' => \Analogue\ORM\Events\Created::class,
-        'updating' => \Analogue\ORM\Events\Updating::class,
-        'updated' => \Analogue\ORM\Events\Updated::class,
-        'deleting' => \Analogue\ORM\Events\Deleting::class,
-        'deleted' => \Analogue\ORM\Events\Deleted::class,
+        'initialized'  => \Analogue\ORM\Events\Initialized::class,
+        'storing'      => \Analogue\ORM\Events\Storing::class,
+        'stored'       => \Analogue\ORM\Events\Stored::class,
+        'creating'     => \Analogue\ORM\Events\Creating::class,
+        'created'      => \Analogue\ORM\Events\Created::class,
+        'updating'     => \Analogue\ORM\Events\Updating::class,
+        'updated'      => \Analogue\ORM\Events\Updated::class,
+        'deleting'     => \Analogue\ORM\Events\Deleting::class,
+        'deleted'      => \Analogue\ORM\Events\Deleted::class,
     ];
 
     /**
@@ -365,7 +365,7 @@ class Mapper
 
         $method = $halt ? 'until' : 'fire';
 
-        if (! array_key_exists($event, $this->events)) {
+        if (!array_key_exists($event, $this->events)) {
             throw new \LogicException("Analogue : Event $event doesn't exist");
         }
 

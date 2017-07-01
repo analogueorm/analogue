@@ -11,6 +11,5 @@ class EventTest extends AnalogueTestCase
     /** @test */
     public function global_events_are_fired()
     {
-        
     }
 }

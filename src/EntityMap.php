@@ -17,8 +17,8 @@ use Analogue\ORM\Relationships\MorphToMany;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Exception;
-use ReflectionClass;
 use Illuminate\Support\Collection;
+use ReflectionClass;
 
 /**
  * The Entity Map defines the Mapping behaviour of an Entity,
@@ -96,8 +96,9 @@ class EntityMap
 
     /**
      * Embedded Value Objects.
-     * 
+     *
      * @deprecated use embedsOne, embedsMany relationships instead
+     *
      * @var array
      */
     protected $embeddables = [];
@@ -496,8 +497,8 @@ class EntityMap
     }
 
     /**
-     * Return event map for the Entity
-     * 
+     * Return event map for the Entity.
+     *
      * @return array
      */
     public function getEvents() : array

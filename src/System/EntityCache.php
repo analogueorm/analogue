@@ -86,15 +86,16 @@ class EntityCache
     }
 
     /**
-     * Return result without any collection or object
-     * 
-     * @param  array  $result
-     * @return 
+     * Return result without any collection or object.
+     *
+     * @param array $result
+     *
+     * @return
      */
     protected function rawResult(array $result) : array
     {
-        return array_filter($result, function($attribute) {
-            return ! is_object($attribute);
+        return array_filter($result, function ($attribute) {
+            return !is_object($attribute);
         });
     }
 

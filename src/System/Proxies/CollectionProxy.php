@@ -691,8 +691,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Create a new collection by invoking the callback a given amount of times.
      *
-     * @param  int  $amount
-     * @param  callable  $callback
+     * @param int      $amount
+     * @param callable $callback
+     *
      * @return static
      */
     public static function times($amount, callable $callback = null)
@@ -707,7 +708,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Cross join with the given lists, returning all possible permutations.
      *
-     * @param  mixed  ...$lists
+     * @param mixed ...$lists
+     *
      * @return static
      */
     public function crossJoin(...$lists)
@@ -722,7 +724,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Get the items in the collection whose keys and values are not present in the given items.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function diffAssoc($items)
