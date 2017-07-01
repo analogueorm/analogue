@@ -3,10 +3,10 @@
 use Analogue\ORM\EntityCollection;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\ProxyInterface;
+use TestApp\CustomGroup;
+use TestApp\CustomUser;
 use TestApp\Group;
 use TestApp\User;
-use TestApp\CustomUser;
-use TestApp\CustomGroup;
 
 class BelongsToManyTest extends DomainTestCase
 {

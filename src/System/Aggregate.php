@@ -1213,5 +1213,4 @@ class Aggregate implements InternallyMappable
     {
         $this->wrappedEntity->setProxies();
     }
-
 }

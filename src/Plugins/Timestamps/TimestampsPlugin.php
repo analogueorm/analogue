@@ -3,9 +3,9 @@
 namespace Analogue\ORM\Plugins\Timestamps;
 
 use Analogue\ORM\Plugins\AnaloguePlugin;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Wrappers\Factory;
 use Carbon\Carbon;
-use Analogue\ORM\System\InternallyMappable;
 
 /**
  * Implements the Timestamps support on Analogue Entities.
@@ -43,7 +43,7 @@ class TimestampsPlugin extends AnaloguePlugin
 
                     $time = new Carbon();
 
-                    if(is_null($wrappedEntity->getEntityAttribute($createdAtField))) {
+                    if (is_null($wrappedEntity->getEntityAttribute($createdAtField))) {
                         $wrappedEntity->setEntityAttribute($createdAtField, $time);
                         $wrappedEntity->setEntityAttribute($updatedAtField, $time);
                     }
@@ -64,16 +64,18 @@ class TimestampsPlugin extends AnaloguePlugin
     }
 
     /**
-     * Return internally mappable if not mappable
-     * 
-     * @param  mixed $entity
+     * Return internally mappable if not mappable.
+     *
+     * @param mixed $entity
+     *
      * @return InternallyMappable
      */
     protected function getMappable($entity) : InternallyMappable
     {
-        if(! $entity instanceof InternallyMappable) {
+        if (!$entity instanceof InternallyMappable) {
             $factory = new Factory();
             $wrappedEntity = $factory->make($entity);
+
             return $wrappedEntity;
         }
 

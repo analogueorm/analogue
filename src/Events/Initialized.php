@@ -6,11 +6,10 @@ use Analogue\ORM\System\Mapper;
 
 class Initialized
 {
-	public $mapper;
+    public $mapper;
 
-	public function __construct(Mapper $mapper)
-	{
-		$this->mapper = $mapper;
-	}
-
+    public function __construct(Mapper $mapper)
+    {
+        $this->mapper = $mapper;
+    }
 }

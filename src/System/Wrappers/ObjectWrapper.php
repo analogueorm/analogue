@@ -18,8 +18,8 @@ class ObjectWrapper extends Wrapper
     protected $attributes = [];
 
     /**
-     * All properties on the original object
-     * 
+     * All properties on the original object.
+     *
      * @var array
      */
     protected $properties = [];
@@ -50,9 +50,9 @@ class ObjectWrapper extends Wrapper
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
         $this->hydrator = $hydrator;
-        
+
         parent::__construct($entity, $entityMap);
-        
+
         $this->attributes = $this->dehydrate($entity);
     }
 
@@ -98,7 +98,7 @@ class ObjectWrapper extends Wrapper
         // In some case, attributes will miss some properties, so we'll just complete the hydration
         // set with the orginal's object properties
         $missingProperties = array_diff_key($this->properties, $properties);
-        foreach(array_keys($missingProperties) as $missingKey) {
+        foreach (array_keys($missingProperties) as $missingKey) {
             $properties[$missingKey] = $this->properties[$missingKey];
         }
 
