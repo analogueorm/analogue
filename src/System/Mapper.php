@@ -520,7 +520,7 @@ class Mapper
         $container = Manager::getInstance()->getContainer();
 
         if ($container === null) {
-            throw new ErrorException("No container defined.");
+            throw new ErrorException('No container defined.');
         }
 
         if ($container instanceof IlluminateContainer) {

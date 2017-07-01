@@ -77,8 +77,8 @@ class Manager
     protected $eventDispatcher;
 
     /**
-     * Container
-     * 
+     * Container.
+     *
      * @var \Psr\Container\ContainerInterface
      */
     protected $container;
@@ -134,8 +134,8 @@ class Manager
     }
 
     /**
-     * Get container instance
-     * 
+     * Get container instance.
+     *
      * @return ContainerInterface | null
      */
     public function getContainer()

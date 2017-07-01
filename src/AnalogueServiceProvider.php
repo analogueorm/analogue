@@ -6,8 +6,8 @@ use Analogue\ORM\Drivers\IlluminateConnectionProvider;
 use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\System\Manager;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Integrate Analogue into Laravel.
@@ -46,7 +46,7 @@ class AnalogueServiceProvider extends ServiceProvider
 
             $event = $app->make('events');
             $container = $app->make(Container::class);
-            
+
             $manager = new Manager($driverManager, $event, $container);
 
             $manager->registerPlugin(\Analogue\ORM\Plugins\Timestamps\TimestampsPlugin::class);
