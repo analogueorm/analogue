@@ -19,19 +19,19 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "illuminate/database": "5.1.*|5.2.*|5.3.*|5.4.*",
-        "illuminate/events": "5.1.*|5.2.*|5.3.*|5.4.*",
-        "illuminate/pagination": "5.1.*|5.2.*|5.3.*|5.4.*",
+        "illuminate/database": "dev-master",
+        "illuminate/events": "dev-master",
+        "illuminate/pagination": "dev-master",
         "doctrine/instantiator": "^1.0",
         "ocramius/proxy-manager": "^2.0",
         "ocramius/generated-hydrator": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0",
-        "laravel/laravel": "5.3.*|5.4.*",
+        "laravel/laravel": "dev-master|dev-develop",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "analogue/factory": "~1.1",
+        "analogue/factory": "dev-master",
         "laravel/browser-kit-testing": "^1.0"
     },
     "suggest": {
@@ -60,6 +60,6 @@
             "tests/helpers.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
