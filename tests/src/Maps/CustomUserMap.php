@@ -3,8 +3,8 @@
 namespace TestApp\Maps;
 
 use Analogue\ORM\EntityMap;
-use TestApp\CustomUser;
 use TestApp\CustomGroup;
+use TestApp\CustomUser;
 
 class CustomUserMap extends EntityMap
 {

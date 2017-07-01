@@ -205,7 +205,7 @@ class BelongsToMany extends Relationship
         $select = $this->getSelectColumns($columns);
 
         $entities = $this->query->addSelect($select)->getEntities();
-        
+
         $this->hydratePivotRelation($entities);
 
         // If we actually found models we will also eager load any relationnships that
@@ -462,11 +462,9 @@ class BelongsToMany extends Relationship
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($entities as $entity) {
-
             $wrapper = $this->factory->make($entity);
 
             if (isset($dictionary[$key = $wrapper->getEntityAttribute($keyName)])) {
-
                 $collection = $this->relatedMap->newCollection($dictionary[$key]);
 
                 $wrapper->setEntityAttribute($relation, $collection);
@@ -486,7 +484,7 @@ class BelongsToMany extends Relationship
      * @return array
      */
     protected function buildDictionary(EntityCollection $results)
-    {   
+    {
         $foreign = $this->foreignKey;
 
         $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
