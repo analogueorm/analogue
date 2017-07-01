@@ -14,6 +14,7 @@ use Analogue\ORM\ValueMap;
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use Psr\Container\ContainerInterface;
 
 /**
  * This class is the entry point for registering Entities and
@@ -76,6 +77,13 @@ class Manager
     protected $eventDispatcher;
 
     /**
+     * Container
+     * 
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
      * Available Analogue Events.
      *
      * @var array
@@ -114,13 +122,25 @@ class Manager
      * @param \Analogue\ORM\Drivers\Manager $driverManager
      * @param Dispatcher                    $event
      */
-    public function __construct(DriverManager $driverManager, Dispatcher $event)
+    public function __construct(DriverManager $driverManager, Dispatcher $event, ContainerInterface $container = null)
     {
         $this->drivers = $driverManager;
 
         $this->eventDispatcher = $event;
 
+        $this->container = $container;
+
         static::$instance = $this;
+    }
+
+    /**
+     * Get container instance
+     * 
+     * @return ContainerInterface | null
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**

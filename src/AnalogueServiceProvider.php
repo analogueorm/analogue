@@ -7,6 +7,7 @@ use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\System\Manager;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Container\Container;
 
 /**
  * Integrate Analogue into Laravel.
@@ -44,8 +45,9 @@ class AnalogueServiceProvider extends ServiceProvider
             $driverManager->addDriver($illuminate);
 
             $event = $app->make('events');
-
-            $manager = new Manager($driverManager, $event);
+            $container = $app->make(Container::class);
+            
+            $manager = new Manager($driverManager, $event, $container);
 
             $manager->registerPlugin(\Analogue\ORM\Plugins\Timestamps\TimestampsPlugin::class);
             $manager->registerPlugin(\Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin::class);

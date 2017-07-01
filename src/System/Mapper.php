@@ -11,7 +11,7 @@ use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Wrappers\Wrapper;
 use Doctrine\Instantiator\Instantiator;
 use ErrorException;
-use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\Container as IlluminateContainer;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
@@ -517,11 +517,17 @@ class Mapper
      */
     protected function newInstanceUsingDependencyInjection($class)
     {
-        if (!class_exists(Container::class)) {
-            throw new ErrorException("Illuminate\Container\Container is required to use Dependency Injection");
+        $container = Manager::getInstance()->getContainer();
+
+        if ($container === null) {
+            throw new ErrorException("No container defined.");
         }
 
-        return Container::getInstance()->make($class);
+        if ($container instanceof IlluminateContainer) {
+            return $container->make($class);
+        }
+
+        return $container->get($class);
     }
 
     /**

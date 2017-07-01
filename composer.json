@@ -24,7 +24,8 @@
         "illuminate/pagination": "dev-master",
         "doctrine/instantiator": "^1.0",
         "ocramius/proxy-manager": "^2.0",
-        "ocramius/generated-hydrator": "^2.0"
+        "ocramius/generated-hydrator": "^2.0",
+        "psr/container": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0",
