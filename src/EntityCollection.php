@@ -424,6 +424,20 @@ class EntityCollection extends Collection
     }
 
     /**
+     * Unset the item at a given offset.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        $this->items = array_filter($this->items, function($item) use ($key) {
+            $primaryKey = $this->getEntityKey($item);
+            return $primaryKey !== $key;
+        });
+    }
+
+    /**
      * Get a base Support collection instance from this collection.
      *
      * @return \Illuminate\Support\Collection
