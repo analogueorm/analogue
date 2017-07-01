@@ -111,7 +111,7 @@ class BelongsToMany extends Relationship
     public function getResults($relation)
     {
         $results = $this->get();
-        tdd($results);
+
         $this->cacheRelation($results, $relation);
 
         return $results;
@@ -215,11 +215,7 @@ class BelongsToMany extends Relationship
             $entities = $this->query->eagerLoadRelations($entities);
         }
 
-        $results = $this->relatedMap->newCollection($entities);
-
-        //tdd($results);
-
-        return $results;
+        return $this->relatedMap->newCollection($entities);
     }
 
     /**
@@ -505,7 +501,7 @@ class BelongsToMany extends Relationship
 
             $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
         }
-        
+
         return $dictionary;
     }
 

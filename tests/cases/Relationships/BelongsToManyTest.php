@@ -222,7 +222,7 @@ class BelongsToManyTest extends DomainTestCase
         $user->groups = [$groupA, $groupB];
         $mapper = $this->mapper(CustomUser::class);
         $mapper->store($user);
-        
+
         $this->seeInDatabase('custom_users', [
             'name' => 'Test User',
         ]);
@@ -242,12 +242,12 @@ class BelongsToManyTest extends DomainTestCase
         $groups = $this->mapper(CustomGroup::class)->get();
         $this->assertCount(2, $groups);
         $this->assertCount(1, $groups->first()->users);
-        setTddOn();
+
         // Test Inverse Eager Loading
         $groups = $this->mapper(CustomGroup::class)->with('users')->get();
         $this->assertCount(2, $groups);
         $this->assertCount(1, $groups->first()->users);
-        setTddOff();
+
         // Test Eager loading
         $users = $mapper->with('groups')->get();
         $this->assertCount(1, $users);
