@@ -20,7 +20,7 @@ class CreateCustomUserTable extends Migration
             $table->increments('groupid');
             $table->string('name');
         });
-        Schema::create('custom_user_groups', function(Blueprint $table) {
+        Schema::create('custom_user_groups', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('userid');
             $table->integer('groupid');

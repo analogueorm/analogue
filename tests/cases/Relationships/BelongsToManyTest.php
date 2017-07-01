@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Collection;
+use TestApp\CustomGroup;
+use TestApp\CustomUser;
 use TestApp\Group;
 use TestApp\User;
-use TestApp\CustomUser;
-use TestApp\CustomGroup;
 
 class BelongsToManyTest extends DomainTestCase
 {
@@ -213,12 +213,12 @@ class BelongsToManyTest extends DomainTestCase
     /** @test */
     public function we_can_use_a_many_to_many_relationship_on_entities_with_custom_primary_keys()
     {
-        $user = new CustomUser;
-        $user->name = "Test User";
-        $groupA = new CustomGroup;
-        $groupA->name = "Test Group A";
-        $groupB = new CustomGroup;
-        $groupB->name = "Test Group B";
+        $user = new CustomUser();
+        $user->name = 'Test User';
+        $groupA = new CustomGroup();
+        $groupA->name = 'Test Group A';
+        $groupB = new CustomGroup();
+        $groupB->name = 'Test Group B';
         $user->groups = [$groupA, $groupB];
         $mapper = $this->mapper(CustomUser::class);
         $mapper->store($user);

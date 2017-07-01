@@ -259,7 +259,7 @@ abstract class Relationship
             if (!$value instanceof InternallyMappable) {
                 $value = $host->factory->make($value);
             }
-            
+
             return $value->getEntityAttribute($key);
         }, $entities)));
     }
