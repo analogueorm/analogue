@@ -81,6 +81,23 @@ class EntityCollection extends Collection
     }
 
     /**
+     * Get and remove an item from the collection.
+     *
+     * @param mixed $key
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function pull($key, $default = null)
+    {
+        $this->items = array_filter($this->items, function ($item) use ($key) {
+            $primaryKey = $this->getEntityKey($item);
+
+            return $primaryKey !== $key;
+        });
+    }
+
+    /**
      * Push an item onto the end of the collection.
      *
      * @param mixed $value
@@ -404,6 +421,22 @@ class EntityCollection extends Collection
         $dictionary = $this->getDictionary();
 
         return new static(array_values($dictionary));
+    }
+
+    /**
+     * Unset the item at a given offset.
+     *
+     * @param string $key
+     *
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        $this->items = array_filter($this->items, function ($item) use ($key) {
+            $primaryKey = $this->getEntityKey($item);
+
+            return $primaryKey !== $key;
+        });
     }
 
     /**

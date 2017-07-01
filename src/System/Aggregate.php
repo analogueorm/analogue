@@ -287,7 +287,7 @@ class Aggregate implements InternallyMappable
     protected function getRelationshipValue($relation)
     {
         $value = $this->getEntityAttribute($relation);
-        //if($relation == "role") tdd($this->wrappedEntity->getEntityAttributes());
+
         if (is_bool($value) || is_float($value) || is_int($value) || is_string($value)) {
             throw new MappingException("Entity's attribute $relation should be array, object, collection or null");
         }

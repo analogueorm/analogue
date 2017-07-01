@@ -208,7 +208,7 @@ class BelongsToMany extends Relationship
 
         $this->hydratePivotRelation($entities);
 
-        // If we actually found models we will also eager load any relationships that
+        // If we actually found models we will also eager load any relationnships that
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($entities) > 0) {
@@ -454,7 +454,7 @@ class BelongsToMany extends Relationship
     {
         $dictionary = $this->buildDictionary($results);
 
-        $keyName = $this->relatedMap->getKeyName();
+        $keyName = $this->parentMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 
