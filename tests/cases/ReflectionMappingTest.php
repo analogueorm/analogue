@@ -1,5 +1,6 @@
 <?php
 
+use TestApp\CustomAttributeRealisator;
 use TestApp\Movie;
 use TestApp\Realisator;
 
@@ -59,5 +60,18 @@ class ReflectionMappingTest extends DomainTestCase
             'title'         => 'A clockwork orange',
             'realisator_id' => $realisator->id,
         ]);
+    }
+
+    /** @test */
+    public function we_can_store_and_retrieve_a_plain_php_object_with_a_custom_attribute_mapping()
+    {
+        $realisator = new CustomAttributeRealisator('Stanley Kubrick');
+        $mapper = $this->mapper(CustomAttributeRealisator::class);
+        $mapper->store($realisator);
+        $this->seeInDatabase('realisators', [
+            'name' => 'Stanley Kubrick',
+        ]);
+        $foundRealisator = $mapper->find($realisator->id);
+        $this->matches('Stanley Kubrick')->evaluate($foundRealisator->getName());
     }
 }
