@@ -25,7 +25,7 @@ class EntityCollection extends Collection
     public function __construct(array $entities = null)
     {
         $this->factory = new Factory();
-
+        
         parent::__construct($entities);
     }
 
