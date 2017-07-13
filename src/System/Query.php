@@ -70,6 +70,7 @@ class Query
         'toSql',
         'lists',
         'pluck',
+        'value',
         'count',
         'min',
         'max',
