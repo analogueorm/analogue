@@ -3,6 +3,7 @@
 namespace Analogue\ORM\System;
 
 use Analogue\ORM\Drivers\DBAdapter;
+use Analogue\ORM\Drivers\IlluminateQueryBuilder;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
 use Analogue\ORM\Relationships\Relationship;
@@ -15,7 +16,7 @@ use Illuminate\Pagination\Paginator;
 /**
  * Analogue Query builder.
  *
- * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+ * @mixin IlluminateQueryBuilder
  */
 class Query
 {
@@ -36,7 +37,7 @@ class Query
     /**
      * Query Builder Instance.
      *
-     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @var IlluminateQueryBuilder
      */
     protected $query;
 
@@ -868,7 +869,7 @@ class Query
      * (REFACTOR: this method should move out, we need to provide the client classes
      * with the adapter instead.)
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @return IlluminateQueryBuilder
      */
     public function getQuery()
     {
