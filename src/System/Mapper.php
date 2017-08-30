@@ -191,6 +191,7 @@ class Mapper
         if (get_class($entity) != $this->entityMap->getClass() && !is_subclass_of($entity, $this->entityMap->getClass())) {
             $expected = $this->entityMap->getClass();
             $actual = get_class($entity);
+
             throw new InvalidArgumentException("Expected : $expected, got $actual.");
         }
     }
