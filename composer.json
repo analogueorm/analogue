@@ -61,5 +61,15 @@
         ]
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+    "laravel": {
+        "providers": [
+            "Analogue\\ORM\\AnalogueServiceProvider"
+        ],
+        "aliases": {
+            "Analogue": "Analogue\\ORM\\AnalogueFacade"
+        }
+    }
+}
 }
