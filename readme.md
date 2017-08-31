@@ -64,6 +64,7 @@ See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) f
 - Embedded value object can now be stored as a mysql JSON field
 - Analogue entities can now be instantiated using laravel's `IoC Container` or any PSR-11 compatible container. 
 - Added [MongoDB](https://github.com/analogueorm/mongodb) driver.
+- Package auto discovery (L5.5)
 
 #### Version 5.4
 - Illuminate 5.4 Compatibility.
