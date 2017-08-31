@@ -122,67 +122,53 @@ class HasManyThrough extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
         $table = $this->parentMap->getTable();
 
-        $this->query->whereIn($table.'.'.$this->firstKey, $this->getKeys($entities));
+        $this->query->whereIn($table.'.'.$this->firstKey, $this->getKeysFromResults($results));
     }
 
     /**
-     * Initialize the relation on a set of entities.
+     * Match eagerly loaded relationship to a result set.
      *
-     * @param \Analogue\ORM\Entity[] $entities
-     * @param string                 $relation
+     * @param array  $results
+     * @param string $relation
      *
-     * @return \Analogue\ORM\Entity[]
+     * @return array
      */
-    public function initRelation(array $entities, $relation)
+    public function match(array $results, $relation)
     {
-        foreach ($entities as $entity) {
-            $entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
-        }
+        $entities = $this->getEager();
 
-        return $entities;
-    }
-
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param \Analogue\ORM\Entity[] $entities
-     * @param EntityCollection       $results
-     * @param string                 $relation
-     *
-     * @return \Analogue\ORM\Entity[]
-     */
-    public function match(array $entities, EntityCollection $results, $relation)
-    {
-        $dictionary = $this->buildDictionary($results);
+        $dictionary = $this->buildDictionary($entities);
 
         $relatedKey = $this->relatedMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 
+        $host = $this;
+
         // Once we have the dictionary we can simply spin through the parent entities to
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
-        foreach ($entities as $entity) {
-            $key = $entity->getEntityAttribute($relatedKey);
+        return array_map(function ($result) use ($relation, $relatedKey, $dictionary, $cache, $host) {
+            $key = $result[$relatedKey];
 
             if (isset($dictionary[$key])) {
-                $value = $this->relatedMap->newCollection($dictionary[$key]);
+                $value = $host->relatedMap->newCollection($dictionary[$key]);
 
-                $entity->setEntityAttribute($relation, $value);
+                $result[$relation] = $value;
 
-                $cache->cacheLoadedRelationResult($entity, $relation, $value, $this);
+                $cache->cacheLoadedRelationResult($key, $relation, $value, $this);
             }
-        }
 
-        return $entities;
+            return $result;
+        }, $results);
     }
 
     /**
@@ -197,8 +183,6 @@ class HasManyThrough extends Relationship
         $dictionary = [];
 
         $foreign = $this->firstKey;
-
-        $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
 
         // First we will create a dictionary of entities keyed by the foreign key of the
         // relationship as this will allow us to quickly access all of the related

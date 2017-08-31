@@ -23,7 +23,7 @@ class MorphTo extends BelongsTo
     protected $entities;
 
     /**
-     * All of the models keyed by ID.
+     * All of the result sets keyed by ID.
      *
      * @var array
      */
@@ -35,13 +35,6 @@ class MorphTo extends BelongsTo
      * @var bool
      */
     protected $withTrashed = false;
-
-    /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = true;
 
     /**
      * Create a new belongs to relationship instance.
@@ -63,29 +56,27 @@ class MorphTo extends BelongsTo
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
-        $this->buildDictionary($this->entities = EntityCollection::make($entities));
+        $this->buildDictionary($results);
     }
 
     /**
      * Build a dictionary with the entities.
      *
-     * @param EntityCollection $entities
+     * @param array $results
      *
      * @return void
      */
-    protected function buildDictionary(EntityCollection $entities)
+    protected function buildDictionary($results)
     {
-        foreach ($entities as $entity) {
-            if ($entity->getEntityAttribute($this->morphType)) {
-                $foreign = $this->foreignKey;
-                $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
-                $this->dictionary[$entity->getEntityAttribute($this->morphType)][$entity->getEntityAttribute($foreign)][] = $entity;
+        foreach ($results as $result) {
+            if ($result[$this->morphType]) {
+                $this->dictionary[$result[$this->morphType]][$result[$this->foreignKey]] = $result;
             }
         }
     }
@@ -93,15 +84,14 @@ class MorphTo extends BelongsTo
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array            $entities
-     * @param EntityCollection $results
-     * @param string           $relation
+     * @param array  $results
+     * @param string $relation
      *
      * @return array
      */
-    public function match(array $entities, EntityCollection $results, $relation)
+    public function match(array $results, $relation)
     {
-        return $entities;
+        return $results;
     }
 
     /**
@@ -134,11 +124,11 @@ class MorphTo extends BelongsTo
         $keyName = $mapper->getEntityMap()->getKeyName();
 
         foreach ($results as $result) {
-            $key = $result->{$keyName};
+            $key = $result[$keyName];
 
             if (isset($this->dictionary[$type][$key])) {
-                foreach ($this->dictionary[$type][$key] as $entity) {
-                    $entity->setEntityAttribute($this->relation, $result);
+                foreach ($this->dictionary[$type][$key] as $result) {
+                    $result[$this->relation] = $result;
                 }
             }
         }

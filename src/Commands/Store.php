@@ -127,6 +127,7 @@ class Store extends Command
 
         // Create any related object that doesn't exist in the database.
         $foreignRelationships = $aggregate->getEntityMap()->getForeignRelationships();
+
         $this->createRelatedEntities($foreignRelationships);
 
         // Update any pivot tables that has been modified.
@@ -141,6 +142,9 @@ class Store extends Command
         }
 
         // Now we can sync the related collections
+        //
+        // TODO (note) : not sute this check is needed, as we can assume
+        // the aggregate exists in the Post Store Process
         if ($this->aggregate->exists()) {
             $this->aggregate->syncRelationships($foreignRelationships);
         }
@@ -223,7 +227,8 @@ class Store extends Command
         } else {
             $sequence = $aggregate->getEntityMap()->getSequence();
 
-            if (empty($attributes[$keyName])) {
+            // Prevent inserting with a null ID
+            if (array_key_exists($keyName, $attributes)) {
                 unset($attributes[$keyName]);
             }
 

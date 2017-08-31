@@ -5,9 +5,10 @@ namespace Analogue\ORM\System;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\System\Proxies\CollectionProxy;
-use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
+use ProxyManager\Proxy\LazyLoadingInterface;
+use ProxyManager\Proxy\ProxyInterface;
 
 /**
  * This class is aimed to facilitate the handling of
@@ -21,6 +22,13 @@ class Aggregate implements InternallyMappable
      * @var \Analogue\ORM\System\Wrappers\Wrapper
      */
     protected $wrappedEntity;
+
+    /**
+     * Class of the entity being aggregated.
+     *
+     * @var string
+     */
+    protected $class;
 
     /**
      * Parent Root Aggregate.
@@ -86,6 +94,8 @@ class Aggregate implements InternallyMappable
     {
         $factory = new Factory();
 
+        $this->class = get_class($entity);
+
         $this->wrappedEntity = $factory->make($entity);
 
         $this->parent = $parent;
@@ -94,9 +104,9 @@ class Aggregate implements InternallyMappable
 
         $this->root = $root;
 
-        $this->mapper = Manager::getMapper($entity);
+        $mapper = $this->getMapper($entity);
 
-        $this->entityMap = $this->mapper->getEntityMap();
+        $this->entityMap = $mapper->getEntityMap();
 
         $this->parseRelationships();
     }
@@ -176,7 +186,7 @@ class Aggregate implements InternallyMappable
             throw new MappingException("Entity's attribute $relation should not be array, or collection");
         }
 
-        if ($value instanceof EntityProxy && !$value->isLoaded()) {
+        if ($value instanceof LazyLoadingInterface && !$value->isProxyInitialized()) {
             $this->relationships[$relation] = [];
 
             return true;
@@ -184,8 +194,8 @@ class Aggregate implements InternallyMappable
 
         // If the attribute is a loaded proxy, swap it for its
         // loaded entity.
-        if ($value instanceof EntityProxy && $value->isLoaded()) {
-            $value = $value->getUnderlyingObject();
+        if ($value instanceof LazyLoadingInterface && $value->isProxyInitialized()) {
+            $value = $value->getWrappedValueHolderValue();
         }
 
         if ($this->isParentOrRoot($value)) {
@@ -248,19 +258,19 @@ class Aggregate implements InternallyMappable
             return true;
         }
 
-        if (is_array($value) || $value instanceof Collection) {
+        if (is_array($value) || (!$value instanceof CollectionProxy && $value instanceof Collection)) {
             $this->needSync[] = $relation;
         }
 
         // If the relation is a proxy, we test is the relation
         // has been lazy loaded, otherwise we'll just treat
         // the subset of newly added items.
-        if ($value instanceof CollectionProxy && $value->isLoaded()) {
+        if ($value instanceof CollectionProxy && $value->isProxyInitialized()) {
             $this->needSync[] = $relation;
-            $value = $value->getUnderlyingCollection();
+            //$value = $value->getUnderlyingCollection();
         }
 
-        if ($value instanceof CollectionProxy && !$value->isLoaded()) {
+        if ($value instanceof CollectionProxy && !$value->isProxyInitialized()) {
             $value = $value->getAddedItems();
         }
 
@@ -343,7 +353,7 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityId()
     {
-        return $this->wrappedEntity->getEntityAttribute($this->entityMap->getKeyName());
+        return $this->wrappedEntity->getEntityKey();
     }
 
     /**
@@ -393,7 +403,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getEntityCache()
     {
-        return $this->mapper->getEntityCache();
+        return $this->getMapper()->getEntityCache();
     }
 
     /**
@@ -564,9 +574,11 @@ class Aggregate implements InternallyMappable
      */
     public function getRawAttributes()
     {
+        //$this->wrappedEntity->refresh();
+
         $attributes = $this->wrappedEntity->getEntityAttributes();
 
-        foreach ($this->entityMap->getRelationships() as $relation) {
+        foreach ($this->entityMap->getNonEmbeddedRelationships() as $relation) {
             unset($attributes[$relation]);
         }
 
@@ -578,7 +590,7 @@ class Aggregate implements InternallyMappable
 
         $foreignKeys = $this->getForeignKeyAttributes();
 
-        return $this->entityMap->getColumnNamesFromAttributes($attributes + $foreignKeys);
+        return $foreignKeys + $attributes;
     }
 
     /**
@@ -620,6 +632,7 @@ class Aggregate implements InternallyMappable
      */
     protected function flattenEmbeddables($attributes)
     {
+        // TODO : deprecate old implementation
         $embeddables = $this->entityMap->getEmbeddables();
 
         foreach ($embeddables as $localKey => $embed) {
@@ -642,6 +655,26 @@ class Aggregate implements InternallyMappable
             }
 
             $attributes = array_merge($attributes, $valueObjectAttributes);
+        }
+
+        //*********************
+        // New implementation
+        // *****************->
+
+        $embeddedRelations = $this->entityMap->getEmbeddedRelationships();
+
+        foreach ($embeddedRelations as $relation) {
+
+            // Spawn a new instance we can pass to the relationship methdod
+            $parentInstance = $this->getMapper()->newInstance();
+            $relationInstance = $this->entityMap->$relation($parentInstance);
+
+            // Extract the object from the attributes
+            $embeddedObject = $attributes[$relation];
+
+            unset($attributes[$relation]);
+
+            $attributes = $relationInstance->normalize($embeddedObject) + $attributes;
         }
 
         return $attributes;
@@ -694,18 +727,52 @@ class Aggregate implements InternallyMappable
         $foreignKeys = [];
 
         foreach ($this->entityMap->getLocalRelationships() as $relation) {
+
+            // If the actual relationship is a non-loaded proxy, we'll simply retrieve
+            // the foreign key pair without parsing the actual object. This will allow
+            // user to modify the actual related ID's directly by updating the corresponding
+            // attribute.
+            if ($this->isNonLoadedProxy($relation)) {
+                $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromNonLoadedRelation($relation);
+                continue;
+            }
+
             // check if relationship has been parsed, meaning it has an actual object
             // in the entity's attributes
             if ($this->isActualRelationships($relation)) {
                 $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromRelation($relation);
+            } else {
+                $foreignKeys = $foreignKeys + $this->getNullForeignKeyFromRelation($relation);
             }
         }
 
         if (!is_null($this->parent)) {
-            $foreignKeys = $foreignKeys + $this->getForeignKeyAttributesFromParent();
+            $foreignKeys = $this->getForeignKeyAttributesFromParent() + $foreignKeys;
         }
 
         return $foreignKeys;
+    }
+
+    /**
+     * Get a null foreign key value pair for an empty relationship.
+     *
+     * @param string $relation
+     *
+     * @return array
+     */
+    protected function getNullForeignKeyFromRelation($relation) : array
+    {
+        $key = $this->entityMap->getLocalKeys($relation);
+
+        if (is_array($key)) {
+            return $this->entityMap->getEmptyValueForLocalKey($relation);
+        }
+
+        if (is_null($key)) {
+            throw new MappingException("Foreign key for relation $relation cannot be null");
+        }
+
+        return [$key => $this->entityMap->getEmptyValueForLocalKey($relation)];
     }
 
     /**
@@ -718,18 +785,38 @@ class Aggregate implements InternallyMappable
      */
     protected function getForeignKeyAttributesFromRelation($relation)
     {
-        $localRelations = $this->entityMap->getLocalRelationships();
+        // Call Relationship's method
+        $relationship = $this->entityMap->$relation($this->getEntityObject());
 
-        if (in_array($relation, $localRelations)) {
-            // Call Relationship's method
-            $relationship = $this->entityMap->$relation($this->getEntityObject());
+        $relatedAggregate = $this->relationships[$relation][0];
 
-            $relatedAggregate = $this->relationships[$relation][0];
+        return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
+    }
 
-            return $relationship->getForeignKeyValuePair($relatedAggregate->getEntityObject());
-        } else {
-            return [];
+    /**
+     * Return an associative array containing the key-value pair(s) from
+     * the foreign key attribute.
+     *
+     * @param string $relation
+     *
+     * @return array
+     */
+    protected function getForeignKeyAttributesFromNonLoadedRelation($relation)
+    {
+        $key = $this->entityMap->getLocalKeys($relation);
+
+        // We'll treat single and composite keys (polymorphic) the same way.
+        if (!is_array($key)) {
+            $keys = [$key];
         }
+
+        $foreignKey = [];
+
+        foreach ($keys as $key) {
+            $foreignKey[$key] = $this->getEntityAttribute($key);
+        }
+
+        return $foreignKey;
     }
 
     /**
@@ -745,6 +832,8 @@ class Aggregate implements InternallyMappable
         $parentForeignRelations = $parentMap->getForeignRelationships();
         $parentPivotRelations = $parentMap->getPivotRelationships();
 
+        // The parentRelation is the name of the relationship
+        // methods on the parent entity map
         $parentRelation = $this->parentRelationship;
 
         if (in_array($parentRelation, $parentForeignRelations)
@@ -755,7 +844,7 @@ class Aggregate implements InternallyMappable
             // Call Relationship's method on parent map
             $relationship = $parentMap->$parentRelation($parentObject);
 
-            return $relationship->getForeignKeyValuePair();
+            return $relationship->getForeignKeyValuePair($parentObject);
         } else {
             return [];
         }
@@ -959,7 +1048,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getCache()
     {
-        return $this->mapper->getEntityCache();
+        return $this->getMapper()->getEntityCache();
     }
 
     /**
@@ -971,12 +1060,13 @@ class Aggregate implements InternallyMappable
     public function getDirtyRawAttributes()
     {
         $attributes = $this->getRawAttributes();
+
         $cachedAttributes = $this->getCachedRawAttributes(array_keys($attributes));
 
         $dirty = [];
 
         foreach ($attributes as $key => $value) {
-            if ($this->isRelation($key) || $key == 'pivot') {
+            if ($this->isActualRelation($key) || $key == 'pivot') {
                 continue;
             }
 
@@ -996,9 +1086,23 @@ class Aggregate implements InternallyMappable
      *
      * @return bool
      */
-    protected function isRelation($key)
+    protected function isActualRelation($key)
     {
-        return in_array($key, $this->entityMap->getRelationships());
+        return in_array($key, $this->entityMap->getNonEmbeddedRelationships());
+    }
+
+    /**
+     * Return true if attribute is a non-loaded proxy.
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    protected function isNonLoadedProxy($key)
+    {
+        $relation = $this->getEntityAttribute($key);
+
+        return $relation instanceof ProxyInterface && !$relation->isProxyInitialized();
     }
 
     /**
@@ -1031,7 +1135,7 @@ class Aggregate implements InternallyMappable
      */
     public function getMapper()
     {
-        return $this->mapper;
+        return Manager::getMapper($this->class);
     }
 
     /**
@@ -1102,6 +1206,8 @@ class Aggregate implements InternallyMappable
 
     /**
      * Set the lazyloading proxies on the wrapped entity.
+     *
+     * @return void
      */
     public function setProxies()
     {

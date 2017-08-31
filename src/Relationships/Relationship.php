@@ -69,13 +69,6 @@ abstract class Relationship
     protected $relatedMap;
 
     /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = false;
-
-    /**
      * Indicate if the relationships use a pivot table.*.
      *
      * @var bool
@@ -99,8 +92,8 @@ abstract class Relationship
     /**
      * Create a new relation instance.
      *
-     * @param Mapper   $mapper
-     * @param Mappable $parent
+     * @param Mapper $mapper
+     * @param mixed  $parent
      *
      * @throws \Analogue\ORM\Exceptions\MappingException
      */
@@ -118,21 +111,11 @@ abstract class Relationship
 
         $this->parentMap = $this->parentMapper->getEntityMap();
 
-        $this->related = $this->query->getEntityInstance();
+        $this->related = $mapper->newInstance();
 
         $this->relatedMap = $mapper->getEntityMap();
 
         $this->addConstraints();
-    }
-
-    /**
-     * Indicate if the parent entity hold the foreign key for relation.
-     *
-     * @return bool
-     */
-    public function ownForeignKey()
-    {
-        return static::$ownForeignKey;
     }
 
     /**
@@ -155,32 +138,22 @@ abstract class Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $models
+     * @param array $results
      *
      * @return void
      */
-    abstract public function addEagerConstraints(array $models);
+    abstract public function addEagerConstraints(array $results);
 
     /**
-     * Initialize the relation on a set of models.
+     * Match the eagerly loaded results to their parents, then return
+     * updated results.
      *
-     * @param array  $models
+     * @param array  $results
      * @param string $relation
      *
      * @return array
      */
-    abstract public function initRelation(array $models, $relation);
-
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param array            $entities
-     * @param EntityCollection $results
-     * @param string           $relation
-     *
-     * @return array
-     */
-    abstract public function match(array $entities, EntityCollection $results, $relation);
+    abstract public function match(array $results, $relation);
 
     /**
      * Get the results of the relationship.
@@ -250,7 +223,7 @@ abstract class Relationship
     protected function getKeys(array $entities, $key = null)
     {
         if (is_null($key)) {
-            $key = $this->parentMap->getKeyName();
+            $key = $this->relatedMap->getKeyName();
         }
 
         $host = $this;
@@ -262,6 +235,25 @@ abstract class Relationship
 
             return $value->getEntityAttribute($key);
         }, $entities)));
+    }
+
+    /**
+     * Get all the keys from a result set.
+     *
+     * @param array  $results
+     * @param string $key
+     *
+     * @return array
+     */
+    protected function getKeysFromResults(array $results, $key = null)
+    {
+        if (is_null($key)) {
+            $key = $this->parentMap->getKeyName();
+        }
+
+        return array_unique(array_values(array_map(function ($value) use ($key) {
+            return $value[$key];
+        }, $results)));
     }
 
     /**
@@ -401,7 +393,7 @@ abstract class Relationship
     {
         $cache = $this->parentMapper->getEntityCache();
 
-        $cache->cacheLoadedRelationResult($this->parent, $relation, $results, $this);
+        $cache->cacheLoadedRelationResult($this->parent->getEntityKey(), $relation, $results, $this);
     }
 
     /**

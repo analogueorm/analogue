@@ -25,7 +25,7 @@ class EntityCollection extends Collection
     public function __construct(array $entities = null)
     {
         $this->factory = new Factory();
-
+        
         parent::__construct($entities);
     }
 
@@ -138,6 +138,27 @@ class EntityCollection extends Collection
             $this->items[$key] = $value;
         }
     }
+
+    /**
+     * Determine if a key exists in the collection.
+     *
+     * @param mixed      $key
+     * @param mixed|null $value
+     *
+     * @return bool
+     */
+    // public function contains($key, $value = null)
+    // {
+    //     if (func_num_args() == 2) {
+    //         return !$this->where($key, $value)->isEmpty();
+    //     }
+
+    //     if ($this->useAsCallable($key)) {
+    //         return !is_null($this->first($key));
+    //     }
+
+    //     return !is_null($this->find($key));
+    // }
 
     /**
      * Fetch a nested element of the collection.

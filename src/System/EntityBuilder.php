@@ -2,8 +2,6 @@
 
 namespace Analogue\ORM\System;
 
-use Analogue\ORM\System\Proxies\CollectionProxy;
-use Analogue\ORM\System\Proxies\EntityProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 
 /**
@@ -26,18 +24,11 @@ class EntityBuilder
     protected $entityMap;
 
     /**
-     * Relations that will be eager loaded on this query.
+     * Relations that are eager loaded on this query.
      *
      * @var array
      */
     protected $eagerLoads;
-
-    /**
-     * Relations that will be lazy loaded on this query.
-     *
-     * @var array
-     */
-    protected $lazyLoads;
 
     /**
      * @var array
@@ -65,8 +56,6 @@ class EntityBuilder
 
         $this->eagerLoads = $eagerLoads;
 
-        $this->lazyLoads = $this->prepareLazyLoading();
-
         $this->factory = new Factory();
     }
 
@@ -79,29 +68,20 @@ class EntityBuilder
      */
     public function build(array $result)
     {
-        $keyName = $this->entityMap->getKeyName();
-
-        $tmpCache = [];
-
-        $instance = $this->getWrapperInstance();
-
-        $tmpCache[$result[$keyName]] = $result;
+        $wrapper = $this->getWrapperInstance();
 
         // Hydrate any embedded Value Object
+        //
+        // TODO Move this to the result builder instead,
+        // as we'll handle this the same way as they were
+        // eager loaded relationships.
         $this->hydrateValueObjects($result);
 
-        // Hydrate relationship attributes with lazyloading proxies
-        if (count($this->lazyLoads) > 0) {
-            $proxies = $this->getLazyLoadingProxies($instance);
-            $instance->setEntityAttributes($result + $proxies);
-        } else {
-            $instance->setEntityAttributes($result);
-        }
+        $wrapper->setEntityAttributes($result);
 
-        // Directly Unwrap the entity now that it has been hydrated
-        $entity = $instance->getObject();
+        $wrapper->setProxies();
 
-        $this->mapper->getEntityCache()->add($tmpCache);
+        $entity = $wrapper->getObject();
 
         return $entity;
     }
@@ -152,55 +132,16 @@ class EntityBuilder
         $embeddedAttributes = $map->getAttributes();
 
         $valueObject = $this->mapper->getManager()->getValueObjectInstance($valueClass);
+        $voWrapper = $this->factory->make($valueObject);
 
         foreach ($embeddedAttributes as $key) {
             $prefix = snake_case(class_basename($valueClass)).'_';
-
-            $voWrapper = $this->factory->make($valueObject);
 
             $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
 
             unset($attributes[$prefix.$key]);
         }
 
-        $attributes[$localKey] = $valueObject;
-    }
-
-    /**
-     * Deduce the relationships that will be lazy loaded from the eagerLoads array.
-     *
-     * @return array
-     */
-    protected function prepareLazyLoading()
-    {
-        $relations = $this->entityMap->getRelationships();
-
-        return array_diff($relations, $this->eagerLoads);
-    }
-
-    /**
-     * Build lazy loading proxies for the current entity.
-     *
-     * @param InternallyMappable $entity
-     *
-     * @return array
-     */
-    protected function getLazyLoadingProxies(InternallyMappable $entity)
-    {
-        $proxies = [];
-
-        $singleRelations = $this->entityMap->getSingleRelationships();
-        $manyRelations = $this->entityMap->getManyRelationships();
-
-        foreach ($this->lazyLoads as $relation) {
-            if (in_array($relation, $singleRelations)) {
-                $proxies[$relation] = new EntityProxy($entity->getObject(), $relation);
-            }
-            if (in_array($relation, $manyRelations)) {
-                $proxies[$relation] = new CollectionProxy($entity->getObject(), $relation);
-            }
-        }
-
-        return $proxies;
+        $attributes[$localKey] = $voWrapper->getObject();
     }
 }

@@ -32,13 +32,6 @@ class BelongsTo extends Relationship
     protected $relation;
 
     /**
-     * Indicate if the parent entity hold the key for the relation.
-     *
-     * @var bool
-     */
-    protected static $ownForeignKey = true;
-
-    /**
      * Create a new belongs to relationship instance.
      *
      * @param Mapper   $mapper
@@ -107,38 +100,36 @@ class BelongsTo extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
         $key = $this->otherKey;
 
-        $this->query->whereIn($key, $this->getEagerModelKeys($entities));
+        $this->query->whereIn($key, $this->getEagerModelKeys($results));
     }
 
     /**
      * Gather the keys from an array of related models.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return array
      */
-    protected function getEagerModelKeys(array $entities)
+    protected function getEagerModelKeys(array $results)
     {
         $keys = [];
 
-        // First we need to gather all of the keys from the parent models so we know what
+        // First we need to gather all of the keys from the result set so we know what
         // to query for via the eager loading query. We will add them to an array then
         // execute a "where in" statement to gather up all of those related records.
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
-
-            if (!is_null($value = $entity->getEntityAttribute($this->foreignKey))) {
+        foreach ($results as $result) {
+            if (!is_null($value = $result[$this->foreignKey])) {
                 $keys[] = $value;
             }
         }
@@ -154,60 +145,48 @@ class BelongsTo extends Relationship
     }
 
     /**
-     * Initialize the relation on a set of models.
+     * Match the Results array to an eagerly loaded relation.
      *
-     * @param array  $entities
+     * @param array  $results
      * @param string $relation
      *
      * @return array
      */
-    public function initRelation(array $entities, $relation)
-    {
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
-            $entity->setEntityAttribute($relation, null);
-        }
-
-        return $entities;
-    }
-
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param array            $entities
-     * @param EntityCollection $results
-     * @param string           $relation
-     *
-     * @return array
-     */
-    public function match(array $entities, EntityCollection $results, $relation)
+    public function match(array $results, $relation)
     {
         $foreign = $this->foreignKey;
 
         $other = $this->otherKey;
+
+        // Execute the relationship and get related entities as an EntityCollection
+        $entities = $this->getEager();
 
         // First we will get to build a dictionary of the child models by their primary
         // key of the relationship, then we can easily match the children back onto
         // the parents using that dictionary and the primary key of the children.
         $dictionary = [];
 
-        foreach ($results as $result) {
-            $result = $this->factory->make($result);
-            $dictionary[$result->getEntityAttribute($other)] = $result->getObject();
+        // TODO ; see if otherKey is the primary key of the related entity, we can
+        // simply use the EntityCollection key to match entities to results, which
+        // will be much more efficient, and use this method as a fallback if the
+        // otherKey is not the same as the primary Key.
+        foreach ($entities as $entity) {
+            $entity = $this->factory->make($entity);
+            $dictionary[$entity->getEntityAttribute($other)] = $entity->getObject();
         }
 
         // Once we have the dictionary constructed, we can loop through all the parents
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
-
-            if (isset($dictionary[$entity->getEntityAttribute($foreign)])) {
-                $entity->setEntityAttribute($relation, $dictionary[$entity->getEntityAttribute($foreign)]);
+        return array_map(function ($result) use ($dictionary, $foreign, $relation) {
+            if (isset($dictionary[$result[$foreign]])) {
+                $result[$relation] = $dictionary[$result[$foreign]];
+            } else {
+                $result[$relation] = null;
             }
-        }
 
-        return $entities;
+            return $result;
+        }, $results);
     }
 
     public function sync(array $entities)

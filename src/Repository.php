@@ -10,6 +10,8 @@ use InvalidArgumentException;
 
 /**
  * Class Repository.
+ *
+ * @mixin Mapper
  */
 class Repository
 {

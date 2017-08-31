@@ -2,8 +2,6 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\EntityCollection;
-
 class HasOne extends HasOneOrMany
 {
     /**
@@ -33,33 +31,15 @@ class HasOne extends HasOneOrMany
     }
 
     /**
-     * Initialize the relation on a set of entities.
-     *
-     * @param \Analogue\ORM\Entity[] $entities
-     * @param string                 $relation
-     *
-     * @return array
-     */
-    public function initRelation(array $entities, $relation)
-    {
-        foreach ($entities as $entity) {
-            $entity->setEntityAttribute($relation, null);
-        }
-
-        return $entities;
-    }
-
-    /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param \Analogue\ORM\Entity[] $entities
-     * @param EntityCollection       $results
-     * @param string                 $relation
+     * @param array  $results
+     * @param string $relation
      *
      * @return array
      */
-    public function match(array $entities, EntityCollection $results, $relation)
+    public function match(array $results, $relation)
     {
-        return $this->matchOne($entities, $results, $relation);
+        return $this->matchOne($results, $relation);
     }
 }

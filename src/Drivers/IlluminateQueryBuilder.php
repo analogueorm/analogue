@@ -5,7 +5,7 @@ namespace Analogue\ORM\Drivers;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class IlluminateQueryBuilder.
+ * Class IlluminateQueryAdapter.
  *
  * @mixin Builder
  */

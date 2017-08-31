@@ -87,13 +87,13 @@ class MorphToMany extends BelongsToMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
-        parent::addEagerConstraints($entities);
+        parent::addEagerConstraints($results);
 
         $this->query->where($this->table.'.'.$this->morphType, $this->morphClass);
     }

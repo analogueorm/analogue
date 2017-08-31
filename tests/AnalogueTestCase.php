@@ -5,7 +5,7 @@ use Faker\Factory as Faker;
 use Illuminate\Filesystem\Filesystem;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
 
-abstract class AnalogueTestCase extends Laravel\BrowserKitTesting\TestCase
+abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 {
     use InteractsWithDatabase;
 

@@ -75,6 +75,24 @@ class Mapper
     protected $customCommands = [];
 
     /**
+     * Available Analogue Events.
+     *
+     * @var array
+     */
+    protected $events = [
+        'initializing' => \Analogue\ORM\Events\Initializing::class,
+        'initialized'  => \Analogue\ORM\Events\Initialized::class,
+        'storing'      => \Analogue\ORM\Events\Storing::class,
+        'stored'       => \Analogue\ORM\Events\Stored::class,
+        'creating'     => \Analogue\ORM\Events\Creating::class,
+        'created'      => \Analogue\ORM\Events\Created::class,
+        'updating'     => \Analogue\ORM\Events\Updating::class,
+        'updated'      => \Analogue\ORM\Events\Updated::class,
+        'deleting'     => \Analogue\ORM\Events\Deleting::class,
+        'deleted'      => \Analogue\ORM\Events\Deleted::class,
+    ];
+
+    /**
      * @param EntityMap  $entityMap
      * @param DBAdapter  $adapter
      * @param Dispatcher $dispatcher
@@ -96,14 +114,40 @@ class Mapper
     /**
      * Map results to a Collection.
      *
-     * @param Collection $results
+     * @param array|Collection $results
      *
      * @return Collection
      */
-    public function map($results)
+    public function map($results, array $eagerLoads = []) : Collection
     {
-        // To implement, will allow decoupling result
-        // instantiation from Query class
+        $builder = new ResultBuilder($this);
+
+        if ($results instanceof Collection) {
+            // Get underlying collection array
+            $results = $results->all();
+        }
+
+        if (!is_array($results)) {
+            throw new InvalidArgumentException("'results' should be an array or collection.");
+        }
+
+        // First, we'll cast every single result to array
+        $results = array_map(function ($item) {
+            return (array) $item;
+        }, $results);
+
+        // Then, we'll pass the results to the Driver's provided transformer, so
+        // any DB specific value can be casted before hydration
+        $results = $this->adapter->fromDatabase($results);
+
+        // Then, we'll cache every single results as raw attributes, before
+        // adding relationships, which will be cached when the relationship's
+        // query takes place.
+        //$this->getEntityCache()->add($results);
+
+        $entities = $builder->build($results, $eagerLoads);
+
+        return $this->entityMap->newCollection($entities);
     }
 
     /**
@@ -191,7 +235,6 @@ class Mapper
         if (get_class($entity) != $this->entityMap->getClass() && !is_subclass_of($entity, $this->entityMap->getClass())) {
             $expected = $this->entityMap->getClass();
             $actual = get_class($entity);
-
             throw new InvalidArgumentException("Expected : $expected, got $actual.");
         }
     }
@@ -318,11 +361,18 @@ class Mapper
             throw new InvalidArgumentException('Fired Event with invalid Entity Object');
         }
 
-        $event = "analogue.{$event}.".$this->entityMap->getClass();
+        $eventName = "analogue.{$event}.".$this->entityMap->getClass();
 
         $method = $halt ? 'until' : 'fire';
 
-        return $this->dispatcher->$method($event, $entity);
+        if (!array_key_exists($event, $this->events)) {
+            throw new \LogicException("Analogue : Event $event doesn't exist");
+        }
+
+        $eventClass = $this->events[$event];
+        $event = new $eventClass($entity);
+
+        return $this->dispatcher->$method($eventName, $event);
     }
 
     /**

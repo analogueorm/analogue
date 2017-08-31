@@ -1,0 +1,65 @@
+{
+    "name": "analogue/orm",
+    "description": "An intuitive Data Mapper ORM for PHP and Laravel",
+    "keywords": [
+        "orm",
+        "datamapper",
+        "laravel",
+        "entity",
+        "repository",
+        "mapper"
+    ],
+    "homepage": "http://github.com/analogueorm/analogue",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rémi Collin",
+            "email": "rcollin2@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "illuminate/database": "~5.3.0",
+        "illuminate/events": "~5.3.0",
+        "illuminate/pagination": "~5.3.0",
+        "doctrine/instantiator": "^1.0",
+        "ocramius/proxy-manager": "^2.0",
+        "ocramius/generated-hydrator": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.0",
+        "laravel/laravel": "5.3.*",
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "analogue/factory": "dev-master",
+        "laravel/browser-kit-testing": "^1.0"
+    },
+    "suggest": {
+        "analogue/laravel-auth": "Analogue's authentication driver for Laravel.",
+        "analogue/factory": "Create simple dummy entities for your tests",
+        "analogue/mongodb": "MongoDB driver for Analogue ORM"
+    },
+    "autoload": {
+        "psr-4": {
+            "Analogue\\ORM\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/AnalogueTestCase.php",
+            "tests/DomainTestCase.php",
+            "tests/ClassFinder.php"
+        ],
+        "psr-4": {
+            "TestApp\\": "tests/src"
+        },
+        "files": [
+            "tests/helpers.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

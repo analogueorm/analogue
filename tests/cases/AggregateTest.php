@@ -3,6 +3,7 @@
 use Illuminate\Support\Collection;
 use TestApp\Article;
 use TestApp\Blog;
+use TestApp\Group;
 use TestApp\User;
 
 class AggregateTest extends AnalogueTestCase
@@ -55,6 +56,7 @@ class AggregateTest extends AnalogueTestCase
         $mapper = $this->mapper($user);
         $loadedUser = $mapper->find($id);
         $loadedUser->blog = $blog;
+
         $mapper->store($loadedUser);
         $this->seeInDatabase('blogs', ['user_id' => $user->id]);
     }
@@ -156,6 +158,40 @@ class AggregateTest extends AnalogueTestCase
         $article->title = 'New Title';
         $mapper->store($user);
         $this->seeInDatabase('articles', ['title' => 'New Title']);
+    }
+
+    /** @test */
+    public function related_collection_with_dirty_entities_are_updated_when_lazy_loaded()
+    {
+        $user = $this->factoryMakeUid(User::class);
+        $group1 = $this->factoryMakeUid(Group::class);
+        $group2 = $this->factoryMakeUid(Group::class);
+        $user->groups = [$group1, $group2];
+        $mapper = $this->mapper(User::class);
+        $mapper->store($user);
+        $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
+        $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
+        $loadedUser = $mapper->find($user->id);
+        $loadedUser->groups->first()->name = 'New Group Name';
+        $mapper->store($loadedUser);
+        $this->seeInDatabase('groups', ['name' => 'New Group Name']);
+    }
+
+    /** @test */
+    public function related_collection_with_dirty_entities_are_updated_when_eager_loaded()
+    {
+        $user = $this->factoryMakeUid(User::class);
+        $group1 = $this->factoryMakeUid(Group::class);
+        $group2 = $this->factoryMakeUid(Group::class);
+        $user->groups = [$group1, $group2];
+        $mapper = $this->mapper(User::class);
+        $mapper->store($user);
+        $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
+        $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
+        $loadedUser = $mapper->with('groups')->whereId($user->id)->first();
+        $loadedUser->groups->first()->name = 'New Group Name';
+        $mapper->store($loadedUser);
+        $this->seeInDatabase('groups', ['name' => 'New Group Name']);
     }
 
     /** @test */

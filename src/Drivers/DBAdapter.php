@@ -7,7 +7,7 @@ interface DBAdapter
     /**
      * Return's Driver specific Query Implementation.
      *
-     * @return IlluminateQueryBuilder
+     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
      */
     public function getQuery();
 
@@ -38,4 +38,14 @@ interface DBAdapter
      * @return void
      */
     public function rollback();
+
+    /**
+     * Parse result from database and return an array of results
+     * casted to analogue compatible values.
+     *
+     * @param array $rows
+     *
+     * @return array
+     */
+    public function fromDatabase(array $rows) : array;
 }

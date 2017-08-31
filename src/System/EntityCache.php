@@ -60,15 +60,43 @@ class EntityCache
      * Add an array of key=>attributes representing
      * the initial state of loaded entities.
      *
-     * @param array $entities
+     * @param array $results
      */
-    public function add(array $entities)
+    public function add(array $results)
     {
-        if (count($this->cache) == 0) {
-            $this->cache = $entities;
-        } else {
-            $this->mergeCacheResults($entities);
+        $cachedResults = [];
+
+        $keyColumn = $this->entityMap->getKeyName();
+
+        foreach ($results as $result) {
+            $id = $result[$keyColumn];
+
+            // Forget the ID field from the cache attributes
+            // to prevent any side effect.
+            // TODO : remove primary key check from dirty attributes parsing
+            //unset($result[$keyColumn]);
+            $cachedResults[$id] = $this->rawResult($result);
         }
+
+        if (count($this->cache) == 0) {
+            $this->cache = $cachedResults;
+        } else {
+            $this->mergeCacheResults($cachedResults);
+        }
+    }
+
+    /**
+     * Return result without any collection or object.
+     *
+     * @param array $result
+     *
+     * @return
+     */
+    protected function rawResult(array $result) : array
+    {
+        return array_filter($result, function ($attribute) {
+            return !is_object($attribute);
+        });
     }
 
     /**
@@ -107,9 +135,9 @@ class EntityCache
      *
      * @return void
      */
-    protected function mergeCacheResults($entities)
+    protected function mergeCacheResults(array $results)
     {
-        foreach ($entities as $key => $entity) {
+        foreach ($results as $key => $entity) {
             $this->cache[$key] = $entity;
         }
     }
@@ -117,7 +145,7 @@ class EntityCache
     /**
      * Cache Relation's query result for an entity.
      *
-     * @param mixed        $parent
+     * @param string       $key          primary key of the cached entity
      * @param string       $relation     name of the relation
      * @param mixed        $results      results of the relationship's query
      * @param Relationship $relationship
@@ -126,22 +154,14 @@ class EntityCache
      *
      * @return void
      */
-    public function cacheLoadedRelationResult($parent, $relation, $results, Relationship $relationship)
+    public function cacheLoadedRelationResult($key, $relation, $results, Relationship $relationship)
     {
-        $keyName = $this->entityMap->getKeyName();
-
-        if (!$parent instanceof InternallyMappable) {
-            $parent = $this->factory->make($parent);
-        }
-
-        $key = $parent->getEntityAttribute($keyName);
-
         if ($results instanceof EntityCollection) {
             $this->cacheManyRelationResults($key, $relation, $results, $relationship);
         }
 
-        // POPO : Maybe this check isn't needed, or we have to check for stdClass
-        // instead
+        // TODO : As we support popo Entities, Maybe this check isn't needed anymore,
+        // or we have to check that $result is an object instead
         if ($results instanceof Mappable) {
             $this->cacheSingleRelationResult($key, $relation, $results, $relationship);
         }
@@ -169,7 +189,7 @@ class EntityCache
 
         $wrapper = $this->factory->make($result);
 
-        $hash = $this->getEntityHash($wrapper);
+        $hash = $wrapper->getEntityHash();
 
         if (count($pivotColumns) > 0) {
             $pivotAttributes = [];
@@ -238,7 +258,7 @@ class EntityCache
      */
     protected function getEntityHash(InternallyMappable $entity)
     {
-        $class = get_class($entity->getObject());
+        $class = $entity->getEntityClass();
 
         $mapper = Manager::getMapper($class);
 

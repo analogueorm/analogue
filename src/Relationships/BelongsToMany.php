@@ -38,7 +38,7 @@ class BelongsToMany extends Relationship
      *
      * @var string
      */
-    protected $relationName;
+    protected $relation;
 
     /**
      * The pivot table columns to retrieve.
@@ -62,14 +62,14 @@ class BelongsToMany extends Relationship
      * @param string   $table
      * @param string   $foreignKey
      * @param string   $otherKey
-     * @param string   $relationName
+     * @param string   $relation
      */
-    public function __construct(Mapper $mapper, $parent, $table, $foreignKey, $otherKey, $relationName = null)
+    public function __construct(Mapper $mapper, $parent, $table, $foreignKey, $otherKey, $relation)
     {
         $this->table = $table;
         $this->otherKey = $otherKey;
         $this->foreignKey = $foreignKey;
-        $this->relationName = $relationName;
+        $this->relation = $relation;
 
         parent::__construct($mapper, $parent);
     }
@@ -204,16 +204,9 @@ class BelongsToMany extends Relationship
 
         $select = $this->getSelectColumns($columns);
 
-        $entities = $this->query->addSelect($select)->getEntities();
+        $entities = $this->query->addSelect($select)->get()->all();
 
-        $this->hydratePivotRelation($entities);
-
-        // If we actually found models we will also eager load any relationnships that
-        // have been specified as needing to be eager loaded. This will solve the
-        // n + 1 query problem for the developer and also increase performance.
-        if (count($entities) > 0) {
-            $entities = $this->query->eagerLoadRelations($entities);
-        }
+        $entities = $this->hydratePivotRelation($entities);
 
         return $this->relatedMap->newCollection($entities);
     }
@@ -227,17 +220,18 @@ class BelongsToMany extends Relationship
      */
     protected function hydratePivotRelation(array $entities)
     {
-        // To hydrate the pivot relationship, we will just gather the pivot attributes
-        // and create a new Pivot model, which is basically a dynamic model that we
-        // will set the attributes, table, and connections on so it they be used.
+        // TODO (note) We should definitely get rid of the pivot in a next
+        // release, as this is not quite relevant in a datamapper context.
+        $host = $this;
 
-        foreach ($entities as $entity) {
+        return array_map(function ($entity) use ($host) {
             $entityWrapper = $this->factory->make($entity);
 
             $pivot = $this->newExistingPivot($this->cleanPivotAttributes($entityWrapper));
-
             $entityWrapper->setEntityAttribute('pivot', $pivot);
-        }
+
+            return $entityWrapper->getObject();
+        }, $entities);
     }
 
     /**
@@ -413,67 +407,53 @@ class BelongsToMany extends Relationship
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
-    public function addEagerConstraints(array $entities)
+    public function addEagerConstraints(array $results)
     {
-        $this->query->whereIn($this->getForeignKey(), $this->getKeys($entities));
+        $this->query->whereIn($this->getForeignKey(), $this->getKeysFromResults($results));
     }
 
     /**
-     * Initialize the relation on a set of eneities.
+     * Match Eagerly loaded relation to result.
      *
-     * @param array  $entities
+     * @param array  $results
      * @param string $relation
      *
      * @return array
      */
-    public function initRelation(array $entities, $relation)
+    public function match(array $results, $relation)
     {
-        foreach ($entities as $entity) {
-            $entity = $this->factory->make($entity);
+        $entities = $this->getEager();
 
-            $entity->setEntityAttribute($relation, $this->relatedMap->newCollection());
-        }
-
-        return $entities;
-    }
-
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param array            $entities
-     * @param EntityCollection $results
-     * @param string           $relation
-     *
-     * @return array
-     */
-    public function match(array $entities, EntityCollection $results, $relation)
-    {
-        $dictionary = $this->buildDictionary($results);
+        // TODO; optimize this operation
+        $dictionary = $this->buildDictionary($entities);
 
         $keyName = $this->parentMap->getKeyName();
 
         $cache = $this->parentMapper->getEntityCache();
 
+        $host = $this;
+
         // Once we have an array dictionary of child objects we can easily match the
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
-        foreach ($entities as $entity) {
-            $wrapper = $this->factory->make($entity);
+        return array_map(function ($result) use ($dictionary, $keyName, $cache, $relation, $host) {
+            if (isset($dictionary[$key = $result[$keyName]])) {
+                $collection = $host->relatedMap->newCollection($dictionary[$key]);
 
-            if (isset($dictionary[$key = $wrapper->getEntityAttribute($keyName)])) {
-                $collection = $this->relatedMap->newCollection($dictionary[$key]);
+                $result[$relation] = $collection;
 
-                $wrapper->setEntityAttribute($relation, $collection);
-
-                $cache->cacheLoadedRelationResult($entity, $relation, $collection, $this);
+                // TODO Refactor this
+                $cache->cacheLoadedRelationResult($key, $relation, $collection, $this);
+            } else {
+                $result[$relation] = $host->relatedMap->newCollection();
             }
-        }
 
-        return $entities;
+            return $result;
+        }, $results);
     }
 
     /**
@@ -487,16 +467,13 @@ class BelongsToMany extends Relationship
     {
         $foreign = $this->foreignKey;
 
-        $foreign = $this->relatedMap->getAttributeNameForColumn($foreign);
-
         // First we will build a dictionary of child models keyed by the foreign key
         // of the relation so that we will easily and quickly match them to their
         // parents without having a possibly slow inner loops for every models.
         $dictionary = [];
-
+        
         foreach ($results as $entity) {
             $wrapper = $this->factory->make($entity);
-
             $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
         }
 
@@ -958,6 +935,6 @@ class BelongsToMany extends Relationship
      */
     public function getRelationName()
     {
-        return $this->relationName;
+        return $this->relation;
     }
 }
