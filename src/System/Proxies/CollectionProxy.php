@@ -1292,6 +1292,56 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
+     * Dump the collection and end the script.
+     *
+     * @return void
+     */
+    public function dd()
+    {
+        $this->initializeProxy();
+
+        return parent::dd();
+    }
+
+    /**
+     * Dump the collection.
+     *
+     * @return $this
+     */
+    public function dump()
+    {
+        $this->initializeProxy();
+
+        return parent::dump();
+    }
+
+    /**
+     * Intersect the collection with the given items by key.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function intersectByKeys($items)
+    {
+        $this->initializeProxy();
+
+        return parent::intersectByKeys($items);
+    }
+
+    /**
+     * Map the values into a new class.
+     *
+     * @param  string  $class
+     * @return static
+     */
+    public function mapInto($class)
+    { 
+        $this->initializeProxy();
+
+        return parent::mapInto($class);
+    }
+
+    /**
      * Get the collection of items as a plain array.
      *
      * @return array
