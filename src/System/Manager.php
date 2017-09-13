@@ -713,13 +713,13 @@ class Manager
     }
 
     /**
-     * Clear all the cached entities within all mappers
-     * 
+     * Clear all the cached entities within all mappers.
+     *
      * @return void
      */
     public function clearCache()
     {
-        array_map(function($mapper) {
+        array_map(function ($mapper) {
             $mapper->clearCache();
         }, $this->mappers);
     }

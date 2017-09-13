@@ -61,7 +61,7 @@ class Store extends Command
         // Once the object is stored, add it to the Instance cache
         $key = $this->aggregate->getEntityId();
 
-        if(! $mapper->getInstanceCache()->has($key)) {
+        if (!$mapper->getInstanceCache()->has($key)) {
             $mapper->getInstanceCache()->add($entity, $key);
         }
 
