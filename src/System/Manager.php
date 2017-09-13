@@ -711,4 +711,16 @@ class Manager
 
         return $key !== false ? $key : $class;
     }
+
+    /**
+     * Clear all the cached entities within all mappers
+     * 
+     * @return void
+     */
+    public function clearCache()
+    {
+        array_map(function($mapper) {
+            $mapper->clearCache();
+        }, $this->mappers);
+    }
 }

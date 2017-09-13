@@ -60,6 +60,7 @@ class MorphManyTest extends DomainTestCase
         $blog->comments = $comments;
         $mapper = $this->mapper($blog);
         $mapper->store($blog);
+        $this->clearCache();
         $loadedBlog = $mapper->whereId($blog->id)->first();
 
         $this->assertCount(2, $loadedBlog->comments);

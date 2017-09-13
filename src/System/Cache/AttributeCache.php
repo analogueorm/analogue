@@ -1,6 +1,6 @@
 <?php
 
-namespace Analogue\ORM\System;
+namespace Analogue\ORM\System\Cache;
 
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\EntityMap;
@@ -8,12 +8,13 @@ use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\Aggregate;
+use Analogue\ORM\System\InternallyMappable;
 
 /**
- * The EntityCache class is responsible for tracking entity's attribute states
- * between request.
+ * Attribute cache is tracking raw attributes between entity queries
  */
-class EntityCache
+class AttributeCache
 {
     /**
      * Entity's raw attributes/relationships.
@@ -21,6 +22,13 @@ class EntityCache
      * @var array
      */
     protected $cache = [];
+
+    /**
+     * Primary key => Entity instance correspondancy
+     * 
+     * @var array
+     */
+    protected $instances = [];
 
     /**
      * Entity Map for the current Entity Type.

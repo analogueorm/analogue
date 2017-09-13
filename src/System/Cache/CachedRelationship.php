@@ -1,6 +1,6 @@
 <?php
 
-namespace Analogue\ORM\System;
+namespace Analogue\ORM\System\Cache;
 
 /**
  * This class is intended to facilitate the handling of ManyToMany relationships

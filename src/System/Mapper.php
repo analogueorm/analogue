@@ -15,6 +15,8 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
+use Analogue\ORM\System\Cache\AttributeCache;
+use Analogue\ORM\System\Cache\InstanceCache;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -56,9 +58,16 @@ class Mapper
     /**
      * Entity Cache.
      *
-     * @var \Analogue\ORM\System\EntityCache
+     * @var \Analogue\ORM\System\Cache\AttributeCache
      */
     protected $cache;
+
+    /**
+     * Entity instances Object cache
+     * 
+     * @var \Analogue\ORM\System\Cache\InstanceCache
+     */
+    protected $instances;
 
     /**
      * Global scopes.
@@ -108,7 +117,8 @@ class Mapper
 
         $this->manager = $manager;
 
-        $this->cache = new EntityCache($entityMap);
+        $this->cache = new AttributeCache($entityMap);
+        $this->instances = new InstanceCache($entityMap->getClass());
     }
 
     /**
@@ -337,11 +347,32 @@ class Mapper
     /**
      * Get the entity cache for the current mapper.
      *
-     * @return EntityCache $entityCache
+     * @return \Analogue\ORM\System\Cache\AttributeCache
      */
-    public function getEntityCache()
+    public function getEntityCache() : AttributeCache
     {
         return $this->cache;
+    }
+
+    /**
+     * Get the instance cache for the current mapper
+     * 
+     * @return \Analogue\ORM\System\Cache\InstanceCache
+     */
+    public function getInstanceCache() : InstanceCache
+    {
+        return $this->instances;
+    }
+
+    /**
+     * Reset all caches within the mapper
+     * 
+     * @return void
+     */
+    public function clearCache()
+    {
+        $this->cache->clear();
+        $this->instances->clear();
     }
 
     /**

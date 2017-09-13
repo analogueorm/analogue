@@ -58,6 +58,13 @@ class Store extends Command
 
         $mapper->fireEvent('stored', $entity, false);
 
+        // Once the object is stored, add it to the Instance cache
+        $key = $this->aggregate->getEntityId();
+
+        if(! $mapper->getInstanceCache()->has($key)) {
+            $mapper->getInstanceCache()->add($entity, $key);
+        }
+
         return $entity;
     }
 

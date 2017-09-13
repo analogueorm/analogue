@@ -287,6 +287,11 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
+    protected function clearCache()
+    {
+        app('analogue')->clearCache();
+    }
+
     /**
      * Log all queries.
      *

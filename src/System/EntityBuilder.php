@@ -60,13 +60,34 @@ class EntityBuilder
     }
 
     /**
-     * Convert an array of values into an entity.
+     * Convert an array of attributes into an entity, or retrieve entity instance from cache
      *
-     * @param array $result
+     * @param array $attributes
      *
      * @return array
      */
-    public function build(array $result)
+    public function build(array $attributes)
+    {
+        // If the object we are building is a value object,
+        // we won't be using the instance cache.
+        if($this->entityMap->getKeyName() === null) {
+            return $this->buildEntity($attributes);
+        }
+
+        $instanceCache = $this->mapper->getInstanceCache();
+
+        $id = $this->getPrimaryKeyValue($attributes);
+
+        return $instanceCache->has($id) ? $instanceCache->get($id) : $this->buildEntity($attributes);
+    }
+    
+    /**
+     * Actually build an entity
+     * 
+     * @param  array  $attributes
+     * @return mixed
+     */
+    protected function buildEntity(array $attributes)
     {
         $wrapper = $this->getWrapperInstance();
 
@@ -75,15 +96,33 @@ class EntityBuilder
         // TODO Move this to the result builder instead,
         // as we'll handle this the same way as they were
         // eager loaded relationships.
-        $this->hydrateValueObjects($result);
+        $this->hydrateValueObjects($attributes);
 
-        $wrapper->setEntityAttributes($result);
+        $wrapper->setEntityAttributes($attributes);
 
         $wrapper->setProxies();
 
         $entity = $wrapper->getObject();
 
+        // Once the object has been hydrated, we'll add
+        // the instance to the instance cache.
+        if($this->entityMap->getKeyName() !== null) {
+            $id = $this->getPrimaryKeyValue($attributes);
+            $this->mapper->getInstanceCache()->add($entity, $id);
+        }
+
         return $entity;
+    }
+
+    /**
+     * Return the primary key value from attributes
+     * 
+     * @param  array  $attributes 
+     * @return string
+     */
+    protected function getPrimaryKeyValue(array $attributes)
+    {
+        return $attributes[$this->entityMap->getKeyName()];
     }
 
     /**
