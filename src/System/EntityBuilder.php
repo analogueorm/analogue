@@ -60,7 +60,7 @@ class EntityBuilder
     }
 
     /**
-     * Convert an array of attributes into an entity, or retrieve entity instance from cache
+     * Convert an array of attributes into an entity, or retrieve entity instance from cache.
      *
      * @param array $attributes
      *
@@ -70,7 +70,7 @@ class EntityBuilder
     {
         // If the object we are building is a value object,
         // we won't be using the instance cache.
-        if($this->entityMap->getKeyName() === null) {
+        if ($this->entityMap->getKeyName() === null) {
             return $this->buildEntity($attributes);
         }
 
@@ -80,11 +80,12 @@ class EntityBuilder
 
         return $instanceCache->has($id) ? $instanceCache->get($id) : $this->buildEntity($attributes);
     }
-    
+
     /**
-     * Actually build an entity
-     * 
-     * @param  array  $attributes
+     * Actually build an entity.
+     *
+     * @param array $attributes
+     *
      * @return mixed
      */
     protected function buildEntity(array $attributes)
@@ -106,7 +107,7 @@ class EntityBuilder
 
         // Once the object has been hydrated, we'll add
         // the instance to the instance cache.
-        if($this->entityMap->getKeyName() !== null) {
+        if ($this->entityMap->getKeyName() !== null) {
             $id = $this->getPrimaryKeyValue($attributes);
             $this->mapper->getInstanceCache()->add($entity, $id);
         }
@@ -115,9 +116,10 @@ class EntityBuilder
     }
 
     /**
-     * Return the primary key value from attributes
-     * 
-     * @param  array  $attributes 
+     * Return the primary key value from attributes.
+     *
+     * @param array $attributes
+     *
      * @return string
      */
     protected function getPrimaryKeyValue(array $attributes)

@@ -7,12 +7,12 @@ use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\Relationships\Relationship;
-use Analogue\ORM\System\Wrappers\Factory;
 use Analogue\ORM\System\Aggregate;
 use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Wrappers\Factory;
 
 /**
- * Attribute cache is tracking raw attributes between entity queries
+ * Attribute cache is tracking raw attributes between entity queries.
  */
 class AttributeCache
 {
@@ -24,8 +24,8 @@ class AttributeCache
     protected $cache = [];
 
     /**
-     * Primary key => Entity instance correspondancy
-     * 
+     * Primary key => Entity instance correspondancy.
+     *
      * @var array
      */
     protected $instances = [];

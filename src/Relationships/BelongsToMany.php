@@ -471,7 +471,7 @@ class BelongsToMany extends Relationship
         // of the relation so that we will easily and quickly match them to their
         // parents without having a possibly slow inner loops for every models.
         $dictionary = [];
-        
+
         foreach ($results as $entity) {
             $wrapper = $this->factory->make($entity);
             $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
