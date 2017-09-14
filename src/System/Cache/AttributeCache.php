@@ -24,7 +24,7 @@ class AttributeCache
     protected $cache = [];
 
     /**
-<<<<<<< HEAD:src/System/Cache/AttributeCache.php
+     * <<<<<<< HEAD:src/System/Cache/AttributeCache.php
      * Primary key => Entity instance correspondancy.
      *
      * @var array
@@ -32,8 +32,8 @@ class AttributeCache
     protected $instances = [];
 
     /**
-=======
->>>>>>> 5.5:src/System/EntityCache.php
+     * =======
+     * >>>>>>> 5.5:src/System/EntityCache.php
      * Entity Map for the current Entity Type.
      *
      * @var \Analogue\ORM\EntityMap
