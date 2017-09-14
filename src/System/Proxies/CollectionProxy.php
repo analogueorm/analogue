@@ -533,6 +533,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
+     * Intersect the collection with the given items by key.
+     *
+     * @param  mixed  $items
+     * @return static
+     */
+    public function intersectByKeys($items)
+    {
+        $this->initializeProxy();
+
+        return parent::intersectByKeys($items);
+    }
+
+    /**
      * Determine if the collection is empty or not.
      *
      * @return bool
@@ -606,6 +619,21 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $parent = $this->toBaseCollection();
 
         return $parent->map($callback);
+    }
+
+    /**
+     * Map the values into a new class.
+     *
+     * @param  string  $class
+     * @return static
+     */
+    public function mapInto($class)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->map($class);
     }
 
     /**
