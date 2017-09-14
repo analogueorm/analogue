@@ -8,6 +8,8 @@ use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Cache\AttributeCache;
+use Analogue\ORM\System\Cache\InstanceCache;
 use Analogue\ORM\System\Wrappers\Wrapper;
 use Doctrine\Instantiator\Instantiator;
 use ErrorException;
@@ -15,8 +17,6 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Analogue\ORM\System\Cache\AttributeCache;
-use Analogue\ORM\System\Cache\InstanceCache;
 
 /**
  * The mapper provide all the interactions with the database layer
@@ -63,8 +63,8 @@ class Mapper
     protected $cache;
 
     /**
-     * Entity instances Object cache
-     * 
+     * Entity instances Object cache.
+     *
      * @var \Analogue\ORM\System\Cache\InstanceCache
      */
     protected $instances;
@@ -245,6 +245,7 @@ class Mapper
         if (get_class($entity) != $this->entityMap->getClass() && !is_subclass_of($entity, $this->entityMap->getClass())) {
             $expected = $this->entityMap->getClass();
             $actual = get_class($entity);
+
             throw new InvalidArgumentException("Expected : $expected, got $actual.");
         }
     }
@@ -355,8 +356,8 @@ class Mapper
     }
 
     /**
-     * Get the instance cache for the current mapper
-     * 
+     * Get the instance cache for the current mapper.
+     *
      * @return \Analogue\ORM\System\Cache\InstanceCache
      */
     public function getInstanceCache() : InstanceCache
@@ -365,8 +366,8 @@ class Mapper
     }
 
     /**
-     * Reset all caches within the mapper
-     * 
+     * Reset all caches within the mapper.
+     *
      * @return void
      */
     public function clearCache()
