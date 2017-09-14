@@ -4,7 +4,4 @@ composer.lock
 .DS_Store
 psr2
 studio.json
-/tests/composer.5.1.lock
-/tests/composer.5.2.lock
-/tests/composer.5.3.lock
-/tests/composer.5.4.lock
+.idea

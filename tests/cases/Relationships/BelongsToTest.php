@@ -68,7 +68,9 @@ class BelongsToTest extends DomainTestCase
             'id'      => $blogId,
             'title'   => 'blog title',
         ]);
+
         $this->clearCache();
+
         $mapper = $this->mapper(Blog::class);
         $blog = $mapper->find($blogId);
         $this->assertEquals(null, $blog->user);

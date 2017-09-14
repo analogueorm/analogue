@@ -64,7 +64,9 @@ class EntityTest extends AnalogueTestCase
         $user = $this->factoryCreateUid(User::class);
         $id = $user->id;
         $mapper = $this->mapper($user);
+
         $this->clearCache();
+
         $user = $mapper->find($id);
         $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->groups);
         $this->assertInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $user->articles);

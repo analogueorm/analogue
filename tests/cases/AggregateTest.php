@@ -171,7 +171,9 @@ class AggregateTest extends AnalogueTestCase
         $mapper->store($user);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
+
         $this->clearCache();
+
         $loadedUser = $mapper->find($user->id);
         $loadedUser->groups->first()->name = 'New Group Name';
         $mapper->store($loadedUser);
@@ -189,7 +191,9 @@ class AggregateTest extends AnalogueTestCase
         $mapper->store($user);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group1->id]);
         $this->seeInDatabase('groups_users', ['user_id' => $user->id, 'group_id' => $group2->id]);
+
         $this->clearCache();
+
         $loadedUser = $mapper->with('groups')->whereId($user->id)->first();
         $loadedUser->groups->first()->name = 'New Group Name';
         $mapper->store($loadedUser);
