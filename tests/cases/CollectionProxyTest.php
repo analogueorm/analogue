@@ -30,6 +30,8 @@ class CollectionProxyTest extends DomainTestCase
             'wrap',
             'unwrap',
             'mixin',
+            'dd',
+            'dump',
         ];
 
         $collectionClass = new ReflectionClass(Collection::class);
