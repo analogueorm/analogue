@@ -101,7 +101,6 @@ class EntityBuilder
 
         $wrapper->setEntityAttributes($attributes);
 
-
         $wrapper->setProxies();
 
         $entity = $wrapper->getObject();
