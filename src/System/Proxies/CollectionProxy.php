@@ -168,7 +168,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::contains($key, $operator, $value);
+        $parent = $this->toBaseCollection();
+
+        return $parent->contains($key, $operator, $value);
     }
 
     /**
