@@ -537,7 +537,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Intersect the collection with the given items by key.
      *
-     * @param  mixed  $items
+     * @param mixed $items
+     *
      * @return static
      */
     public function intersectByKeys($items)
@@ -626,7 +627,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * Map the values into a new class.
      *
-     * @param  string  $class
+     * @param string $class
+     *
      * @return static
      */
     public function mapInto($class)
