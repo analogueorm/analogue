@@ -2,6 +2,9 @@
 
 namespace Analogue\ORM;
 
+/**
+ * @deprecated as 5.5 uses reflection based mapping
+ */
 interface Mappable
 {
     /**

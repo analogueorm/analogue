@@ -12,6 +12,8 @@ use InvalidArgumentException;
  * Class Repository.
  *
  * @mixin Mapper
+ * 
+ * @deprecated : will be removed in v5.6
  */
 class Repository
 {
