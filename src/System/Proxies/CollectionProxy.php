@@ -77,8 +77,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * @inheritdoc
+     */
     protected function toBaseCollection() : Collection
     {
         return new Collection($this->items);
@@ -105,7 +105,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
+     * @inheritdoc
     */
     public function median($key = null)
     {
@@ -545,6 +545,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $parent = $this->toBaseCollection();
 
         return $parent->merge($items);
+    }
+
+    /**
+    * @inheritdoc
+    */
+    public function pad($size, $value)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+        
+        return $parent($size, $value);
     }
 
     /**
