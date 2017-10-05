@@ -68,16 +68,16 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return true;
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function isProxyInitialized() : bool
     {
         return $this->relationshipLoaded;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function toBaseCollection() : Collection
     {
@@ -85,8 +85,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function all()
     {
         $this->initializeProxy();
@@ -95,8 +95,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function avg($callback = null)
     {
         $this->initializeProxy();
@@ -105,8 +105,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function median($key = null)
     {
         $this->initializeProxy();
@@ -115,8 +115,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function mode($key = null)
     {
         $this->initializeProxy();
@@ -125,8 +125,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function collapse()
     {
         $this->initializeProxy();
@@ -137,8 +137,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function contains($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
@@ -149,8 +149,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function containsStrict($key, $value = null)
     {
         $this->initializeProxy();
@@ -159,8 +159,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function diff($items)
     {
         $this->initializeProxy();
@@ -171,8 +171,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function diffKeys($items)
     {
         $this->initializeProxy();
@@ -183,18 +183,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function each(callable $callback)
     {
         $this->initializeProxy();
 
         return parent::each($callback);
     }
-    
+
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function every($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
@@ -204,9 +204,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return $parent->every($key, $operator, $value);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function except($keys)
     {
         $this->initializeProxy();
@@ -217,8 +217,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function filter(callable $callback = null)
     {
         $this->initializeProxy();
@@ -229,8 +229,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function where($key, $operator, $value = null)
     {
         $this->initializeProxy();
@@ -241,8 +241,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function whereNotIn($key, $values, $strict = false)
     {
         $this->initializeProxy();
@@ -253,8 +253,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function whereStrict($key, $value)
     {
         $this->initializeProxy();
@@ -265,8 +265,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function whereIn($key, $values, $strict = false)
     {
         $this->initializeProxy();
@@ -277,8 +277,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function whereInStrict($key, $values)
     {
         $this->initializeProxy();
@@ -289,8 +289,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function first(callable $callback = null, $default = null)
     {
         // TODO Consider partial loading
@@ -300,8 +300,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function flatten($depth = INF)
     {
         $this->initializeProxy();
@@ -312,8 +312,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function flip()
     {
         $this->initializeProxy();
@@ -324,8 +324,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function forget($keys)
     {
         // TODO, we could consider these as
@@ -337,8 +337,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function get($key, $default = null)
     {
         // TODO : We could also consider partial loading
@@ -349,8 +349,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function groupBy($groupBy, $preserveKeys = false)
     {
         $this->initializeProxy();
@@ -361,8 +361,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function keyBy($keyBy)
     {
         $this->initializeProxy();
@@ -373,8 +373,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function has($key)
     {
         // TODO : we could do automagic here by directly
@@ -388,8 +388,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function implode($value, $glue = null)
     {
         $this->initializeProxy();
@@ -398,8 +398,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function intersect($items)
     {
         $this->initializeProxy();
@@ -410,8 +410,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function intersectByKeys($items)
     {
         $this->initializeProxy();
@@ -420,8 +420,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function isEmpty()
     {
         $this->initializeProxy();
@@ -430,8 +430,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function keys()
     {
         $this->initializeProxy();
@@ -442,8 +442,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function last(callable $callback = null, $default = null)
     {
         // TODO : we could do partial loading there as well
@@ -452,9 +452,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::last($callback, $default);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function pluck($value, $key = null)
     {
         // TODO : automagic call to QB if not initialized
@@ -466,8 +466,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function map(callable $callback)
     {
         $this->initializeProxy();
@@ -478,8 +478,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function mapInto($class)
     {
         $this->initializeProxy();
@@ -488,10 +488,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return $parent->map($class);
     }
-    
+
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function mapWithKeys(callable $callback)
     {
         $this->initializeProxy();
@@ -502,8 +502,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function mapToDictionary(callable $callback)
     {
         $this->initializeProxy();
@@ -514,8 +514,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function flatMap(callable $callback)
     {
         $this->initializeProxy();
@@ -526,8 +526,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function max($callback = null)
     {
         $this->initializeProxy();
@@ -536,8 +536,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function merge($items)
     {
         $this->initializeProxy();
@@ -548,20 +548,20 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function pad($size, $value)
     {
         $this->initializeProxy();
 
         $parent = $this->toBaseCollection();
-        
+
         return $parent($size, $value);
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function combine($values)
     {
         $this->initializeProxy();
@@ -572,8 +572,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public static function times($amount, callable $callback = null)
     {
         $this->initializeProxy();
@@ -584,8 +584,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function crossJoin(...$lists)
     {
         $this->initializeProxy();
@@ -596,8 +596,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function diffAssoc($items)
     {
         $this->initializeProxy();
@@ -608,8 +608,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function intersectKey($items)
     {
         $this->initializeProxy();
@@ -620,8 +620,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function union($items)
     {
         $this->initializeProxy();
@@ -632,8 +632,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function min($callback = null)
     {
         // TODO : we could rely on the QB
@@ -645,8 +645,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function nth($step, $offset = 0)
     {
         $this->initializeProxy();
@@ -657,8 +657,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function only($keys)
     {
         // TODO : we could rely on the QB if
@@ -671,8 +671,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function forPage($page, $perPage)
     {
         // TODO : check possibility of partial loading
@@ -685,8 +685,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function partition($callback)
     {
         $this->initializeProxy();
@@ -697,8 +697,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function pipe(callable $callback)
     {
         $this->initializeProxy();
@@ -707,8 +707,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function pop()
     {
         $this->initializeProxy();
@@ -717,8 +717,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function prepend($value, $key = null)
     {
         // TODO : partial adding of values.
@@ -731,8 +731,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function push($value)
     {
         // TODO : partial adding of values.
@@ -745,8 +745,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function pull($key, $default = null)
     {
         // TODO : QB query if the collection
@@ -758,8 +758,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function put($key, $value)
     {
         // TODO : Partial loading ?
@@ -770,8 +770,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function random($amount = 1)
     {
         // TODO : we could optimize this by only
@@ -784,8 +784,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function reduce(callable $callback, $initial = null)
     {
         $this->initializeProxy();
@@ -794,8 +794,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function reject($callback)
     {
         $this->initializeProxy();
@@ -806,8 +806,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function reverse()
     {
         $this->initializeProxy();
@@ -818,8 +818,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function search($value, $strict = false)
     {
         $this->initializeProxy();
@@ -828,8 +828,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function shift()
     {
         // Todo : Partial Removing
@@ -840,8 +840,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function shuffle($seed = null)
     {
         $this->initializeProxy();
@@ -852,8 +852,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function slice($offset, $length = null)
     {
         $this->initializeProxy();
@@ -864,8 +864,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function split($numberOfGroups)
     {
         $this->initializeProxy();
@@ -876,8 +876,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function chunk($size)
     {
         // TODO : partial loading ?
@@ -889,8 +889,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function sort(callable $callback = null)
     {
         $this->initializeProxy();
@@ -901,8 +901,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function sortBy($callback, $options = SORT_REGULAR, $descending = false)
     {
         $this->initializeProxy();
@@ -913,8 +913,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function splice($offset, $length = null, $replacement = [])
     {
         $this->initializeProxy();
@@ -925,8 +925,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function sum($callback = null)
     {
         $this->initializeProxy();
@@ -935,8 +935,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function take($limit)
     {
         // TODO: partial loading
@@ -948,8 +948,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function tap(callable $callback)
     {
         $this->initializeProxy();
@@ -958,8 +958,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function transform(callable $callback)
     {
         $this->initializeProxy();
@@ -968,8 +968,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function unique($key = null, $strict = false)
     {
         $this->initializeProxy();
@@ -980,8 +980,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function values()
     {
         $this->initializeProxy();
@@ -990,10 +990,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return $parent->values();
     }
-    
+
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function when($value, callable $callback, callable $default = null)
     {
         $this->initializeProxy();
@@ -1002,8 +1002,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function zip($items)
     {
         $this->initializeProxy();
@@ -1013,9 +1013,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return $parent->zip($items);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         // If this is called on all subsequent proxy,
@@ -1028,8 +1028,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function jsonSerialize()
     {
         // If this is called on all subsequent proxy,
@@ -1041,9 +1041,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::jsonSerialize();
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function toJson($options = 0)
     {
         // If this is called on all subsequent proxy,
@@ -1055,9 +1055,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::toJson($options);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         $this->initializeProxy();
@@ -1066,8 +1066,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING)
     {
         $this->initializeProxy();
@@ -1075,9 +1075,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::getCachingIterator($flags);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function count()
     {
         // TODO rely on QB if not initialized
@@ -1098,9 +1098,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::toBase();
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function offsetExists($key)
     {
         // TODO rely on QB if no collection
@@ -1110,9 +1110,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::offsetExists($key);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function offsetGet($key)
     {
         // TODO rely on partial init if no collection
@@ -1121,10 +1121,10 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return parent::offsetGet($key);
     }
-    
+
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function offsetSet($key, $value)
     {
         // TODO : think of the use of it into a ProxyCollection
@@ -1134,9 +1134,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         return parent::offsetSet($key, $value);
     }
 
-   /**
-    * @inheritdoc
-    */
+    /**
+     * {@inheritdoc}
+     */
     public function offsetUnset($key)
     {
         // TODO : think of the use of it into a ProxyCollection
@@ -1147,16 +1147,16 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function __get($key)
     {
         parent::__get($key);
     }
 
     /**
-    * @inheritdoc
-    */
+     * {@inheritdoc}
+     */
     public function __call($method, $parameters)
     {
         $this->initializeProxy();
