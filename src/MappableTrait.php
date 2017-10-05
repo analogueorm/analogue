@@ -5,7 +5,7 @@ namespace Analogue\ORM;
 /**
  * Share behaviour of Entities/ValueObjects and allow
  * implementing mapping for custom classes.
- * 
+ *
  * @deprecated as 5.5 uses reflection based mapping
  */
 trait MappableTrait

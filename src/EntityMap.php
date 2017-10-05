@@ -1638,7 +1638,7 @@ class EntityMap
      * Override this method for custom entity instantiation.
      *
      * @return null
-     * 
+     *
      * @deprecated 5.5
      */
     public function activator()
