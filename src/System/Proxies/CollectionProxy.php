@@ -69,9 +69,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Retrieves current initialization status of the proxy.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isProxyInitialized() : bool
     {
@@ -79,9 +77,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Return a base Collection with current items.
-     *
-     * @return \Illuminate\Support\Collection
+     * {@inheritdoc}
      */
     protected function toBaseCollection() : Collection
     {
@@ -89,9 +85,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get all of the items in the collection.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -101,11 +95,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the average value of a given key.
-     *
-     * @param callable|string|null $callback
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function avg($callback = null)
     {
@@ -115,11 +105,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the median of a given key.
-     *
-     * @param null $key
-     *
-     * @return mixed|null
+     * {@inheritdoc}
      */
     public function median($key = null)
     {
@@ -129,11 +115,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the mode of a given key.
-     *
-     * @param mixed $key
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function mode($key = null)
     {
@@ -143,9 +125,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Collapse the collection of items into a single array.
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function collapse()
     {
@@ -157,27 +137,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Determine if an item exists in the collection.
-     *
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function contains($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
-        return parent::contains($key, $operator, $value);
+        $parent = $this->toBaseCollection();
+
+        return $parent->contains($key, $operator, $value);
     }
 
     /**
-     * Determine if an item exists in the collection using strict comparison.
-     *
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function containsStrict($key, $value = null)
     {
@@ -187,11 +159,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the items in the collection that are not present in the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function diff($items)
     {
@@ -203,11 +171,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the items in the collection whose keys are not present in the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function diffKeys($items)
     {
@@ -219,11 +183,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Execute a callback over each item.
-     *
-     * @param callable $callback
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function each(callable $callback)
     {
@@ -233,12 +193,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Create a new collection consisting of every n-th element.
-     *
-     * @param int $step
-     * @param int $offset
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function every($key, $operator = null, $value = null)
     {
@@ -250,11 +205,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get all items except for those with the specified keys.
-     *
-     * @param mixed $keys
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function except($keys)
     {
@@ -266,11 +217,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Run a filter over each of the items.
-     *
-     * @param callable|null $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function filter(callable $callback = null)
     {
@@ -282,13 +229,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Filter items by the given key value pair.
-     *
-     * @param string $key
-     * @param mixed  $operator
-     * @param mixed  $value
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function where($key, $operator, $value = null)
     {
@@ -300,13 +241,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Filter items by the given key value pair.
-     *
-     * @param string $key
-     * @param mixed  $values
-     * @param bool   $strict
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function whereNotIn($key, $values, $strict = false)
     {
@@ -318,12 +253,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Filter items by the given key value pair using strict comparison.
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function whereStrict($key, $value)
     {
@@ -335,13 +265,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Filter items by the given key value pair.
-     *
-     * @param string $key
-     * @param mixed  $values
-     * @param bool   $strict
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function whereIn($key, $values, $strict = false)
     {
@@ -353,12 +277,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Filter items by the given key value pair using strict comparison.
-     *
-     * @param string $key
-     * @param mixed  $values
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function whereInStrict($key, $values)
     {
@@ -370,12 +289,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the first item from the collection.
-     *
-     * @param callable|null $callback
-     * @param mixed         $default
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function first(callable $callback = null, $default = null)
     {
@@ -386,11 +300,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get a flattened array of the items in the collection.
-     *
-     * @param int $depth
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function flatten($depth = INF)
     {
@@ -402,9 +312,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Flip the items in the collection.
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function flip()
     {
@@ -416,11 +324,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Remove an item from the collection by key.
-     *
-     * @param string|array $keys
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function forget($keys)
     {
@@ -433,12 +337,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get an item from the collection by key.
-     *
-     * @param mixed $key
-     * @param mixed $default
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key, $default = null)
     {
@@ -450,12 +349,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Group an associative array by a field or using a callback.
-     *
-     * @param callable|string $groupBy
-     * @param bool            $preserveKeys
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function groupBy($groupBy, $preserveKeys = false)
     {
@@ -467,11 +361,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Key an associative array by a field or using a callback.
-     *
-     * @param callable|string $keyBy
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function keyBy($keyBy)
     {
@@ -483,11 +373,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Determine if an item exists in the collection by key.
-     *
-     * @param mixed $key
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function has($key)
     {
@@ -502,12 +388,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Concatenate values of a given key as a string.
-     *
-     * @param string $value
-     * @param string $glue
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function implode($value, $glue = null)
     {
@@ -517,11 +398,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Intersect the collection with the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function intersect($items)
     {
@@ -533,11 +410,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Intersect the collection with the given items by key.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function intersectByKeys($items)
     {
@@ -547,9 +420,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Determine if the collection is empty or not.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -559,9 +430,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the keys of the collection items.
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function keys()
     {
@@ -573,12 +442,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the last item from the collection.
-     *
-     * @param callable|null $callback
-     * @param mixed         $default
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function last(callable $callback = null, $default = null)
     {
@@ -589,12 +453,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the values of a given key.
-     *
-     * @param string      $value
-     * @param string|null $key
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function pluck($value, $key = null)
     {
@@ -607,11 +466,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Run a map over each of the items.
-     *
-     * @param callable $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function map(callable $callback)
     {
@@ -623,11 +478,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Map the values into a new class.
-     *
-     * @param string $class
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function mapInto($class)
     {
@@ -639,13 +490,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Run an associative map over each of the items.
-     *
-     * The callback should return an associative array with a single key/value pair.
-     *
-     * @param callable $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function mapWithKeys(callable $callback)
     {
@@ -657,11 +502,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Map a collection and flatten the result by a single level.
-     *
-     * @param callable $callback
-     *
-     * @return static
+     * {@inheritdoc}
+     */
+    public function mapToDictionary(callable $callback)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->mapWithKeys($callback);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function flatMap(callable $callback)
     {
@@ -673,11 +526,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the max value of a given key.
-     *
-     * @param callable|string|null $callback
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function max($callback = null)
     {
@@ -687,11 +536,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Merge the collection with the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function merge($items)
     {
@@ -703,11 +548,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Create a collection by using this collection for keys and another for its values.
-     *
-     * @param mixed $values
-     *
-     * @return static
+     * {@inheritdoc}
+     */
+    public function pad($size, $value)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent($size, $value);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function combine($values)
     {
@@ -719,12 +572,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Create a new collection by invoking the callback a given amount of times.
-     *
-     * @param int      $amount
-     * @param callable $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public static function times($amount, callable $callback = null)
     {
@@ -736,11 +584,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Cross join with the given lists, returning all possible permutations.
-     *
-     * @param mixed ...$lists
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function crossJoin(...$lists)
     {
@@ -752,11 +596,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the items in the collection whose keys and values are not present in the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function diffAssoc($items)
     {
@@ -768,11 +608,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Intersect the collection with the given items by key.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function intersectKey($items)
     {
@@ -784,11 +620,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Union the collection with the given items.
-     *
-     * @param mixed $items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function union($items)
     {
@@ -800,11 +632,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the min value of a given key.
-     *
-     * @param callable|string|null $callback
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function min($callback = null)
     {
@@ -817,12 +645,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Create a new collection consisting of every n-th element.
-     *
-     * @param int $step
-     * @param int $offset
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function nth($step, $offset = 0)
     {
@@ -834,11 +657,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the items with the specified keys.
-     *
-     * @param mixed $keys
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function only($keys)
     {
@@ -852,12 +671,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * "Paginate" the collection by slicing it into a smaller collection.
-     *
-     * @param int $page
-     * @param int $perPage
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function forPage($page, $perPage)
     {
@@ -871,11 +685,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Partition the collection into two arrays using the given callback or key.
-     *
-     * @param callable|string $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function partition($callback)
     {
@@ -887,11 +697,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Pass the collection to the given callback and return the result.
-     *
-     * @param callable $callback
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function pipe(callable $callback)
     {
@@ -901,9 +707,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get and remove the last item from the collection.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function pop()
     {
@@ -913,12 +717,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Push an item onto the beginning of the collection.
-     *
-     * @param mixed $value
-     * @param mixed $key
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function prepend($value, $key = null)
     {
@@ -932,11 +731,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Push an item onto the end of the collection.
-     *
-     * @param mixed $value
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function push($value)
     {
@@ -950,12 +745,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get and remove an item from the collection.
-     *
-     * @param mixed $key
-     * @param mixed $default
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function pull($key, $default = null)
     {
@@ -968,12 +758,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Put an item in the collection by key.
-     *
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function put($key, $value)
     {
@@ -985,13 +770,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get one or more items randomly from the collection.
-     *
-     * @param int $amount
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function random($amount = 1)
     {
@@ -1005,12 +784,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Reduce the collection to a single value.
-     *
-     * @param callable $callback
-     * @param mixed    $initial
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function reduce(callable $callback, $initial = null)
     {
@@ -1020,11 +794,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Create a collection of all elements that do not pass a given truth test.
-     *
-     * @param callable|mixed $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function reject($callback)
     {
@@ -1036,9 +806,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Reverse items order.
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function reverse()
     {
@@ -1050,12 +818,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Search the collection for a given value and return the corresponding key if successful.
-     *
-     * @param mixed $value
-     * @param bool  $strict
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function search($value, $strict = false)
     {
@@ -1065,9 +828,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get and remove the first item from the collection.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function shift()
     {
@@ -1079,11 +840,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Shuffle the items in the collection.
-     *
-     * @param int $seed
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function shuffle($seed = null)
     {
@@ -1095,12 +852,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Slice the underlying collection array.
-     *
-     * @param int $offset
-     * @param int $length
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function slice($offset, $length = null)
     {
@@ -1112,11 +864,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Split a collection into a certain number of groups.
-     *
-     * @param int $numberOfGroups
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function split($numberOfGroups)
     {
@@ -1128,11 +876,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Chunk the underlying collection array.
-     *
-     * @param int $size
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function chunk($size)
     {
@@ -1145,11 +889,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Sort through each item with a callback.
-     *
-     * @param callable|null $callback
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function sort(callable $callback = null)
     {
@@ -1161,13 +901,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Sort the collection using the given callback.
-     *
-     * @param callable|string $callback
-     * @param int             $options
-     * @param bool            $descending
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function sortBy($callback, $options = SORT_REGULAR, $descending = false)
     {
@@ -1179,13 +913,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Splice a portion of the underlying collection array.
-     *
-     * @param int      $offset
-     * @param int|null $length
-     * @param mixed    $replacement
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function splice($offset, $length = null, $replacement = [])
     {
@@ -1197,11 +925,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the sum of the given values.
-     *
-     * @param callable|string|null $callback
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function sum($callback = null)
     {
@@ -1211,11 +935,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Take the first or last {$limit} items.
-     *
-     * @param int $limit
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function take($limit)
     {
@@ -1228,11 +948,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Pass the collection to the given callback and then return it.
-     *
-     * @param callable $callback
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function tap(callable $callback)
     {
@@ -1242,11 +958,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Transform each item in the collection using a callback.
-     *
-     * @param callable $callback
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function transform(callable $callback)
     {
@@ -1256,12 +968,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Return only unique items from the collection array.
-     *
-     * @param string|callable|null $key
-     * @param bool                 $strict
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function unique($key = null, $strict = false)
     {
@@ -1273,9 +980,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Reset the keys on the underlying array.
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function values()
     {
@@ -1287,13 +992,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Apply the callback if the value is truthy.
-     *
-     * @param bool     $value
-     * @param callable $callback
-     * @param callable $default
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function when($value, callable $callback, callable $default = null)
     {
@@ -1303,14 +1002,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Zip the collection together with one or more arrays.
-     *
-     * e.g. new Collection([1, 2, 3])->zip([4, 5, 6]);
-     *      => [[1, 4], [2, 5], [3, 6]]
-     *
-     * @param mixed ...$items
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function zip($items)
     {
@@ -1322,9 +1014,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the collection of items as a plain array.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray()
     {
@@ -1338,9 +1028,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Convert the object into something JSON serializable.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {
@@ -1354,11 +1042,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get the collection of items as JSON.
-     *
-     * @param int $options
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function toJson($options = 0)
     {
@@ -1372,9 +1056,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get an iterator for the items.
-     *
-     * @return \ArrayIterator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -1384,11 +1066,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get a CachingIterator instance.
-     *
-     * @param int $flags
-     *
-     * @return \CachingIterator
+     * {@inheritdoc}
      */
     public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING)
     {
@@ -1398,9 +1076,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Count the number of items in the collection.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -1423,11 +1099,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Determine if an item exists at an offset.
-     *
-     * @param mixed $key
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($key)
     {
@@ -1439,11 +1111,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Get an item at a given offset.
-     *
-     * @param mixed $key
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function offsetGet($key)
     {
@@ -1455,12 +1123,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Set the item at a given offset.
-     *
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetSet($key, $value)
     {
@@ -1472,11 +1135,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Unset the item at a given offset.
-     *
-     * @param string $key
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetUnset($key)
     {
@@ -1488,13 +1147,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Dynamically access collection proxies.
-     *
-     * @param string $key
-     *
-     * @throws \Exception
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function __get($key)
     {
@@ -1502,14 +1155,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Dynamically handle calls to the class.
-     *
-     * @param string $method
-     * @param array  $parameters
-     *
-     * @throws \BadMethodCallException
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function __call($method, $parameters)
     {

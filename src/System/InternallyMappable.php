@@ -22,7 +22,7 @@ interface InternallyMappable
      * Set the raw entity attributes.
      *
      * @param string $key
-     * @param string $value
+     * @param mixed  $value
      */
     public function setEntityAttribute($key, $value);
 

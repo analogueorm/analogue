@@ -2,6 +2,9 @@
 
 namespace Analogue\ORM;
 
+/**
+ * @deprecated 5.5 : use EntityMap and embedded relationships.
+ */
 class ValueMap
 {
     /**
