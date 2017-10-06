@@ -1,9 +1,9 @@
 <?php
 
-use TestApp\Blog;
-use TestApp\User;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+use TestApp\Blog;
+use TestApp\User;
 
 class QueryTest extends AnalogueTestCase
 {
@@ -31,7 +31,7 @@ class QueryTest extends AnalogueTestCase
         $this->assertEquals($userWithBlog->id, $users->first()->id);
     }
 
-     /** @test */
+    /** @test */
     public function test_where_has_query()
     {
         $blogA = $this->factoryCreateUid(Blog::class);
@@ -48,7 +48,7 @@ class QueryTest extends AnalogueTestCase
 
         $this->clearCache();
 
-        $users = $userMapper->whereHas('blog', function($query) use($blogA) {
+        $users = $userMapper->whereHas('blog', function ($query) use ($blogA) {
             return $query->whereId($blogA->id);
         })->get();
         $this->assertCount(1, $users);
@@ -57,7 +57,7 @@ class QueryTest extends AnalogueTestCase
 
     /** @test */
     public function test_find_query()
-    {   
+    {
         $blogA = $this->factoryCreateUid(Blog::class);
         $this->clearCache();
         $mapper = $this->mapper(Blog::class);
@@ -76,14 +76,14 @@ class QueryTest extends AnalogueTestCase
         $blogs = $mapper->findMany([$blogA->id, $blogB->id]);
         $this->assertInstanceOf(EntityCollection::class, $blogs);
         $this->assertCount(2, $blogs);
-    }   
+    }
 
     /** @test */
     public function test_findOrFail_query()
     {
         $mapper = $this->mapper(Blog::class);
         $this->expectException(EntityNotFoundException::class);
-        $mapper->findOrFail("1234");
+        $mapper->findOrFail('1234');
     }
 
     /** @test */
@@ -93,7 +93,9 @@ class QueryTest extends AnalogueTestCase
         $blogB = $this->factoryCreateUid(Blog::class);
         $this->clearCache();
         $mapper = $this->mapper(Blog::class);
-        $ids = $mapper->pluck("id");
+
+        $ids = $mapper->pluck('id');
+
         $this->assertEquals([$blogA->id, $blogB->id], $ids->all());
     }
 }
