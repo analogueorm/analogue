@@ -217,22 +217,6 @@ class Query
     }
 
     /**
-     * Pluck a single column from the database.
-     *
-     * @param string $column
-     *
-     * @return mixed
-     */
-    public function pluck($column)
-    {
-        $result = $this->first([$column]);
-
-        if ($result) {
-            return $result->{$column};
-        }
-    }
-
-    /**
      * Chunk the results of the query.
      *
      * @param int      $count
