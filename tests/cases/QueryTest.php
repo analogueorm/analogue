@@ -89,12 +89,13 @@ class QueryTest extends AnalogueTestCase
     /** @test */
     public function test_pluck()
     {
-        $blogA = $this->factoryCreateUid(Blog::class);
-        $blogB = $this->factoryCreateUid(Blog::class);
+        $blogA = analogue_factory(Blog::class)->create(['id' => 1]);
+        $blogB = analogue_factory(Blog::class)->create(['id' => 2]);
         $this->clearCache();
         $mapper = $this->mapper(Blog::class);
-        $ids = $mapper->pluck('id');
-        dd($ids);
+
+        $ids = $mapper->orderBy('id')->pluck('id');
+
         $this->assertEquals([$blogA->id, $blogB->id], $ids->all());
     }
 }
