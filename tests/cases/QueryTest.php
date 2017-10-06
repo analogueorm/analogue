@@ -94,7 +94,6 @@ class QueryTest extends AnalogueTestCase
         $this->clearCache();
         $mapper = $this->mapper(Blog::class);
         $ids = $mapper->pluck("id");
-        dd($ids);
         $this->assertEquals([$blogA->id, $blogB->id], $ids->all());
     }
 }
