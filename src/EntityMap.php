@@ -294,9 +294,9 @@ class EntityMap
     protected $discriminatorColumnMap = [];
 
     /**
-     * Indicate if the entity map has been booted
-     * 
-     * @var boolean
+     * Indicate if the entity map has been booted.
+     *
+     * @var bool
      */
     private $isBooted = false;
 
@@ -1576,9 +1576,9 @@ class EntityMap
     }
 
     /**
-     * Return true if entity map has been booted
+     * Return true if entity map has been booted.
      *
-     * @return boolean 
+     * @return bool
      */
     public function isBooted()
     {
