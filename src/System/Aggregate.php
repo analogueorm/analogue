@@ -1205,8 +1205,8 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Return wrapped entity
-     * 
+     * Return wrapped entity.
+     *
      * @return InternallyMappable
      */
     public function getWrappedEntity()
