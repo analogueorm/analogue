@@ -103,7 +103,7 @@ class EntityBuilder
 
         $wrapper->setProxies();
 
-        $entity = $wrapper->getObject();
+        $entity = $wrapper->unwrap();
 
         // Once the object has been hydrated, we'll add
         // the instance to the instance cache.

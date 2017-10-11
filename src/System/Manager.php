@@ -14,6 +14,7 @@ use Analogue\ORM\ValueMap;
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * This class is the entry point for registering Entities and
@@ -74,6 +75,13 @@ class Manager
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $eventDispatcher;
+
+    /**
+     * Optionnal Cache implementation.
+     *
+     * @var CacheInterface
+     */
+    protected $cache = null;
 
     /**
      * Available Analogue Events.
@@ -218,7 +226,7 @@ class Manager
      * Build a new Mapper instance for a given Entity.
      *
      * @param string $entity
-     * @param        $entityMap
+     * @param mixed  $entityMap
      *
      * @throws MappingException
      *
@@ -243,7 +251,14 @@ class Manager
         // At this point we can safely call the boot() method on the entityMap as
         // the mapper is now instantiated & registered within the manager.
 
-        $mapper->getEntityMap()->boot();
+        if (!$entityMap->isBooted()) {
+            $entityMap->boot();
+        }
+
+        // If a cache is defined, use it to store the entityMap
+        if ($this->cache !== null && !$this->cache->has($entityMap->getClass())) {
+            $this->cache->set($entityMap->getClass(), serialize($entityMap), 1440);
+        }
 
         return $mapper;
     }
@@ -381,6 +396,14 @@ class Manager
      */
     protected function getEntityMapInstanceFor($entity)
     {
+        // First, we'll try to load the entity map from cache, to
+        // save from time consuming parsing of the relationships
+        $entityMap = $this->getEntityMapInstanceFromCache($entity);
+
+        if ($entityMap !== null) {
+            return $entityMap;
+        }
+
         if (class_exists($entity.'Map')) {
             $map = $entity.'Map';
             $map = new $map();
@@ -399,6 +422,24 @@ class Manager
         $map = $this->getNewEntityMap();
 
         return $map;
+    }
+
+    /**
+     * Get Entity Map instance from cache.
+     *
+     * @param string $entity
+     *
+     * @return EntityMap | null
+     */
+    protected function getEntityMapInstanceFromCache(string $entityClass)
+    {
+        if ($this->cache == null) {
+            return;
+        }
+
+        if ($this->cache->has($entityClass)) {
+            return unserialize($this->cache->get($entityClass));
+        }
     }
 
     /**
@@ -588,6 +629,16 @@ class Manager
         $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($valueObject), $valueObject));
 
         return $prototype;
+    }
+
+    /**
+     * Set an application cache.
+     *
+     * @param Psr\SimpleCache\CacheInterface $cache
+     */
+    public function setCache(CacheInterface $cache)
+    {
+        $this->cache = $cache;
     }
 
     /**

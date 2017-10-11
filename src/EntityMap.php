@@ -294,6 +294,13 @@ class EntityMap
     protected $discriminatorColumnMap = [];
 
     /**
+     * Indicate if the entity map has been booted.
+     *
+     * @var bool
+     */
+    private $isBooted = false;
+
+    /**
      * Return Domain class attributes, useful when mapping to a Plain PHP Object.
      *
      * @return array
@@ -1564,6 +1571,18 @@ class EntityMap
         if (count($this->relationships > 0)) {
             $this->sortRelationshipsByType();
         }
+
+        $this->isBooted = true;
+    }
+
+    /**
+     * Return true if entity map has been booted.
+     *
+     * @return bool
+     */
+    public function isBooted()
+    {
+        return $this->isBooted;
     }
 
     /**

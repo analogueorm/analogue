@@ -74,7 +74,9 @@ class MapperFactory
         $mapper->fireEvent('initializing', $mapper);
 
         // Proceed necessary parsing on the EntityMap object
-        $entityMap->initialize();
+        if (!$entityMap->isBooted()) {
+            $entityMap->initialize();
+        }
 
         // Apply Inheritance scope, if necessary
         if ($entityMap->getInheritanceType() == 'single_table') {

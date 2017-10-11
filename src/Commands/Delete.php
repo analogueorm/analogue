@@ -19,10 +19,10 @@ class Delete extends Command
         $aggregate = $this->aggregate;
 
         $entity = $aggregate->getEntityObject();
-
+        $wrappedEntity = $aggregate->getWrappedEntity();
         $mapper = $aggregate->getMapper();
 
-        if ($mapper->fireEvent('deleting', $entity) === false) {
+        if ($mapper->fireEvent('deleting', $wrappedEntity) === false) {
             return false;
         }
 
@@ -36,6 +36,6 @@ class Delete extends Command
 
         $this->query->where($keyName, '=', $id)->delete();
 
-        $mapper->fireEvent('deleted', $entity, false);
+        $mapper->fireEvent('deleted', $wrappedEntity, false);
     }
 }
