@@ -74,7 +74,7 @@ class MapperFactory
         $mapper->fireEvent('initializing', $mapper);
 
         // Proceed necessary parsing on the EntityMap object
-        if(! $entityMap->isBooted()) {
+        if (!$entityMap->isBooted()) {
             $entityMap->initialize();
         }
 

@@ -77,8 +77,8 @@ class Manager
     protected $eventDispatcher;
 
     /**
-     * Optionnal Cache implementation
-     * 
+     * Optionnal Cache implementation.
+     *
      * @var CacheInterface
      */
     protected $cache = null;
@@ -225,8 +225,8 @@ class Manager
     /**
      * Build a new Mapper instance for a given Entity.
      *
-     * @param  string $entity
-     * @param  mixed  $entityMap
+     * @param string $entity
+     * @param mixed  $entityMap
      *
      * @throws MappingException
      *
@@ -251,12 +251,12 @@ class Manager
         // At this point we can safely call the boot() method on the entityMap as
         // the mapper is now instantiated & registered within the manager.
 
-        if(! $entityMap->isBooted()) {
-            $entityMap->boot();    
+        if (!$entityMap->isBooted()) {
+            $entityMap->boot();
         }
-        
+
         // If a cache is defined, use it to store the entityMap
-        if($this->cache !== null && ! $this->cache->has($entityMap->getClass())) {
+        if ($this->cache !== null && !$this->cache->has($entityMap->getClass())) {
             $this->cache->set($entityMap->getClass(), serialize($entityMap), 1440);
         }
 
@@ -396,11 +396,11 @@ class Manager
      */
     protected function getEntityMapInstanceFor($entity)
     {
-        // First, we'll try to load the entity map from cache, to 
+        // First, we'll try to load the entity map from cache, to
         // save from time consuming parsing of the relationships
         $entityMap = $this->getEntityMapInstanceFromCache($entity);
 
-        if($entityMap !== null) {
+        if ($entityMap !== null) {
             return $entityMap;
         }
 
@@ -425,18 +425,19 @@ class Manager
     }
 
     /**
-     * Get Entity Map instance from cache
-     * 
-     * @param  string $entity
+     * Get Entity Map instance from cache.
+     *
+     * @param string $entity
+     *
      * @return EntityMap | null
      */
     protected function getEntityMapInstanceFromCache(string $entityClass)
     {
-        if($this->cache == null) {
-            return null;
+        if ($this->cache == null) {
+            return;
         }
 
-        if($this->cache->has($entityClass)) {
+        if ($this->cache->has($entityClass)) {
             return unserialize($this->cache->get($entityClass));
         }
     }
@@ -631,9 +632,9 @@ class Manager
     }
 
     /**
-     * Set an application cache
-     * 
-     * @param Psr\SimpleCache\CacheInterface $cache 
+     * Set an application cache.
+     *
+     * @param Psr\SimpleCache\CacheInterface $cache
      */
     public function setCache(CacheInterface $cache)
     {
