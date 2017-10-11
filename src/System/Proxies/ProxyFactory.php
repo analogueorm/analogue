@@ -44,7 +44,14 @@ class ProxyFactory
      */
     protected function makeEntityProxy($entity, $relation, $class)
     {
-        $factory = new LazyLoadingValueHolderFactory();
+        $proxyPath = Manager::getInstance()->getProxyPath();
+
+        if($proxyPath !== null) {
+            $proxyConfig = new \ProxyManager\Configuration();
+            $proxyConfig->setProxiesTargetDir($proxyPath);
+
+            $factory = new LazyLoadingValueHolderFactory($proxyConfig);
+        }
 
         $initializer = function (&$wrappedObject, LazyLoadingInterface $proxy, $method, array $parameters, &$initializer) use ($entity, $relation) {
             $entityMap = Manager::getMapper($entity)->getEntityMap();
