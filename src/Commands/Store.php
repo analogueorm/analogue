@@ -24,10 +24,10 @@ class Store extends Command
     public function execute()
     {
         $entity = $this->aggregate->getEntityObject();
-
+        $wrappedEntity = $this->aggregate->getWrappedEntity();
         $mapper = $this->aggregate->getMapper();
 
-        if ($mapper->fireEvent('storing', $entity) === false) {
+        if ($mapper->fireEvent('storing', $wrappedEntity) === false) {
             return false;
         }
 
@@ -38,25 +38,25 @@ class Store extends Command
          * and run a creation if it doesn't exists
          */
         if (!$this->aggregate->exists()) {
-            if ($mapper->fireEvent('creating', $entity) === false) {
+            if ($mapper->fireEvent('creating', $wrappedEntity) === false) {
                 return false;
             }
 
             $this->insert();
 
-            $mapper->fireEvent('created', $entity, false);
+            $mapper->fireEvent('created', $wrappedEntity, false);
         } elseif ($this->aggregate->isDirty()) {
-            if ($mapper->fireEvent('updating', $entity) === false) {
+            if ($mapper->fireEvent('updating', $wrappedEntity) === false) {
                 return false;
             }
             $this->update();
 
-            $mapper->fireEvent('updated', $entity, false);
+            $mapper->fireEvent('updated', $wrappedEntity, false);
         }
 
         $this->postStoreProcess();
 
-        $mapper->fireEvent('stored', $entity, false);
+        $mapper->fireEvent('stored', $wrappedEntity, false);
 
         // Once the object is stored, add it to the Instance cache
         $key = $this->aggregate->getEntityId();
