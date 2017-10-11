@@ -6,6 +6,7 @@ use Analogue\ORM\Drivers\IlluminateConnectionProvider;
 use Analogue\ORM\Drivers\IlluminateDriver;
 use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\System\Manager;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -49,6 +50,8 @@ class AnalogueServiceProvider extends ServiceProvider
 
             $manager->registerPlugin(\Analogue\ORM\Plugins\Timestamps\TimestampsPlugin::class);
             $manager->registerPlugin(\Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin::class);
+
+            $manager->setCache($app->make(CacheRepository::class));
 
             return $manager;
         });
