@@ -57,6 +57,18 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
+     * Get hydrated object
+     * 
+     * @return mixed
+     */
+    public function unwrap()
+    {
+        $this->hydrate();
+
+        return $this->entity;
+    }
+
+    /**
      * Returns the wrapped entity.
      *
      * @return mixed
@@ -98,6 +110,7 @@ class ObjectWrapper extends Wrapper
         // In some case, attributes will miss some properties, so we'll just complete the hydration
         // set with the orginal's object properties
         $missingProperties = array_diff_key($this->properties, $properties);
+
         foreach (array_keys($missingProperties) as $missingKey) {
             $properties[$missingKey] = $this->properties[$missingKey];
         }
@@ -196,7 +209,7 @@ class ObjectWrapper extends Wrapper
     {
         $this->attributes = $attributes;
 
-        $this->hydrate();
+        //$this->hydrate();
     }
 
     /**
@@ -207,7 +220,7 @@ class ObjectWrapper extends Wrapper
      */
     public function getEntityAttributes() : array
     {
-        $this->attributes = $this->dehydrate($this->entity);
+        //$this->attributes = $this->dehydrate($this->entity);
 
         return $this->attributes;
     }
@@ -223,7 +236,7 @@ class ObjectWrapper extends Wrapper
      */
     public function setEntityAttribute($key, $value)
     {
-        $this->attributes = $this->dehydrate($this->entity);
+        //$this->attributes = $this->dehydrate($this->entity);
 
         $this->attributes[$key] = $value;
 
@@ -240,7 +253,7 @@ class ObjectWrapper extends Wrapper
      */
     public function getEntityAttribute($key)
     {
-        $this->attributes = $this->dehydrate($this->entity);
+        //$this->attributes = $this->dehydrate($this->entity);
 
         if ($this->hasAttribute($key)) {
             return $this->attributes[$key];
@@ -258,7 +271,7 @@ class ObjectWrapper extends Wrapper
      */
     public function hasAttribute($key) : bool
     {
-        $this->attributes = $this->dehydrate($this->entity);
+        //$this->attributes = $this->dehydrate($this->entity);
 
         return array_key_exists($key, $this->attributes) ? true : false;
     }

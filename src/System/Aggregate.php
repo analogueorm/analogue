@@ -1205,6 +1205,16 @@ class Aggregate implements InternallyMappable
     }
 
     /**
+     * Return wrapped entity
+     * 
+     * @return InternallyMappable
+     */
+    public function getWrappedEntity()
+    {
+        return $this->wrappedEntity;
+    }
+
+    /**
      * Set the lazyloading proxies on the wrapped entity.
      *
      * @return void
