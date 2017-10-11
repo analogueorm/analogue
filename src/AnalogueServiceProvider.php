@@ -34,6 +34,9 @@ class AnalogueServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Experimenting autoloading proxies
+        
+
         $this->app->singleton('analogue', function ($app) {
             $db = $app['db'];
 
@@ -57,6 +60,18 @@ class AnalogueServiceProvider extends ServiceProvider
             if($cache instanceof CacheInterface) {
                 $manager->setCache($cache);    
             }
+
+            $proxyPath = storage_path('framework/analogue/proxies');
+            
+            if(! file_exists($proxyPath)) {
+                mkdir($proxyPath, 0777, true);
+            }
+
+            $proxyConfig = new \ProxyManager\Configuration();
+            $proxyConfig->setProxiesTargetDir($proxyPath);
+            spl_autoload_register($proxyConfig->getProxyAutoloader());
+
+            $manager->setProxyPath($proxyPath);
 
             return $manager;
         });

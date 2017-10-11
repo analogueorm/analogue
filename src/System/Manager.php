@@ -119,6 +119,13 @@ class Manager
     protected $customMapNamespaces = [];
 
     /**
+     * Path where generated proxy classes are stored
+     * 
+     * @var string
+     */
+    protected $proxyPath;
+
+    /**
      * @param \Analogue\ORM\Drivers\Manager $driverManager
      * @param Dispatcher                    $event
      */
@@ -325,6 +332,25 @@ class Manager
     public function setStrictMode($mode)
     {
         $this->strictMode = $mode;
+    }
+
+    /**
+     * Define a generated proxy class path
+     * @param string $path
+     */
+    public function setProxyPath(string $path)
+    {
+        $this->proxyPath = $path;
+    }
+
+    /**
+     * Return proxy path if defined 
+     * 
+     * @return string | null
+     */
+    public function getProxyPath()
+    {
+        return $this->proxyPath;
     }
 
     /**
