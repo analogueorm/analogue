@@ -35,7 +35,7 @@
         "mockery/mockery": "0.9.*",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
-        "analogue/factory": "~1.1.0",
+        "analogue/factory": "dev-master",
         "laravel/browser-kit-testing": "^1.0"
     },
     "suggest": {

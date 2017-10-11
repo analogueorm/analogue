@@ -24,6 +24,7 @@ class Factory
         // of these hydrator, and get it, ideally, from the entityMap or the Mapper class,
         // so it's only instantiated once
         $config = new Configuration(get_class($object));
+
         $hydratorClass = $config->createFactory()->getHydratorClass();
         $hydrator = new $hydratorClass();
 

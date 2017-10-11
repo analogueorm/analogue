@@ -389,9 +389,9 @@ class Mapper
      */
     public function fireEvent($event, $entity, $halt = true)
     {
-        if ($entity instanceof Wrapper) {
+        /*if ($entity instanceof Wrapper) {
             throw new InvalidArgumentException('Fired Event with invalid Entity Object');
-        }
+        }*/
 
         $eventName = "analogue.{$event}.".$this->entityMap->getClass();
 
