@@ -8,6 +8,7 @@ use Analogue\ORM\Drivers\Manager as DriverManager;
 use Analogue\ORM\System\Manager;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\ServiceProvider;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Integrate Analogue into Laravel.
@@ -51,7 +52,11 @@ class AnalogueServiceProvider extends ServiceProvider
             $manager->registerPlugin(\Analogue\ORM\Plugins\Timestamps\TimestampsPlugin::class);
             $manager->registerPlugin(\Analogue\ORM\Plugins\SoftDeletes\SoftDeletesPlugin::class);
 
-            $manager->setCache($app->make(CacheRepository::class));
+            // If the cache is pre laravel 5.5, it doesn't implements PSR-16, so we'll skip it.
+            $cache = $app->make(CacheRepository::class);
+            if($cache instanceof CacheInterface) {
+                $manager->setCache($cache);    
+            }
 
             return $manager;
         });
