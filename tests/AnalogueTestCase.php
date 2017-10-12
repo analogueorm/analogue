@@ -38,7 +38,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         $this->analogue->setCache(Cache::driver('file'));
         $this->analogue->setStrictMode(true);
 
-        $this->artisan("cache:clear");
+        $this->artisan('cache:clear');
 
         $this->migrateDatabase();
     }
