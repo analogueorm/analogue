@@ -93,4 +93,39 @@ class MorphToTest extends DomainTestCase
             'commentable_type' => null,
         ]);
     }
+
+    /** @test */
+    public function we_can_set_a_polymorphic_relations_by_setting_primary_keys_directly()
+    {
+        $comment = new Comment('Comment 1');
+        $blog = $this->factoryCreateUid(Blog::class);
+
+        $comment->commentable_id = $blog->id;
+        $comment->commentable_type = Blog::class;
+        $mapper = $this->mapper($comment);
+
+        $mapper->store($comment);
+
+        $this->clearCache();
+
+        $loadedComment = $mapper->find($comment->id);
+
+        $this->seeInDatabase('comments', [
+            'id'               => $comment->id,
+            'commentable_id'   => $blog->id,
+            'commentable_type' => Blog::class,
+        ]);
+
+        $blog = $this->factoryCreateUid(Blog::class);
+        $comment->commentable_id = $blog->id;
+        $comment->commentable_type = Blog::class;
+        $mapper = $this->mapper($comment);
+
+        $mapper->store($comment);
+        $this->seeInDatabase('comments', [
+            'id'               => $comment->id,
+            'commentable_id'   => $blog->id,
+            'commentable_type' => Blog::class,
+        ]);
+    }
 }

@@ -35,8 +35,10 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         });
 
         $this->analogue = $this->app->make('analogue');
-        $this->analogue->setCache(Cache::driver('array'));
+        $this->analogue->setCache(Cache::driver('file'));
         $this->analogue->setStrictMode(true);
+
+        $this->artisan('cache:clear');
 
         $this->migrateDatabase();
     }

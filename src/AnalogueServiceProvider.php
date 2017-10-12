@@ -35,7 +35,6 @@ class AnalogueServiceProvider extends ServiceProvider
     public function register()
     {
         // Experimenting autoloading proxies
-        
 
         $this->app->singleton('analogue', function ($app) {
             $db = $app['db'];
@@ -57,13 +56,13 @@ class AnalogueServiceProvider extends ServiceProvider
 
             // If the cache is pre laravel 5.5, it doesn't implements PSR-16, so we'll skip it.
             $cache = $app->make(CacheRepository::class);
-            if($cache instanceof CacheInterface) {
-                $manager->setCache($cache);    
+            if ($cache instanceof CacheInterface) {
+                $manager->setCache($cache);
             }
 
             $proxyPath = storage_path('framework/analogue/proxies');
-            
-            if(! file_exists($proxyPath)) {
+
+            if (!file_exists($proxyPath)) {
                 mkdir($proxyPath, 0777, true);
             }
 

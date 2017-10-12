@@ -119,8 +119,8 @@ class Manager
     protected $customMapNamespaces = [];
 
     /**
-     * Path where generated proxy classes are stored
-     * 
+     * Path where generated proxy classes are stored.
+     *
      * @var string
      */
     protected $proxyPath;
@@ -335,7 +335,8 @@ class Manager
     }
 
     /**
-     * Define a generated proxy class path
+     * Define a generated proxy class path.
+     *
      * @param string $path
      */
     public function setProxyPath(string $path)
@@ -344,8 +345,8 @@ class Manager
     }
 
     /**
-     * Return proxy path if defined 
-     * 
+     * Return proxy path if defined.
+     *
      * @return string | null
      */
     public function getProxyPath()
