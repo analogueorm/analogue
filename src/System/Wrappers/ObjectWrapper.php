@@ -57,8 +57,8 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Get hydrated object
-     * 
+     * Get hydrated object.
+     *
      * @return mixed
      */
     public function unwrap()

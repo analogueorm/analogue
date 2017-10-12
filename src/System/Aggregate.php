@@ -587,52 +587,51 @@ class Aggregate implements InternallyMappable
         $attributes = $this->flattenEmbeddables($attributes);
 
         $foreignKeys = $this->getForeignKeyAttributes();
-        
+
         return $this->mergeForeignKeysWithAttributes($foreignKeys, $attributes);
     }
 
     /**
-     * Merge foreign keys and attributes by comparing their 
+     * Merge foreign keys and attributes by comparing their
      * current value to the cache, and guess the user intent.
-     * 
-     * @param  array $foreignKeys
-     * @param  array $attributes
+     *
+     * @param array $foreignKeys
+     * @param array $attributes
+     *
      * @return array
      */
     protected function mergeForeignKeysWithAttributes(array $foreignKeys, array $attributes) : array
     {
         $cachedAttributes = $this->getCachedRawAttributes();
 
-        foreach($foreignKeys as $fkAttributeKey => $fkAttributeValue) {
+        foreach ($foreignKeys as $fkAttributeKey => $fkAttributeValue) {
 
             // FK doesn't exist in attributes => we set it
-            if(! array_key_exists($fkAttributeKey, $attributes)) {
+            if (!array_key_exists($fkAttributeKey, $attributes)) {
                 $attributes[$fkAttributeKey] = $fkAttributeValue;
                 continue;
             }
 
             // FK does exists in attributes and is equal => we set it
-            if($attributes[$fkAttributeKey] === $fkAttributeValue) {
+            if ($attributes[$fkAttributeKey] === $fkAttributeValue) {
                 $attributes[$fkAttributeKey] = $fkAttributeValue;
                 continue;
             }
 
-            // ForeignKey exists in attributes array, but the value is different that 
+            // ForeignKey exists in attributes array, but the value is different that
             // the one fetched from the relationship itself.
-            
+
             // Does it exist in cache
-            if(array_key_exists($fkAttributeKey, $cachedAttributes)) {
+            if (array_key_exists($fkAttributeKey, $cachedAttributes)) {
                 // attribute is different than cached value, we use it
-                if($attributes[$fkAttributeKey] !== $cachedAttributes[$fkAttributeKey]) {
+                if ($attributes[$fkAttributeKey] !== $cachedAttributes[$fkAttributeKey]) {
                     continue;
                 }
                 // if not, we use the foreign key value
                 else {
                     $attributes[$fkAttributeKey] = $fkAttributeValue;
                 }
-                
-            }
-            else {
+            } else {
                 if (is_null($attributes[$fkAttributeKey])) {
                     $attributes[$fkAttributeKey] = $fkAttributeValue;
                 }
@@ -760,7 +759,7 @@ class Aggregate implements InternallyMappable
         $cachedAttributes = $this->getCache()->get($this->getEntityId());
 
         if (!array_key_exists($key, $cachedAttributes)) {
-            return null;
+            return;
         } else {
             return $cachedAttributes[$key];
         }
@@ -1254,8 +1253,8 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Return wrapped entity
-     * 
+     * Return wrapped entity.
+     *
      * @return InternallyMappable
      */
     public function getWrappedEntity()

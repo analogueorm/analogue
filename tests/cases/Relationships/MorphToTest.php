@@ -105,7 +105,7 @@ class MorphToTest extends DomainTestCase
         $mapper = $this->mapper($comment);
 
         $mapper->store($comment);
-        
+
         $this->clearCache();
 
         $loadedComment = $mapper->find($comment->id);
