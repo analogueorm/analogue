@@ -17,15 +17,32 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     protected $relationshipLoaded = false;
 
+    /**
+     * Added items.
+     *
+     * @var array
+     */
     protected $addedItems = [];
+
+    /**
+     * Parent entity.
+     *
+     * @var \Analogue\ORM\Mappable|string
+     */
+    protected $parentEntity;
+
+    /**
+     * Relationship.
+     *
+     * @var string
+     */
+    protected $relationshipMethod;
 
     /**
      * Create a new collection.
      *
      * @param mixed  $entity
      * @param string $relation
-     *
-     * @return void
      */
     public function __construct($entity, $relation)
     {
@@ -35,7 +52,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Return Items that has been added without lady loading
+     * Return Items that has been added without lazy loading
      * the underlying collection.
      *
      * @return array
@@ -637,7 +654,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     public function min($callback = null)
     {
         // TODO : we could rely on the QB
-        // for thos, if initialization has not
+        // for this, if initialization has not
         // take place yet
         $this->initializeProxy();
 
