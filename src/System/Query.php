@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * Analogue Query builder.
  *
- * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+ * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
  */
 class Query
 {
@@ -37,7 +37,7 @@ class Query
     /**
      * Query Builder Instance.
      *
-     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
      */
     protected $query;
 
@@ -640,7 +640,7 @@ class Query
      * (REFACTOR: this method should move out, we need to provide the client classes
      * with the adapter instead.)
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
      */
     public function getQuery()
     {
