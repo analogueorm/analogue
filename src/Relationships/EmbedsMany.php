@@ -14,6 +14,7 @@ class EmbedsMany extends EmbedsOne
      * @param array $attributes
      *
      * @throws MappingException
+     *
      * @return array
      */
     public function matchSingleResult(array $attributes) : array
