@@ -51,7 +51,7 @@ class EntityMap
      * The primary key for the model. If the model is an Embedded Value object
      * primary key is set to null.
      *
-     * @var string | null
+     * @var string|null
      */
     protected $primaryKey = 'id';
 
@@ -287,7 +287,7 @@ class EntityMap
 
     /**
      * Allow using a string to define which entity type should be instantiated.
-     * If not set, analogue will uses entity's FQDN.
+     * If not set, analogue will uses entity's FQCN.
      *
      * @var array
      */
@@ -614,6 +614,8 @@ class EntityMap
      *
      * @param string $relation
      *
+     * @throws MappingException
+     *
      * @return mixed
      */
     public function getEmptyValueForRelationship(string $relation)
@@ -626,7 +628,7 @@ class EntityMap
             return new Collection();
         }
 
-        throw new MappingException("Cannot determine defaut value of $relation");
+        throw new MappingException("Cannot determine default value of $relation");
     }
 
     /**
@@ -667,7 +669,7 @@ class EntityMap
      *
      * @param string $relation
      *
-     * @return string | array | null
+     * @return string|array|null
      */
     public function getLocalKeys($relation)
     {
@@ -717,11 +719,11 @@ class EntityMap
     }
 
     /**
-     * Get the targetted type for a relationship. Return null if polymorphic.
+     * Get the targeted type for a relationship. Return null if polymorphic.
      *
      * @param string $relation
      *
-     * @return string | null
+     * @return string|null
      */
     public function getTargettedClass($relation)
     {
@@ -770,7 +772,7 @@ class EntityMap
     /**
      * Get the primary key attribute for the entity.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getKeyName()
     {
@@ -1023,8 +1025,9 @@ class EntityMap
     /**
      * Define an Embedded Object.
      *
-     * @param mixed  $entity
-     * @param string $related
+     * @param mixed  $parent
+     * @param string $relatedClass
+     * @param string $relation
      *
      * @return EmbedsOne
      */
@@ -1044,10 +1047,11 @@ class EntityMap
     /**
      * Define an Embedded Collection.
      *
-     * @param mixed  $entity
-     * @param string $related
+     * @param mixed  $parent
+     * @param string $relatedClass
+     * @param string $relation
      *
-     * @return EmbedsOne
+     * @return EmbedsMany
      */
     public function embedsMany($parent, string $relatedClass, $relation = null) : EmbedsMany
     {
@@ -1151,7 +1155,6 @@ class EntityMap
      * @param string      $related
      * @param string|null $foreignKey
      * @param string|null $otherKey
-     * @param string|null $relation
      *
      * @throws MappingException
      *
@@ -1356,11 +1359,10 @@ class EntityMap
      * Define a many-to-many relationship.
      *
      * @param mixed       $entity
-     * @param string      $relatedClass
+     * @param string      $related
      * @param string|null $table
      * @param string|null $foreignKey
      * @param string|null $otherKey
-     * @param string|null $relation
      *
      * @throws MappingException
      *
@@ -1537,7 +1539,7 @@ class EntityMap
      */
     public function newCollection(array $entities = [])
     {
-        return new EntityCollection($entities, $this);
+        return new EntityCollection($entities);
     }
 
     /**
@@ -1568,7 +1570,7 @@ class EntityMap
      */
     public function boot()
     {
-        if (count($this->relationships > 0)) {
+        if (count($this->relationships) > 0) {
             $this->sortRelationshipsByType();
         }
 
@@ -1635,9 +1637,9 @@ class EntityMap
     /**
      * Sort Relationships methods by type.
      *
-     * TODO : replace this by direclty setting these value
+     * TODO : replace this by directly setting these value
      * in the corresponding methods, so we won't need
-     * the correpondancy tabble
+     * the correspondency table
      *
      * @return void
      */
