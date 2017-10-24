@@ -51,7 +51,7 @@ class Repository
     /**
      * Return all Entities from database.
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function all()
     {
