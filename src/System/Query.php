@@ -68,6 +68,7 @@ class Query
      * @var array
      */
     protected $passthru = [
+        'cursor',
         'toSql',
         'lists',
         'pluck',
