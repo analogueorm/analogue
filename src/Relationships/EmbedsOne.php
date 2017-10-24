@@ -2,6 +2,8 @@
 
 namespace Analogue\ORM\Relationships;
 
+use Analogue\ORM\Exceptions\MappingException;
+
 class EmbedsOne extends EmbeddedRelationship
 {
     /**
@@ -13,7 +15,7 @@ class EmbedsOne extends EmbeddedRelationship
 
     /**
      * Transform attributes into embedded object(s), and
-     * match it into the given resultset.
+     * match it into the given result set.
      *
      * @param array $results
      *
@@ -43,6 +45,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @param array $attributes
      *
+     * @throws MappingException
      * @return array
      */
     protected function matchAsArray(array $attributes) : array
@@ -96,7 +99,7 @@ class EmbedsOne extends EmbeddedRelationship
     }
 
     /**
-     * Return a dictionnary of attributes key on parent Entity.
+     * Return a dictionary of attributes key on parent Entity.
      *
      * @return array
      */
@@ -107,7 +110,7 @@ class EmbedsOne extends EmbeddedRelationship
 
         $attributesMap = [];
 
-        // Build a dictionnary for corresponding object attributes => parent attributes
+        // Build a dictionary for corresponding object attributes => parent attributes
         foreach ($embeddedAttributeKeys as $key) {
             $attributesMap[$key] = $this->getParentAttributeKey($key);
         }
