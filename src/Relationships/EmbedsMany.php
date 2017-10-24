@@ -34,6 +34,7 @@ class EmbedsMany extends EmbedsOne
      * @param array $attributes
      *
      * @throws MappingException
+     *
      * @return array
      */
     protected function matchAsArray(array $attributes) : array
@@ -79,6 +80,7 @@ class EmbedsMany extends EmbedsOne
      * @param mixed $objects
      *
      * @throws MappingException
+     *
      * @return array $columns
      */
     public function normalize($objects) : array
@@ -96,6 +98,7 @@ class EmbedsMany extends EmbedsOne
      * @param mixed $objects
      *
      * @throws MappingException
+     *
      * @return array
      */
     protected function normalizeAsArray($objects) : array
