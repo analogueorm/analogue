@@ -39,6 +39,167 @@ class HasManyTest extends DomainTestCase
     }
 
     /** @test */
+    public function relationship_isnt_updated_or_detached_if_no_attributes_are_dirty()
+    {
+        $blog = analogue_factory(Blog::class)->make();
+        $article1 = analogue_factory(Article::class)->make();
+        $article2 = analogue_factory(Article::class)->make();
+
+        $articles = [
+            $article1,
+            $article2,
+        ];
+
+        $blog->articles = $articles;
+
+        $mapper = $this->mapper(Blog::class);
+        $mapper->store($blog);
+
+        $this->clearCache();
+
+        $loadedBlog = $mapper->find($blog->id);
+        $mapper->store($loadedBlog);
+        $this->seeInDatabase('blogs', [
+            'title' => $blog->title,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article1->title,
+            'slug'    => $article1->slug,
+            'content' => $article1->content,
+            'blog_id' => $blog->id,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article2->title,
+            'slug'    => $article2->slug,
+            'content' => $article2->content,
+            'blog_id' => $blog->id,
+        ]);
+    }
+
+
+    /** @test */
+    public function relationship_isnt_updated_or_detached_if_no_attributes_are_dirty_and_proxy_is_replaced_by_collection()
+    {
+        $blog = analogue_factory(Blog::class)->make();
+        $article1 = analogue_factory(Article::class)->make();
+        $article2 = analogue_factory(Article::class)->make();
+
+        $articles = [
+            $article1,
+            $article2,
+        ];
+
+        $blog->articles = $articles;
+
+        $mapper = $this->mapper(Blog::class);
+        $mapper->store($blog);
+
+        $this->clearCache();
+
+        $loadedBlog = $mapper->find($blog->id);
+        $loadedBlog->articles = $loadedBlog->articles->map(function($a) { return $a; });
+
+        $mapper->store($loadedBlog);
+        $this->seeInDatabase('blogs', [
+            'title' => $blog->title,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article1->title,
+            'slug'    => $article1->slug,
+            'content' => $article1->content,
+            'blog_id' => $blog->id,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article2->title,
+            'slug'    => $article2->slug,
+            'content' => $article2->content,
+            'blog_id' => $blog->id,
+        ]);
+    }
+
+     /** @test */
+    public function relationship_isnt_updated_or_detached_if_we_store_the_relation_from_its_child()
+    {
+        $blog = analogue_factory(Blog::class)->make();
+        $article1 = analogue_factory(Article::class)->make();
+        $article2 = analogue_factory(Article::class)->make();
+
+        $articles = [
+            $article1,
+            $article2,
+        ];
+
+        $blog->articles = $articles;
+
+        $mapper = $this->mapper(Blog::class);
+        $mapper->store($blog);
+
+        $this->clearCache();
+
+        $mapper = $this->mapper(Article::class);
+        $article = $mapper->find($article1->id);
+        $mapper->store($article);
+
+        $this->seeInDatabase('blogs', [
+            'title' => $blog->title,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article1->title,
+            'slug'    => $article1->slug,
+            'content' => $article1->content,
+            'blog_id' => $blog->id,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article2->title,
+            'slug'    => $article2->slug,
+            'content' => $article2->content,
+            'blog_id' => $blog->id,
+        ]);
+    }
+
+    /** @test */
+    public function relationship_isnt_updated_or_detached_if_the_proxy_is_loaded()
+    {
+        $blog = analogue_factory(Blog::class)->make();
+        $article1 = analogue_factory(Article::class)->make();
+        $article2 = analogue_factory(Article::class)->make();
+
+        $articles = [
+            $article1,
+            $article2,
+        ];
+
+        $blog->articles = $articles;
+
+        $mapper = $this->mapper(Blog::class);
+        $mapper->store($blog);
+
+        $this->clearCache();
+
+        
+        $blog = $mapper->find($blog->id);
+        $blog->articles->all();
+        $mapper->store($blog);
+        
+        $this->seeInDatabase('blogs', [
+            'title' => $blog->title,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article1->title,
+            'slug'    => $article1->slug,
+            'content' => $article1->content,
+            'blog_id' => $blog->id,
+        ]);
+        $this->seeInDatabase('articles', [
+            'title'   => $article2->title,
+            'slug'    => $article2->slug,
+            'content' => $article2->content,
+            'blog_id' => $blog->id,
+        ]);
+    }
+
+
+    /** @test */
     public function relationship_can_be_eager_loaded()
     {
         list($blog, $article1, $article2) = $this->buildObjects();
