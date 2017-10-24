@@ -25,7 +25,7 @@ abstract class Wrapper implements InternallyMappable
     protected $entityMap;
 
     /**
-     * @var \Analogue\ORM\System\Proxirs\ProxyFactory
+     * @var \Analogue\ORM\System\Proxies\ProxyFactory
      */
     protected $proxyFactory;
 
@@ -64,7 +64,7 @@ abstract class Wrapper implements InternallyMappable
 
     /**
      * Return the Entity class/primary key couple,
-     * which is used for internall operations.
+     * which is used for internal operations.
      *
      * @return string
      */
@@ -94,7 +94,7 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Set the lazyloading proxies on the wrapped entity objet.
+     * Set the lazy loading proxies on the wrapped entity objet.
      *
      * @param array $relations list of relations to be lazy loaded
      *
