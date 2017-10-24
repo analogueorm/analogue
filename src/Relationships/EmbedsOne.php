@@ -46,6 +46,7 @@ class EmbedsOne extends EmbeddedRelationship
      * @param array $attributes
      *
      * @throws MappingException
+     *
      * @return array
      */
     protected function matchAsArray(array $attributes) : array
