@@ -9,6 +9,7 @@ use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 
 class BelongsToMany extends Relationship
 {
@@ -193,9 +194,9 @@ class BelongsToMany extends Relationship
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
-    public function get($columns = ['*'])
+    public function get($columns = ['*']) : Collection
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
