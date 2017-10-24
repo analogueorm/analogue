@@ -399,7 +399,7 @@ class Aggregate implements InternallyMappable
     /**
      * Return the Mapper's entity cache.
      *
-     * @return \Analogue\ORM\System\EntityCache
+     * @return \Analogue\ORM\System\Cache\AttributeCache
      */
     protected function getEntityCache()
     {
@@ -661,7 +661,7 @@ class Aggregate implements InternallyMappable
             $type = array_search($entityClass, $map);
 
             if ($type === false) {
-                // Use entity FQDN if no corresponding key is set
+                // Use entity FQCN if no corresponding key is set
                 $attributes[$discriminatorColumn] = $entityClass;
             } else {
                 $attributes[$discriminatorColumn] = $type;
@@ -805,6 +805,8 @@ class Aggregate implements InternallyMappable
      * Get a null foreign key value pair for an empty relationship.
      *
      * @param string $relation
+     *
+     * @throws MappingException
      *
      * @return array
      */
@@ -1092,7 +1094,7 @@ class Aggregate implements InternallyMappable
     /**
      * Return cache instance for the current entity type.
      *
-     * @return \Analogue\ORM\System\EntityCache
+     * @return \Analogue\ORM\System\Cache\AttributeCache
      */
     protected function getCache()
     {
@@ -1100,7 +1102,7 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Get Only Raw Entiy's attributes which have been modified
+     * Get Only Raw Entity attributes which have been modified
      * since last query.
      *
      * @return array
@@ -1263,7 +1265,7 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Set the lazyloading proxies on the wrapped entity.
+     * Set the lazy loading proxies on the wrapped entity.
      *
      * @return void
      */
