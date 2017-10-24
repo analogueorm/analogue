@@ -407,7 +407,7 @@ class EntityCollection extends Collection
      * @param string      $value
      * @param string|null $key
      *
-     * @return self
+     * @return \Illuminate\Support\Collection
      */
     public function pluck($value, $key = null)
     {
@@ -420,7 +420,7 @@ class EntityCollection extends Collection
      * @param string      $value
      * @param string|null $key
      *
-     * @return self
+     * @return \Illuminate\Support\Collection
      */
     public function lists($value, $key = null)
     {
