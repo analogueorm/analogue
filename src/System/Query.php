@@ -123,7 +123,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function get($columns = ['*']) : Collection
     {
@@ -155,7 +155,7 @@ class Query
      * @param array $id
      * @param array $columns
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function findMany($id, $columns = ['*'])
     {
@@ -561,7 +561,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function getEntities($columns = ['*'])
     {
