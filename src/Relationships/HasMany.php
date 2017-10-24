@@ -23,7 +23,7 @@ class HasMany extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array  $$results
+     * @param array  $results
      * @param string $relation
      *
      * @return array
