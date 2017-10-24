@@ -6,7 +6,7 @@ use Illuminate\Database\Connection;
 
 /**
  * Illuminate Driver for Analogue ORM. If multiple DB connections are
- * involved, we'll treat each underlyin driver as a separate instance.
+ * involved, we'll treat each underlying driver as a separate instance.
  */
 class IlluminateDBAdapter implements DBAdapter
 {
