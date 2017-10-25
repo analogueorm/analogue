@@ -12,14 +12,13 @@ class SoftDeletingScope implements ScopeInterface
      *
      * @var array
      */
-    protected $extensions = ['WithTrashed', 'OnlyTrashed'];
+    protected $extensions = [
+        'WithTrashed',
+        'OnlyTrashed',
+    ];
 
     /**
-     * Apply the scope to a given Analogue query builder.
-     *
-     * @param \Analogue\ORM\System\Query $query
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function apply(Query $query)
     {
@@ -31,11 +30,7 @@ class SoftDeletingScope implements ScopeInterface
     }
 
     /**
-     * Remove the scope from the given Analogue query builder.
-     *
-     * @param mixed $query
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function remove(Query $query)
     {
