@@ -12,6 +12,14 @@ if (!function_exists('tdd')) {
         }
     }
 
+    function tdump($expression)
+    {
+        global $tdd_status;
+        if ($tdd_status) {
+            dump($expression);
+        }
+    }
+
     function setTddOn()
     {
         global $tdd_status;

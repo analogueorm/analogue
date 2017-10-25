@@ -290,6 +290,22 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
+    /**
+     * Migrate a DB
+     *  
+     * @param  callable $callback 
+     * @return void
+     */
+    protected function migrate($table, $callback)
+    {
+        Schema::create($table, $callback);
+    }
+
+    /**
+     * Clear analogue's instance & db cache
+     * 
+     * @return void
+     */
     protected function clearCache()
     {
         app('analogue')->clearCache();
