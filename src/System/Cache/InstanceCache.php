@@ -14,12 +14,17 @@ class InstanceCache
     protected $class;
 
     /**
-     * Intances.
+     * Instances.
      *
      * @var array
      */
     protected $instances = [];
 
+    /**
+     * InstanceCache constructor.
+     *
+     * @param string $class
+     */
     public function __construct(string $class)
     {
         $this->class = $class;
