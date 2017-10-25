@@ -51,8 +51,7 @@ class ProxyFactory
             $proxyConfig->setProxiesTargetDir($proxyPath);
 
             $factory = new LazyLoadingValueHolderFactory($proxyConfig);
-        }
-        else {
+        } else {
             $factory = new LazyLoadingValueHolderFactory();
         }
 
