@@ -9,6 +9,7 @@ use Analogue\ORM\Mappable;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Aggregate;
 use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 
 /**
@@ -118,9 +119,9 @@ class AttributeCache
     {
         if ($this->has($id)) {
             return $this->cache[$id];
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     /**
