@@ -115,7 +115,7 @@ class AttributeCache
      *
      * @return array
      */
-    public function get(string $id)
+    public function get(string $id = null)
     {
         if ($this->has($id)) {
             return $this->cache[$id];
@@ -131,7 +131,7 @@ class AttributeCache
      *
      * @return bool
      */
-    public function has(string $id): bool
+    public function has(string $id = null): bool
     {
         return array_key_exists($id, $this->cache);
     }
