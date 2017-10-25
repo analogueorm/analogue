@@ -38,7 +38,6 @@ class ResultBuilder
 
     /**
      * @param Mapper $defaultMapper
-     * @param array  $eagerLoads
      */
     public function __construct(Mapper $defaultMapper)
     {
@@ -52,7 +51,7 @@ class ResultBuilder
      * @param array $results
      * @param array $eagerLoads name of the relation to be eager loaded on the Entities
      *
-     * @return \Illuminate\Support\Collection
+     * @return array
      */
     public function build(array $results, array $eagerLoads)
     {
@@ -341,7 +340,7 @@ class ResultBuilder
      *
      * @param array $results
      *
-     * @return Collection
+     * @return array
      */
     protected function buildWithDefaultMapper(array $results)
     {
@@ -357,7 +356,7 @@ class ResultBuilder
      *
      * @param array $results
      *
-     * @return Collection
+     * @return array
      */
     protected function buildUsingSingleTableInheritance(array $results)
     {

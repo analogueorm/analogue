@@ -73,7 +73,7 @@ class Entity extends ValueObject
      */
     protected function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'get'.$this->getMutatorMethod($key));
     }
 
     /**
@@ -85,7 +85,7 @@ class Entity extends ValueObject
      */
     protected function hasSetMutator($key)
     {
-        return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'set'.$this->getMutatorMethod($key));
     }
 
     /**

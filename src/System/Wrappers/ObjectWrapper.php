@@ -42,10 +42,9 @@ class ObjectWrapper extends Wrapper
     /**
      * Object Wrapper constructor.
      *
-     * @param mixed                  $object
-     * @param Analogue\ORM\EntityMap $entityMap
-     *
-     * @return void
+     * @param mixed                   $entity
+     * @param \Analogue\ORM\EntityMap $entityMap
+     * @param HydratorInterface       $hydrator
      */
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
@@ -108,7 +107,7 @@ class ObjectWrapper extends Wrapper
         $properties = $this->propertiesFromAttributes($this->attributes) + $this->unmanagedProperties;
 
         // In some case, attributes will miss some properties, so we'll just complete the hydration
-        // set with the orginal's object properties
+        // set with the original object properties
         $missingProperties = array_diff_key($this->properties, $properties);
 
         foreach (array_keys($missingProperties) as $missingKey) {
@@ -136,6 +135,8 @@ class ObjectWrapper extends Wrapper
      * Convert object's properties to analogue's internal attributes representation.
      *
      * @param array $properties
+     *
+     * @throws MappingException
      *
      * @return array
      */

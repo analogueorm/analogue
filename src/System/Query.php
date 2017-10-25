@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * Analogue Query builder.
  *
- * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+ * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
  */
 class Query
 {
@@ -37,7 +37,7 @@ class Query
     /**
      * Query Builder Instance.
      *
-     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
      */
     protected $query;
 
@@ -68,6 +68,7 @@ class Query
      * @var array
      */
     protected $passthru = [
+        'cursor',
         'toSql',
         'lists',
         'pluck',
@@ -122,7 +123,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function get($columns = ['*']) : Collection
     {
@@ -154,7 +155,7 @@ class Query
      * @param array $id
      * @param array $columns
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function findMany($id, $columns = ['*'])
     {
@@ -560,7 +561,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function getEntities($columns = ['*'])
     {
@@ -639,7 +640,7 @@ class Query
      * (REFACTOR: this method should move out, we need to provide the client classes
      * with the adapter instead.)
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
      */
     public function getQuery()
     {

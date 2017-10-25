@@ -31,6 +31,8 @@ class InstanceCache
      * @param mixed  $entity
      * @param string $id
      *
+     * @throws CacheException
+     *
      * @return void
      */
     public function add($entity, $id)
@@ -65,12 +67,14 @@ class InstanceCache
      *
      * @param string $id
      *
+     * @throws CacheException
+     *
      * @return mixed|null
      */
     public function get($id)
     {
         if ($id === null) {
-            throw new CacheException('Cached isntance id cannot be null');
+            throw new CacheException('Cached instance id cannot be null');
         }
 
         if (!$this->has($id)) {

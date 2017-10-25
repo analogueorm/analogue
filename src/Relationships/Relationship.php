@@ -167,7 +167,7 @@ abstract class Relationship
     /**
      * Get the relationship for eager loading.
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function getEager()
     {
