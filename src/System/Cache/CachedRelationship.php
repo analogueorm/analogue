@@ -41,7 +41,7 @@ class CachedRelationship
      */
     public function hasPivotAttributes(): bool
     {
-        return ! empty($this->pivotAttributes);
+        return !empty($this->pivotAttributes);
     }
 
     /**

@@ -231,7 +231,7 @@ class Aggregate implements InternallyMappable
         $id = spl_object_hash($value);
         $root = $this->root ? $this->root->getWrappedEntity()->getObject() : null;
         $parent = $this->parent ? $this->parent->getWrappedEntity()->getObject() : null;
-        
+
         if ($parent && (spl_object_hash($parent) == $id)) {
             return true;
         }
