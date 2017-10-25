@@ -7,7 +7,7 @@ use Analogue\ORM\System\Mapper;
 class Initialized
 {
     /**
-     * Mapper.
+     * Mapper instance.
      *
      * @var Mapper
      */
