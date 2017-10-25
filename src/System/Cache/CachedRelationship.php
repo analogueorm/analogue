@@ -16,7 +16,7 @@ class CachedRelationship
     protected $hash;
 
     /**
-     * Pivot attributes, if any.
+     * Pivot attributes.
      *
      * @var array
      */
@@ -25,10 +25,10 @@ class CachedRelationship
     /**
      * CachedRelationship constructor.
      *
-     * @param $hash
-     * @param array $pivotAttributes
+     * @param string $hash
+     * @param array  $pivotAttributes
      */
-    public function __construct($hash, $pivotAttributes = [])
+    public function __construct(string $hash, array $pivotAttributes = [])
     {
         $this->hash = $hash;
         $this->pivotAttributes = $pivotAttributes;
@@ -39,9 +39,9 @@ class CachedRelationship
      *
      * @return bool
      */
-    public function hasPivotAttributes()
+    public function hasPivotAttributes(): bool
     {
-        return count($this->pivotAttributes) > 0;
+        return ! empty($this->pivotAttributes);
     }
 
     /**
@@ -49,7 +49,7 @@ class CachedRelationship
      *
      * @return string
      */
-    public function getHash()
+    public function getHash(): string
     {
         return $this->hash;
     }
@@ -59,7 +59,7 @@ class CachedRelationship
      *
      * @return array
      */
-    public function getPivotAttributes()
+    public function getPivotAttributes(): array
     {
         return $this->pivotAttributes;
     }
@@ -69,7 +69,7 @@ class CachedRelationship
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->hash;
     }
