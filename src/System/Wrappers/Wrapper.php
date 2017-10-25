@@ -43,17 +43,15 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Return the wrapped entity class.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getEntityClass()
+    public function getEntityClass(): string
     {
         return get_class($this->entity);
     }
 
     /**
-     * Return the entity's primary key valuye.
+     * Return the entity's primary key value.
      *
      * @return string
      */
@@ -63,12 +61,9 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Return the Entity class/primary key couple,
-     * which is used for internal operations.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getEntityHash()
+    public function getEntityHash(): string
     {
         return $this->getEntityClass().'.'.$this->getEntityKey();
     }
@@ -211,38 +206,4 @@ abstract class Wrapper implements InternallyMappable
 
         return true;
     }
-
-    /**
-     * @param string $key
-     * @param string $value
-     *
-     * @return mixed
-     */
-    abstract public function setEntityAttribute($key, $value);
-
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    abstract public function getEntityAttribute($key);
-
-    /**
-     * @param array $attributes
-     *
-     * @return mixed
-     */
-    abstract public function setEntityAttributes(array $attributes);
-
-    /**
-     * @return mixed
-     */
-    abstract public function getEntityAttributes();
-
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    abstract public function hasAttribute($key);
 }
