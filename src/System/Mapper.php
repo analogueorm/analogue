@@ -264,9 +264,9 @@ class Mapper
     }
 
     /**
-     * Get a the Underlying QueryAdapter.
+     * Get a the Underlying Query Builder.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return \Illuminate\Database\Query\Builder
      */
     public function newQueryBuilder()
     {
