@@ -87,7 +87,7 @@ class AttributeCache
             $cachedResults[$id] = $this->rawResult($result);
         }
 
-        if (count($this->cache) == 0) {
+        if (empty($this->cache)) {
             $this->cache = $cachedResults;
         } else {
             $this->mergeCacheResults($cachedResults);
@@ -115,7 +115,7 @@ class AttributeCache
      *
      * @return array
      */
-    public function get($id)
+    public function get(string $id)
     {
         if ($this->has($id)) {
             return $this->cache[$id];
@@ -131,7 +131,7 @@ class AttributeCache
      *
      * @return bool
      */
-    public function has($id)
+    public function has(string $id): bool
     {
         return array_key_exists($id, $this->cache);
     }
