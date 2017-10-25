@@ -5,7 +5,6 @@ namespace Analogue\ORM\Relationships;
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\ResultBuilder;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\Wrappers\Wrapper;
 
 abstract class EmbeddedRelationship
 {
@@ -154,7 +153,7 @@ abstract class EmbeddedRelationship
      * Get attribute name from the parent, if a map has been
      * defined.
      *
-     * @param srring $attributeKey
+     * @param string $key
      *
      * @return string
      */
@@ -217,7 +216,7 @@ abstract class EmbeddedRelationship
     /**
      * Return parent mapper.
      *
-     * @return Analogue\ORM\System\Mapper
+     * @return \Analogue\ORM\System\Mapper
      */
     protected function getParentMapper()
     {
@@ -227,7 +226,7 @@ abstract class EmbeddedRelationship
     /**
      * Return embedded relationship mapper.
      *
-     * @return Analogue\ORM\System\Mapper
+     * @return \Analogue\ORM\System\Mapper
      */
     protected function getRelatedMapper()
     {

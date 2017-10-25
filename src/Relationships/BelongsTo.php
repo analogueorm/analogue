@@ -2,7 +2,7 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;

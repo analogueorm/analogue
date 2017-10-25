@@ -82,7 +82,7 @@ class Pivot extends Entity
         // The pivot model is a "dynamic" model since we will set the tables dynamically
         // for the instance. This allows it work for any intermediate tables for the
         // many to many relationship that are defined by this developer's classes.
-        $this->setEntityAttributes($attributes, true);
+        $this->setEntityAttributes($attributes);
 
         $this->table = $table;
 

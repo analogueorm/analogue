@@ -291,7 +291,7 @@ class HasManyThrough extends Relationship
      * Run synchronization content if needed by the
      * relation type.
      *
-     * @param array $actualContent
+     * @param array $entities
      *
      * @return void
      */

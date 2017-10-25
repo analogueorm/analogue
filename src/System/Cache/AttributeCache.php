@@ -98,7 +98,7 @@ class AttributeCache
      *
      * @param array $result
      *
-     * @return
+     * @return array
      */
     protected function rawResult(array $result) : array
     {
@@ -139,7 +139,7 @@ class AttributeCache
      * Combine new result set with existing attributes in
      * cache.
      *
-     * @param array $entities
+     * @param array $results
      *
      * @return void
      */
@@ -365,7 +365,7 @@ class AttributeCache
 
     /**
      * Clear the entity Cache. Use with caution as it could result
-     * in impredictable behaviour if the cached entities are stored
+     * in unpredictable behaviour if the cached entities are stored
      * after the cache clear operation.
      *
      * @return void
