@@ -76,7 +76,6 @@ class HasManyTest extends DomainTestCase
         ]);
     }
 
-
     /** @test */
     public function relationship_isnt_updated_or_detached_if_no_attributes_are_dirty_and_proxy_is_replaced_by_collection()
     {
@@ -97,7 +96,9 @@ class HasManyTest extends DomainTestCase
         $this->clearCache();
 
         $loadedBlog = $mapper->find($blog->id);
-        $loadedBlog->articles = $loadedBlog->articles->map(function($a) { return $a; });
+        $loadedBlog->articles = $loadedBlog->articles->map(function ($a) {
+            return $a;
+        });
 
         $mapper->store($loadedBlog);
         $this->seeInDatabase('blogs', [
@@ -117,7 +118,7 @@ class HasManyTest extends DomainTestCase
         ]);
     }
 
-     /** @test */
+    /** @test */
     public function relationship_isnt_updated_or_detached_if_we_store_the_relation_from_its_child()
     {
         $blog = analogue_factory(Blog::class)->make();
@@ -176,11 +177,10 @@ class HasManyTest extends DomainTestCase
 
         $this->clearCache();
 
-        
         $blog = $mapper->find($blog->id);
         $blog->articles->all();
         $mapper->store($blog);
-        
+
         $this->seeInDatabase('blogs', [
             'title' => $blog->title,
         ]);
@@ -197,7 +197,6 @@ class HasManyTest extends DomainTestCase
             'blog_id' => $blog->id,
         ]);
     }
-
 
     /** @test */
     public function relationship_can_be_eager_loaded()
