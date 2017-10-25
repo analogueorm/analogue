@@ -37,6 +37,8 @@ class ResultBuilder
     protected $builders = [];
 
     /**
+     * ResultBuilder constructor.
+     *
      * @param Mapper $defaultMapper
      */
     public function __construct(Mapper $defaultMapper)
@@ -73,11 +75,9 @@ class ResultBuilder
         switch ($this->entityMap->getInheritanceType()) {
             case 'single_table':
                 return $this->buildUsingSingleTableInheritance($results);
-                break;
 
             default:
                 return $this->buildWithDefaultMapper($results);
-                break;
         }
     }
 
@@ -150,6 +150,9 @@ class ResultBuilder
     /**
      * Launch queries on eager loaded relationships.
      *
+     * @param array $results
+     * @param array $eagerLoads
+     *
      * @return array
      */
     protected function queryEagerLoadedRelationships(array $results, array $eagerLoads) : array
@@ -166,7 +169,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function parseRelations(array $relations)
+    protected function parseRelations(array $relations): array
     {
         $results = [];
 
@@ -200,7 +203,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function parseNested($name, $results)
+    protected function parseNested(string $name, array $results): array
     {
         $progress = [];
 
@@ -226,7 +229,7 @@ class ResultBuilder
      *
      * @return array
      */
-    public function eagerLoadRelations(array $results)
+    public function eagerLoadRelations(array $results): array
     {
         foreach ($this->eagerLoads as $name => $constraints) {
 
@@ -250,7 +253,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function loadRelation(array $results, $name, Closure $constraints) : array
+    protected function loadRelation(array $results, string $name, Closure $constraints) : array
     {
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the
@@ -275,7 +278,7 @@ class ResultBuilder
      *
      * @return \Analogue\ORM\Relationships\Relationship
      */
-    public function getRelation($relation)
+    public function getRelation(string $relation): Relationship
     {
         // We want to run a relationship query without any constrains so that we will
         // not have to remove these where clauses manually which gets really hacky
@@ -303,7 +306,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function nestedRelations($relation)
+    protected function nestedRelations(string $relation): array
     {
         $nested = [];
 
@@ -327,7 +330,7 @@ class ResultBuilder
      *
      * @return bool
      */
-    protected function isNested($name, $relation)
+    protected function isNested(string $name, string $relation): bool
     {
         $dots = str_contains($name, '.');
 
@@ -342,7 +345,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function buildWithDefaultMapper(array $results)
+    protected function buildWithDefaultMapper(array $results): array
     {
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
@@ -358,7 +361,7 @@ class ResultBuilder
      *
      * @return array
      */
-    protected function buildUsingSingleTableInheritance(array $results)
+    protected function buildUsingSingleTableInheritance(array $results): array
     {
         return collect($results)->map(function ($item, $key) {
             $builder = $this->builderForResult($item);
@@ -378,7 +381,7 @@ class ResultBuilder
      *
      * @return EntityBuilder
      */
-    protected function builderForResult(array $result)
+    protected function builderForResult(array $result): EntityBuilder
     {
         $type = $result[$this->entityMap->getDiscriminatorColumn()];
 
