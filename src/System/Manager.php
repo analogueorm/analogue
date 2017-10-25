@@ -13,6 +13,7 @@ use Analogue\ORM\System\Wrappers\Wrapper;
 use Analogue\ORM\ValueMap;
 use Illuminate\Contracts\Events\Dispatcher;
 use Psr\SimpleCache\CacheInterface;
+use ReflectionClass;
 
 /**
  * This class is the entry point for registering Entities and
@@ -261,11 +262,24 @@ class Manager
         }
 
         // If a cache is defined, use it to store the entityMap
-        if ($this->cache !== null && !$this->cache->has($entityMap->getClass())) {
+        if ($this->cache !== null && !$this->cache->has($entityMap->getClass()) && !$this->isAnonymous($entityMap)) {
             $this->cache->set($entityMap->getClass(), serialize($entityMap), 1440);
         }
 
         return $mapper;
+    }
+
+    /**
+     * Check if an Object is an anonymous class instance
+     * 
+     * @param  mixed  $class
+     * @return boolean      
+     */
+    protected function isAnonymous($class) : bool
+    {
+        $instance = new ReflectionClass($class);
+
+        return $instance->isAnonymous();
     }
 
     /**
