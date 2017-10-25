@@ -22,9 +22,7 @@ class IlluminateDriver implements DriverInterface
     }
 
     /**
-     * Return the name of the driver.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -32,11 +30,7 @@ class IlluminateDriver implements DriverInterface
     }
 
     /**
-     * Get Analogue DBAdapter.
-     *
-     * @param string|null $connection
-     *
-     * @return IlluminateDBAdapter
+     * {@inheritdoc}
      */
     public function getAdapter($connection = null)
     {
