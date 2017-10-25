@@ -228,18 +228,16 @@ class Aggregate implements InternallyMappable
      */
     protected function isParentOrRoot($value)
     {
-        if (!is_null($this->root)) {
-            $rootClass = get_class($this->root->getEntityObject());
-            if ($rootClass == get_class($value)) {
-                return true;
-            }
+        $id = spl_object_hash($value);
+        $root = $this->root ? $this->root->getWrappedEntity()->getObject() : null;
+        $parent = $this->parent ? $this->parent->getWrappedEntity()->getObject() : null;
+        
+        if ($parent && (spl_object_hash($parent) == $id)) {
+            return true;
         }
 
-        if (!is_null($this->parent)) {
-            $parentClass = get_class($this->parent->getEntityObject());
-            if ($parentClass == get_class($value)) {
-                return true;
-            }
+        if ($root && (spl_object_hash($root) == $id)) {
+            return true;
         }
     }
 
