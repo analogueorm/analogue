@@ -7,7 +7,7 @@ interface DBAdapter
     /**
      * Return's Driver specific Query Implementation.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryBuilder
+     * @return \Illuminate\Database\Query\Builder
      */
     public function getQuery();
 
