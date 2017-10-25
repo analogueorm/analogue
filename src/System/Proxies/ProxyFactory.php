@@ -52,6 +52,9 @@ class ProxyFactory
 
             $factory = new LazyLoadingValueHolderFactory($proxyConfig);
         }
+        else {
+            $factory = new LazyLoadingValueHolderFactory();
+        }
 
         $initializer = function (&$wrappedObject, LazyLoadingInterface $proxy, $method, array $parameters, &$initializer) use ($entity, $relation) {
             $entityMap = Manager::getMapper($entity)->getEntityMap();
