@@ -81,7 +81,7 @@ class TimestampsPlugin extends AnaloguePlugin
     /**
      * {@inheritdoc}
      */
-    public function getCustomEvents()
+    public function getCustomEvents(): array
     {
         return [];
     }
