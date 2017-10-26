@@ -15,6 +15,8 @@ class Manager
      * Add a Mapping Driver.
      *
      * @param DriverInterface $driver
+     *
+     * @return void
      */
     public function addDriver(DriverInterface $driver)
     {
@@ -29,7 +31,7 @@ class Manager
      *
      * @return DBAdapter
      */
-    public function getAdapter($driver, $connection = null)
+    public function getAdapter(string $driver, string $connection = null)
     {
         if (array_key_exists($driver, $this->drivers)) {
             return $this->drivers[$driver]->getAdapter($connection);
