@@ -345,26 +345,6 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Get the Entity's primary key attribute.
-     *
-     * @return string|int
-     */
-    public function getEntityId()
-    {
-        return $this->wrappedEntity->getEntityKey();
-    }
-
-    /**
-     * Get the name of the primary key.
-     *
-     * @return string
-     */
-    public function getEntityKey()
-    {
-        return $this->entityMap->getKeyName();
-    }
-
-    /**
      * Return the entity map for the current entity.
      *
      * @return \Analogue\ORM\EntityMap
@@ -379,7 +359,23 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityHash(): string
     {
-        return $this->getEntityClass().'.'.$this->getEntityId();
+        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityKeyName(): string
+    {
+        return $this->entityMap->getKeyName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityKeyValue()
+    {
+        return $this->wrappedEntity->getEntityKeyValue();
     }
 
     /**
@@ -732,7 +728,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getCachedRawAttributes(array $columns = null)
     {
-        $cachedAttributes = $this->getCache()->get($this->getEntityId());
+        $cachedAttributes = $this->getCache()->get($this->getEntityKeyValue());
 
         if (is_null($columns)) {
             return $cachedAttributes;
@@ -750,7 +746,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getCachedAttribute($key)
     {
-        $cachedAttributes = $this->getCache()->get($this->getEntityId());
+        $cachedAttributes = $this->getCache()->get($this->getEntityKeyValue());
 
         if (!array_key_exists($key, $cachedAttributes)) {
             return;
@@ -971,7 +967,7 @@ class Aggregate implements InternallyMappable
             $dirty = $this->getDirtyAttributes($actualPivotAttributes, $cachedPivotAttributes);
 
             if (count($dirty) > 0) {
-                $id = $aggregate->getEntityId();
+                $id = $aggregate->getEntityKeyValue();
 
                 $this->entityMap->$relation($this->getEntityObject())->updateExistingPivot($id, $dirty);
             }
@@ -1190,7 +1186,7 @@ class Aggregate implements InternallyMappable
      */
     public function exists()
     {
-        return $this->getCache()->has($this->getEntityId());
+        return $this->getCache()->has($this->getEntityKeyValue());
     }
 
     /**
