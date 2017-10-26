@@ -9,7 +9,7 @@ interface DriverInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get Analogue DB Adapter.
@@ -18,5 +18,5 @@ interface DriverInterface
      *
      * @return \Analogue\ORM\Drivers\DBAdapter
      */
-    public function getAdapter($connection = null);
+    public function getAdapter(string $connection = null): DBAdapter;
 }
