@@ -227,10 +227,9 @@ class Store extends Command
         $attributes = $aggregate->getRawAttributes();
 
         $keyName = $aggregate->getEntityMap()->getKeyName();
-        
+
         // Check if the primary key is defined in the attributes
         if (array_key_exists($keyName, $attributes) && $attributes[$keyName] != null) {
-
             $this->query->insert($attributes);
         } else {
             $sequence = $aggregate->getEntityMap()->getSequence();
