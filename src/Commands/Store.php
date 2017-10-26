@@ -2,11 +2,7 @@
 
 namespace Analogue\ORM\Commands;
 
-use Analogue\ORM\EntityCollection;
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\System\Proxies\CollectionProxy;
-use Analogue\ORM\System\Proxies\EntityProxy;
 
 /**
  * Persist entities & relationships to the
@@ -162,57 +158,6 @@ class Store extends Command
 
         // Update Entity Cache
         $aggregate->getMapper()->getEntityCache()->refresh($aggregate);
-    }
-
-    /**
-     * Update Related Entities which attributes have
-     * been modified.
-     *
-     * @return void
-     */
-    protected function updateDirtyRelated()
-    {
-        $relations = $this->entityMap->getRelationships();
-        $attributes = $this->getAttributes();
-
-        foreach ($relations as $relation) {
-            if (!array_key_exists($relation, $attributes)) {
-                continue;
-            }
-
-            $value = $attributes[$relation];
-
-            if ($value == null) {
-                continue;
-            }
-
-            if ($value instanceof EntityProxy) {
-                continue;
-            }
-
-            if ($value instanceof CollectionProxy && $value->isLoaded()) {
-                $value = $value->getUnderlyingCollection();
-            }
-            if ($value instanceof CollectionProxy && !$value->isLoaded()) {
-                foreach ($value->getAddedItems() as $entity) {
-                    $this->updateEntityIfDirty($entity);
-                }
-                continue;
-            }
-
-            if ($value instanceof EntityCollection) {
-                foreach ($value as $entity) {
-                    if (!$this->createEntityIfNotExists($entity)) {
-                        $this->updateEntityIfDirty($entity);
-                    }
-                }
-                continue;
-            }
-            if ($value instanceof Mappable) {
-                $this->updateEntityIfDirty($value);
-                continue;
-            }
-        }
     }
 
     /**

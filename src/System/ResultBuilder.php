@@ -349,9 +349,9 @@ class ResultBuilder
     {
         $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
 
-        return collect($results)->map(function ($item, $key) use ($builder) {
+        return array_map(function ($item) use ($builder) {
             return $builder->build($item);
-        })->all();
+        }, $results);
     }
 
     /**
@@ -363,11 +363,11 @@ class ResultBuilder
      */
     protected function buildUsingSingleTableInheritance(array $results): array
     {
-        return collect($results)->map(function ($item, $key) {
+        return array_map(function ($item) {
             $builder = $this->builderForResult($item);
 
             return $builder->build($item);
-        })->all();
+        }, $results);
     }
 
     /**

@@ -64,15 +64,11 @@ class EmbedsMany extends EmbedsOne
      *
      * @return Collection
      */
-    protected function buildEmbeddedCollection($rows) : Collection
+    protected function buildEmbeddedCollection(array $rows): Collection
     {
-        $items = [];
-
-        foreach ($rows as $attributes) {
-            $items[] = $this->buildEmbeddedObject($attributes);
-        }
-
-        return collect($items);
+        return collect($rows)->map(function ($attributes) {
+            return $this->buildEmbeddedObject($attributes);
+        });
     }
 
     /**

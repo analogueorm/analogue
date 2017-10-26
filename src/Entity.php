@@ -2,8 +2,6 @@
 
 namespace Analogue\ORM;
 
-use Analogue\ORM\System\Proxies\EntityProxy;
-
 class Entity extends ValueObject
 {
     /**
@@ -37,9 +35,6 @@ class Entity extends ValueObject
         }
         if (!array_key_exists($key, $this->attributes)) {
             return;
-        }
-        if ($this->attributes[$key] instanceof EntityProxy) {
-            $this->attributes[$key] = $this->attributes[$key]->load();
         }
 
         return $this->attributes[$key];
