@@ -270,10 +270,11 @@ class Manager
     }
 
     /**
-     * Check if an Object is an anonymous class instance
-     * 
-     * @param  mixed  $class
-     * @return boolean      
+     * Check if an Object is an anonymous class instance.
+     *
+     * @param mixed $class
+     *
+     * @return bool
      */
     protected function isAnonymous($class) : bool
     {
