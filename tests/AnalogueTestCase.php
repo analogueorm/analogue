@@ -291,9 +291,10 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     }
 
     /**
-     * Migrate a DB
-     *  
-     * @param  callable $callback 
+     * Migrate a DB.
+     *
+     * @param callable $callback
+     *
      * @return void
      */
     protected function migrate($table, $callback)
@@ -302,8 +303,8 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     }
 
     /**
-     * Clear analogue's instance & db cache
-     * 
+     * Clear analogue's instance & db cache.
+     *
      * @return void
      */
     protected function clearCache()
