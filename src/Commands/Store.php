@@ -59,7 +59,7 @@ class Store extends Command
         $mapper->fireEvent('stored', $wrappedEntity, false);
 
         // Once the object is stored, add it to the Instance cache
-        $key = $this->aggregate->getEntityId();
+        $key = $this->aggregate->getEntityKeyValue();
 
         if (!$mapper->getInstanceCache()->has($key)) {
             $mapper->getInstanceCache()->add($entity, $key);
@@ -255,16 +255,15 @@ class Store extends Command
      */
     protected function update()
     {
-        $query = $this->query;
+        $key = $this->aggregate->getEntityKeyName();
+        $value = $this->aggregate->getEntityKeyValue();
 
-        $keyName = $this->aggregate->getEntityKey();
-
-        $query = $query->where($keyName, '=', $this->aggregate->getEntityId());
+        $this->query->where($key, $value);
 
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
 
         if (count($dirtyAttributes) > 0) {
-            $query->update($dirtyAttributes);
+            $this->query->update($dirtyAttributes);
         }
     }
 }

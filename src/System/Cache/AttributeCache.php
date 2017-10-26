@@ -283,7 +283,7 @@ class AttributeCache
      */
     public function refresh(Aggregate $entity)
     {
-        $this->cache[$entity->getEntityId()] = $this->transform($entity);
+        $this->cache[$entity->getEntityKeyValue()] = $this->transform($entity);
     }
 
     /**
