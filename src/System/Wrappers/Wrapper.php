@@ -51,11 +51,17 @@ abstract class Wrapper implements InternallyMappable
     }
 
     /**
-     * Return the entity's primary key value.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getEntityKey()
+    public function getEntityKeyName(): string
+    {
+        return $this->entityMap->getKeyName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityKeyValue()
     {
         return $this->getEntityAttribute($this->entityMap->getKeyName());
     }
@@ -65,7 +71,7 @@ abstract class Wrapper implements InternallyMappable
      */
     public function getEntityHash(): string
     {
-        return $this->getEntityClass().'.'.$this->getEntityKey();
+        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
     }
 
     /**

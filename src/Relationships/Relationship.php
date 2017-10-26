@@ -393,7 +393,7 @@ abstract class Relationship
     {
         $cache = $this->parentMapper->getEntityCache();
 
-        $cache->cacheLoadedRelationResult($this->parent->getEntityKey(), $relation, $results, $this);
+        $cache->cacheLoadedRelationResult($this->parent->getEntityKeyName(), $relation, $results, $this);
     }
 
     /**

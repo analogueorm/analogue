@@ -19,6 +19,20 @@ interface InternallyMappable
     public function getEntityClass(): string;
 
     /**
+     * Return the entity's primary key name.
+     *
+     * @return string
+     */
+    public function getEntityKeyName(): string;
+
+    /**
+     * Return the entity's primary key value.
+     *
+     * @return mixed
+     */
+    public function getEntityKeyValue();
+
+    /**
      * Return the Entity's hash $class.$id.
      *
      * @return string
