@@ -5,6 +5,8 @@ namespace Analogue\ORM\Drivers;
 class Manager
 {
     /**
+     * Drivers.
+     *
      * @var DriverInterface[]
      */
     protected $drivers = [];
@@ -25,7 +27,7 @@ class Manager
      * @param string $driver
      * @param string $connection connection name for drivers supporting multiple connection.
      *
-     * @return DriverInterface|void
+     * @return DBAdapter
      */
     public function getAdapter($driver, $connection = null)
     {

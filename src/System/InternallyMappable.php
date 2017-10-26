@@ -12,6 +12,20 @@ interface InternallyMappable
     public function setEntityAttributes(array $attributes);
 
     /**
+     * Get the entity class name.
+     *
+     * @return string
+     */
+    public function getEntityClass(): string;
+
+    /**
+     * Return the Entity's hash $class.$id.
+     *
+     * @return string
+     */
+    public function getEntityHash(): string;
+
+    /**
      * Get the raw object's values.
      *
      * @return array

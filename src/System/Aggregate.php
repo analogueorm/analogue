@@ -104,7 +104,7 @@ class Aggregate implements InternallyMappable
 
         $this->root = $root;
 
-        $mapper = $this->getMapper($entity);
+        $mapper = $this->getMapper();
 
         $this->entityMap = $mapper->getEntityMap();
 
@@ -231,7 +231,7 @@ class Aggregate implements InternallyMappable
         $id = spl_object_hash($value);
         $root = $this->root ? $this->root->getWrappedEntity()->getObject() : null;
         $parent = $this->parent ? $this->parent->getWrappedEntity()->getObject() : null;
-        
+
         if ($parent && (spl_object_hash($parent) == $id)) {
             return true;
         }
@@ -375,21 +375,17 @@ class Aggregate implements InternallyMappable
     }
 
     /**
-     * Return the Entity's hash $class.$id.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getEntityHash()
+    public function getEntityHash(): string
     {
         return $this->getEntityClass().'.'.$this->getEntityId();
     }
 
     /**
-     * Get wrapped entity class.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getEntityClass()
+    public function getEntityClass(): string
     {
         return $this->entityMap->getClass();
     }

@@ -13,11 +13,7 @@ use Carbon\Carbon;
 class TimestampsPlugin extends AnaloguePlugin
 {
     /**
-     * Register the plugin.
-     *
-     * @throws \Exception
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function register()
     {
@@ -72,20 +68,18 @@ class TimestampsPlugin extends AnaloguePlugin
      */
     protected function getMappable($entity) : InternallyMappable
     {
-        if (!$entity instanceof InternallyMappable) {
-            $factory = new Factory();
-            $wrappedEntity = $factory->make($entity);
-
-            return $wrappedEntity;
+        if ($entity instanceof InternallyMappable) {
+            return $entity;
         }
 
-        return $entity;
+        $factory = new Factory();
+        $wrappedEntity = $factory->make($entity);
+
+        return $wrappedEntity;
     }
 
     /**
-     * Get custom events provided by the plugin.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCustomEvents()
     {

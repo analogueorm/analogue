@@ -7,6 +7,8 @@ use Illuminate\Database\DatabaseManager;
 class IlluminateConnectionProvider
 {
     /**
+     * Database manager.
+     *
      * @var DatabaseManager
      */
     protected $db;
@@ -24,7 +26,7 @@ class IlluminateConnectionProvider
     /**
      * Get a Database connection object.
      *
-     * @param  $name
+     * @param $name
      *
      * @return \Illuminate\Database\Connection
      */

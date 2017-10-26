@@ -11,6 +11,8 @@ use Illuminate\Database\Connection;
 class IlluminateDBAdapter implements DBAdapter
 {
     /**
+     * Database connection.
+     *
      * @var Connection
      */
     protected $connection;
@@ -26,9 +28,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Return a new Query instance for this driver.
-     *
-     * @return QueryAdapter
+     * {@inheritdoc}
      */
     public function getQuery()
     {
@@ -40,9 +40,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Get the date format supported by the current connection.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDateFormat()
     {
@@ -50,9 +48,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Start a DB transaction on driver that supports it.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function beginTransaction()
     {
@@ -60,9 +56,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Commit a DB transaction on driver that supports it.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function commit()
     {
@@ -70,9 +64,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Rollback a DB transaction.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function rollback()
     {
@@ -80,12 +72,7 @@ class IlluminateDBAdapter implements DBAdapter
     }
 
     /**
-     * Parse result from database and return an array of results
-     * casted to analogue compatible values.
-     *
-     * @param array $rows
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function fromDatabase(array $rows) : array
     {

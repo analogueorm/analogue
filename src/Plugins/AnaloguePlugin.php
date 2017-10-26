@@ -22,18 +22,4 @@ abstract class AnaloguePlugin implements AnaloguePluginInterface
     {
         $this->manager = $manager;
     }
-
-    /**
-     * Boot the plugin.
-     *
-     * @return void
-     */
-    abstract public function register();
-
-    /**
-     * Get custom events provided by the plugin.
-     *
-     * @return array
-     */
-    abstract public function getCustomEvents();
 }

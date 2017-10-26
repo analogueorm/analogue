@@ -9,6 +9,7 @@ use Analogue\ORM\Mappable;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Aggregate;
 use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 
 /**
@@ -86,7 +87,7 @@ class AttributeCache
             $cachedResults[$id] = $this->rawResult($result);
         }
 
-        if (count($this->cache) == 0) {
+        if (empty($this->cache)) {
             $this->cache = $cachedResults;
         } else {
             $this->mergeCacheResults($cachedResults);
@@ -114,13 +115,13 @@ class AttributeCache
      *
      * @return array
      */
-    public function get($id)
+    public function get(string $id = null)
     {
         if ($this->has($id)) {
             return $this->cache[$id];
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     /**
@@ -130,7 +131,7 @@ class AttributeCache
      *
      * @return bool
      */
-    public function has($id)
+    public function has(string $id = null): bool
     {
         return array_key_exists($id, $this->cache);
     }
