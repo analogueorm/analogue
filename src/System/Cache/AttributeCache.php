@@ -101,7 +101,7 @@ class AttributeCache
      *
      * @return array
      */
-    protected function rawResult(array $result) : array
+    protected function rawResult(array $result): array
     {
         return array_filter($result, function ($attribute) {
             return !is_object($attribute);
@@ -115,7 +115,7 @@ class AttributeCache
      *
      * @return array
      */
-    public function get(string $id = null)
+    public function get(string $id = null): array
     {
         if ($this->has($id)) {
             return $this->cache[$id];
@@ -163,7 +163,7 @@ class AttributeCache
      *
      * @return void
      */
-    public function cacheLoadedRelationResult($key, $relation, $results, Relationship $relationship)
+    public function cacheLoadedRelationResult(string $key, string $relation, $results, Relationship $relationship)
     {
         if ($results instanceof EntityCollection) {
             $this->cacheManyRelationResults($key, $relation, $results, $relationship);
@@ -188,7 +188,7 @@ class AttributeCache
      *
      * @return CachedRelationship
      */
-    protected function getCachedRelationship($parentKey, $relation, $result, Relationship $relationship)
+    protected function getCachedRelationship(string $parentKey, string $relation, $result, Relationship $relationship)
     {
         $pivotColumns = $relationship->getPivotAttributes();
 
@@ -221,14 +221,14 @@ class AttributeCache
     /**
      * Cache a many relationship.
      *
-     * @param                  $parentKey
+     * @param string           $parentKey
      * @param string           $relation
      * @param EntityCollection $results
      * @param Relationship     $relationship
      *
      * @throws MappingException
      */
-    protected function cacheManyRelationResults($parentKey, $relation, $results, Relationship $relationship)
+    protected function cacheManyRelationResults(string $parentKey, string $relation, $results, Relationship $relationship)
     {
         $this->cache[$parentKey][$relation] = [];
 
@@ -244,14 +244,14 @@ class AttributeCache
     /**
      * Cache a single relationship.
      *
-     * @param              $parentKey
+     * @param string       $parentKey
      * @param string       $relation
      * @param Mappable     $result
      * @param Relationship $relationship
      *
      * @throws MappingException
      */
-    protected function cacheSingleRelationResult($parentKey, $relation, $result, Relationship $relationship)
+    protected function cacheSingleRelationResult(string $parentKey, string $relation, $result, Relationship $relationship)
     {
         $this->cache[$parentKey][$relation] = $this->getCachedRelationship($parentKey, $relation, $result, $relationship);
     }
@@ -265,7 +265,7 @@ class AttributeCache
      *
      * @return string
      */
-    protected function getEntityHash(InternallyMappable $entity)
+    protected function getEntityHash(InternallyMappable $entity): string
     {
         $class = $entity->getEntityClass();
 
@@ -295,7 +295,7 @@ class AttributeCache
      *
      * @return array
      */
-    protected function transform(Aggregate $aggregatedEntity)
+    protected function transform(Aggregate $aggregatedEntity): array
     {
         $baseAttributes = $aggregatedEntity->getRawAttributes();
 
@@ -347,7 +347,7 @@ class AttributeCache
      *
      * @return array
      */
-    protected function getPivotValues($relation, InternallyMappable $entity)
+    protected function getPivotValues(string $relation, InternallyMappable $entity): array
     {
         $values = [];
 
