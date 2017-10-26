@@ -179,7 +179,6 @@ class AttributeCache
     /**
      * Create a cachedRelationship instance which will hold related entity's hash and pivot attributes, if any.
      *
-     * @param string       $parentKey
      * @param string       $relation
      * @param array        $result
      * @param Relationship $relationship
@@ -188,7 +187,7 @@ class AttributeCache
      *
      * @return CachedRelationship
      */
-    protected function getCachedRelationship(string $parentKey, string $relation, $result, Relationship $relationship)
+    protected function getCachedRelationship(string $relation, $result, Relationship $relationship)
     {
         $pivotColumns = $relationship->getPivotAttributes();
 
@@ -233,7 +232,7 @@ class AttributeCache
         $this->cache[$parentKey][$relation] = [];
 
         foreach ($results as $result) {
-            $cachedRelationship = $this->getCachedRelationship($parentKey, $relation, $result, $relationship);
+            $cachedRelationship = $this->getCachedRelationship($relation, $result, $relationship);
 
             $relatedHash = $cachedRelationship->getHash();
 
@@ -253,7 +252,7 @@ class AttributeCache
      */
     protected function cacheSingleRelationResult(string $parentKey, string $relation, $result, Relationship $relationship)
     {
-        $this->cache[$parentKey][$relation] = $this->getCachedRelationship($parentKey, $relation, $result, $relationship);
+        $this->cache[$parentKey][$relation] = $this->getCachedRelationship($relation, $result, $relationship);
     }
 
     /**
