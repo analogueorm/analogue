@@ -195,14 +195,15 @@ class Store extends Command
     }
 
     /**
-     * Update attributes on actual entity
-     * 
-     * @param  array  $attributes 
+     * Update attributes on actual entity.
+     *
+     * @param array $attributes
+     *
      * @return void
      */
     protected function syncAttributes(array $attributes)
     {
-        foreach($attributes as $key => $value) {
+        foreach ($attributes as $key => $value) {
             $this->aggregate->setEntityAttribute($key, $value);
         }
     }
