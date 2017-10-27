@@ -2,6 +2,7 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
+use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Zend\Hydrator\HydratorInterface;
 
@@ -46,7 +47,7 @@ class ObjectWrapper extends Wrapper
      * @param \Analogue\ORM\EntityMap $entityMap
      * @param HydratorInterface       $hydrator
      */
-    public function __construct($entity, $entityMap, HydratorInterface $hydrator)
+    public function __construct($entity, EntityMap $entityMap, HydratorInterface $hydrator)
     {
         $this->hydrator = $hydrator;
 
@@ -86,7 +87,7 @@ class ObjectWrapper extends Wrapper
      *
      * @return array
      */
-    protected function dehydrate($entity) : array
+    protected function dehydrate($entity): array
     {
         $properties = $this->hydrator->extract($entity);
 
@@ -100,11 +101,11 @@ class ObjectWrapper extends Wrapper
     /**
      * Hydrate object's properties/attribute from the internal array representation.
      *
-     * @return mixed
+     * @return void
      */
     protected function hydrate()
     {
-        $properties = $this->propertiesFromAttributes($this->attributes) + $this->unmanagedProperties;
+        $properties = $this->propertiesFromAttributes() + $this->unmanagedProperties;
 
         // In some case, attributes will miss some properties, so we'll just complete the hydration
         // set with the original object properties
@@ -122,7 +123,7 @@ class ObjectWrapper extends Wrapper
      *
      * @return array
      */
-    protected function getManagedProperties() : array
+    protected function getManagedProperties(): array
     {
         $properties = $this->entityMap->getProperties();
 
@@ -140,7 +141,7 @@ class ObjectWrapper extends Wrapper
      *
      * @return array
      */
-    protected function attributesFromProperties(array $properties) : array
+    protected function attributesFromProperties(array $properties): array
     {
         // First, we'll only keep the entities that are part of the Entity's
         // attributes
@@ -175,19 +176,15 @@ class ObjectWrapper extends Wrapper
      * Convert internal representation of attributes to an array of properties
      * that can hydrate the actual object.
      *
-     * @param array $attributes
-     *
      * @return array
      */
-    protected function propertiesFromAttributes(array $attributes) : array
+    protected function propertiesFromAttributes(): array
     {
-        $attributes = $this->attributes;
-
         // Get all managed properties
         $propertyNames = $this->entityMap->getProperties();
 
-        $propertyAttributes = array_only($attributes, $propertyNames);
-        $attributesArray = array_except($attributes, $propertyNames);
+        $propertyAttributes = array_only($this->attributes, $propertyNames);
+        $attributesArray = array_except($this->attributes, $propertyNames);
 
         $attributesArrayName = $this->entityMap->getAttributesArrayName();
 
@@ -199,12 +196,7 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Method used by the mapper to set the object
-     * attribute raw values (hydration).
-     *
-     * @param array $attributes
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setEntityAttributes(array $attributes)
     {
@@ -214,12 +206,9 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Method used by the mapper to get the
-     * raw object's values.
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getEntityAttributes() : array
+    public function getEntityAttributes(): array
     {
         //$this->attributes = $this->dehydrate($this->entity);
 
@@ -227,15 +216,9 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Method used by the mapper to set raw
-     * key-value pair.
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setEntityAttribute($key, $value)
+    public function setEntityAttribute(string $key, $value)
     {
         //$this->attributes = $this->dehydrate($this->entity);
 
@@ -245,35 +228,24 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Method used by the mapper to get single
-     * key-value pair.
-     *
-     * @param string $key
-     *
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getEntityAttribute($key)
+    public function getEntityAttribute(string $key)
     {
         //$this->attributes = $this->dehydrate($this->entity);
 
         if ($this->hasAttribute($key)) {
             return $this->attributes[$key];
-        } else {
-            return;
         }
     }
 
     /**
-     * Test if a given attribute exists.
-     *
-     * @param string $key
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function hasAttribute($key) : bool
+    public function hasAttribute(string $key): bool
     {
         //$this->attributes = $this->dehydrate($this->entity);
 
-        return array_key_exists($key, $this->attributes) ? true : false;
+        return array_key_exists($key, $this->attributes);
     }
 }
