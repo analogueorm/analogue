@@ -2,6 +2,7 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
+use Analogue\ORM\EntityMap;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\ProxyFactory;
 
@@ -32,8 +33,8 @@ abstract class Wrapper implements InternallyMappable
     /**
      * Wrapper constructor.
      *
-     * @param $entity
-     * @param $entityMap
+     * @param mixed     $entity
+     * @param EntityMap $entityMap
      */
     public function __construct($entity, $entityMap)
     {

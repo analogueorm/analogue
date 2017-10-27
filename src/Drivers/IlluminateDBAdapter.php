@@ -42,7 +42,7 @@ class IlluminateDBAdapter implements DBAdapter
     /**
      * {@inheritdoc}
      */
-    public function getDateFormat()
+    public function getDateFormat(): string
     {
         return $this->connection->getQueryGrammar()->getDateFormat();
     }
@@ -74,7 +74,7 @@ class IlluminateDBAdapter implements DBAdapter
     /**
      * {@inheritdoc}
      */
-    public function fromDatabase(array $rows) : array
+    public function fromDatabase(array $rows): array
     {
         return $rows;
     }

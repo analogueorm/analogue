@@ -52,7 +52,7 @@ interface InternallyMappable
      * @param string $key
      * @param mixed  $value
      */
-    public function setEntityAttribute($key, $value);
+    public function setEntityAttribute(string $key, $value);
 
     /**
      * Return the entity's attribute.
@@ -61,7 +61,7 @@ interface InternallyMappable
      *
      * @return mixed
      */
-    public function getEntityAttribute($key);
+    public function getEntityAttribute(string $key);
 
     /**
      * Does the entity posses the given attribute.
@@ -70,5 +70,5 @@ interface InternallyMappable
      *
      * @return bool
      */
-    public function hasAttribute($key);
+    public function hasAttribute(string $key): bool;
 }

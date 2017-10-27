@@ -24,7 +24,7 @@ class IlluminateDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'illuminate';
     }
@@ -32,7 +32,7 @@ class IlluminateDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdapter($connection = null)
+    public function getAdapter(string $connection = null): DBAdapter
     {
         $connection = $this->connectionProvider->connection($connection);
 

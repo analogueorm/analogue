@@ -40,7 +40,7 @@ class InstanceCache
      *
      * @return void
      */
-    public function add($entity, $id)
+    public function add($entity, string $id)
     {
         $entityClass = get_class($entity);
 
@@ -48,11 +48,11 @@ class InstanceCache
             throw new CacheException('Tried to cache an instance with a wrong type : expected '.$this->class.", got $entityClass");
         }
 
-        if ($this->has($id)) {
-            throw new CacheException("Tried to cache an instance which is already cached. Id : $id");
+        // Cache once and ignore subsequent caching
+        // attempts if the entity is already stored
+        if (!$this->has($id)) {
+            $this->instances[$id] = $entity;
         }
-
-        $this->instances[$id] = $entity;
     }
 
     /**
@@ -62,7 +62,7 @@ class InstanceCache
      *
      * @return bool
      */
-    public function has($id) : bool
+    public function has(string $id): bool
     {
         return array_key_exists($id, $this->instances);
     }
@@ -72,21 +72,13 @@ class InstanceCache
      *
      * @param string $id
      *
-     * @throws CacheException
-     *
      * @return mixed|null
      */
-    public function get($id)
+    public function get(string $id)
     {
-        if ($id === null) {
-            throw new CacheException('Cached instance id cannot be null');
+        if ($this->has($id)) {
+            return $this->instances[$id];
         }
-
-        if (!$this->has($id)) {
-            return;
-        }
-
-        return $this->instances[$id];
     }
 
     /**

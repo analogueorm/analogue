@@ -16,5 +16,5 @@ interface AnaloguePluginInterface
      *
      * @return array
      */
-    public function getCustomEvents();
+    public function getCustomEvents(): array;
 }
