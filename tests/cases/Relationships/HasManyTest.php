@@ -496,8 +496,6 @@ class HasManyTest extends DomainTestCase
         $foo->childs->push($barA);
         $foo->parents->push($barB);
 
-        $this->logQueries();
-
         $mapper = $this->mapper(Foo::class);
         $mapper->store($foo);
 
