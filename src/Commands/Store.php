@@ -61,6 +61,8 @@ class Store extends Command
             $mapper->getInstanceCache()->add($entity, $key);
         }
 
+        $wrappedEntity->unwrap();
+
         return $entity;
     }
 
@@ -187,6 +189,22 @@ class Store extends Command
             $id = $this->query->insertGetId($attributes, $sequence);
 
             $aggregate->setEntityAttribute($keyName, $id);
+
+            $this->syncAttributes($attributes);
+        }
+    }
+
+    /**
+     * Update attributes on actual entity.
+     *
+     * @param array $attributes
+     *
+     * @return void
+     */
+    protected function syncAttributes(array $attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            $this->aggregate->setEntityAttribute($key, $value);
         }
     }
 
@@ -208,6 +226,7 @@ class Store extends Command
 
         if (count($dirtyAttributes) > 0) {
             $this->query->update($dirtyAttributes);
+            $this->syncAttributes($dirtyAttributes);
         }
     }
 }
