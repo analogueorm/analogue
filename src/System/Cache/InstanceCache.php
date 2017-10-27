@@ -50,7 +50,7 @@ class InstanceCache
 
         // Cache once and ignore subsequent caching
         // attempts if the entity is already stored
-        if (! $this->has($id)) {
+        if (!$this->has($id)) {
             $this->instances[$id] = $entity;
         }
     }

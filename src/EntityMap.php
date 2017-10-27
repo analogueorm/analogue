@@ -488,6 +488,7 @@ class EntityMap
      * Get the embedded Value Objects.
      *
      * @deprecated 5.5
+     *
      * @return array
      */
     public function getEmbeddables(): array
@@ -529,6 +530,7 @@ class EntityMap
      * Set the embedded Value Objects.
      *
      * @deprecated 5.5
+     *
      * @param array $embeddables
      */
     public function setEmbeddables(array $embeddables)

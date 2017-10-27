@@ -2,7 +2,6 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
-use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Zend\Hydrator\HydratorInterface;
 
