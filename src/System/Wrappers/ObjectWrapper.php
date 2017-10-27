@@ -47,7 +47,7 @@ class ObjectWrapper extends Wrapper
      * @param \Analogue\ORM\EntityMap $entityMap
      * @param HydratorInterface       $hydrator
      */
-    public function __construct($entity, EntityMap $entityMap, HydratorInterface $hydrator)
+    public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
         $this->hydrator = $hydrator;
 
