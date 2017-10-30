@@ -754,7 +754,7 @@ class Aggregate implements InternallyMappable
      *
      * @return array
      */
-    protected function getForeignKeyAttributes(): array
+    public function getForeignKeyAttributes(): array
     {
         $foreignKeys = [];
 

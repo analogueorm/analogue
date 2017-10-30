@@ -90,7 +90,7 @@ class EmbedsMany extends EmbedsOne
     }
 
     /**
-     * Normalize object an array containing raw attributes.
+     * Normalize object as array containing raw attributes.
      *
      * @param mixed $objects
      *
@@ -109,7 +109,7 @@ class EmbedsMany extends EmbedsOne
         if ($objects instanceof Collection) {
             $objects = $objects->all();
         }
-
+        
         $normalizedObjects = [];
 
         foreach ($objects as $object) {
