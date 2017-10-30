@@ -683,7 +683,7 @@ class Aggregate implements InternallyMappable
             // attributes with the snake_case name of the embedded class.
             $prefix = snake_case(class_basename($embed));
 
-            foreach ($valueObjectAttributes as $key=>$value) {
+            foreach ($valueObjectAttributes as $key => $value) {
                 $valueObjectAttributes[$prefix.'_'.$key] = $value;
                 unset($valueObjectAttributes[$key]);
             }
