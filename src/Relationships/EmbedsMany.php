@@ -109,7 +109,7 @@ class EmbedsMany extends EmbedsOne
         if ($objects instanceof Collection) {
             $objects = $objects->all();
         }
-        
+
         $normalizedObjects = [];
 
         foreach ($objects as $object) {
