@@ -3,9 +3,9 @@
 namespace Analogue\ORM\System\Wrappers;
 
 use Analogue\ORM\EntityMap;
+use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\ProxyFactory;
-use Analogue\ORM\Exceptions\MappingException;
 use Zend\Hydrator\HydratorInterface;
 
 /**
@@ -63,9 +63,9 @@ class ObjectWrapper implements InternallyMappable
 
     /**
      * Set to true if the object's attributes have been modified since last
-     * hydration
-     * 
-     * @var boolean
+     * hydration.
+     *
+     * @var bool
      */
     protected $touched = false;
 
@@ -134,7 +134,7 @@ class ObjectWrapper implements InternallyMappable
      */
     public function unwrap()
     {
-        if($this->touched) {
+        if ($this->touched) {
             $this->hydrate();
         }
 
@@ -293,7 +293,7 @@ class ObjectWrapper implements InternallyMappable
         $this->attributes[$key] = $value;
 
         $this->touched = true;
-        
+
         $this->hydrate();
     }
 
