@@ -454,7 +454,7 @@ class Query
      *
      * @return \Analogue\ORM\System\Query
      */
-    protected function addHasWhere(Query $hasQuery, Relationship $relation, $operator, $count, $boolean)
+    protected function addHasWhere(self $hasQuery, Relationship $relation, $operator, $count, $boolean)
     {
         $this->mergeWheresToHas($hasQuery, $relation);
 
@@ -473,7 +473,7 @@ class Query
      *
      * @return void
      */
-    protected function mergeWheresToHas(Query $hasQuery, Relationship $relation)
+    protected function mergeWheresToHas(self $hasQuery, Relationship $relation)
     {
         // Here we have the "has" query and the original relation. We need to copy over any
         // where clauses the developer may have put in the relationship function over to

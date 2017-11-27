@@ -1519,7 +1519,7 @@ class EntityMap
      *
      * @return string
      */
-    public function joiningTable(EntityMap $relatedMap): string
+    public function joiningTable(self $relatedMap): string
     {
         // The joining table name, by convention, is simply the snake cased models
         // sorted alphabetically and concatenated with an underscore, so we can

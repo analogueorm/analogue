@@ -92,7 +92,7 @@ class Aggregate implements InternallyMappable
      *
      * @throws MappingException
      */
-    public function __construct($entity, Aggregate $parent = null, string $parentRelationship = null, Aggregate $root = null)
+    public function __construct($entity, self $parent = null, string $parentRelationship = null, self $root = null)
     {
         $factory = new Factory();
 
@@ -336,7 +336,7 @@ class Aggregate implements InternallyMappable
      *
      * @return Aggregate
      */
-    protected function createSubAggregate($entity, string $relation): Aggregate
+    protected function createSubAggregate($entity, string $relation): self
     {
         // If root isn't defined, then this is the Aggregate Root
         $root = is_null($this->root) ? $this : $this->root;

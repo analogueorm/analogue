@@ -112,7 +112,7 @@ class Store extends Command
      *
      * @return Store
      */
-    protected function createStoreCommand(Aggregate $aggregate): Store
+    protected function createStoreCommand(Aggregate $aggregate): self
     {
         // We gotta retrieve the corresponding query adapter to use.
         $mapper = $aggregate->getMapper();
