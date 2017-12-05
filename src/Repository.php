@@ -31,8 +31,8 @@ class Repository
      * - Mappable object instance
      * - Instance of mapper
      *
-     * @param Mapper         $mapper
-     * @param EntityMap|null $entityMap (optional)
+     * @param Mapper|Mappable|string $mapper
+     * @param EntityMap|null         $entityMap (optional)
      *
      * @throws \InvalidArgumentException
      * @throws MappingException
