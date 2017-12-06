@@ -104,6 +104,7 @@ class AttributeCache
     protected function rawResult(array $result): array
     {
         return $result;
+
         return array_filter($result, function ($attribute) {
             return !is_object($attribute);
         });

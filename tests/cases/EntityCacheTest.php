@@ -1,7 +1,7 @@
 <?php
 
-use TestApp\Stubs\Foo;
 use Analogue\ORM\EntityMap;
+use TestApp\Stubs\Foo;
 
 class EntityCacheTest extends AnalogueTestCase
 {
@@ -18,17 +18,17 @@ class EntityCacheTest extends AnalogueTestCase
             $table->string('name');
             $table->timestamps();
         });
-        
+
         $this->analogue->register(Foo::class, new class() extends EntityMap {
             public $timestamps = true;
         });
 
-        $foo = new Foo;
-        $foo->name = "test";
+        $foo = new Foo();
+        $foo->name = 'test';
 
         $mapper = mapper(Foo::class);
         $mapper->store($foo);
-        
+
         $this->clearCache();
 
         $loadedFoo = $mapper->find($foo->id);

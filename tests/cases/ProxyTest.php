@@ -1,13 +1,13 @@
 <?php
 
+use Analogue\ORM\EntityCollection;
+use Analogue\ORM\EntityMap;
 use ProxyManager\Proxy\ProxyInterface;
 use TestApp\Blog;
 use TestApp\PlainProxy;
-use TestApp\User;
 use TestApp\Stubs\Bar;
 use TestApp\Stubs\Foo;
-use Analogue\ORM\EntityMap;
-use Analogue\ORM\EntityCollection;
+use TestApp\User;
 
 class ProxyTest extends AnalogueTestCase
 {
@@ -101,6 +101,6 @@ class ProxyTest extends AnalogueTestCase
         $this->clearCache();
         $loadedFoo = $mapper->find($foo->id);
         $this->assertInstanceof(Analogue\ORM\System\Proxies\CollectionProxy::class, $loadedFoo->bars);
-        $this->assertEquals("ZYX", $loadedFoo->bars->first()->title);
+        $this->assertEquals('ZYX', $loadedFoo->bars->first()->title);
     }
 }
