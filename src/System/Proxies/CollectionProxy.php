@@ -248,6 +248,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
+    public function firstWhere($key, $operator, $value = null)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->filterWhere($key, $operator, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function where($key, $operator, $value = null)
     {
         $this->initializeProxy();
