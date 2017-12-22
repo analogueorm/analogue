@@ -938,7 +938,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->sort($callback, $options, $descending);
+        return $parent->sortBy($callback, $options, $descending);
     }
 
     /**
