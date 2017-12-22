@@ -179,7 +179,6 @@ class BelongsTo extends Relationship
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
         return array_map(function ($result) use ($dictionary, $foreign, $relation) {
-            
             if (array_key_exists($foreign, $result) && isset($dictionary[$result[$foreign]])) {
                 $result[$relation] = $dictionary[$result[$foreign]];
             } else {
