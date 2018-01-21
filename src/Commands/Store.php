@@ -181,14 +181,12 @@ class Store extends Command
         if (array_key_exists($keyName, $attributes) && $attributes[$keyName] != null) {
             $this->query->insert($attributes);
         } else {
-            $sequence = $aggregate->getEntityMap()->getSequence();
-
             // Prevent inserting with a null ID
             if (array_key_exists($keyName, $attributes)) {
                 unset($attributes[$keyName]);
             }
 
-            $id = $this->query->insertGetId($attributes, $sequence);
+            $id = $this->query->insertGetId($attributes, $keyName);
 
             $aggregate->setEntityAttribute($keyName, $id);
         }
