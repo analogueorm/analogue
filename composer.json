@@ -19,9 +19,9 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "illuminate/database": "^5.1.0",
-        "illuminate/events": "^5.1.0",
-        "illuminate/pagination": "^5.1.0",
+        "illuminate/database": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/events": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/pagination": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.*",
         "doctrine/instantiator": "^1.0.0",
         "ocramius/proxy-manager": "^2.0.0",
         "ocramius/generated-hydrator": "^2.0.0",
