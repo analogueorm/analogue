@@ -716,7 +716,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function partition($callback)
+    public function partition($callback, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
