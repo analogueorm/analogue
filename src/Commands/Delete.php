@@ -28,7 +28,7 @@ class Delete extends Command
 
         $keyName = $aggregate->getEntityMap()->getKeyName();
 
-        $id = $this->aggregate->getEntityId();
+        $id = $this->aggregate->getEntityKeyValue();
 
         if (is_null($id)) {
             throw new MappingException('Executed a delete command on an entity with "null" as primary key');

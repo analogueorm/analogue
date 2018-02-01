@@ -2,14 +2,36 @@
 
 namespace Analogue\ORM\System\Wrappers;
 
+use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
+use Analogue\ORM\System\InternallyMappable;
+use Analogue\ORM\System\Proxies\ProxyFactory;
 use Zend\Hydrator\HydratorInterface;
 
 /**
  * Mixed wrapper using HydratorGenerator.
  */
-class ObjectWrapper extends Wrapper
+class ObjectWrapper implements InternallyMappable
 {
+    /**
+     * Original Entity Object.
+     *
+     * @var mixed
+     */
+    protected $entity;
+
+    /**
+     * Corresponding EntityMap.
+     *
+     * @var \Analogue\ORM\EntityMap
+     */
+    protected $entityMap;
+
+    /**
+     * @var \Analogue\ORM\System\Proxies\ProxyFactory
+     */
+    protected $proxyFactory;
+
     /**
      * Internal Representation of analogue's entity attributes.
      *
@@ -40,20 +62,69 @@ class ObjectWrapper extends Wrapper
     protected $hydrator;
 
     /**
+     * Set to true if the object's attributes have been modified since last
+     * hydration.
+     *
+     * @var bool
+     */
+    protected $touched = false;
+
+    /**
      * Object Wrapper constructor.
      *
-     * @param mixed                  $object
-     * @param Analogue\ORM\EntityMap $entityMap
-     *
-     * @return void
+     * @param mixed                   $entity
+     * @param \Analogue\ORM\EntityMap $entityMap
+     * @param HydratorInterface       $hydrator
      */
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
         $this->hydrator = $hydrator;
-
-        parent::__construct($entity, $entityMap);
-
+        $this->entity = $entity;
+        $this->entityMap = $entityMap;
+        $this->proxyFactory = new ProxyFactory();
         $this->attributes = $this->dehydrate($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityClass(): string
+    {
+        return get_class($this->entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityKeyName(): string
+    {
+        return $this->entityMap->getKeyName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityKeyValue()
+    {
+        return $this->getEntityAttribute($this->entityMap->getKeyName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityHash(): string
+    {
+        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
+    }
+
+    /**
+     * Returns the wrapped entity's map.
+     *
+     * @return mixed
+     */
+    public function getMap()
+    {
+        return $this->entityMap;
     }
 
     /**
@@ -63,7 +134,9 @@ class ObjectWrapper extends Wrapper
      */
     public function unwrap()
     {
-        $this->hydrate();
+        if ($this->touched) {
+            $this->hydrate();
+        }
 
         return $this->entity;
     }
@@ -75,8 +148,6 @@ class ObjectWrapper extends Wrapper
      */
     public function getObject()
     {
-        //$this->hydrate();
-
         return $this->entity;
     }
 
@@ -87,7 +158,7 @@ class ObjectWrapper extends Wrapper
      *
      * @return array
      */
-    protected function dehydrate($entity) : array
+    protected function dehydrate($entity): array
     {
         $properties = $this->hydrator->extract($entity);
 
@@ -101,14 +172,14 @@ class ObjectWrapper extends Wrapper
     /**
      * Hydrate object's properties/attribute from the internal array representation.
      *
-     * @return mixed
+     * @return void
      */
     protected function hydrate()
     {
-        $properties = $this->propertiesFromAttributes($this->attributes) + $this->unmanagedProperties;
+        $properties = $this->propertiesFromAttributes() + $this->unmanagedProperties;
 
         // In some case, attributes will miss some properties, so we'll just complete the hydration
-        // set with the orginal's object properties
+        // set with the original object properties
         $missingProperties = array_diff_key($this->properties, $properties);
 
         foreach (array_keys($missingProperties) as $missingKey) {
@@ -116,6 +187,8 @@ class ObjectWrapper extends Wrapper
         }
 
         $this->hydrator->hydrate($properties, $this->entity);
+
+        $this->touched = false;
     }
 
     /**
@@ -123,7 +196,7 @@ class ObjectWrapper extends Wrapper
      *
      * @return array
      */
-    protected function getManagedProperties() : array
+    protected function getManagedProperties(): array
     {
         $properties = $this->entityMap->getProperties();
 
@@ -137,9 +210,11 @@ class ObjectWrapper extends Wrapper
      *
      * @param array $properties
      *
+     * @throws MappingException
+     *
      * @return array
      */
-    protected function attributesFromProperties(array $properties) : array
+    protected function attributesFromProperties(array $properties): array
     {
         // First, we'll only keep the entities that are part of the Entity's
         // attributes
@@ -174,19 +249,15 @@ class ObjectWrapper extends Wrapper
      * Convert internal representation of attributes to an array of properties
      * that can hydrate the actual object.
      *
-     * @param array $attributes
-     *
      * @return array
      */
-    protected function propertiesFromAttributes(array $attributes) : array
+    protected function propertiesFromAttributes(): array
     {
-        $attributes = $this->attributes;
-
         // Get all managed properties
         $propertyNames = $this->entityMap->getProperties();
 
-        $propertyAttributes = array_only($attributes, $propertyNames);
-        $attributesArray = array_except($attributes, $propertyNames);
+        $propertyAttributes = array_only($this->attributes, $propertyNames);
+        $attributesArray = array_except($this->attributes, $propertyNames);
 
         $attributesArrayName = $this->entityMap->getAttributesArrayName();
 
@@ -198,81 +269,168 @@ class ObjectWrapper extends Wrapper
     }
 
     /**
-     * Method used by the mapper to set the object
-     * attribute raw values (hydration).
-     *
-     * @param array $attributes
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setEntityAttributes(array $attributes)
     {
         $this->attributes = $attributes;
-
-        //$this->hydrate();
+        $this->touched = true;
     }
 
     /**
-     * Method used by the mapper to get the
-     * raw object's values.
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getEntityAttributes() : array
+    public function getEntityAttributes(): array
     {
-        //$this->attributes = $this->dehydrate($this->entity);
-
         return $this->attributes;
     }
 
     /**
-     * Method used by the mapper to set raw
-     * key-value pair.
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setEntityAttribute($key, $value)
+    public function setEntityAttribute(string $key, $value)
     {
-        //$this->attributes = $this->dehydrate($this->entity);
-
         $this->attributes[$key] = $value;
+
+        $this->touched = true;
 
         $this->hydrate();
     }
 
     /**
-     * Method used by the mapper to get single
-     * key-value pair.
-     *
-     * @param string $key
-     *
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getEntityAttribute($key)
+    public function getEntityAttribute(string $key)
     {
-        //$this->attributes = $this->dehydrate($this->entity);
-
         if ($this->hasAttribute($key)) {
             return $this->attributes[$key];
-        } else {
-            return;
         }
     }
 
     /**
-     * Test if a given attribute exists.
+     * {@inheritdoc}
+     */
+    public function hasAttribute(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
+    }
+
+    /**
+     * Set the lazy loading proxies on the wrapped entity objet.
      *
-     * @param string $key
+     * @param array $relations list of relations to be lazy loaded
+     *
+     * @return void
+     */
+    public function setProxies(array $relations = null)
+    {
+        $attributes = $this->getEntityAttributes();
+        $proxies = [];
+
+        $relations = $this->getRelationsToProxy();
+
+        // Before calling the relationship methods, we'll set the relationship
+        // method to null, to avoid hydration error on class properties
+        foreach ($relations as $relation) {
+            $this->setEntityAttribute($relation, null);
+        }
+
+        foreach ($relations as $relation) {
+
+            // First, we check that the relation has not been already
+            // set, in which case, we'll just pass.
+            if (array_key_exists($relation, $attributes) && !is_null($attributes[$relation])) {
+                continue;
+            }
+
+            // If the key is handled locally and we know it not to be set,
+            // we'll set the relationship to null value
+            if (!$this->relationNeedsProxy($relation, $attributes)) {
+                $proxies[$relation] = $this->entityMap->getEmptyValueForRelationship($relation);
+            } else {
+                $targetClass = $this->getClassToProxy($relation, $attributes);
+                $proxies[$relation] = $this->proxyFactory->make($this->getObject(), $relation, $targetClass);
+            }
+        }
+
+        foreach ($proxies as $key => $value) {
+            $this->setEntityAttribute($key, $value);
+        }
+    }
+
+    /**
+     * Get Target class to proxy for a one to one.
+     *
+     * @param string $relation
+     * @param array  $attributes
+     *
+     * @return string
+     */
+    protected function getClassToProxy($relation, array $attributes)
+    {
+        if ($this->entityMap->isPolymorphic($relation)) {
+            $localTypeAttribute = $this->entityMap->getLocalKeys($relation)['type'];
+
+            return $attributes[$localTypeAttribute];
+        }
+
+        return $this->entityMap->getTargettedClass($relation);
+    }
+
+    /**
+     * Determine which relations we have to build proxy for, by parsing
+     * attributes and finding methods that aren't set.
+     *
+     * @return array
+     */
+    protected function getRelationsToProxy()
+    {
+        $proxies = [];
+        $attributes = $this->getEntityAttributes();
+
+        foreach ($this->entityMap->getNonEmbeddedRelationships() as $relation) {
+            //foreach ($this->entityMap->getRelationships() as $relation) {
+
+            if (!array_key_exists($relation, $attributes) || is_null($attributes[$relation])) {
+                $proxies[] = $relation;
+            }
+        }
+
+        return $proxies;
+    }
+
+    /**
+     * Determine if the relation needs a proxy or not.
+     *
+     * @param string $relation
+     * @param array  $attributes
      *
      * @return bool
      */
-    public function hasAttribute($key) : bool
+    protected function relationNeedsProxy($relation, $attributes)
     {
-        //$this->attributes = $this->dehydrate($this->entity);
+        if (in_array($relation, $this->entityMap->getRelationshipsWithoutProxy())) {
+            return false;
+        }
 
-        return array_key_exists($key, $this->attributes) ? true : false;
+        $localKey = $this->entityMap->getLocalKeys($relation);
+
+        if (is_null($localKey)) {
+            return true;
+        }
+
+        if (is_array($localKey)) {
+            $localKey = $localKey['id'];
+        }
+
+        if (!isset($attributes[$localKey])) {
+            return false;
+        }
+
+        if (is_null($attributes[$localKey])) {
+            return false;
+        }
+
+        return true;
     }
 }

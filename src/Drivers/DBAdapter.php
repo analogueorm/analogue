@@ -7,7 +7,7 @@ interface DBAdapter
     /**
      * Return's Driver specific Query Implementation.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @return \Illuminate\Database\Query\Builder
      */
     public function getQuery();
 
@@ -16,7 +16,7 @@ interface DBAdapter
      *
      * @return string
      */
-    public function getDateFormat();
+    public function getDateFormat(): string;
 
     /**
      * Start a DB transaction on driver that supports it.
@@ -47,5 +47,5 @@ interface DBAdapter
      *
      * @return array
      */
-    public function fromDatabase(array $rows) : array;
+    public function fromDatabase(array $rows): array;
 }

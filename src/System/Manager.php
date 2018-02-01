@@ -11,14 +11,13 @@ use Analogue\ORM\Plugins\AnaloguePluginInterface;
 use Analogue\ORM\Repository;
 use Analogue\ORM\System\Wrappers\Wrapper;
 use Analogue\ORM\ValueMap;
-use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Collection;
 use Psr\SimpleCache\CacheInterface;
+use ReflectionClass;
 
 /**
  * This class is the entry point for registering Entities and
- * instansiating Mappers.
+ * instantiating Mappers.
  */
 class Manager
 {
@@ -263,11 +262,25 @@ class Manager
         }
 
         // If a cache is defined, use it to store the entityMap
-        if ($this->cache !== null && !$this->cache->has($entityMap->getClass())) {
+        if ($this->cache !== null && !$this->cache->has($entityMap->getClass()) && !$this->isAnonymous($entityMap)) {
             $this->cache->set($entityMap->getClass(), serialize($entityMap), 1440);
         }
 
         return $mapper;
+    }
+
+    /**
+     * Check if an Object is an anonymous class instance.
+     *
+     * @param mixed $class
+     *
+     * @return bool
+     */
+    protected function isAnonymous($class) : bool
+    {
+        $instance = new ReflectionClass($class);
+
+        return $instance->isAnonymous();
     }
 
     /**
@@ -299,7 +312,7 @@ class Manager
     /**
      * Check if a value class is already registered.
      *
-     * @param string|sdtClass $object
+     * @param string|\stdClass $object
      *
      * @return bool
      */
@@ -347,7 +360,7 @@ class Manager
     /**
      * Return proxy path if defined.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getProxyPath()
     {
@@ -454,9 +467,9 @@ class Manager
     /**
      * Get Entity Map instance from cache.
      *
-     * @param string $entity
+     * @param string $entityClass
      *
-     * @return EntityMap | null
+     * @return EntityMap|null
      */
     protected function getEntityMapInstanceFromCache(string $entityClass)
     {
@@ -661,7 +674,7 @@ class Manager
     /**
      * Set an application cache.
      *
-     * @param Psr\SimpleCache\CacheInterface $cache
+     * @param \Psr\SimpleCache\CacheInterface $cache
      */
     public function setCache(CacheInterface $cache)
     {
@@ -729,7 +742,7 @@ class Manager
      * @throws MappingException
      * @throws \InvalidArgumentException
      *
-     * @return \Illuminate\Support\Collection|null
+     * @return \Traversable|array
      */
     public function delete($entity)
     {

@@ -22,23 +22,17 @@ class IlluminateDriver implements DriverInterface
     }
 
     /**
-     * Return the name of the driver.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'illuminate';
     }
 
     /**
-     * Get Analogue DBAdapter.
-     *
-     * @param string|null $connection
-     *
-     * @return IlluminateDBAdapter
+     * {@inheritdoc}
      */
-    public function getAdapter($connection = null)
+    public function getAdapter(string $connection = null): DBAdapter
     {
         $connection = $this->connectionProvider->connection($connection);
 

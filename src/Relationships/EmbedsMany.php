@@ -13,6 +13,8 @@ class EmbedsMany extends EmbedsOne
      *
      * @param array $attributes
      *
+     * @throws MappingException
+     *
      * @return array
      */
     public function matchSingleResult(array $attributes) : array
@@ -31,6 +33,8 @@ class EmbedsMany extends EmbedsOne
      * and return the updated attributes.
      *
      * @param array $attributes
+     *
+     * @throws MappingException
      *
      * @return array
      */
@@ -60,21 +64,19 @@ class EmbedsMany extends EmbedsOne
      *
      * @return Collection
      */
-    protected function buildEmbeddedCollection($rows) : Collection
+    protected function buildEmbeddedCollection(array $rows): Collection
     {
-        $items = [];
-
-        foreach ($rows as $attributes) {
-            $items[] = $this->buildEmbeddedObject($attributes);
-        }
-
-        return collect($items);
+        return collect($rows)->map(function ($attributes) {
+            return $this->buildEmbeddedObject($attributes);
+        });
     }
 
     /**
      * Transform embedded object into db column(s).
      *
-     * @param mixed $object
+     * @param mixed $objects
+     *
+     * @throws MappingException
      *
      * @return array $columns
      */
@@ -88,9 +90,11 @@ class EmbedsMany extends EmbedsOne
     }
 
     /**
-     * Normalize object an array containing raw attributes.
+     * Normalize object as array containing raw attributes.
      *
-     * @param mixed $object
+     * @param mixed $objects
+     *
+     * @throws MappingException
      *
      * @return array
      */

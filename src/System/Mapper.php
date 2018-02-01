@@ -10,8 +10,6 @@ use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Cache\InstanceCache;
-use Analogue\ORM\System\Wrappers\Wrapper;
-use Doctrine\Instantiator\Instantiator;
 use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -125,6 +123,7 @@ class Mapper
      * Map results to a Collection.
      *
      * @param array|Collection $results
+     * @param array            $eagerLoads
      *
      * @return Collection
      */
@@ -163,7 +162,7 @@ class Mapper
     /**
      * Return all records for a mapped object.
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function all()
     {
@@ -265,9 +264,9 @@ class Mapper
     }
 
     /**
-     * Get a the Underlying QueryAdapter.
+     * Get a the Underlying Query Builder.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return \Illuminate\Database\Query\Builder
      */
     public function newQueryBuilder()
     {
@@ -544,6 +543,8 @@ class Mapper
      * Return a new object instance using dependency injection.
      *
      * @param string $class
+     *
+     * @throws ErrorException
      *
      * @return mixed
      */

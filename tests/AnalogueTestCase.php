@@ -35,8 +35,10 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         });
 
         $this->analogue = $this->app->make('analogue');
-        $this->analogue->setCache(Cache::driver('array'));
+        $this->analogue->setCache(Cache::driver('file'));
         $this->analogue->setStrictMode(true);
+
+        $this->artisan('cache:clear');
 
         $this->migrateDatabase();
     }
@@ -288,6 +290,23 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         }
     }
 
+    /**
+     * Migrate a DB.
+     *
+     * @param callable $callback
+     *
+     * @return void
+     */
+    protected function migrate($table, $callback)
+    {
+        Schema::create($table, $callback);
+    }
+
+    /**
+     * Clear analogue's instance & db cache.
+     *
+     * @return void
+     */
     protected function clearCache()
     {
         app('analogue')->clearCache();

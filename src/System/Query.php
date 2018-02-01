@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * Analogue Query builder.
  *
- * @mixin QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+ * @mixin \Illuminate\Database\Query\Builder
  */
 class Query
 {
@@ -37,7 +37,7 @@ class Query
     /**
      * Query Builder Instance.
      *
-     * @var \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @var \Illuminate\Database\Query\Builder
      */
     protected $query;
 
@@ -68,6 +68,7 @@ class Query
      * @var array
      */
     protected $passthru = [
+        'cursor',
         'toSql',
         'lists',
         'pluck',
@@ -122,7 +123,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function get($columns = ['*']) : Collection
     {
@@ -154,7 +155,7 @@ class Query
      * @param array $id
      * @param array $columns
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function findMany($id, $columns = ['*'])
     {
@@ -453,7 +454,7 @@ class Query
      *
      * @return \Analogue\ORM\System\Query
      */
-    protected function addHasWhere(Query $hasQuery, Relationship $relation, $operator, $count, $boolean)
+    protected function addHasWhere(self $hasQuery, Relationship $relation, $operator, $count, $boolean)
     {
         $this->mergeWheresToHas($hasQuery, $relation);
 
@@ -472,7 +473,7 @@ class Query
      *
      * @return void
      */
-    protected function mergeWheresToHas(Query $hasQuery, Relationship $relation)
+    protected function mergeWheresToHas(self $hasQuery, Relationship $relation)
     {
         // Here we have the "has" query and the original relation. We need to copy over any
         // where clauses the developer may have put in the relationship function over to
@@ -560,7 +561,7 @@ class Query
      *
      * @param array $columns
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function getEntities($columns = ['*'])
     {
@@ -639,7 +640,7 @@ class Query
      * (REFACTOR: this method should move out, we need to provide the client classes
      * with the adapter instead.)
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter|\Analogue\ORM\Drivers\IlluminateQueryAdapter
+     * @return \Illuminate\Database\Query\Builder
      */
     public function getQuery()
     {

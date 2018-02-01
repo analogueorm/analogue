@@ -3,10 +3,13 @@
 namespace Analogue\ORM\Drivers;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Connection;
 
 class CapsuleConnectionProvider
 {
     /**
+     * Capsule manager.
+     *
      * @var Capsule
      */
     protected $capsule;
@@ -24,11 +27,11 @@ class CapsuleConnectionProvider
     /**
      * Get a Database connection object.
      *
-     * @param  $name
+     * @param string $name
      *
      * @return \Illuminate\Database\Connection
      */
-    public function connection($name = null)
+    public function connection(string $name = null): Connection
     {
         return $this->capsule->getConnection($name);
     }

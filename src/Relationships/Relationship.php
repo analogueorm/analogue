@@ -167,7 +167,7 @@ abstract class Relationship
     /**
      * Get the relationship for eager loading.
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function getEager()
     {
@@ -269,7 +269,7 @@ abstract class Relationship
     /**
      * Get the base query builder.
      *
-     * @return \Analogue\ORM\Drivers\QueryAdapter
+     * @return \Illuminate\Database\Query\Builder
      */
     public function getBaseQuery()
     {
@@ -393,7 +393,7 @@ abstract class Relationship
     {
         $cache = $this->parentMapper->getEntityCache();
 
-        $cache->cacheLoadedRelationResult($this->parent->getEntityKey(), $relation, $results, $this);
+        $cache->cacheLoadedRelationResult($this->parent->getEntityKeyName(), $relation, $results, $this);
     }
 
     /**

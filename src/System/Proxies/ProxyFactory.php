@@ -4,6 +4,7 @@ namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\Manager;
+use ProxyManager\Configuration;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\Proxy\LazyLoadingInterface;
 
@@ -47,10 +48,13 @@ class ProxyFactory
         $proxyPath = Manager::getInstance()->getProxyPath();
 
         if ($proxyPath !== null) {
-            $proxyConfig = new \ProxyManager\Configuration();
+
+            $proxyConfig = new Configuration();
             $proxyConfig->setProxiesTargetDir($proxyPath);
 
             $factory = new LazyLoadingValueHolderFactory($proxyConfig);
+        } else {
+            $factory = new LazyLoadingValueHolderFactory();
         }
 
         $initializer = function (&$wrappedObject, LazyLoadingInterface $proxy, $method, array $parameters, &$initializer) use ($entity, $relation) {

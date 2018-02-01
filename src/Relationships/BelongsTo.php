@@ -2,7 +2,7 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
@@ -129,7 +129,7 @@ class BelongsTo extends Relationship
         // to query for via the eager loading query. We will add them to an array then
         // execute a "where in" statement to gather up all of those related records.
         foreach ($results as $result) {
-            if (!is_null($value = $result[$this->foreignKey])) {
+            if (array_key_exists($this->foreignKey, $result) && !is_null($value = $result[$this->foreignKey])) {
                 $keys[] = $value;
             }
         }
@@ -179,7 +179,7 @@ class BelongsTo extends Relationship
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
         return array_map(function ($result) use ($dictionary, $foreign, $relation) {
-            if (isset($dictionary[$result[$foreign]])) {
+            if (array_key_exists($foreign, $result) && isset($dictionary[$result[$foreign]])) {
                 $result[$relation] = $dictionary[$result[$foreign]];
             } else {
                 $result[$relation] = null;

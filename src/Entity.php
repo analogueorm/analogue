@@ -2,8 +2,6 @@
 
 namespace Analogue\ORM;
 
-use Analogue\ORM\System\Proxies\EntityProxy;
-
 class Entity extends ValueObject
 {
     /**
@@ -38,9 +36,6 @@ class Entity extends ValueObject
         if (!array_key_exists($key, $this->attributes)) {
             return;
         }
-        if ($this->attributes[$key] instanceof EntityProxy) {
-            $this->attributes[$key] = $this->attributes[$key]->load();
-        }
 
         return $this->attributes[$key];
     }
@@ -73,7 +68,7 @@ class Entity extends ValueObject
      */
     protected function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'get'.$this->getMutatorMethod($key));
     }
 
     /**
@@ -85,7 +80,7 @@ class Entity extends ValueObject
      */
     protected function hasSetMutator($key)
     {
-        return method_exists($this, 'set'.$this->getMutatorMethod($key)) ? true : false;
+        return method_exists($this, 'set'.$this->getMutatorMethod($key));
     }
 
     /**

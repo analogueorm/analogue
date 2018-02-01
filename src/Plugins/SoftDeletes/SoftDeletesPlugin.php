@@ -14,11 +14,7 @@ use Carbon\Carbon;
 class SoftDeletesPlugin extends AnaloguePlugin
 {
     /**
-     * Register the plugin.
-     *
-     * @throws \Exception
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function register()
     {
@@ -74,29 +70,30 @@ class SoftDeletesPlugin extends AnaloguePlugin
 
             if (!is_null($wrappedEntity->getEntityAttribute($deletedAtField))) {
                 return true;
-            } else {
-                $time = new Carbon();
-
-                $wrappedEntity->setEntityAttribute($deletedAtField, $time);
-
-                $plainObject = $wrappedEntity->getObject();
-                $host->manager->mapper(get_class($plainObject))->store($plainObject);
-
-                return false;
             }
+
+            $time = new Carbon();
+
+            $wrappedEntity->setEntityAttribute($deletedAtField, $time);
+
+            $plainObject = $wrappedEntity->getObject();
+            $host->manager->mapper(get_class($plainObject))->store($plainObject);
+
+            return false;
         });
 
         // Register RestoreCommand
-        $mapper->addCustomCommand('Analogue\ORM\Plugins\SoftDeletes\Restore');
+        $mapper->addCustomCommand(Restore::class);
     }
 
     /**
-     * Get custom events provided by the plugin.
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
-    public function getCustomEvents()
+    public function getCustomEvents(): array
     {
-        return ['restoring', 'restored'];
+        return [
+            'restoring',
+            'restored',
+        ];
     }
 }

@@ -31,8 +31,8 @@ class Repository
      * - Mappable object instance
      * - Instance of mapper
      *
-     * @param Mapper         $mapper
-     * @param EntityMap|null $entityMap (optional)
+     * @param Mapper|Mappable|string $mapper
+     * @param EntityMap|null         $entityMap (optional)
      *
      * @throws \InvalidArgumentException
      * @throws MappingException
@@ -51,7 +51,7 @@ class Repository
     /**
      * Return all Entities from database.
      *
-     * @return \Analogue\ORM\EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     public function all()
     {

@@ -43,15 +43,15 @@ class EntityMap
     /**
      * The table associated with the entity.
      *
-     * @var string|null
+     * @var string
      */
-    protected $table = null;
+    protected $table;
 
     /**
      * The primary key for the model. If the model is an Embedded Value object
      * primary key is set to null.
      *
-     * @var string | null
+     * @var string|null
      */
     protected $primaryKey = 'id';
 
@@ -83,9 +83,9 @@ class EntityMap
     /**
      * The Custom Domain Class to use with this mapping.
      *
-     * @var string|null
+     * @var string
      */
-    protected $class = null;
+    protected $class;
 
     /**
      * The event map for the entity.
@@ -97,7 +97,7 @@ class EntityMap
     /**
      * Embedded Value Objects.
      *
-     * @deprecated use embedsOne, embedsMany relationships instead
+     * @deprecated 5.5 (use embedsOne() or embedsMany() relationships instead)
      *
      * @var array
      */
@@ -168,7 +168,7 @@ class EntityMap
     protected $dynamicRelationships = [];
 
     /**
-     * Targetted class for the relationship method. value is set to `null` for
+     * Targeted class for the relationship method. value is set to `null` for
      * polymorphic relations.
      *
      * @var array
@@ -210,14 +210,6 @@ class EntityMap
      * @var string
      */
     protected $morphClass;
-
-    /**
-     * Sequence name, to be used with postgreSql
-     * defaults to %table_name%_id_seq.
-     *
-     * @var string|null
-     */
-    protected $sequence = null;
 
     /**
      * Indicates if the entity should be timestamped.
@@ -274,9 +266,9 @@ class EntityMap
      * "single_table"
      * null.
      *
-     * @var string | null
+     * @var string
      */
-    protected $inheritanceType = null;
+    protected $inheritanceType;
 
     /**
      * Discriminator column name.
@@ -287,7 +279,7 @@ class EntityMap
 
     /**
      * Allow using a string to define which entity type should be instantiated.
-     * If not set, analogue will uses entity's FQDN.
+     * If not set, analogue will uses entity's FQCN.
      *
      * @var array
      */
@@ -305,7 +297,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -325,11 +317,12 @@ class EntityMap
      *
      * @return bool
      */
-    public function usesAttributesArray() : bool
+    public function usesAttributesArray(): bool
     {
         if ($this->arrayName === null) {
             return false;
         }
+
         if ($this->attributes === null) {
             return false;
         }
@@ -352,7 +345,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getCompiledAttributes() : array
+    public function getCompiledAttributes(): array
     {
         $key = $this->getKeyName();
 
@@ -370,7 +363,7 @@ class EntityMap
      *
      * @param string $format
      */
-    public function setDateFormat($format)
+    public function setDateFormat(string $format)
     {
         $this->dateFormat = $format;
     }
@@ -380,7 +373,7 @@ class EntityMap
      *
      *  @return string
      */
-    public function getDateFormat() : string
+    public function getDateFormat(): string
     {
         return $this->dateFormat;
     }
@@ -390,7 +383,7 @@ class EntityMap
      *
      * @param string $driver
      */
-    public function setDriver($driver)
+    public function setDriver(string $driver)
     {
         $this->driver = $driver;
     }
@@ -400,7 +393,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getDriver() : string
+    public function getDriver(): string
     {
         return $this->driver;
     }
@@ -408,9 +401,9 @@ class EntityMap
     /**
      * Set the db connection to use on the table.
      *
-     * @param $connection
+     * @param string $connection
      */
-    public function setConnection($connection)
+    public function setConnection(string $connection)
     {
         $this->connection = $connection;
     }
@@ -418,7 +411,7 @@ class EntityMap
     /**
      * Get the Database connection the Entity is stored on.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getConnection()
     {
@@ -430,9 +423,9 @@ class EntityMap
      *
      * @return string
      */
-    public function getTable() : string
+    public function getTable(): string
     {
-        if (!is_null($this->table)) {
+        if (isset($this->table)) {
             return $this->table;
         }
 
@@ -444,41 +437,27 @@ class EntityMap
      *
      * @param string $table
      */
-    public function setTable($table)
+    public function setTable(string $table)
     {
         $this->table = $table;
     }
 
     /**
-     * Get the pgSql sequence name.
-     *
-     * @return string
-     */
-    public function getSequence()
-    {
-        if (!is_null($this->sequence)) {
-            return $this->sequence;
-        } else {
-            return $this->getTable().'_id_seq';
-        }
-    }
-
-    /**
      * Get the custom entity class.
      *
-     * @return string namespaced class name
+     * @return string|null
      */
-    public function getClass() : string
+    public function getClass()
     {
-        return isset($this->class) ? $this->class : null;
+        return $this->class ?: null;
     }
 
     /**
      * Set the custom entity class.
      *
-     * @param string $class namespaced class name
+     * @param string $class The FQCN
      */
-    public function setClass($class)
+    public function setClass(string $class)
     {
         $this->class = $class;
     }
@@ -486,9 +465,11 @@ class EntityMap
     /**
      * Get the embedded Value Objects.
      *
+     * @deprecated 5.5
+     *
      * @return array
      */
-    public function getEmbeddables() : array
+    public function getEmbeddables(): array
     {
         return $this->embeddables;
     }
@@ -498,7 +479,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getProperties() : array
+    public function getProperties(): array
     {
         return $this->properties;
     }
@@ -526,6 +507,8 @@ class EntityMap
     /**
      * Set the embedded Value Objects.
      *
+     * @deprecated 5.5
+     *
      * @param array $embeddables
      */
     public function setEmbeddables(array $embeddables)
@@ -539,7 +522,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getRelationships() : array
+    public function getRelationships(): array
     {
         return $this->relationships;
     }
@@ -549,7 +532,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getNonEmbeddedRelationships() : array
+    public function getNonEmbeddedRelationships(): array
     {
         return array_diff($this->relationships, $this->embeddedRelations);
     }
@@ -560,7 +543,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getRelationshipsWithoutProxy() : array
+    public function getRelationshipsWithoutProxy(): array
     {
         return $this->nonProxyRelationships;
     }
@@ -570,7 +553,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getSingleRelationships() : array
+    public function getSingleRelationships(): array
     {
         return $this->singleRelations;
     }
@@ -582,7 +565,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function isSingleRelationship(string $relation) : bool
+    public function isSingleRelationship(string $relation): bool
     {
         return in_array($relation, $this->singleRelations);
     }
@@ -592,7 +575,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getManyRelationships() : array
+    public function getManyRelationships(): array
     {
         return $this->manyRelations;
     }
@@ -604,7 +587,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function isManyRelationship(string $relation) : bool
+    public function isManyRelationship(string $relation): bool
     {
         return in_array($relation, $this->manyRelations);
     }
@@ -613,6 +596,8 @@ class EntityMap
      * Return empty value for a given relationship.
      *
      * @param string $relation
+     *
+     * @throws MappingException
      *
      * @return mixed
      */
@@ -626,7 +611,7 @@ class EntityMap
             return new Collection();
         }
 
-        throw new MappingException("Cannot determine defaut value of $relation");
+        throw new MappingException("Cannot determine default value of $relation");
     }
 
     /**
@@ -657,7 +642,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getLocalRelationships() : array
+    public function getLocalRelationships(): array
     {
         return $this->localRelations;
     }
@@ -667,7 +652,7 @@ class EntityMap
      *
      * @param string $relation
      *
-     * @return string | array | null
+     * @return string|array|null
      */
     public function getLocalKeys($relation)
     {
@@ -679,7 +664,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getForeignRelationships() : array
+    public function getForeignRelationships(): array
     {
         return $this->foreignRelations;
     }
@@ -689,7 +674,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getPivotRelationships() : array
+    public function getPivotRelationships(): array
     {
         return $this->pivotRelations;
     }
@@ -699,7 +684,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getEmbeddedRelationships() : array
+    public function getEmbeddedRelationships(): array
     {
         return $this->embeddedRelations;
     }
@@ -711,25 +696,23 @@ class EntityMap
      *
      * @return bool
      */
-    public function isPolymorphic($relation) : bool
+    public function isPolymorphic($relation): bool
     {
         return in_array($relation, $this->polymorphicRelations);
     }
 
     /**
-     * Get the targetted type for a relationship. Return null if polymorphic.
+     * Get the targeted type for a relationship. Return null if polymorphic.
      *
      * @param string $relation
      *
-     * @return string | null
+     * @return string|null
      */
     public function getTargettedClass($relation)
     {
-        if (!array_key_exists($relation, $this->relatedClasses)) {
-            return;
+        if (array_key_exists($relation, $this->relatedClasses)) {
+            return $this->relatedClasses[$relation];
         }
-
-        return $this->relatedClasses[$relation];
     }
 
     /**
@@ -751,7 +734,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getDynamicRelationships() : array
+    public function getDynamicRelationships(): array
     {
         return array_keys($this->dynamicRelationships);
     }
@@ -762,7 +745,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getEagerloadedRelationships() : array
+    public function getEagerloadedRelationships(): array
     {
         return $this->with;
     }
@@ -770,7 +753,7 @@ class EntityMap
     /**
      * Get the primary key attribute for the entity.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getKeyName()
     {
@@ -780,11 +763,11 @@ class EntityMap
     /**
      * Set the primary key for the entity.
      *
-     * @param $key
+     * @param string $key
      *
      * @return void
      */
-    public function setKeyName($key)
+    public function setKeyName(string $key)
     {
         $this->primaryKey = $key;
     }
@@ -794,7 +777,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getQualifiedKeyName() : string
+    public function getQualifiedKeyName(): string
     {
         return $this->getTable().'.'.$this->getKeyName();
     }
@@ -804,7 +787,7 @@ class EntityMap
      *
      * @return int
      */
-    public function getPerPage() : int
+    public function getPerPage(): int
     {
         return $this->perPage;
     }
@@ -816,7 +799,7 @@ class EntityMap
      *
      * @return void
      */
-    public function setPerPage($perPage)
+    public function setPerPage(int $perPage)
     {
         $this->perPage = $perPage;
     }
@@ -826,7 +809,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function usesTimestamps() : bool
+    public function usesTimestamps(): bool
     {
         return $this->timestamps;
     }
@@ -836,7 +819,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function usesSoftDeletes() : bool
+    public function usesSoftDeletes(): bool
     {
         return $this->softDeletes;
     }
@@ -846,7 +829,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getCreatedAtColumn() : string
+    public function getCreatedAtColumn(): string
     {
         return $this->createdAtColumn;
     }
@@ -856,7 +839,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getUpdatedAtColumn() : string
+    public function getUpdatedAtColumn(): string
     {
         return $this->updatedAtColumn;
     }
@@ -866,7 +849,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getQualifiedDeletedAtColumn() : string
+    public function getQualifiedDeletedAtColumn(): string
     {
         return $this->deletedAtColumn;
     }
@@ -876,7 +859,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getForeignKey() : string
+    public function getForeignKey(): string
     {
         return snake_case(class_basename($this->getClass())).'_id';
     }
@@ -897,7 +880,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getDiscriminatorColumn() : string
+    public function getDiscriminatorColumn(): string
     {
         return $this->discriminatorColumn;
     }
@@ -908,18 +891,18 @@ class EntityMap
      *
      * @return array
      */
-    public function getDiscriminatorColumnMap() : array
+    public function getDiscriminatorColumnMap(): array
     {
         return $this->discriminatorColumnMap;
     }
 
     /**
-     * Return true if the entity should be instanciated using
+     * Return true if the entity should be instantiated using
      * the IoC Container.
      *
      * @return bool
      */
-    public function useDependencyInjection() : bool
+    public function useDependencyInjection(): bool
     {
         return $this->dependencyInjection;
     }
@@ -929,7 +912,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addSingleRelation($relation)
+    protected function addSingleRelation(string $relation)
     {
         if (!in_array($relation, $this->singleRelations)) {
             $this->singleRelations[] = $relation;
@@ -941,7 +924,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addForeignRelation($relation)
+    protected function addForeignRelation(string $relation)
     {
         if (!in_array($relation, $this->foreignRelations)) {
             $this->foreignRelations[] = $relation;
@@ -953,7 +936,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addPolymorphicRelation($relation)
+    protected function addPolymorphicRelation(string $relation)
     {
         if (!in_array($relation, $this->polymorphicRelations)) {
             $this->polymorphicRelations[] = $relation;
@@ -965,7 +948,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addNonProxyRelation($relation)
+    protected function addNonProxyRelation(string $relation)
     {
         if (!in_array($relation, $this->nonProxyRelationships)) {
             $this->nonProxyRelationships[] = $relation;
@@ -977,7 +960,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addLocalRelation($relation)
+    protected function addLocalRelation(string $relation)
     {
         if (!in_array($relation, $this->localRelations)) {
             $this->localRelations[] = $relation;
@@ -989,7 +972,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addManyRelation($relation)
+    protected function addManyRelation(string $relation)
     {
         if (!in_array($relation, $this->manyRelations)) {
             $this->manyRelations[] = $relation;
@@ -1001,7 +984,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addPivotRelation($relation)
+    protected function addPivotRelation(string $relation)
     {
         if (!in_array($relation, $this->pivotRelations)) {
             $this->pivotRelations[] = $relation;
@@ -1013,7 +996,7 @@ class EntityMap
      *
      * @param string $relation
      */
-    protected function addEmbeddedRelation($relation)
+    protected function addEmbeddedRelation(string $relation)
     {
         if (!in_array($relation, $this->embeddedRelations)) {
             $this->embeddedRelations[] = $relation;
@@ -1023,12 +1006,13 @@ class EntityMap
     /**
      * Define an Embedded Object.
      *
-     * @param mixed  $entity
-     * @param string $related
+     * @param mixed  $parent
+     * @param string $relatedClass
+     * @param string $relation
      *
      * @return EmbedsOne
      */
-    public function embedsOne($parent, string $relatedClass, $relation = null) : EmbedsOne
+    public function embedsOne($parent, string $relatedClass, string $relation = null): EmbedsOne
     {
         if (is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
@@ -1044,12 +1028,13 @@ class EntityMap
     /**
      * Define an Embedded Collection.
      *
-     * @param mixed  $entity
-     * @param string $related
+     * @param mixed  $parent
+     * @param string $relatedClass
+     * @param string $relation
      *
-     * @return EmbedsOne
+     * @return EmbedsMany
      */
-    public function embedsMany($parent, string $relatedClass, $relation = null) : EmbedsMany
+    public function embedsMany($parent, string $relatedClass, string $relation = null): EmbedsMany
     {
         if (is_null($relation)) {
             list(, $caller) = debug_backtrace(false);
@@ -1074,7 +1059,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasOne
      */
-    public function hasOne($entity, $related, $foreignKey = null, $localKey = null)
+    public function hasOne($entity, string $related, string $foreignKey = null, string $localKey = null): HasOne
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
@@ -1116,8 +1101,14 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphOne
      */
-    public function morphOne($entity, $related, $name, $type = null, $id = null, $localKey = null)
-    {
+    public function morphOne(
+        $entity,
+        string $related,
+        string $name,
+        string $type = null,
+        string $id = null,
+        string $localKey = null
+    ): MorphOne {
         list($type, $id) = $this->getMorphs($name, $type, $id);
 
         $localKey = $localKey ?: $this->getKeyName();
@@ -1151,13 +1142,12 @@ class EntityMap
      * @param string      $related
      * @param string|null $foreignKey
      * @param string|null $otherKey
-     * @param string|null $relation
      *
      * @throws MappingException
      *
      * @return \Analogue\ORM\Relationships\BelongsTo
      */
-    public function belongsTo($entity, $related, $foreignKey = null, $otherKey = null)
+    public function belongsTo($entity, string $related, string $foreignKey = null, string $otherKey = null): BelongsTo
     {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
@@ -1195,7 +1185,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphTo
      */
-    public function morphTo($entity, $name = null, $type = null, $id = null)
+    public function morphTo($entity, string $name = null, string $type = null, string $id = null): MorphTo
     {
         // If no name is provided, we will use the backtrace to get the function name
         // since that is most likely the name of the polymorphic interface. We can
@@ -1262,7 +1252,7 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasMany
      */
-    public function hasMany($entity, $related, $foreignKey = null, $localKey = null)
+    public function hasMany($entity, string $related, string $foreignKey = null, string $localKey = null): HasMany
     {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
@@ -1294,8 +1284,13 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\HasManyThrough
      */
-    public function hasManyThrough($entity, $related, $through, $firstKey = null, $secondKey = null)
-    {
+    public function hasManyThrough(
+        $entity,
+        string $related,
+        string $through,
+        string $firstKey = null,
+        string $secondKey = null
+    ): HasManyThrough {
         $relatedMapper = Manager::getInstance()->mapper($related);
         $throughMapper = Manager::getInstance()->mapper($through);
 
@@ -1328,8 +1323,14 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphMany
      */
-    public function morphMany($entity, $related, $name, $type = null, $id = null, $localKey = null)
-    {
+    public function morphMany(
+        $entity,
+        string $related,
+        string $name,
+        string $type = null,
+        string $id = null,
+        string $localKey = null
+    ): MorphMany {
         // Here we will gather up the morph type and ID for the relationship so that we
         // can properly query the intermediate table of a relation. Finally, we will
         // get the table and create the relationship instances for the developers.
@@ -1356,18 +1357,22 @@ class EntityMap
      * Define a many-to-many relationship.
      *
      * @param mixed       $entity
-     * @param string      $relatedClass
+     * @param string      $related
      * @param string|null $table
      * @param string|null $foreignKey
      * @param string|null $otherKey
-     * @param string|null $relation
      *
      * @throws MappingException
      *
      * @return \Analogue\ORM\Relationships\BelongsToMany
      */
-    public function belongsToMany($entity, $related, $table = null, $foreignKey = null, $otherKey = null)
-    {
+    public function belongsToMany(
+        $entity,
+        string $related,
+        string $table = null,
+        string $foreignKey = null,
+        string $otherKey = null
+    ): BelongsToMany {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
@@ -1413,8 +1418,15 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphToMany
      */
-    public function morphToMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
-    {
+    public function morphToMany(
+        $entity,
+        string $related,
+        string $name,
+        string $table = null,
+        string $foreignKey = null,
+        string $otherKey = null,
+        bool $inverse = false
+    ): MorphToMany {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
@@ -1452,8 +1464,14 @@ class EntityMap
      *
      * @return \Analogue\ORM\Relationships\MorphToMany
      */
-    public function morphedByMany($entity, $related, $name, $table = null, $foreignKey = null, $otherKey = null)
-    {
+    public function morphedByMany(
+        $entity,
+        string $related,
+        string $name,
+        string $table = null,
+        string $foreignKey = null,
+        string $otherKey = null
+    ): MorphToMany {
         // Add the relation to the definition in map
         list(, $caller) = debug_backtrace(false);
         $relation = $caller['function'];
@@ -1479,7 +1497,7 @@ class EntityMap
      *
      * @return string
      */
-    public function joiningTable($relatedMap)
+    public function joiningTable(self $relatedMap): string
     {
         // The joining table name, by convention, is simply the snake cased models
         // sorted alphabetically and concatenated with an underscore, so we can
@@ -1507,13 +1525,12 @@ class EntityMap
      *
      * @return string[]
      */
-    protected function getMorphs($name, $type, $id)
+    protected function getMorphs(string $name, string $type = null, string $id = null): array
     {
-        $type = $type ?: $name.'_type';
-
-        $id = $id ?: $name.'_id';
-
-        return [$type, $id];
+        return [
+            $type ?: $name.'_type',
+            $id ?: $name.'_id',
+        ];
     }
 
     /**
@@ -1521,7 +1538,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getMorphClass()
+    public function getMorphClass(): string
     {
         $morphClass = Manager::getInstance()->getMorphMap($this->getClass());
 
@@ -1535,9 +1552,9 @@ class EntityMap
      *
      * @return \Analogue\ORM\EntityCollection
      */
-    public function newCollection(array $entities = [])
+    public function newCollection(array $entities = []): EntityCollection
     {
-        return new EntityCollection($entities, $this);
+        return new EntityCollection($entities);
     }
 
     /**
@@ -1568,7 +1585,7 @@ class EntityMap
      */
     public function boot()
     {
-        if (count($this->relationships > 0)) {
+        if (count($this->relationships) > 0) {
             $this->sortRelationshipsByType();
         }
 
@@ -1580,7 +1597,7 @@ class EntityMap
      *
      * @return bool
      */
-    public function isBooted()
+    public function isBooted(): bool
     {
         return $this->isBooted;
     }
@@ -1590,7 +1607,7 @@ class EntityMap
      *
      * @return array
      */
-    protected function getCustomMethods()
+    protected function getCustomMethods(): array
     {
         $mapMethods = get_class_methods($this);
 
@@ -1606,7 +1623,7 @@ class EntityMap
      *
      * @return array
      */
-    protected function parseMethodsForRelationship(array $customMethods)
+    protected function parseMethodsForRelationship(array $customMethods): array
     {
         $relationships = [];
 
@@ -1635,9 +1652,9 @@ class EntityMap
     /**
      * Sort Relationships methods by type.
      *
-     * TODO : replace this by direclty setting these value
+     * TODO : replace this by directly setting these value
      * in the corresponding methods, so we won't need
-     * the correpondancy tabble
+     * the correspondency table
      *
      * @return void
      */
@@ -1674,7 +1691,7 @@ class EntityMap
      *
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (!array_key_exists($method, $this->dynamicRelationships)) {
             throw new Exception(get_class($this)." has no method $method");

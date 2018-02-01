@@ -2,11 +2,7 @@
 
 namespace Analogue\ORM\Commands;
 
-use Analogue\ORM\EntityCollection;
-use Analogue\ORM\Mappable;
 use Analogue\ORM\System\Aggregate;
-use Analogue\ORM\System\Proxies\CollectionProxy;
-use Analogue\ORM\System\Proxies\EntityProxy;
 
 /**
  * Persist entities & relationships to the
@@ -59,11 +55,15 @@ class Store extends Command
         $mapper->fireEvent('stored', $wrappedEntity, false);
 
         // Once the object is stored, add it to the Instance cache
-        $key = $this->aggregate->getEntityId();
+        $key = $this->aggregate->getEntityKeyValue();
 
         if (!$mapper->getInstanceCache()->has($key)) {
             $mapper->getInstanceCache()->add($entity, $key);
         }
+
+        $this->syncForeignKeyAttributes();
+
+        $wrappedEntity->unwrap();
 
         return $entity;
     }
@@ -112,7 +112,7 @@ class Store extends Command
      *
      * @return Store
      */
-    protected function createStoreCommand(Aggregate $aggregate)
+    protected function createStoreCommand(Aggregate $aggregate): self
     {
         // We gotta retrieve the corresponding query adapter to use.
         $mapper = $aggregate->getMapper();
@@ -165,57 +165,6 @@ class Store extends Command
     }
 
     /**
-     * Update Related Entities which attributes have
-     * been modified.
-     *
-     * @return void
-     */
-    protected function updateDirtyRelated()
-    {
-        $relations = $this->entityMap->getRelationships();
-        $attributes = $this->getAttributes();
-
-        foreach ($relations as $relation) {
-            if (!array_key_exists($relation, $attributes)) {
-                continue;
-            }
-
-            $value = $attributes[$relation];
-
-            if ($value == null) {
-                continue;
-            }
-
-            if ($value instanceof EntityProxy) {
-                continue;
-            }
-
-            if ($value instanceof CollectionProxy && $value->isLoaded()) {
-                $value = $value->getUnderlyingCollection();
-            }
-            if ($value instanceof CollectionProxy && !$value->isLoaded()) {
-                foreach ($value->getAddedItems() as $entity) {
-                    $this->updateEntityIfDirty($entity);
-                }
-                continue;
-            }
-
-            if ($value instanceof EntityCollection) {
-                foreach ($value as $entity) {
-                    if (!$this->createEntityIfNotExists($entity)) {
-                        $this->updateEntityIfDirty($entity);
-                    }
-                }
-                continue;
-            }
-            if ($value instanceof Mappable) {
-                $this->updateEntityIfDirty($value);
-                continue;
-            }
-        }
-    }
-
-    /**
      * Execute an insert statement on the database.
      *
      * @return void
@@ -232,16 +181,30 @@ class Store extends Command
         if (array_key_exists($keyName, $attributes) && $attributes[$keyName] != null) {
             $this->query->insert($attributes);
         } else {
-            $sequence = $aggregate->getEntityMap()->getSequence();
-
             // Prevent inserting with a null ID
             if (array_key_exists($keyName, $attributes)) {
                 unset($attributes[$keyName]);
             }
 
-            $id = $this->query->insertGetId($attributes, $sequence);
+            $id = $this->query->insertGetId($attributes, $keyName);
 
             $aggregate->setEntityAttribute($keyName, $id);
+        }
+    }
+
+    /**
+     * Update attributes on actual entity.
+     *
+     * @param array $attributes
+     *
+     * @return void
+     */
+    protected function syncForeignKeyAttributes()
+    {
+        $attributes = $this->aggregate->getForeignKeyAttributes();
+
+        foreach ($attributes as $key => $value) {
+            $this->aggregate->setEntityAttribute($key, $value);
         }
     }
 
@@ -254,16 +217,15 @@ class Store extends Command
      */
     protected function update()
     {
-        $query = $this->query;
+        $key = $this->aggregate->getEntityKeyName();
+        $value = $this->aggregate->getEntityKeyValue();
 
-        $keyName = $this->aggregate->getEntityKey();
-
-        $query = $query->where($keyName, '=', $this->aggregate->getEntityId());
+        $this->query->where($key, $value);
 
         $dirtyAttributes = $this->aggregate->getDirtyRawAttributes();
 
         if (count($dirtyAttributes) > 0) {
-            $query->update($dirtyAttributes);
+            $this->query->update($dirtyAttributes);
         }
     }
 }

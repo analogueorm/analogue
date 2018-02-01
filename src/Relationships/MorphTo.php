@@ -141,7 +141,7 @@ class MorphTo extends BelongsTo
      *
      * @throws \Analogue\ORM\Exceptions\MappingException
      *
-     * @return EntityCollection
+     * @return \Illuminate\Support\Collection
      */
     protected function getResultsByType($type)
     {
@@ -192,7 +192,7 @@ class MorphTo extends BelongsTo
     /**
      * Get the foreign key value pair for a related object.
      *
-     * @var mixed
+     * @param mixed $related
      *
      * @return array
      */
