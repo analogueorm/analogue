@@ -48,7 +48,6 @@ class ProxyFactory
         $proxyPath = Manager::getInstance()->getProxyPath();
 
         if ($proxyPath !== null) {
-
             $proxyConfig = new Configuration();
             $proxyConfig->setProxiesTargetDir($proxyPath);
 
