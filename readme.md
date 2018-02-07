@@ -7,7 +7,7 @@
 
 **Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
 
-The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
+The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common morally accepted behaviour in the same family...)*
 
 Analogue can be used as a **standalone package**, or can be transparently integrated into **Laravel** or **Lumen** via a dedicated ServiceProvider. A [Silex](https://github.com/anthonysterling/silex-provider-analogue-orm) service provider is also available.
 
