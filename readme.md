@@ -5,28 +5,103 @@
 [![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.5)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.5)
 [![StyleCI](https://styleci.io/repos/27265369/shield?branch=5.5)](https://styleci.io/repos/27265369)
 
-**Analogue** is a flexible, easy-to-use **Data Mapper ORM** for **PHP**. It provides a quick and intuitive way to query and persist custom domain objects into a SQL Database. 
+**Analogue** is a flexible, easy-to-use **ORM** for **PHP**. It is a transposition of the **Eloquent** ORM that ships with **Laravel** framework using a **Data Mapper** pattern instead of the original Active Record approach. it overcomes *Eloquent* architectural limitations by using a strict separation of concerns, allowing users to use *Value Objects* or *Single-table-inheritance* pattern, to name a few.
 
-The project started as a fork from **Eloquent** by *Taylor Otwell*, and evolved into a fully featured Data Mapper, that sits on top of the very robust **Laravel Database** component. That said, **Analogue** is able to peacefuly coexists with its cousin in a same application *(only limitation is you cannot have relationships between the two, which is a common moraly accepted behaviour in the same family...)*
+As a **Laravel package**, it integrates flawlessly inside the framework, and provides a more powerfull peristance layer, allowing to build enterprise-grade applications while retaining a simple and enjoyable development experience. 
 
-Analogue can be used as a **standalone package**, or can be transparently integrated into **Laravel** or **Lumen** via a dedicated ServiceProvider. A [Silex](https://github.com/anthonysterling/silex-provider-analogue-orm) service provider is also available.
+## Installation
 
-If you're already familiar with Eloquent, a lot of the syntax is similar, so you should be up and running in no time. In fact, you may probably **gain time** as Analogue leverage some heavy DB tasks as **synchronizing complex relationships**, letting you think in term of **objects** and **collections** instead.
-
-```php
-$files = $filesystem->files('/path/to/gallery');
-
-$gallery = new Gallery('Trip to India');
-
-foreach ($files as $file) {
-    $photo = new Photo($file);
-    $gallery->addPhoto($photo);
-}
-
-$mapper->store($gallery);
+```bash
+composer require analogue/orm
 ```
 
-If you intend to build applications following the **DDD** approach, **Analogue** can be a great asset for you.
+See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
+
+## Concept
+
+The concept is simple; your model layer is defined using 2 classes : one **Entity**, which can be any PHP class or extends the base *Analogue\ORM\Entity* class which provides magic getters and setters, and one **EntityMap** which defines relationships, castings, table name, database column names. 
+
+Take this simple domain model : 
+
+```php
+
+use Analogue\ORM\Entity;
+use Illuminate\Support\Collection;
+
+class Blog extends Entity
+{
+    public function __construct()
+    {
+        $this->posts = new Collection;
+    }
+
+    public function addPost(Post $post)
+    {
+        $this->posts->push($post);
+    }
+}
+
+class Post extends Entity
+{
+ 
+}
+
+```
+
+We can instruct **Analogue** how these objects are related using these classes : 
+
+```php
+
+use Analogue\ORM\EntityMap;
+
+class BlogMap extends EntityMap
+{
+    public function posts(Blog $blog)
+    {
+        return $this->hasMany($blog, Post::class);
+    }
+}
+
+class PostMap extends EntityMap
+{
+    public function blog(Post $post)
+    {
+        return $this->belongsTo($post, Blog::class);
+    }
+}
+
+```
+
+Now we can create related instance of or object and persist them to the database : 
+
+```php
+
+$blog = new Blog;
+$blog->title = "My first blog";
+
+$post = new Post; 
+$post->title->"My first post";
+
+$blog->addPost($post);
+
+// Only the blog instance need to explicitely stored; Analogue takes care of synchronizing
+// related objects behinds the scene. 
+
+mapper(Blog::class)->store($blog);
+
+```
+
+Once our objects are persisted into the database, we can query them using the fluent query builder : 
+
+```php
+
+$blog = mapper(Blog::class)->first();
+
+echo $blog->posts->first()->title; // 'My first post'
+
+```
+
+## Documentation
 
 Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more details.
 
@@ -40,20 +115,17 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 - Value Objects
 - Polymorphic Relationships
 - Dynamic Relationships
+- Single table inheritance
 - Cast entities to Array / Json
 - Flexible event system
 - Native multiple database connections support
-- Extendable via Plugins
+- Extendable via custom database drivers / plugins
 
-## Install
-
-```bash
-composer require analogue/orm
-```
-
-See [Configuration](https://github.com/analogueorm/analogue/wiki/Installation) for more information.
 
 ## Changelog 
+
+#### Version 5.6
+- Laravel 5.6 support
 
 #### Version 5.5
 - Laravel 5.5 support
