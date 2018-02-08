@@ -2,10 +2,10 @@
 [![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
 [![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
 [![License](https://poser.pugx.org/analogue/orm/license)](https://packagist.org/packages/analogue/orm)
-[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.5)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.5)
-[![StyleCI](https://styleci.io/repos/27265369/shield?branch=5.5)](https://styleci.io/repos/27265369)
+[![Build Status](https://travis-ci.org/analogueorm/analogue.svg?branch=5.6)](https://travis-ci.org/analogueorm/analogue.svg?branch=5.6)
+[![StyleCI](https://styleci.io/repos/27265369/shield?branch=5.6)](https://styleci.io/repos/27265369)
 
-**Analogue** is a flexible, easy-to-use **ORM** for **PHP**. It is a transposition of the **Eloquent** ORM that ships with **Laravel** framework using a **Data Mapper** pattern instead of the original Active Record approach. it overcomes *Eloquent* architectural limitations by using a strict separation of concerns, allowing users to use *Value Objects* or *Single-table-inheritance* pattern, to name a few.
+**Analogue** is a flexible, easy-to-use **ORM** for **PHP**. It is a transposition of the **Eloquent** ORM that ships with **Laravel** framework using a **Data Mapper** pattern instead of the original Active Record approach. it overcomes some of Eloquent's architectural limitations by using a strict separation of concerns; for example, you can use **Value Objects** or **Single-table-inheritance**, which are hard/impossible to implement correctly using the native ORM. 
 
 As a **Laravel package**, it integrates flawlessly inside the framework, and provides a more powerfull peristance layer, allowing to build enterprise-grade applications while retaining a simple and enjoyable development experience. 
 
@@ -24,7 +24,6 @@ The concept is simple; your model layer is defined using 2 classes : one **Entit
 Take this simple domain model : 
 
 ```php
-
 use Analogue\ORM\Entity;
 use Illuminate\Support\Collection;
 
@@ -51,7 +50,6 @@ class Post extends Entity
 We can instruct **Analogue** how these objects are related using these classes : 
 
 ```php
-
 use Analogue\ORM\EntityMap;
 
 class BlogMap extends EntityMap
@@ -75,7 +73,6 @@ class PostMap extends EntityMap
 Now we can create related instance of or object and persist them to the database : 
 
 ```php
-
 $blog = new Blog;
 $blog->title = "My first blog";
 
@@ -94,7 +91,6 @@ mapper(Blog::class)->store($blog);
 Once our objects are persisted into the database, we can query them using the fluent query builder : 
 
 ```php
-
 $blog = mapper(Blog::class)->first();
 
 echo $blog->posts->first()->title; // 'My first post'
