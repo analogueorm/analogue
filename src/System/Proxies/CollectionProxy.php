@@ -7,6 +7,7 @@ use Analogue\ORM\System\Manager;
 use CachingIterator;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\ProxyInterface;
+use Analogue\ORM\Relationships\Relationship;
 
 class CollectionProxy extends EntityCollection implements ProxyInterface
 {
@@ -73,16 +74,25 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
             return true;
         }
 
-        $relation = $this->relationshipMethod;
-        $entity = $this->parentEntity;
-
-        $entityMap = Manager::getMapper($entity)->getEntityMap();
-
-        $this->items = $entityMap->$relation($entity)->getResults($relation)->all() + $this->addedItems;
+        $this->items = $this->getRelationshipInstance()
+            ->getResults($this->relationshipMethod)->all() + $this->addedItems;
 
         $this->relationshipLoaded = true;
 
         return true;
+    }
+
+    /**
+     * Return instance of the underlying relationship
+     * 
+     * @return Relationship
+     */
+    protected function getRelationshipInstance() : Relationship
+    {
+        $relation = $this->relationshipMethod;
+        $entity = $this->parentEntity;
+        $entityMap = Manager::getMapper($entity)->getEntityMap();
+        return $entityMap->$relation($entity);
     }
 
     /**
@@ -1109,10 +1119,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function count()
     {
-        // TODO rely on QB if not initialized
-        $this->initializeProxy();
+        return $this->relationshipLoaded
+            ? parent::count()
+            : $this->countUsingDatabaseQuery();
+    }
 
-        return parent::count();
+    /**
+     * Do a count query and return the result
+     * 
+     * @return integer
+     */
+    protected function countUsingDatabaseQuery() : int
+    {
+        return $this->getRelationshipInstance()->count();
     }
 
     /**
