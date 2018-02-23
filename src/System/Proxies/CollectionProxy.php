@@ -207,7 +207,19 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->diff($items, $callback);
+        return $parent->diffUsing($items, $callback);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function diffAssocUsing($items, callable $callback)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->diffAssocUsing($items, $callback);
     }
 
     /**
@@ -220,6 +232,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $parent = $this->toBaseCollection();
 
         return $parent->diffKeys($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function diffKeysUsing($items, callable $callback)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->diffKeysUsing($items);
     }
 
     /**
