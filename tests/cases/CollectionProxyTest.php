@@ -1,8 +1,8 @@
 <?php
 
-
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Illuminate\Support\Collection;
+use TestApp\User;
 
 class CollectionProxyTest extends DomainTestCase
 {
@@ -58,6 +58,18 @@ class CollectionProxyTest extends DomainTestCase
     }
 
     /** @test */
+    public function we_can_do_a_count_operation_on_proxy_without_loading_it()
+    {
+        $id = $this->createRelatedSet(3);
+        $user = mapper(User::class)->find($id);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $this->assertEquals(3, $user->groups->count());
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $this->assertCount(3, $user->groups->all());
+        $this->assertTrue($user->groups->isProxyInitialized());
+    }
+
+    /** @test */
     public function we_can_push_to_a_collection_proxy_without_loading_it()
     {
     }
@@ -65,5 +77,27 @@ class CollectionProxyTest extends DomainTestCase
     /** @test */
     public function we_can_remove_from_a_lazy_collection_without_loading_it()
     {
+    }
+
+    /**
+     * Create a random related set.
+     *
+     * @return int
+     */
+    protected function createRelatedSet($relatedCount = 1)
+    {
+        $userId = $this->insertUser();
+        for ($x = 1; $x <= $relatedCount; $x++) {
+            $groupId = $this->rawInsert('groups', [
+                'id'   => $this->randId(),
+                'name' => $this->faker()->sentence,
+            ]);
+            $this->rawInsert('groups_users', [
+                'user_id'  => $userId,
+                'group_id' => $groupId,
+            ]);
+        }
+
+        return $userId;
     }
 }
