@@ -3,11 +3,11 @@
 namespace Analogue\ORM\System\Proxies;
 
 use Analogue\ORM\EntityCollection;
+use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Manager;
 use CachingIterator;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\ProxyInterface;
-use Analogue\ORM\Relationships\Relationship;
 
 class CollectionProxy extends EntityCollection implements ProxyInterface
 {
@@ -83,8 +83,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Return instance of the underlying relationship
-     * 
+     * Return instance of the underlying relationship.
+     *
      * @return Relationship
      */
     protected function getRelationshipInstance() : Relationship
@@ -92,6 +92,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $relation = $this->relationshipMethod;
         $entity = $this->parentEntity;
         $entityMap = Manager::getMapper($entity)->getEntityMap();
+
         return $entityMap->$relation($entity);
     }
 
@@ -208,7 +209,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return $parent->diff($items, $callback);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -1137,9 +1138,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     }
 
     /**
-     * Do a count query and return the result
-     * 
-     * @return integer
+     * Do a count query and return the result.
+     *
+     * @return int
      */
     protected function countUsingDatabaseQuery() : int
     {
