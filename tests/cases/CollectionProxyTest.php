@@ -79,7 +79,7 @@ class CollectionProxyTest extends DomainTestCase
     {
     }
 
-     /**
+    /**
      * Create a random related set.
      *
      * @return int
@@ -97,6 +97,7 @@ class CollectionProxyTest extends DomainTestCase
                 'group_id' => $groupId,
             ]);
         }
+
         return $userId;
     }
 }
