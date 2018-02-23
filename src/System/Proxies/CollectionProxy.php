@@ -200,6 +200,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
+    public function diffUsing($items, callable $callback)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->diff($items, $callback);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
     public function diffKeys($items)
     {
         $this->initializeProxy();
