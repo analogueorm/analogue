@@ -788,7 +788,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        switch(func_num_args()) {
+        switch (func_num_args()) {
             case 1:
                 return $parent->partition($callback);
             case 2:
@@ -1023,7 +1023,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        switch(func_num_args()) {
+        switch (func_num_args()) {
             case 1:
                 $parent->splice($offset);
             case 2:
