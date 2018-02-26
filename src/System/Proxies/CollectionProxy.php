@@ -173,7 +173,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->contains($key, $operator, $value);
+        switch (func_num_args()) {
+            case 1:
+                return $parent->contains($key);
+            case 2:
+                return $parent->contains($key, $operator);
+            case 3:
+                return $parent->contains($key, $operator, $value);
+        }
     }
 
     /**
@@ -183,7 +190,12 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     {
         $this->initializeProxy();
 
-        return parent::containsStrict($key, $value);
+        switch (func_num_args()) {
+            case 1:
+                return parent::containsStrict($key);
+            case 2:
+                return parent::containsStrict($key, $value);
+        }
     }
 
     /**
@@ -265,7 +277,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->every($key, $operator, $value);
+        switch (func_num_args()) {
+            case 1:
+                return $parent->every($key);
+            case 2:
+                return $parent->every($key, $operator);
+            case 3:
+                return $parent->every($key, $operator, $value);
+        }
     }
 
     /**
@@ -769,7 +788,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->partition($callback);
+        switch (func_num_args()) {
+            case 1:
+                return $parent->partition($callback);
+            case 2:
+                return $parent->partition($callback, $operator);
+            case 3:
+                return $parent->partition($callback, $operator, $value);
+        }
     }
 
     /**
@@ -848,7 +874,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function random($amount = 1)
+    public function random($amount = null)
     {
         // TODO : we could optimize this by only
         // fetching the keys from the database
@@ -997,7 +1023,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->splice($offset, $length, $replacement);
+        switch (func_num_args()) {
+            case 1:
+                $parent->splice($offset);
+            case 2:
+                $parent->splice($offset, $length);
+            case 3:
+                $parent->splice($offset, $length, $replacement);
+        }
     }
 
     /**
