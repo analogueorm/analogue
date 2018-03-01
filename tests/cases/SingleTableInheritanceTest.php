@@ -1,13 +1,23 @@
 <?php
 
 use TestApp\Car;
+use TestApp\Wheel;
 use TestApp\Vehicle;
+use TestApp\Maps\VehicleMap;
+use Analogue\ORM\EntityMap;
 
-class SingleTableInheritanceTest extends DomainTestCase
+class SingleTableInheritanceTest extends AnalogueTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
     /** @test */
     public function we_can_store_multiple_object_types_in_a_single_table()
     {
+        $this->analogue->register(TestApp\Vehicle::class, TestApp\Maps\VehicleMap::class);
+        $this->analogue->register(TestApp\Car::class, TestApp\Maps\CarMap::class);
         $vehicle = new Vehicle();
         $vehicle->name = 'base vehicle';
         $vehicleMapper = $this->mapper($vehicle);
@@ -29,6 +39,8 @@ class SingleTableInheritanceTest extends DomainTestCase
     /** @test */
     public function we_can_query_multiple_object_types_from_base_mapper()
     {
+        $this->analogue->register(TestApp\Vehicle::class, TestApp\Maps\VehicleMap::class);
+        $this->analogue->register(TestApp\Car::class, TestApp\Maps\CarMap::class);
         $this->rawInsert('vehicles', [
             'name' => 'car',
             'type' => 'car',
@@ -49,6 +61,8 @@ class SingleTableInheritanceTest extends DomainTestCase
     /** @test */
     public function inherited_mapper_only_return_discriminated_records()
     {
+        $this->analogue->register(TestApp\Vehicle::class, TestApp\Maps\VehicleMap::class);
+        $this->analogue->register(TestApp\Car::class, TestApp\Maps\CarMap::class);
         $this->rawInsert('vehicles', [
             'name' => 'car',
             'type' => 'car',
@@ -61,5 +75,41 @@ class SingleTableInheritanceTest extends DomainTestCase
         $carMapper = $this->mapper(Car::class);
         $results = $carMapper->get();
         $this->assertCount(1, $results);
+    }
+
+    /** @test */
+    public function we_can_eager_load_relationship_from_inherited_entities()
+    {
+        $this->analogue->register(TestApp\Vehicle::class, TestApp\Maps\VehicleMap::class);
+        $this->migrate('wheels', function ($table) {
+            $table->increments('id');
+            $table->integer('car_id');
+            $table->integer('number');
+        });
+        $this->analogue->register(Car::class, new class() extends VehicleMap {
+            public function bars(Car $car)
+            {
+                return $this->hasMany($car, Wheel::class);
+            }
+        });
+        $this->analogue->register(Wheel::class, new class() extends EntityMap {
+        });
+        $id = $this->rawInsert('vehicles', [
+            'name' => 'car',
+            'type' => 'car',
+        ]);
+        $this->assertDatabaseHas('vehicles', ['name' => 'car', 'id' => $id]);
+        for($x=1; $x<=4; $x++) {
+            $this->rawInsert('wheels', [
+                'car_id' => $id, 
+                'number' => $x,
+            ]);
+            $this->assertDatabaseHas('wheels', ['car_id' => $id, 'number' => $x]);
+        }
+
+        $this->assertCount(1, mapper(Vehicle::class)->with('wheels')->get());
+        
+
+
     }
 }

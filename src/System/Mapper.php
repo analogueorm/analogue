@@ -14,6 +14,7 @@ use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use Analogue\ORM\System\Builders\ResultBuilder;
 use InvalidArgumentException;
 
 /**

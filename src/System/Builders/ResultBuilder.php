@@ -1,9 +1,11 @@
 <?php
 
-namespace Analogue\ORM\System;
+namespace Analogue\ORM\System\Builders;
 
-use Analogue\ORM\Relationships\Relationship;
 use Closure;
+use Analogue\ORM\Relationships\Relationship;
+use Analogue\ORM\System\Mapper;
+use Analogue\ORM\System\Manager;
 
 class ResultBuilder
 {

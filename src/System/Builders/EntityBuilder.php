@@ -1,7 +1,8 @@
 <?php
 
-namespace Analogue\ORM\System;
+namespace Analogue\ORM\System\Builders;
 
+use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
 
 /**
