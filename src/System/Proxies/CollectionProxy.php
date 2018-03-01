@@ -1017,6 +1017,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
+    public function sortKeys($options = SORT_REGULAR, $descending = false)
+    {
+        $this->initializeProxy();
+
+        $parent = $this->toBaseCollection();
+
+        return $parent->sortKeys($options, $descending);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function splice($offset, $length = null, $replacement = [])
     {
         $this->initializeProxy();

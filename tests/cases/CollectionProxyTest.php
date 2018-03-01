@@ -32,6 +32,7 @@ class CollectionProxyTest extends DomainTestCase
             'mixin',
             'dd',
             'dump',
+            'sortKeysDesc',
         ];
 
         $collectionClass = new ReflectionClass(Collection::class);
