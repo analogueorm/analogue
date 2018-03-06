@@ -15,6 +15,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use Analogue\ORM\System\Builders\ResultBuilder;
+use Analogue\ORM\System\Builders\PolymorphicResultBuilder;
 use InvalidArgumentException;
 
 /**
@@ -130,7 +131,7 @@ class Mapper
      */
     public function map($results, array $eagerLoads = []) : Collection
     {
-        $builder = new ResultBuilder($this);
+        $builder = $this->newResultBuilder();
 
         if ($results instanceof Collection) {
             // Get underlying collection array
@@ -138,7 +139,7 @@ class Mapper
         }
 
         if (!is_array($results)) {
-            throw new InvalidArgumentException("'results' should be an array or collection.");
+            throw new InvalidArgumentException("Parameter 'results' should be an array or a collection.");
         }
 
         // First, we'll cast every single result to array
@@ -150,14 +151,24 @@ class Mapper
         // any DB specific value can be casted before hydration
         $results = $this->adapter->fromDatabase($results);
 
-        // Then, we'll cache every single results as raw attributes, before
-        // adding relationships, which will be cached when the relationship's
-        // query takes place.
-        //$this->getEntityCache()->add($results);
-
         $entities = $builder->build($results, $eagerLoads);
 
         return $this->entityMap->newCollection($entities);
+    }
+
+    /**
+     * Return result builder used by this mapper
+     * 
+     * @return ResultBuilder
+     */
+    protected function newResultBuilder() : ResultBuilder
+    {
+        switch ($this->entityMap->getInheritanceType()) {
+            case 'single_table':
+                return new PolymorphicResultBuilder($this);
+            default:
+                return new ResultBuilder($this);
+        }
     }
 
     /**

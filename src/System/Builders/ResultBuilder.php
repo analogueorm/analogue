@@ -53,7 +53,7 @@ class ResultBuilder
      * Convert a result set into an array of entities.
      *
      * @param array $results
-     * @param array $eagerLoads name of the relation to be eager loaded on the Entities
+     * @param array $eagerLoads name of the relation(s) to be eager loaded on the Entities
      *
      * @return array
      */
