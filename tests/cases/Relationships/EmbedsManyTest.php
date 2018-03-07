@@ -17,15 +17,8 @@ class EmbedsManyTest extends DomainTestCase
 
         $this->seeInDatabase('settings', [
             'options' => json_encode([
-                ['label' => 'test1', 'value' => 'value1']
+                ['label' => 'test1', 'value' => 'value1'],
             ]),
-        ]);
-
-        $mapper->clearCache();
-        $storedSettings = $mapper->first();
-
-        $this->assertEquals($storedSettings->options->toArray(), [
-            ['label' => 'test1', 'value' => 'value1']
         ]);
     }
 
@@ -35,13 +28,13 @@ class EmbedsManyTest extends DomainTestCase
         $this->analogue->register(Settings::class, SettingsMap::class);
         $id = $this->createSettingsRecord([
             'options' => json_encode([
-                ['label' => 'test1', 'value' => 'value1']
-            ])
+                ['label' => 'test1', 'value' => 'value1'],
+            ]),
         ]);
 
         $mapper = $this->mapper(Settings::class);
         $settings = $mapper->find($id);
-        $this->assertCount(1,$settings->options);
+        $this->assertCount(1, $settings->options);
         $option = $settings->options->first();
         $this->assertInstanceOf(Option::class, $option);
         $this->assertEquals('test1', $option->label);

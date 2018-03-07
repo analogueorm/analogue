@@ -39,7 +39,7 @@ abstract class EmbeddedRelationship
 
     /**
      * If set to true, embedded Object's attributes will
-     * be json encoded before storing to database
+     * be json encoded before storing to database.
      *
      * @var bool
      */

@@ -3,7 +3,6 @@
 use TestApp\Image;
 use TestApp\ImageSize;
 use TestApp\Maps\ImageMap;
-use TestApp\Maps\ImageMapArray;
 use TestApp\Maps\ImageMapCustomMap;
 use TestApp\Maps\ImageMapCustomPrefix;
 use TestApp\Maps\ImageMapJson;
@@ -89,7 +88,7 @@ class EmbedsOneTest extends DomainTestCase
         $mapper->store($image);
         $this->seeInDatabase('images', [
             'size' => json_encode([
-                'width' => 500,
+                'width'  => 500,
                 'height' => 500,
             ]),
         ]);
@@ -175,7 +174,7 @@ class EmbedsOneTest extends DomainTestCase
     {
         $this->analogue->register(Image::class, ImageMapJson::class);
         $id = $this->createImageRecord([
-            'size' => json_encode(['width' => 500, 'height' => 500])
+            'size' => json_encode(['width' => 500, 'height' => 500]),
         ]);
         $mapper = $this->mapper(Image::class);
         $image = $mapper->find($id);
