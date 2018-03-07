@@ -334,7 +334,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return $parent->where($key, $operator, $value);
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -423,7 +423,7 @@ class ObjectWrapper implements InternallyMappable
             $localKey = $localKey['id'];
         }
 
-        if (!isset($attributes[$localKey]) || is_null($attributes[$localKey]) ) {
+        if (!isset($attributes[$localKey]) || is_null($attributes[$localKey])) {
             return false;
         }
 
