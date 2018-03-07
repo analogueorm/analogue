@@ -334,6 +334,16 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         return $parent->where($key, $operator, $value);
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function whereInstanceOf($type)
+    {
+        $this->initializeProxy();
+
+        return parent::whereInstanceOf($type);
+    }
 
     /**
      * {@inheritdoc}
