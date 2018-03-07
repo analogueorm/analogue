@@ -46,7 +46,9 @@ class EmbedsMany extends EmbedsOne
 
         if (!array_key_exists($key, $attributes)) {
             $attributes[$key] = [];
-        } else {
+        }
+
+        if ($this->asJson) {
             $attributes[$key] = json_decode($attributes[$key], true);
         }
 
@@ -119,6 +121,10 @@ class EmbedsMany extends EmbedsOne
             $normalizedObjects[] = $wrapper->getEntityAttributes();
         }
 
-        return [$key => json_encode($normalizedObjects)];
+        if ($this->asJson) {
+            $normalizedObjects = json_encode($normalizedObjects);
+        }
+
+        return [$key => $normalizedObjects];
     }
 }
