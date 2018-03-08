@@ -45,7 +45,7 @@ class EmbedsMany extends EmbedsOne
         $key = $this->relation;
 
         if (!array_key_exists($key, $attributes)) {
-            $attributes[$key] = [];
+            $attributes[$key] = $this->asJson ? json_encode([]) : [];
         }
 
         if ($this->asJson) {
