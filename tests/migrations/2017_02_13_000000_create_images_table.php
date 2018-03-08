@@ -23,7 +23,7 @@ class CreateImagesTable extends Migration
             $table->integer('custom_height')->nullable();
             $table->integer('w')->nullable();
             $table->integer('h')->nullable();
-            //$table->json('size')->nullable();
+            $table->json('size')->nullable();
         });
     }
 

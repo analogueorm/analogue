@@ -48,6 +48,10 @@ class EmbedsMany extends EmbedsOne
             $attributes[$key] = [];
         }
 
+        if ($this->asJson) {
+            $attributes[$key] = json_decode($attributes[$key], true);
+        }
+
         if (!is_array($attributes[$key])) {
             throw new MappingException("'$key' column should be an array, actual :".$attributes[$key]);
         }
@@ -115,6 +119,10 @@ class EmbedsMany extends EmbedsOne
         foreach ($objects as $object) {
             $wrapper = $this->factory->make($object);
             $normalizedObjects[] = $wrapper->getEntityAttributes();
+        }
+
+        if ($this->asJson) {
+            $normalizedObjects = json_encode($normalizedObjects);
         }
 
         return [$key => $normalizedObjects];
