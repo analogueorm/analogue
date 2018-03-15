@@ -11,6 +11,7 @@ use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use ProxyManager\Proxy\ProxyInterface;
+use MongoDB\BSON\ObjectId;
 
 /**
  * This class is aimed to facilitate the handling of
@@ -375,7 +376,13 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityKeyValue()
     {
-        return $this->wrappedEntity->getEntityKeyValue();
+        $keyValue = $this->wrappedEntity->getEntityKeyValue();
+
+        if($keyValue instanceof ObjectId) {
+            $keyValue = (string) $keyValue;
+        }
+
+        return $keyValue;
     }
 
     /**
