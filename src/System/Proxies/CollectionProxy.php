@@ -26,8 +26,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     protected $pushedItems = [];
 
     /**
-     * Prepended items
-     * 
+     * Prepended items.
+     *
      * @var array
      */
     protected $prependedItems = [];
@@ -840,7 +840,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function prepend($value, $key = null)
     {
-        $key 
+        $key
             ? $this->prependedItems[$key] = $value
             : $this->prependedItems[] = $value;
 

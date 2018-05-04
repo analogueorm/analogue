@@ -2,8 +2,8 @@
 
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Illuminate\Support\Collection;
-use TestApp\User;
 use TestApp\Group;
+use TestApp\User;
 
 class CollectionProxyTest extends DomainTestCase
 {
@@ -77,19 +77,19 @@ class CollectionProxyTest extends DomainTestCase
         $id = $this->createRelatedSet(3);
         $user = mapper(User::class)->find($id);
         $this->assertFalse($user->groups->isProxyInitialized());
-        $group = new Group;
+        $group = new Group();
         $group->id = 666;
-        $group->name = "added-test";
+        $group->name = 'added-test';
         $user->groups->push($group);
         $this->assertFalse($user->groups->isProxyInitialized());
         $this->assertCount(1, $user->groups->getAddedItems());
         mapper(User::class)->store($user);
         $this->assertDatabaseHas('groups', [
-            'name' => "added-test",
+            'name' => 'added-test',
         ]);
         $this->assertDatabaseHas('groups_users', [
             'group_id' => 666,
-            'user_id' => $id,
+            'user_id'  => $id,
         ]);
     }
 
@@ -99,26 +99,25 @@ class CollectionProxyTest extends DomainTestCase
         $id = $this->createRelatedSet(3);
         $user = mapper(User::class)->find($id);
         $this->assertFalse($user->groups->isProxyInitialized());
-        $group = new Group;
+        $group = new Group();
         $group->id = 666;
-        $group->name = "added-test";
+        $group->name = 'added-test';
         $user->groups->prepend($group);
         $this->assertFalse($user->groups->isProxyInitialized());
         $this->assertCount(1, $user->groups->getAddedItems());
         mapper(User::class)->store($user);
         $this->assertDatabaseHas('groups', [
-            'name' => "added-test",
+            'name' => 'added-test',
         ]);
         $this->assertDatabaseHas('groups_users', [
             'group_id' => 666,
-            'user_id' => $id,
+            'user_id'  => $id,
         ]);
     }
 
     /** @test */
     public function we_can_remove_from_a_collection_proxy_without_loading_it()
     {
-
     }
 
     /**
