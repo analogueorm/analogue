@@ -284,7 +284,7 @@ class Aggregate implements InternallyMappable
         }
 
         $this->relationships[$relation] = $this->createSubAggregates($value, $relation);
-        
+
         return true;
     }
 
