@@ -87,7 +87,7 @@ class SingleTableInheritanceTest extends AnalogueTestCase
             $table->integer('number');
         });
         $this->analogue->register(Car::class, new class() extends VehicleMap {
-            public function bars(Car $car)
+            public function wheels(Car $car)
             {
                 return $this->hasMany($car, Wheel::class);
             }
@@ -106,10 +106,54 @@ class SingleTableInheritanceTest extends AnalogueTestCase
             ]);
             $this->assertDatabaseHas('wheels', ['car_id' => $id, 'number' => $x]);
         }
-
-        $this->assertCount(1, mapper(Vehicle::class)->with('wheels')->get());
+        $cars = mapper(Vehicle::class)->with('wheels')->get();
+        $this->assertCount(1, $cars);
+        $car = $cars->first();
+        $this->assertNotInstanceOf(\Analogue\ORM\System\Proxies\CollectionProxy::class, $car->wheels);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $car->wheels);
+        $this->assertCount(4, $car->wheels);
         
+    }
 
-
+    /** @test */
+    public function eager_loaded_relationship_from_inherited_entities_are_only_loaded_once()
+    {
+        $this->analogue->register(TestApp\Vehicle::class, TestApp\Maps\VehicleMap::class);
+        $this->migrate('wheels', function ($table) {
+            $table->increments('id');
+            $table->integer('car_id');
+            $table->integer('number');
+        });
+        $this->analogue->register(Car::class, new class() extends VehicleMap {
+            public function wheels(Car $car)
+            {
+                return $this->hasMany($car, Wheel::class);
+            }
+        });
+        $this->analogue->register(Wheel::class, new class() extends EntityMap {
+        });
+        
+        for($x=1; $x<=10; $x ++) {
+            $id = $this->rawInsert('vehicles', [
+                'name' => 'car',
+                'type' => 'car',
+            ]);
+            $this->assertDatabaseHas('vehicles', ['name' => 'car', 'id' => $id]);
+            for($y=1; $y<=4; $y++) {
+                $this->rawInsert('wheels', [
+                    'car_id' => $id, 
+                    'number' => $y,
+                ]);
+                $this->assertDatabaseHas('wheels', ['car_id' => $id, 'number' => $y]);
+            }
+        }
+        $cars = mapper(Vehicle::class)->with('wheels')->get();
+        $this->assertCount(10, $cars);
+        
+        foreach($cars as $car) {
+            $this->assertNotInstanceOf(\Analogue\ORM\System\Proxies\CollectionProxy::class, $car->wheels);
+            $this->assertInstanceOf(\Illuminate\Support\Collection::class, $car->wheels);
+            $this->assertCount(4, $car->wheels);
+        }
     }
 }
