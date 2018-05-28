@@ -2,10 +2,9 @@
 
 namespace Analogue\ORM\System\Builders;
 
-use Closure;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Mapper;
-use Analogue\ORM\System\Manager;
+use Closure;
 
 class ResultBuilder implements ResultBuilderInterface
 {
@@ -83,7 +82,7 @@ class ResultBuilder implements ResultBuilderInterface
     protected function cacheResults(array $results)
     {
         $mapper = $this->mapper;
-         // When hydrating EmbeddedValue object, they'll likely won't
+        // When hydrating EmbeddedValue object, they'll likely won't
         // have a primary key set.
         if (!is_null($mapper->getEntityMap()->getKeyName())) {
             $mapper->getEntityCache()->add($results);
@@ -197,7 +196,7 @@ class ResultBuilder implements ResultBuilderInterface
         foreach ($this->eagerLoads as $name => $constraints) {
             // First, we'll check if the entity map has a relation and just pass if it
             // is not the case
-            if(! in_array($name, $this->entityMap->getRelationships())) {
+            if (!in_array($name, $this->entityMap->getRelationships())) {
                 continue;
             }
 
@@ -306,7 +305,7 @@ class ResultBuilder implements ResultBuilderInterface
     }
 
     /**
-     * Build an entity from results
+     * Build an entity from results.
      *
      * @param array $results
      *

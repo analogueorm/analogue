@@ -8,14 +8,14 @@ use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Builders\ResultBuilderFactory;
+use Analogue\ORM\System\Builders\ResultBuilderInterface;
 use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Cache\InstanceCache;
 use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use Analogue\ORM\System\Builders\ResultBuilderInterface;
-use Analogue\ORM\System\Builders\ResultBuilderFactory;
 use InvalidArgumentException;
 
 /**
@@ -157,13 +157,13 @@ class Mapper
     }
 
     /**
-     * Return result builder used by this mapper
-     * 
+     * Return result builder used by this mapper.
+     *
      * @return ResultBuilder
      */
     protected function newResultBuilder() : ResultBuilderInterface
     {
-        $factory = new ResultBuilderFactory;
+        $factory = new ResultBuilderFactory();
 
         return $factory->make($this);
     }

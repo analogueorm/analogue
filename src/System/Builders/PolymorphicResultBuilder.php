@@ -2,10 +2,8 @@
 
 namespace Analogue\ORM\System\Builders;
 
-use Closure;
-use Analogue\ORM\Relationships\Relationship;
-use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
+use Analogue\ORM\System\Mapper;
 
 class PolymorphicResultBuilder implements ResultBuilderInterface
 {
@@ -17,8 +15,8 @@ class PolymorphicResultBuilder implements ResultBuilderInterface
     protected $defaultMapper;
 
     /**
-     * Reference to all mappers used in this result set
-     * 
+     * Reference to all mappers used in this result set.
+     *
      * @var array
      */
     protected $mappers = [];
@@ -68,34 +66,33 @@ class PolymorphicResultBuilder implements ResultBuilderInterface
     {
         // Make a list of all primary key of the current result set. This will
         // allow us to group all polymorphic operations by type, then put
-        // back every object in the intended order. 
+        // back every object in the intended order.
         $primaryKeyColumn = $this->entityMap->getKeyName();
-        $ids = array_map(function($row) use($primaryKeyColumn) {
+        $ids = array_map(function ($row) use ($primaryKeyColumn) {
             return $row[$primaryKeyColumn];
         }, $results);
 
         $results = array_combine($ids, $results);
 
-        // Make a list of types appearing within this result set. 
+        // Make a list of types appearing within this result set.
         $discriminatorColumn = $this->entityMap->getDiscriminatorColumn();
         $types = array_unique(array_pluck($results, $discriminatorColumn));
 
-        // We'll split the result set by type that will make it easier to deal 
-        // with.  
+        // We'll split the result set by type that will make it easier to deal
+        // with.
         $entities = [];
 
-        foreach($types as $type) {
-
+        foreach ($types as $type) {
             $this->mappers[$type] = $this->getMapperForType($type);
 
-            $resultsByType[$type] = array_filter($results, function(array $row) use($type, $discriminatorColumn) {
+            $resultsByType[$type] = array_filter($results, function (array $row) use ($type, $discriminatorColumn) {
                 return $row[$discriminatorColumn] === $type;
             });
 
             $entities = $entities + $this->buildResultsForType($resultsByType[$type], $type, $eagerLoads);
         }
-        
-        return array_map(function($id) use($entities) {
+
+        return array_map(function ($id) use ($entities) {
             return $entities[$id];
         }, $ids);
     }
@@ -103,7 +100,8 @@ class PolymorphicResultBuilder implements ResultBuilderInterface
     protected function buildResultsForType($results, $type, array $eagerLoads)
     {
         $builder = new ResultBuilder($this->mappers[$type]);
-        return $builder->build($results, $eagerLoads); 
+
+        return $builder->build($results, $eagerLoads);
     }
 
     protected function getMapperForType(string $type) : Mapper
