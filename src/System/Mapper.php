@@ -14,8 +14,8 @@ use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use Analogue\ORM\System\Builders\ResultBuilder;
-use Analogue\ORM\System\Builders\PolymorphicResultBuilder;
+use Analogue\ORM\System\Builders\ResultBuilderInterface;
+use Analogue\ORM\System\Builders\ResultBuilderFactory;
 use InvalidArgumentException;
 
 /**
@@ -161,14 +161,11 @@ class Mapper
      * 
      * @return ResultBuilder
      */
-    protected function newResultBuilder() : ResultBuilder
+    protected function newResultBuilder() : ResultBuilderInterface
     {
-        switch ($this->entityMap->getInheritanceType()) {
-            case 'single_table':
-                return new PolymorphicResultBuilder($this);
-            default:
-                return new ResultBuilder($this);
-        }
+        $factory = new ResultBuilderFactory;
+
+        return $factory->make($this);
     }
 
     /**

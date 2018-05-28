@@ -7,14 +7,14 @@ use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Manager;
 
-class ResultBuilder
+class ResultBuilder implements ResultBuilderInterface
 {
     /**
-     * The default mapper used to build entities with.
+     * The mapper used to build entities with.
      *
      * @var \Analogue\ORM\System\Mapper
      */
-    protected $defaultMapper;
+    protected $mapper;
 
     /**
      * Relations that will be eager loaded on this query.
@@ -41,12 +41,12 @@ class ResultBuilder
     /**
      * ResultBuilder constructor.
      *
-     * @param Mapper $defaultMapper
+     * @param Mapper $mapper
      */
-    public function __construct(Mapper $defaultMapper)
+    public function __construct(Mapper $mapper)
     {
-        $this->defaultMapper = $defaultMapper;
-        $this->entityMap = $defaultMapper->getEntityMap();
+        $this->mapper = $mapper;
+        $this->entityMap = $mapper->getEntityMap();
     }
 
     /**
@@ -70,17 +70,7 @@ class ResultBuilder
         // current result set to these loaded relationships.
         $results = $this->queryEagerLoadedRelationships($results, $eagerLoads);
 
-        // Note : Maybe we could use a PolymorphicResultBuilder, which would
-        // be shared by both STI and polymorphic relations, as they share the
-        // same process.
-
-        switch ($this->entityMap->getInheritanceType()) {
-            case 'single_table':
-                return $this->buildUsingSingleTableInheritance($results);
-
-            default:
-                return $this->buildWithDefaultMapper($results);
-        }
+        return $this->buildResultSet($results);
     }
 
     /**
@@ -92,40 +82,11 @@ class ResultBuilder
      */
     protected function cacheResults(array $results)
     {
-        switch ($this->entityMap->getInheritanceType()) {
-            case 'single_table':
-
-                $this->cacheSingleTableInheritanceResults($results);
-                break;
-
-            default:
-                $mapper = $this->defaultMapper;
-                 // When hydrating EmbeddedValue object, they'll likely won't
-                // have a primary key set.
-                if (!is_null($mapper->getEntityMap()->getKeyName())) {
-                    $mapper->getEntityCache()->add($results);
-                }
-                break;
-        }
-    }
-
-    /**
-     * Cache results from a STI result set.
-     *
-     * @param array $results
-     *
-     * @return void
-     */
-    protected function cacheSingleTableInheritanceResults(array $results)
-    {
-        foreach ($results as $result) {
-            $mapper = $this->getMapperForSingleRow($result);
-
-            // When hydrating EmbeddedValue object, they'll likely won't
-            // have a primary key set.
-            if (!is_null($mapper->getEntityMap()->getKeyName())) {
-                $mapper->getEntityCache()->add([$result]);
-            }
+        $mapper = $this->mapper;
+         // When hydrating EmbeddedValue object, they'll likely won't
+        // have a primary key set.
+        if (!is_null($mapper->getEntityMap()->getKeyName())) {
+            $mapper->getEntityCache()->add($results);
         }
     }
 
@@ -139,7 +100,7 @@ class ResultBuilder
     protected function buildEmbeddedRelationships(array $results) : array
     {
         $entityMap = $this->entityMap;
-        $instance = $this->defaultMapper->newInstance();
+        $instance = $this->mapper->newInstance();
         $embeddeds = $entityMap->getEmbeddedRelationships();
 
         foreach ($embeddeds as $embedded) {
@@ -234,6 +195,11 @@ class ResultBuilder
     public function eagerLoadRelations(array $results): array
     {
         foreach ($this->eagerLoads as $name => $constraints) {
+            // First, we'll check if the entity map has a relation and just pass if it
+            // is not the case
+            if(! in_array($name, $this->entityMap->getRelationships())) {
+                continue;
+            }
 
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
@@ -280,13 +246,13 @@ class ResultBuilder
      *
      * @return \Analogue\ORM\Relationships\Relationship
      */
-    public function getRelation(string $relation): Relationship
+    public function getRelation(string $relation) : Relationship
     {
         // We want to run a relationship query without any constrains so that we will
         // not have to remove these where clauses manually which gets really hacky
         // and is error prone while we remove the developer's own where clauses.
         $query = Relationship::noConstraints(function () use ($relation) {
-            return $this->entityMap->$relation($this->defaultMapper->newInstance());
+            return $this->entityMap->$relation($this->mapper->newInstance());
         });
 
         $nested = $this->nestedRelations($relation);
@@ -340,80 +306,18 @@ class ResultBuilder
     }
 
     /**
-     * Build an entity from results, using the default mapper on this builder.
-     * This is the default build plan when no table inheritance is being used.
+     * Build an entity from results
      *
      * @param array $results
      *
      * @return array
      */
-    protected function buildWithDefaultMapper(array $results): array
+    protected function buildResultSet(array $results): array
     {
-        $builder = new EntityBuilder($this->defaultMapper, array_keys($this->eagerLoads));
+        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
 
         return array_map(function ($item) use ($builder) {
             return $builder->build($item);
         }, $results);
-    }
-
-    /**
-     * Build an entity from results, using single table inheritance.
-     *
-     * @param array $results
-     *
-     * @return array
-     */
-    protected function buildUsingSingleTableInheritance(array $results): array
-    {
-        return array_map(function ($item) {
-            $builder = $this->builderForResult($item);
-
-            return $builder->build($item);
-        }, $results);
-    }
-
-    /**
-     * Given a result array, return the entity builder needed to correctly
-     * build the result into an entity. If no getDiscriminatorColumnMap property
-     * has been defined on the EntityMap, we'll assume that the value stored in
-     * the $type column is the fully qualified class name of the entity and
-     * we'll use it instead.
-     *
-     * @param array $result
-     *
-     * @return EntityBuilder
-     */
-    protected function builderForResult(array $result): EntityBuilder
-    {
-        $type = $result[$this->entityMap->getDiscriminatorColumn()];
-
-        $mapper = $this->getMapperForSingleRow($result);
-
-        if (!isset($this->builders[$type])) {
-            $this->builders[$type] = new EntityBuilder(
-                $mapper,
-                array_keys($this->eagerLoads)
-            );
-        }
-
-        return $this->builders[$type];
-    }
-
-    /**
-     * Get mapper corresponding to the result type.
-     *
-     * @param array $result
-     *
-     * @return Mapper
-     */
-    protected function getMapperForSingleRow(array $result) : Mapper
-    {
-        $type = $result[$this->entityMap->getDiscriminatorColumn()];
-
-        $columnMap = $this->entityMap->getDiscriminatorColumnMap();
-
-        $class = isset($columnMap[$type]) ? $columnMap[$type] : $type;
-
-        return Manager::getInstance()->mapper($class);
     }
 }
