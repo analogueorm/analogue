@@ -6,8 +6,7 @@ use Analogue\ORM\System\Mapper;
 
 class ResultBuilderFactory
 {
-
-    public function make(Mapper $mapper) : ResultBuilderInterface 
+    public function make(Mapper $mapper) : ResultBuilderInterface
     {
         switch ($mapper->getEntityMap()->getInheritanceType()) {
             case 'single_table':
@@ -16,6 +15,4 @@ class ResultBuilderFactory
                 return new ResultBuilder($mapper);
         }
     }
-
-
 }

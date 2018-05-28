@@ -2,8 +2,8 @@
 
 namespace Analogue\ORM\Relationships;
 
-use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Builders\ResultBuilder;
+use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 
 abstract class EmbeddedRelationship

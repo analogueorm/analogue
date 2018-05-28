@@ -1,10 +1,10 @@
 <?php
 
-use TestApp\Car;
-use TestApp\Wheel;
-use TestApp\Vehicle;
-use TestApp\Maps\VehicleMap;
 use Analogue\ORM\EntityMap;
+use TestApp\Car;
+use TestApp\Maps\VehicleMap;
+use TestApp\Vehicle;
+use TestApp\Wheel;
 
 class SingleTableInheritanceTest extends AnalogueTestCase
 {
@@ -99,9 +99,9 @@ class SingleTableInheritanceTest extends AnalogueTestCase
             'type' => 'car',
         ]);
         $this->assertDatabaseHas('vehicles', ['name' => 'car', 'id' => $id]);
-        for($x=1; $x<=4; $x++) {
+        for ($x = 1; $x <= 4; $x++) {
             $this->rawInsert('wheels', [
-                'car_id' => $id, 
+                'car_id' => $id,
                 'number' => $x,
             ]);
             $this->assertDatabaseHas('wheels', ['car_id' => $id, 'number' => $x]);
@@ -112,7 +112,6 @@ class SingleTableInheritanceTest extends AnalogueTestCase
         $this->assertNotInstanceOf(\Analogue\ORM\System\Proxies\CollectionProxy::class, $car->wheels);
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $car->wheels);
         $this->assertCount(4, $car->wheels);
-        
     }
 
     /** @test */
@@ -132,16 +131,16 @@ class SingleTableInheritanceTest extends AnalogueTestCase
         });
         $this->analogue->register(Wheel::class, new class() extends EntityMap {
         });
-        
-        for($x=1; $x<=10; $x ++) {
+
+        for ($x = 1; $x <= 10; $x++) {
             $id = $this->rawInsert('vehicles', [
                 'name' => 'car',
                 'type' => 'car',
             ]);
             $this->assertDatabaseHas('vehicles', ['name' => 'car', 'id' => $id]);
-            for($y=1; $y<=4; $y++) {
+            for ($y = 1; $y <= 4; $y++) {
                 $this->rawInsert('wheels', [
-                    'car_id' => $id, 
+                    'car_id' => $id,
                     'number' => $y,
                 ]);
                 $this->assertDatabaseHas('wheels', ['car_id' => $id, 'number' => $y]);
@@ -149,8 +148,8 @@ class SingleTableInheritanceTest extends AnalogueTestCase
         }
         $cars = mapper(Vehicle::class)->with('wheels')->get();
         $this->assertCount(10, $cars);
-        
-        foreach($cars as $car) {
+
+        foreach ($cars as $car) {
             $this->assertNotInstanceOf(\Analogue\ORM\System\Proxies\CollectionProxy::class, $car->wheels);
             $this->assertInstanceOf(\Illuminate\Support\Collection::class, $car->wheels);
             $this->assertCount(4, $car->wheels);
