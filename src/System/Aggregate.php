@@ -9,6 +9,7 @@ use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Collection;
+use MongoDB\BSON\ObjectId;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use ProxyManager\Proxy\ProxyInterface;
 
@@ -375,7 +376,13 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityKeyValue()
     {
-        return $this->wrappedEntity->getEntityKeyValue();
+        $keyValue = $this->wrappedEntity->getEntityKeyValue();
+
+        if ($keyValue instanceof ObjectId) {
+            $keyValue = (string) $keyValue;
+        }
+
+        return $keyValue;
     }
 
     /**

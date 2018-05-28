@@ -38,6 +38,14 @@ abstract class EmbeddedRelationship
     protected $asArray = false;
 
     /**
+     * If set to true, embedded Object's attributes will
+     * be json encoded before storing to database.
+     *
+     * @var bool
+     */
+    protected $asJson = false;
+
+    /**
      * Prefix on which the object's attributes are saved into
      * the parent's table. defaults to "<relatedClass>_".
      *
@@ -81,6 +89,20 @@ abstract class EmbeddedRelationship
         $this->asArray = $storeAsArray;
 
         return $this;
+    }
+
+    /**
+     * Switch the 'store as json' feature.
+     *
+     * @param bool $storeAsJson
+     *
+     * @return static
+     */
+    public function asJson(bool $storeAsJson = true)
+    {
+        $this->asJson = $storeAsJson;
+
+        return $this->asArray();
     }
 
     /**

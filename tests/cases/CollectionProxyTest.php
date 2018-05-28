@@ -2,6 +2,7 @@
 
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Illuminate\Support\Collection;
+use TestApp\Group;
 use TestApp\User;
 
 class CollectionProxyTest extends DomainTestCase
@@ -73,10 +74,49 @@ class CollectionProxyTest extends DomainTestCase
     /** @test */
     public function we_can_push_to_a_collection_proxy_without_loading_it()
     {
+        $id = $this->createRelatedSet(3);
+        $user = mapper(User::class)->find($id);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $group = new Group();
+        $group->id = 666;
+        $group->name = 'added-test';
+        $user->groups->push($group);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $this->assertCount(1, $user->groups->getAddedItems());
+        mapper(User::class)->store($user);
+        $this->assertDatabaseHas('groups', [
+            'name' => 'added-test',
+        ]);
+        $this->assertDatabaseHas('groups_users', [
+            'group_id' => 666,
+            'user_id'  => $id,
+        ]);
     }
 
     /** @test */
-    public function we_can_remove_from_a_lazy_collection_without_loading_it()
+    public function we_can_prepend_to_a_collection_proxy_without_loading_it()
+    {
+        $id = $this->createRelatedSet(3);
+        $user = mapper(User::class)->find($id);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $group = new Group();
+        $group->id = 666;
+        $group->name = 'added-test';
+        $user->groups->prepend($group);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $this->assertCount(1, $user->groups->getAddedItems());
+        mapper(User::class)->store($user);
+        $this->assertDatabaseHas('groups', [
+            'name' => 'added-test',
+        ]);
+        $this->assertDatabaseHas('groups_users', [
+            'group_id' => 666,
+            'user_id'  => $id,
+        ]);
+    }
+
+    /** @test */
+    public function we_can_remove_from_a_collection_proxy_without_loading_it()
     {
     }
 

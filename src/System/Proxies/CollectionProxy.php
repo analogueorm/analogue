@@ -19,11 +19,18 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     protected $relationshipLoaded = false;
 
     /**
-     * Added items.
+     * Pushed items.
      *
      * @var array
      */
-    protected $addedItems = [];
+    protected $pushedItems = [];
+
+    /**
+     * Prepended items.
+     *
+     * @var array
+     */
+    protected $prependedItems = [];
 
     /**
      * Parent entity.
@@ -60,7 +67,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function getAddedItems()
     {
-        return $this->addedItems;
+        return array_merge($this->prependedItems, $this->pushedItems);
     }
 
     /**
@@ -74,8 +81,8 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
             return true;
         }
 
-        $this->items = $this->getRelationshipInstance()
-            ->getResults($this->relationshipMethod)->all() + $this->addedItems;
+        $this->items = $this->prependedItems + $this->getRelationshipInstance()
+            ->getResults($this->relationshipMethod)->all() + $this->pushedItems;
 
         $this->relationshipLoaded = true;
 
@@ -333,6 +340,16 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         $parent = $this->toBaseCollection();
 
         return $parent->where($key, $operator, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whereInstanceOf($type)
+    {
+        $this->initializeProxy();
+
+        return parent::whereInstanceOf($type);
     }
 
     /**
@@ -823,13 +840,11 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function prepend($value, $key = null)
     {
-        // TODO : partial adding of values.
-        // we could have a $prepended , and $pushed arrays
-        // which we would combine at full initialization
+        $key
+            ? $this->prependedItems[$key] = $value
+            : $this->prependedItems[] = $value;
 
-        $this->initializeProxy();
-
-        return parent::prepend($value, $key);
+        return $this;
     }
 
     /**
@@ -837,13 +852,9 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function push($value)
     {
-        // TODO : partial adding of values.
-        // we could have a $prepended , and $pushed arrays
-        // which we would combine at full initialization
+        $this->pushedItems[] = $value;
 
-        $this->initializeProxy();
-
-        return parent::push($value);
+        return $this;
     }
 
     /**
