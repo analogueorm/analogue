@@ -110,7 +110,7 @@ class CollectionProxyTest extends DomainTestCase
         $this->assertCount(1, $user->groups->getAddedItems());
         $user->groups->initializeProxy();
         $this->assertTrue($user->groups->isProxyInitialized());
-        
+
         mapper(User::class)->store($user);
         $this->assertDatabaseHas('groups', [
             'name' => 'added-test',
@@ -185,7 +185,7 @@ class CollectionProxyTest extends DomainTestCase
     protected function createRelatedSet($relatedCount = 1)
     {
         $userId = $this->insertUser();
-        for ($x = 0; $x <= $relatedCount - 1 ; $x++) {
+        for ($x = 0; $x <= $relatedCount - 1; $x++) {
             $groupId = $this->rawInsert('groups', [
                 'id'   => $this->randId(),
                 'name' => $this->faker()->sentence,
