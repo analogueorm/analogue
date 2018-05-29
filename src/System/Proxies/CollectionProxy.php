@@ -840,11 +840,14 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function prepend($value, $key = null)
     {
-        $key
-            ? $this->prependedItems[$key] = $value
-            : $this->prependedItems[] = $value;
-
-        return $this;
+        if(! $this->relationshipLoaded) {
+            $key
+                ? $this->prependedItems[$key] = $value
+                : $this->prependedItems[] = $value;
+            return $this;
+        }
+        
+        return parent::prepend($value, $key);
     }
 
     /**
@@ -852,9 +855,12 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function push($value)
     {
-        $this->pushedItems[] = $value;
+        if(! $this->relationshipLoaded) {
+            $this->pushedItems[] = $value;
+            return $this;
+        }
 
-        return $this;
+        return parent::push($value);
     }
 
     /**

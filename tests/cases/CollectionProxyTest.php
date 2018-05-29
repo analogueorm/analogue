@@ -74,7 +74,7 @@ class CollectionProxyTest extends DomainTestCase
     /** @test */
     public function we_can_push_to_a_collection_proxy_without_loading_it()
     {
-        $id = $this->createRelatedSet(3);
+        $id = $this->createRelatedSet(0);
         $user = mapper(User::class)->find($id);
         $this->assertFalse($user->groups->isProxyInitialized());
         $group = new Group();
@@ -91,6 +91,63 @@ class CollectionProxyTest extends DomainTestCase
             'group_id' => 666,
             'user_id'  => $id,
         ]);
+        $this->clearCache();
+        $user = mapper(User::class)->find($user->id);
+        $this->assertEquals(666, $user->groups->first()->id);
+    }
+
+    /** @test */
+    public function pushed_items_are_stored_if_relationship_is_loaded_after_push()
+    {
+        $id = $this->createRelatedSet(0);
+        $user = mapper(User::class)->find($id);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $group = new Group();
+        $group->id = 666;
+        $group->name = 'added-test';
+        $user->groups->push($group);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $this->assertCount(1, $user->groups->getAddedItems());
+        $user->groups->initializeProxy();
+        $this->assertTrue($user->groups->isProxyInitialized());
+        
+        mapper(User::class)->store($user);
+        $this->assertDatabaseHas('groups', [
+            'name' => 'added-test',
+        ]);
+        $this->assertDatabaseHas('groups_users', [
+            'group_id' => 666,
+            'user_id'  => $id,
+        ]);
+        $this->clearCache();
+        $user = mapper(User::class)->find($user->id);
+        $this->assertEquals(666, $user->groups->first()->id);
+    }
+
+    /** @test */
+    public function pushed_items_are_stored_if_relationship_is_loaded_before_push()
+    {
+        $id = $this->createRelatedSet(0);
+        $user = mapper(User::class)->find($id);
+        $this->assertFalse($user->groups->isProxyInitialized());
+        $user->groups->initializeProxy();
+        $this->assertTrue($user->groups->isProxyInitialized());
+        $group = new Group();
+        $group->id = 666;
+        $group->name = 'added-test';
+        $user->groups->push($group);
+        $this->assertCount(0, $user->groups->getAddedItems());
+        mapper(User::class)->store($user);
+        $this->assertDatabaseHas('groups', [
+            'name' => 'added-test',
+        ]);
+        $this->assertDatabaseHas('groups_users', [
+            'group_id' => 666,
+            'user_id'  => $id,
+        ]);
+        $this->clearCache();
+        $user = mapper(User::class)->find($user->id);
+        $this->assertEquals(666, $user->groups->first()->id);
     }
 
     /** @test */
@@ -128,7 +185,7 @@ class CollectionProxyTest extends DomainTestCase
     protected function createRelatedSet($relatedCount = 1)
     {
         $userId = $this->insertUser();
-        for ($x = 1; $x <= $relatedCount; $x++) {
+        for ($x = 0; $x <= $relatedCount - 1 ; $x++) {
             $groupId = $this->rawInsert('groups', [
                 'id'   => $this->randId(),
                 'name' => $this->faker()->sentence,
