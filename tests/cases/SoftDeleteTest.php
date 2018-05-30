@@ -1,7 +1,7 @@
 <?php
 
-use TestApp\Stubs\Foo;
 use Analogue\ORM\EntityMap;
+use TestApp\Stubs\Foo;
 
 class SoftDeleteTest extends AnalogueTestCase
 {
@@ -15,14 +15,14 @@ class SoftDeleteTest extends AnalogueTestCase
         });
 
         $this->analogue->register(Foo::class, new class() extends EntityMap {
-            public $softDeletes = true; 
+            public $softDeletes = true;
         });
 
-        $foo = new Foo;
-        $foo->name = "Test";
+        $foo = new Foo();
+        $foo->name = 'Test';
         mapper($foo)->store($foo);
         $this->assertDatabaseHas('foos', [
-            'name' => "Test",
+            'name' => 'Test',
         ]);
         mapper($foo)->delete($foo);
 
@@ -35,6 +35,4 @@ class SoftDeleteTest extends AnalogueTestCase
         mapper($foo)->restore($foo);
         $this->assertNotNull(mapper($foo)->find($foo->id));
     }
-
-
 }

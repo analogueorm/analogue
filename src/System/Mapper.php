@@ -431,8 +431,8 @@ class Mapper
     }
 
     /**
-     * Add a custom object event to the mapper
-     * 
+     * Add a custom object event to the mapper.
+     *
      * @param string $name
      * @param string $class
      */

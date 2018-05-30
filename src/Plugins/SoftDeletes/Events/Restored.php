@@ -6,5 +6,4 @@ use Analogue\ORM\Events\Event;
 
 class Restored extends Event
 {
-
 }
