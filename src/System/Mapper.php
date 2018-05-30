@@ -431,6 +431,17 @@ class Mapper
     }
 
     /**
+     * Add a custom object event to the mapper
+     * 
+     * @param string $name
+     * @param string $class
+     */
+    public function addCustomEvent(string $name, string $class)
+    {
+        $this->events[$name] = $class;
+    }
+
+    /**
      * Add a global scope to this mapper query builder.
      *
      * @param ScopeInterface $scope

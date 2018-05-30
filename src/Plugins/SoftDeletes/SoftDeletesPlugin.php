@@ -5,6 +5,7 @@ namespace Analogue\ORM\Plugins\SoftDeletes;
 use Analogue\ORM\Plugins\AnaloguePlugin;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
+use Analogue\ORM\System\InternallyMappable;
 use Carbon\Carbon;
 
 /**
@@ -18,10 +19,8 @@ class SoftDeletesPlugin extends AnaloguePlugin
      */
     public function register()
     {
-        $host = $this;
-
         // Hook any mapper init and check the mapping include soft deletes.
-        $this->manager->registerGlobalEvent('initialized', function ($event, $payload = null) use ($host) {
+        $this->manager->registerGlobalEvent('initialized', function ($event, $payload = null) {
 
             // Cross Compatible Event handling with 5.3
             // TODO : find a replacement event handler
@@ -34,7 +33,11 @@ class SoftDeletesPlugin extends AnaloguePlugin
             $entityMap = $mapper->getEntityMap();
 
             if ($entityMap->usesSoftDeletes()) {
-                $host->registerSoftDelete($mapper);
+                $this->registerSoftDelete($mapper);
+
+                foreach($this->getCustomEvents() as $name => $class) {
+                    $mapper->addCustomEvent($name, $class);
+                }
             }
         });
     }
@@ -56,15 +59,11 @@ class SoftDeletesPlugin extends AnaloguePlugin
         // Add Scopes
         $mapper->addGlobalScope(new SoftDeletingScope());
 
-        $host = $this;
-
         // Register 'deleting' events
-        $mapper->registerEvent('deleting', function ($entity) use ($entityMap, $host) {
+        $mapper->registerEvent('deleting', function ($event) use ($entityMap) {
 
-            // Convert Entity into an EntityWrapper
-            $factory = new Factory();
-
-            $wrappedEntity = $factory->make($entity);
+            $entity = $event->entity;
+            $wrappedEntity = $this->getMappable($entity);
 
             $deletedAtField = $entityMap->getQualifiedDeletedAtColumn();
 
@@ -77,7 +76,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
             $wrappedEntity->setEntityAttribute($deletedAtField, $time);
 
             $plainObject = $wrappedEntity->getObject();
-            $host->manager->mapper(get_class($plainObject))->store($plainObject);
+            $this->manager->mapper(get_class($plainObject))->store($plainObject);
 
             return false;
         });
@@ -87,13 +86,32 @@ class SoftDeletesPlugin extends AnaloguePlugin
     }
 
     /**
+     * Return internally mappable if not mappable.
+     *
+     * @param mixed $entity
+     *
+     * @return InternallyMappable
+     */
+    protected function getMappable($entity) : InternallyMappable
+    {
+        if ($entity instanceof InternallyMappable) {
+            return $entity;
+        }
+
+        $factory = new Factory();
+        $wrappedEntity = $factory->make($entity);
+
+        return $wrappedEntity;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getCustomEvents(): array
+    public function getCustomEvents():  array
     {
         return [
-            'restoring',
-            'restored',
+            'restoring' => Events\Restoring::class,
+            'restored' => Events\Restored::class,
         ];
     }
 }
