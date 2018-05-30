@@ -140,27 +140,6 @@ class EntityCollection extends Collection
     }
 
     /**
-     * Determine if a key exists in the collection.
-     *
-     * @param mixed      $key
-     * @param mixed|null $value
-     *
-     * @return bool
-     */
-    // public function contains($key, $value = null)
-    // {
-    //     if (func_num_args() == 2) {
-    //         return !$this->where($key, $value)->isEmpty();
-    //     }
-
-    //     if ($this->useAsCallable($key)) {
-    //         return !is_null($this->first($key));
-    //     }
-
-    //     return !is_null($this->find($key));
-    // }
-
-    /**
      * Fetch a nested element of the collection.
      *
      * @param string $key
@@ -425,23 +404,6 @@ class EntityCollection extends Collection
     public function lists($value, $key = null)
     {
         return $this->pluck($value, $key);
-    }
-
-    /**
-     * Return only unique items from the collection.
-     *
-     * @param string|null $key
-     * @param bool        $strict
-     *
-     * @throws MappingException
-     *
-     * @return self
-     */
-    public function unique($key = null, $strict = false)
-    {
-        $dictionary = $this->getDictionary();
-
-        return new static(array_values($dictionary));
     }
 
     /**
