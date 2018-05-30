@@ -3,9 +3,9 @@
 namespace Analogue\ORM\Plugins\SoftDeletes;
 
 use Analogue\ORM\Plugins\AnaloguePlugin;
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
-use Analogue\ORM\System\InternallyMappable;
 use Carbon\Carbon;
 
 /**
@@ -35,7 +35,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
             if ($entityMap->usesSoftDeletes()) {
                 $this->registerSoftDelete($mapper);
 
-                foreach($this->getCustomEvents() as $name => $class) {
+                foreach ($this->getCustomEvents() as $name => $class) {
                     $mapper->addCustomEvent($name, $class);
                 }
             }
@@ -61,7 +61,6 @@ class SoftDeletesPlugin extends AnaloguePlugin
 
         // Register 'deleting' events
         $mapper->registerEvent('deleting', function ($event) use ($entityMap) {
-
             $entity = $event->entity;
             $wrappedEntity = $this->getMappable($entity);
 
@@ -111,7 +110,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
     {
         return [
             'restoring' => Events\Restoring::class,
-            'restored' => Events\Restored::class,
+            'restored'  => Events\Restored::class,
         ];
     }
 }
