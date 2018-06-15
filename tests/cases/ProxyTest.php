@@ -103,4 +103,35 @@ class ProxyTest extends AnalogueTestCase
         $this->assertInstanceof(Analogue\ORM\System\Proxies\CollectionProxy::class, $loadedFoo->bars);
         $this->assertEquals('ZYX', $loadedFoo->bars->first()->title);
     }
+
+    /** @test */
+    public function relationships_within_the_with_property_are_always_eager_loaded()
+    {
+        $this->migrate('foos', function ($table) {
+            $table->increments('id');
+            $table->string('title');
+        });
+        $this->migrate('bars', function ($table) {
+            $table->increments('id');
+            $table->integer('foo_id');
+            $table->string('title');
+        });
+        $this->analogue->register(Foo::class, new class() extends EntityMap {
+            protected $with = ['bars'];
+            public function bars(Foo $foo)
+            {
+                return $this->hasMany($foo, Bar::class, 'food_id', 'id');
+            }
+        });
+        $this->analogue->register(Bar::class, new class() extends EntityMap {
+        });
+        $foo = new Foo();
+        $foo->title = 'Test';
+        mapper($foo)->store($foo);
+        $this->clearCache();
+        $loadedFoo = mapper($foo)->find($foo->id);
+        $this->assertNotNull($loadedFoo);
+        $this->assertInstanceOf(Illuminate\Support\Collection::class, $loadedFoo->bars);
+        $this->assertNotInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $loadedFoo->bars);
+    }
 }
