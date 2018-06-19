@@ -313,10 +313,45 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function buildResultSet(array $results): array
     {
+        $keyName = $this->entityMap->getKeyName();
+
+        return $keyName
+            ? $this->buildKeyedResultSet($results, $keyName)
+            : $this->buildUnkeyedResultSet($results);
+    }
+
+    /**
+     * Build a result set 
+     * 
+     * @param  array  $results
+     * @return array
+     */
+    protected function buildUnkeyedResultSet(array $results) : array
+    {
         $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
 
         return array_map(function ($item) use ($builder) {
             return $builder->build($item);
         }, $results);
+    }
+
+    /**
+     * Build a result set keyed by PK
+     * 
+     * @param  array  $results
+     * @param  string. $primaryKey
+     * @return array
+     */
+    protected function buildKeyedResultSet(array $results, string $primaryKey) : array
+    {
+        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
+
+        $keys = array_map(function($item) use ($primaryKey) {
+            return $item[$primaryKey];
+        }, $results);
+
+        return array_combine($keys, array_map(function ($item) use ($builder) {
+            return $builder->build($item);
+        }, $results));
     }
 }
