@@ -321,9 +321,10 @@ class ResultBuilder implements ResultBuilderInterface
     }
 
     /**
-     * Build a result set 
-     * 
-     * @param  array  $results
+     * Build a result set.
+     *
+     * @param array $results
+     *
      * @return array
      */
     protected function buildUnkeyedResultSet(array $results) : array
@@ -336,17 +337,18 @@ class ResultBuilder implements ResultBuilderInterface
     }
 
     /**
-     * Build a result set keyed by PK
-     * 
-     * @param  array  $results
-     * @param  string. $primaryKey
+     * Build a result set keyed by PK.
+     *
+     * @param array   $results
+     * @param string. $primaryKey
+     *
      * @return array
      */
     protected function buildKeyedResultSet(array $results, string $primaryKey) : array
     {
         $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
 
-        $keys = array_map(function($item) use ($primaryKey) {
+        $keys = array_map(function ($item) use ($primaryKey) {
             return $item[$primaryKey];
         }, $results);
 
