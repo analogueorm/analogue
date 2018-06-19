@@ -105,7 +105,7 @@ class ProxyTest extends AnalogueTestCase
     }
 
     /** @test */
-    public function relationships_within_the_with_property_are_always_eager_loaded()
+    public function many_relationships_within_the_with_property_are_always_eager_loaded()
     {
         $this->migrate('foos', function ($table) {
             $table->increments('id');
@@ -133,5 +133,46 @@ class ProxyTest extends AnalogueTestCase
         $this->assertNotNull($loadedFoo);
         $this->assertInstanceOf(Illuminate\Support\Collection::class, $loadedFoo->bars);
         $this->assertNotInstanceOf(Analogue\ORM\System\Proxies\CollectionProxy::class, $loadedFoo->bars);
+    }
+
+    /** @test */
+    public function single_relationships_within_the_with_property_are_always_eager_loaded()
+    {
+        $this->migrate('foos', function ($table) {
+            $table->increments('id');
+            $table->string('title');
+        });
+        $this->migrate('bars', function ($table) {
+            $table->increments('id');
+            $table->integer('foo_id')->nullable();
+            $table->string('title');
+        });
+        $this->analogue->register(Foo::class, new class() extends EntityMap {
+           
+        });
+        $this->analogue->register(Bar::class, new class() extends EntityMap {
+            protected $with = ['foo'];
+            public function foo(Bar $bar)
+            {
+                return $this->belongsTo($bar, Foo::class);
+            }
+        });
+        $bar = new Bar();
+        $bar->title = 'Test';
+        $bar->foo = new Foo();
+        $bar->foo->title = "test";
+        mapper($bar)->store($bar);
+        $this->clearCache();
+        $loadedBar = mapper($bar)->find($bar->id);
+        $this->assertNotNull($loadedBar);
+        $this->assertInstanceOf(Foo::class, $loadedBar->foo);
+        $this->assertNotInstanceOf(\ProxyManager\Proxy\LazyLoadingInterface::class, $loadedBar->foo);
+        $bar = new Bar();
+        $bar->title = 'Test';
+        mapper($bar)->store($bar);
+        $this->clearCache();
+        $loadedBar = mapper($bar)->find($bar->id);
+        $this->assertNotNull($loadedBar);
+        $this->assertNull($loadedBar->foo);
     }
 }
