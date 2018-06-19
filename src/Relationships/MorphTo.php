@@ -76,7 +76,7 @@ class MorphTo extends BelongsTo
     {
         foreach ($results as $result) {
             if ($result[$this->morphType]) {
-                $this->dictionary[$result[$this->morphType]][$result[$this->foreignKey]] = $result;
+                $this->dictionary[$result[$this->morphType]][$result[$this->foreignKey]][] = $result;
             }
         }
     }
@@ -91,23 +91,11 @@ class MorphTo extends BelongsTo
      */
     public function match(array $results, $relation)
     {
-        return $results;
-    }
-
-    /**
-     * Get the results of the relationship.
-     *
-     * @throws \Analogue\ORM\Exceptions\MappingException
-     *
-     * @return EntityCollection
-     */
-    public function getEager()
-    {
         foreach (array_keys($this->dictionary) as $type) {
-            $this->matchToMorphParents($type, $this->getResultsByType($type));
+            $results = $this->matchToMorphParents($type, $this->getResultsByType($type), $results);
         }
-
-        return $this->entities;
+        
+        return $results;
     }
 
     /**
@@ -115,23 +103,32 @@ class MorphTo extends BelongsTo
      *
      * @param string           $type
      * @param EntityCollection $results
+     * @param  array  $parents
      *
-     * @return void
+     * @return array
      */
-    protected function matchToMorphParents($type, EntityCollection $results)
+    protected function matchToMorphParents($type, EntityCollection $results, array $parents)
     {
         $mapper = $this->relatedMapper->getManager()->mapper($type);
         $keyName = $mapper->getEntityMap()->getKeyName();
 
+        $keys = array_map(function($parent) use($keyName) {
+            return $parent[$keyName];
+        }, $parents);
+
+        $parents = array_combine($keys, $parents);
+        
         foreach ($results as $result) {
             $key = $result[$keyName];
-
+            
             if (isset($this->dictionary[$type][$key])) {
-                foreach ($this->dictionary[$type][$key] as $result) {
-                    $result[$this->relation] = $result;
+                foreach ($this->dictionary[$type][$key] as $parent) {
+                    $parents[$parent[$keyName]][$this->relation] = $result;
                 }
             }
         }
+
+        return array_values($parents);
     }
 
     /**
@@ -151,7 +148,7 @@ class MorphTo extends BelongsTo
 
         $query = $mapper->getQuery();
 
-        return $query->whereIn($key, $this->gatherKeysByType($type)->all())->get();
+        return $query->whereIn($key, array_keys($this->dictionary[$type]))->get();
     }
 
     /**
@@ -166,7 +163,7 @@ class MorphTo extends BelongsTo
         $foreign = $this->foreignKey;
 
         return BaseCollection::make($this->dictionary[$type])->map(function ($entities) use ($foreign) {
-            return head($entities)->{$foreign};
+            return head($entities)[$foreign];
         })->unique();
     }
 

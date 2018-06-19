@@ -120,7 +120,7 @@ class ResultBuilder implements ResultBuilderInterface
     protected function queryEagerLoadedRelationships(array $results, array $eagerLoads) : array
     {
         $this->eagerLoads = $this->parseRelations($eagerLoads);
-
+        
         return $this->eagerLoadRelations($results);
     }
 
@@ -196,6 +196,7 @@ class ResultBuilder implements ResultBuilderInterface
         foreach ($this->eagerLoads as $name => $constraints) {
             // First, we'll check if the entity map has a relation and just pass if it
             // is not the case
+            
             if (!in_array($name, $this->entityMap->getRelationships())) {
                 continue;
             }
@@ -234,7 +235,6 @@ class ResultBuilder implements ResultBuilderInterface
         // Once we have the results, we just match those back up to their parent models
         // using the relationship instance. Then we just return the finished arrays
         // of models which have been eagerly hydrated and are readied for return.
-
         return $relation->match($results, $name);
     }
 

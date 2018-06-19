@@ -29,13 +29,15 @@ class MorphToTest extends DomainTestCase
         $comment->commentable = $blog;
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
+        $this->clearCache();
         $loadedComment = $mapper->with('commentable')->whereId($comment->id)->first();
-
+        //dd($loadedComment);
         $this->assertInstanceOf(Blog::class, $loadedComment->commentable);
         $this->assertEquals($blog->id, $loadedComment->commentable->id);
         $this->assertNotInstanceOf(LazyLoadingInterface::class, $loadedComment->commentable);
     }
 
+    /** @test */
     public function relationship_can_be_lazy_loaded()
     {
         $comment = new Comment('Comment 1');
@@ -43,8 +45,8 @@ class MorphToTest extends DomainTestCase
         $comment->commentable = $blog;
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
-        $loadedComment = $mapper->with('commentable')->whereId($comment->id)->first();
-
+        $this->clearCache();
+        $loadedComment = $mapper->whereId($comment->id)->first();
         $this->assertInstanceOf(LazyLoadingInterface::class, $loadedComment->commentable);
         $this->assertInstanceOf(Blog::class, $loadedComment->commentable);
         $this->assertEquals($blog->id, $loadedComment->commentable->id);
@@ -56,6 +58,7 @@ class MorphToTest extends DomainTestCase
         $comment = new Comment('Comment 1');
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
+        $this->clearCache();
         $loadedComment = $mapper->with('commentable')->whereId($comment->id)->first();
         $this->assertNull($loadedComment->commentable);
     }
@@ -69,6 +72,7 @@ class MorphToTest extends DomainTestCase
         $comment->commentable = $blog;
         $mapper = $this->mapper($comment);
         $mapper->store($comment);
+
         $this->seeInDatabase('blogs', [
             'id'    => $blog->id,
             'title' => 'New Title',
