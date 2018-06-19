@@ -120,7 +120,7 @@ class ResultBuilder implements ResultBuilderInterface
     protected function queryEagerLoadedRelationships(array $results, array $eagerLoads) : array
     {
         $this->eagerLoads = $this->parseRelations($eagerLoads);
-        
+
         return $this->eagerLoadRelations($results);
     }
 
@@ -196,7 +196,7 @@ class ResultBuilder implements ResultBuilderInterface
         foreach ($this->eagerLoads as $name => $constraints) {
             // First, we'll check if the entity map has a relation and just pass if it
             // is not the case
-            
+
             if (!in_array($name, $this->entityMap->getRelationships())) {
                 continue;
             }
