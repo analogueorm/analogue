@@ -2,8 +2,6 @@
 
 use Illuminate\Contracts\Cache\Repository;
 use TestApp\User;
-use TestApp\Foo;
-use TestApp\Bar;
 
 class EntityMapTest extends AnalogueTestCase
 {
@@ -29,5 +27,4 @@ class EntityMapTest extends AnalogueTestCase
         $cache = $this->app->make(Repository::class);
         $this->assertTrue($cache->has(User::class));
     }
-
 }

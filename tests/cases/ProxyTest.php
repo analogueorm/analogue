@@ -118,6 +118,7 @@ class ProxyTest extends AnalogueTestCase
         });
         $this->analogue->register(Foo::class, new class() extends EntityMap {
             protected $with = ['bars'];
+
             public function bars(Foo $foo)
             {
                 return $this->hasMany($foo, Bar::class, 'food_id', 'id');
@@ -148,10 +149,10 @@ class ProxyTest extends AnalogueTestCase
             $table->string('title');
         });
         $this->analogue->register(Foo::class, new class() extends EntityMap {
-           
         });
         $this->analogue->register(Bar::class, new class() extends EntityMap {
             protected $with = ['foo'];
+
             public function foo(Bar $bar)
             {
                 return $this->belongsTo($bar, Foo::class);
@@ -160,7 +161,7 @@ class ProxyTest extends AnalogueTestCase
         $bar = new Bar();
         $bar->title = 'Test';
         $bar->foo = new Foo();
-        $bar->foo->title = "test";
+        $bar->foo->title = 'test';
         mapper($bar)->store($bar);
         $this->clearCache();
         $loadedBar = mapper($bar)->find($bar->id);

@@ -94,7 +94,7 @@ class MorphTo extends BelongsTo
         foreach (array_keys($this->dictionary) as $type) {
             $results = $this->matchToMorphParents($type, $this->getResultsByType($type), $results);
         }
-        
+
         return $results;
     }
 
@@ -103,7 +103,7 @@ class MorphTo extends BelongsTo
      *
      * @param string           $type
      * @param EntityCollection $results
-     * @param  array  $parents
+     * @param array            $parents
      *
      * @return array
      */
@@ -112,15 +112,15 @@ class MorphTo extends BelongsTo
         $mapper = $this->relatedMapper->getManager()->mapper($type);
         $keyName = $mapper->getEntityMap()->getKeyName();
 
-        $keys = array_map(function($parent) use($keyName) {
+        $keys = array_map(function ($parent) use ($keyName) {
             return $parent[$keyName];
         }, $parents);
 
         $parents = array_combine($keys, $parents);
-        
+
         foreach ($results as $result) {
             $key = $result[$keyName];
-            
+
             if (isset($this->dictionary[$type][$key])) {
                 foreach ($this->dictionary[$type][$key] as $parent) {
                     $parents[$parent[$keyName]][$this->relation] = $result;
