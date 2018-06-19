@@ -524,7 +524,7 @@ class Query
         if (is_string($relations)) {
             $relations = func_get_args();
         }
-        
+
         $this->eagerLoad = array_merge($this->eagerLoad, $relations);
 
         return $this;
@@ -572,7 +572,7 @@ class Query
 
         // Run the query
         $results = $this->query->get($columns);
-        
+
         // Pass result set to the mapper and return the EntityCollection
         return $this->mapper->map($results, $this->getEagerLoads());
     }
