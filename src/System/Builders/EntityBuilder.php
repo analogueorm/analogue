@@ -2,6 +2,7 @@
 
 namespace Analogue\ORM\System\Builders;
 
+use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
 
@@ -44,12 +45,18 @@ class EntityBuilder
     protected $factory;
 
     /**
+     * @var bool
+     */
+    protected $useCache;
+
+    /**
      * EntityBuilder constructor.
      *
      * @param Mapper $mapper
      * @param array  $eagerLoads
+     * @param bool   $useCache
      */
-    public function __construct(Mapper $mapper, array $eagerLoads)
+    public function __construct(Mapper $mapper, array $eagerLoads, bool $useCache = false)
     {
         $this->mapper = $mapper;
 
@@ -58,6 +65,8 @@ class EntityBuilder
         $this->eagerLoads = $eagerLoads;
 
         $this->factory = new Factory();
+
+        $this->useCache = $useCache;
     }
 
     /**
@@ -65,13 +74,13 @@ class EntityBuilder
      *
      * @param array $attributes
      *
-     * @return array
+     * @return mixed
      */
     public function build(array $attributes)
     {
         // If the object we are building is a value object,
         // we won't be using the instance cache.
-        if ($this->entityMap->getKeyName() === null) {
+        if (!$this->useCache || $this->entityMap->getKeyName() === null) {
             return $this->buildEntity($attributes);
         }
 

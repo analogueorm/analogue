@@ -217,7 +217,7 @@ abstract class EmbeddedRelationship
      */
     protected function buildEmbeddedObject(array $attributes)
     {
-        $resultBuilder = new ResultBuilder($this->getRelatedMapper());
+        $resultBuilder = new ResultBuilder($this->getRelatedMapper(), true);
 
         // TODO : find a way to support eager load within an embedded
         // object.

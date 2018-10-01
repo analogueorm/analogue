@@ -6,6 +6,7 @@ use Analogue\ORM\EntityCollection;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 
 class HasManyThrough extends Relationship
 {
@@ -217,7 +218,7 @@ class HasManyThrough extends Relationship
      *
      * @return EntityCollection
      */
-    public function get($columns = ['*'])
+    public function get($columns = ['*']): Collection
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot

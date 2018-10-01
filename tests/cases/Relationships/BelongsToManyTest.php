@@ -32,14 +32,33 @@ class BelongsToManyTest extends DomainTestCase
     }
 
     /** @test */
-    public function we_can_retrieve_a_many_to_many_relationship()
+    public function we_can_retrieve_a_one_belongs_to_many_relationship()
     {
+        // One user belonging to many groups
         $userId = $this->createRelatedSet(3);
         $mapper = $this->mapper(User::class);
         $user = $mapper->find($userId);
         $this->assertCount(3, $user->groups);
         foreach ($user->groups as $group) {
             $this->assertInstanceOf(Group::class, $group);
+        }
+    }
+
+    /** @test */
+    public function we_can_retrieve_a_many_belongs_to_many_relationship()
+    {
+        // Many users belonging to many groups
+        $userIdsToGroupIds = $this->createRelatedSets(3, 3);
+
+        // Test that the relationships we've set up load appropriately
+        $mapper = $this->mapper(User::class);
+        foreach ($userIdsToGroupIds as $userId => $groupIds) {
+            $user = $mapper->find($userId);
+            $this->assertCount(count($groupIds), $user->groups);
+            foreach ($user->groups as $group) {
+                $this->assertContains($group->id, $groupIds);
+                $this->assertInstanceOf(Group::class, $group);
+            }
         }
     }
 
@@ -229,7 +248,7 @@ class BelongsToManyTest extends DomainTestCase
     }
 
     /** @test */
-    public function belongs_to_many_relationship_can_be_eager_loaded()
+    public function one_belongs_to_many_relationship_can_be_eager_loaded()
     {
         $database = $this->app->make('db');
         $userId = $this->createRelatedSet(1);
@@ -239,6 +258,29 @@ class BelongsToManyTest extends DomainTestCase
         $this->assertCount(1, $user->groups);
         $this->assertInstanceOf(EntityCollection::class, $user->groups);
         $this->assertNotInstanceOf(ProxyInterface::class, $user->groups);
+    }
+
+    /** @test */
+    public function many_belongs_to_many_relationship_can_be_eager_loaded()
+    {
+        // Create many users belonging to many groups
+        $userIdsToGroupIds = $this->createRelatedSets(2, 2);
+
+        // Test that the relationships we've set up are eager loaded appropriately
+        $mapper = $this->mapper(User::class);
+
+        $users = $mapper->with('groups')->get();
+
+        foreach ($users as $user) {
+            $groupIds = $userIdsToGroupIds[$user->id];
+            $this->assertNotInstanceOf(ProxyInterface::class, $user->groups);
+            $this->assertInstanceOf(EntityCollection::class, $user->groups);
+            $this->assertCount(count($groupIds), $user->groups);
+            foreach ($user->groups as $group) {
+                $this->assertContains($group->id, $groupIds);
+                $this->assertInstanceOf(Group::class, $group);
+            }
+        }
     }
 
     /** @test */
@@ -299,6 +341,8 @@ class BelongsToManyTest extends DomainTestCase
     /**
      * Create a random related set.
      *
+     * @param int $relatedCount
+     *
      * @return int
      */
     protected function createRelatedSet($relatedCount = 1)
@@ -316,5 +360,52 @@ class BelongsToManyTest extends DomainTestCase
         }
 
         return $userId;
+    }
+
+    /**
+     * Create two randomly related sets.
+     *
+     * @param int $rootCount    [optional] The number of root entities to create. Defaults to 3.
+     * @param int $relatedCount [optional] The number of related entities to create. Defaults to 3.
+     *
+     * @return array [userId => [groupId, groupId, ...], ...] A map of root entity IDs as keys to a list of related entity IDs as values
+     */
+    protected function createRelatedSets($rootCount = 3, $relatedCount = 3)
+    {
+        $userIds = [];
+        $groupIds = [];
+        $userIdsToGroupIds = [];
+
+        // Create users
+        for ($i = 0; $i < $rootCount; $i++) {
+            $userIds[] = $this->insertUser();
+        }
+
+        // Create groups
+        for ($i = 0; $i < $relatedCount; $i++) {
+            $groupIds[] = $this->insertGroup();
+        }
+
+        // Relate each user to every group
+        for ($i = 0; $i < $rootCount; $i++) {
+            $userId = $userIds[$i];
+
+            for ($j = 0; $j < $relatedCount; $j++) {
+                $groupId = $groupIds[$j];
+
+                $this->rawInsert('groups_users', [
+                    'user_id'  => $userId,
+                    'group_id' => $groupId,
+                ]);
+
+                if (empty($userIdsToGroupIds[$userId])) {
+                    $userIdsToGroupIds[$userId] = [];
+                }
+
+                $userIdsToGroupIds[$userId][] = $groupId;
+            }
+        }
+
+        return $userIdsToGroupIds;
     }
 }
