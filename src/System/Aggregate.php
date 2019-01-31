@@ -577,6 +577,8 @@ class Aggregate implements InternallyMappable
             $attributes = $this->addDiscriminatorColumn($attributes);
         }
 
+        $attributes = $this->entityMap->getColumnNamesFromAttributes($attributes);
+
         $attributes = $this->flattenEmbeddables($attributes);
 
         $foreignKeys = $this->getForeignKeyAttributes();
@@ -598,7 +600,6 @@ class Aggregate implements InternallyMappable
         $cachedAttributes = $this->getCachedRawAttributes();
 
         foreach ($foreignKeys as $fkAttributeKey => $fkAttributeValue) {
-
             // FK doesn't exist in attributes => we set it
             if (!array_key_exists($fkAttributeKey, $attributes)) {
                 $attributes[$fkAttributeKey] = $fkAttributeValue;
@@ -619,9 +620,7 @@ class Aggregate implements InternallyMappable
                 // attribute is different than cached value, we use it
                 if ($attributes[$fkAttributeKey] !== $cachedAttributes[$fkAttributeKey]) {
                     continue;
-                }
-                // if not, we use the foreign key value
-                else {
+                } else { // if not, we use the foreign key value
                     $attributes[$fkAttributeKey] = $fkAttributeValue;
                 }
             } else {
@@ -647,7 +646,6 @@ class Aggregate implements InternallyMappable
         $entityClass = $this->entityMap->getClass();
 
         if (!array_key_exists($discriminatorColumn, $attributes)) {
-
             // Use key if present in discriminatorMap
             $map = $this->entityMap->getDiscriminatorColumnMap();
 
@@ -686,6 +684,9 @@ class Aggregate implements InternallyMappable
             // TODO Make wrapper object compatible with value objects
             $valueObjectAttributes = $valueObject->getEntityAttributes();
 
+            $voMap = $this->getMapper()->getManager()->getValueMap($embed);
+            $valueObjectAttributes = $voMap->getColumnNamesFromAttributes($valueObjectAttributes);
+
             // Now (if setup in the entity map) we prefix the value object's
             // attributes with the snake_case name of the embedded class.
             $prefix = snake_case(class_basename($embed));
@@ -705,7 +706,6 @@ class Aggregate implements InternallyMappable
         $embeddedRelations = $this->entityMap->getEmbeddedRelationships();
 
         foreach ($embeddedRelations as $relation) {
-
             // Spawn a new instance we can pass to the relationship method
             $parentInstance = $this->getMapper()->newInstance();
             $relationInstance = $this->entityMap->$relation($parentInstance);
@@ -766,7 +766,6 @@ class Aggregate implements InternallyMappable
         $foreignKeys = [];
 
         foreach ($this->entityMap->getLocalRelationships() as $relation) {
-
             // If the actual relationship is a non-loaded proxy, we'll simply retrieve
             // the foreign key pair without parsing the actual object. This will allow
             // user to modify the actual related ID's directly by updating the corresponding
@@ -879,8 +878,7 @@ class Aggregate implements InternallyMappable
         // methods on the parent entity map
         $parentRelation = $this->parentRelationship;
 
-        if (
-            in_array($parentRelation, $parentForeignRelations) &&
+        if (in_array($parentRelation, $parentForeignRelations) &&
             !in_array($parentRelation, $parentPivotRelations)
         ) {
             $parentObject = $this->parent->getEntityObject();

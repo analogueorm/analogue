@@ -5,11 +5,11 @@ namespace Analogue\ORM\System;
 use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\EntityCollection;
 use Analogue\ORM\Exceptions\EntityNotFoundException;
+use Analogue\ORM\LengthAwareEntityPaginator;
 use Analogue\ORM\Relationships\Relationship;
 use Closure;
 use Exception;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
@@ -260,7 +260,7 @@ class Query
      * @param int   $perPage
      * @param array $columns
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwareEntityPaginator
      */
     public function paginate($perPage = null, $columns = ['*'])
     {
@@ -271,7 +271,7 @@ class Query
             $perPage = $perPage ?: $this->entityMap->getPerPage()
         );
 
-        return new LengthAwarePaginator($this->get($columns)->all(), $total, $perPage, $page, [
+        return new LengthAwareEntityPaginator($this->get($columns)->all(), $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
         ]);
     }
@@ -481,7 +481,8 @@ class Query
         $relationQuery = $relation->getBaseQuery();
 
         $hasQuery->mergeWheres(
-            $relationQuery->wheres, $relationQuery->getBindings()
+            $relationQuery->wheres,
+            $relationQuery->getBindings()
         );
 
         $this->query->mergeBindings($hasQuery->getQuery());
@@ -568,7 +569,9 @@ class Query
         // As we need the primary key to feed the
         // entity cache, we need it loaded on each
         // request
-        $columns = $this->enforceIdColumn($columns);
+        if ($columns !== ['*']) {
+            $columns = $this->enforceIdColumn($columns);
+        }
 
         // Run the query
         $results = $this->query->get($columns);

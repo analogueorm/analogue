@@ -1057,10 +1057,13 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
         switch (func_num_args()) {
             case 1:
                 $parent->splice($offset);
+                break;
             case 2:
                 $parent->splice($offset, $length);
+                break;
             case 3:
                 $parent->splice($offset, $length, $replacement);
+                break;
         }
     }
 

@@ -293,6 +293,14 @@ class EntityMap
     private $isBooted = false;
 
     /**
+     * Set this property to true if you wish to use camel case
+     * properties.
+     *
+     * @var bool
+     */
+    protected $camelCaseHydratation = false;
+
+    /**
      * Return Domain class attributes, useful when mapping to a Plain PHP Object.
      *
      * @return array
@@ -1223,21 +1231,29 @@ class EntityMap
 
         if (is_null($class = $wrapper->getEntityAttribute($type))) {
             return new MorphTo(
-                $mapper, $entity, $id, null, $type, $name
+                $mapper,
+                $entity,
+                $id,
+                null,
+                $type,
+                $name
             );
-        }
-
-        // If we are not eager loading the relationship we will essentially treat this
-        // as a belongs-to style relationship since morph-to extends that class and
-        // we will pass in the appropriate values so that it behaves as expected.
-        else {
+        } else {
+            // If we are not eager loading the relationship we will essentially treat this
+            // as a belongs-to style relationship since morph-to extends that class and
+            // we will pass in the appropriate values so that it behaves as expected.
             $class = Manager::getInstance()->getInverseMorphMap($class);
             $relatedMapper = Manager::getInstance()->mapper($class);
 
             $foreignKey = $relatedMapper->getEntityMap()->getKeyName();
 
             return new MorphTo(
-                $relatedMapper, $entity, $id, $foreignKey, $type, $name
+                $relatedMapper,
+                $entity,
+                $id,
+                $foreignKey,
+                $type,
+                $name
             );
         }
     }
@@ -1556,7 +1572,10 @@ class EntityMap
      */
     public function newCollection(array $entities = []): EntityCollection
     {
-        return new EntityCollection($entities);
+        $collection = new EntityCollection($entities);
+        $keyName = $this->getAttributeNameForColumn($this->getKeyName());
+
+        return $collection->keyBy($keyName);
     }
 
     /**
@@ -1703,5 +1722,97 @@ class EntityMap
         $parameters[] = $this;
 
         return  call_user_func_array($this->dynamicRelationships[$method], $parameters);
+    }
+
+    /**
+     * Maps the names of the column names to the appropriate attributes
+     * of an entity if the $attributes property of an EntityMap is an
+     * associative array.
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    public function getAttributeNamesFromColumns($array)
+    {
+        if (!empty($this->mappings)) {
+            $newArray = [];
+            foreach ($array as $key => $value) {
+                $attributeName = isset($this->mappings[$key]) ? $this->mappings[$key] : $key;
+                $newArray[$attributeName] = $value;
+            }
+
+            return $newArray;
+        }
+        if ($this->camelCaseHydratation) {
+            foreach ($array as $key => $value) {
+                $attributeName = camel_case($key);
+                $newArray[$attributeName] = $value;
+            }
+
+            return $newArray;
+        }
+
+        return $array;
+    }
+
+    /**
+     * Gets the entity attribute name of a given column in a table.
+     *
+     * @param string $columnName
+     *
+     * @return string
+     */
+    public function getAttributeNameForColumn($columnName)
+    {
+        if (!empty($this->mappings)) {
+            if (isset($this->mappings[$columnName])) {
+                return $this->mappings[$columnName];
+            }
+        }
+
+        return $columnName;
+    }
+
+    /**
+     * Maps the attribute names of an entity to the appropriate
+     * column names in the database if the $attributes property of
+     * an EntityMap is an associative array.
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    public function getColumnNamesFromAttributes($array)
+    {
+        if (!empty($this->mappings)) {
+            $newArray = [];
+            $flipped = array_flip($this->mappings);
+            foreach ($array as $key => $value) {
+                $attributeName = isset($flipped[$key]) ? $flipped[$key] : $key;
+                $newArray[$attributeName] = $value;
+            }
+
+            return $newArray;
+        }
+        if ($this->camelCaseHydratation) {
+            foreach ($array as $key => $value) {
+                $attributeName = snake_case($key);
+                $newArray[$attributeName] = $value;
+            }
+
+            return $newArray;
+        }
+
+        return $array;
+    }
+
+    public function hasAttribute($attribute)
+    {
+        if (!empty($this->mappings)) {
+            return in_array($attribute, array_values($this->mappings));
+        }
+
+        return in_array($attribute, $attributes);
     }
 }
