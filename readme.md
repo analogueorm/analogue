@@ -1,3 +1,5 @@
+(this project is looking for a new maintainer)
+
 # Analogue ORM 
 [![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
 [![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
