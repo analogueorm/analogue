@@ -13,6 +13,10 @@ class UserMap extends EntityMap
 {
     public $timestamps = true;
 
+    protected $mappings = [
+        'remember_token' => 'rememberToken',
+    ];
+
     protected $embeddables = ['identity' => Identity::class];
 
     public function blog(User $user)

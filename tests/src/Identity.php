@@ -8,7 +8,7 @@ class Identity extends ValueObject
 {
     public function __construct($firstname, $lastname)
     {
-        $this->firstname = $firstname;
+        $this->fname = $firstname;
         $this->lastname = $lastname;
     }
 }
