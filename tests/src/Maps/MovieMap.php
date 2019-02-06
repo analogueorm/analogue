@@ -14,6 +14,8 @@ class MovieMap extends EntityMap
         'realisator',
     ];
 
+    protected $camelCaseHydratation = true;
+
     protected $arrayName = null;
 
     public function realisator(Movie $movie)

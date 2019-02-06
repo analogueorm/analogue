@@ -1,3 +1,5 @@
+(this project is looking for a new maintainer)
+
 # Analogue ORM 
 [![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
 [![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
@@ -122,6 +124,8 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 
 #### Version 5.6
 - Laravel 5.6 support
+- Bring back ability to map DB columns that name are not equals to the name of the attribute.
+- Add ability to map DB snake case columns to camel case properties on entities.
 
 #### Version 5.5
 - Laravel 5.5 support
@@ -136,7 +140,7 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 
 #### Version 5.4
 - Illuminate 5.4 Compatibility.
-- Add Abillity to map DB columns that name are not equals to the name of the attribute.
+- Add Ability to map DB columns that name are not equals to the name of the attribute.
 
 #### Version 5.3
 - Illuminate 5.3 Compatibility. 

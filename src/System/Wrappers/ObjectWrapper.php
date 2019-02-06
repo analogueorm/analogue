@@ -162,6 +162,14 @@ class ObjectWrapper implements InternallyMappable
     {
         $properties = $this->hydrator->extract($entity);
 
+        $attributesName = $this->entityMap->getAttributesArrayName();
+
+        if (isset($properties[$attributesName])) {
+            $properties[$attributesName] = $this->entityMap->getColumnNamesFromAttributes($properties[$attributesName]);
+        } else {
+            $properties = $this->entityMap->getColumnNamesFromAttributes($properties);
+        }
+
         $this->properties = $properties;
 
         $this->unmanagedProperties = array_except($properties, $this->getManagedProperties());
@@ -177,6 +185,14 @@ class ObjectWrapper implements InternallyMappable
     protected function hydrate()
     {
         $properties = $this->propertiesFromAttributes() + $this->unmanagedProperties;
+
+        $attributesName = $this->entityMap->getAttributesArrayName();
+
+        if (isset($properties[$attributesName])) {
+            $properties[$attributesName] = $this->entityMap->getAttributeNamesFromColumns($properties[$attributesName]);
+        } else {
+            $properties = $this->entityMap->getAttributeNamesFromColumns($properties);
+        }
 
         // In some case, attributes will miss some properties, so we'll just complete the hydration
         // set with the original object properties
@@ -336,7 +352,6 @@ class ObjectWrapper implements InternallyMappable
         }
 
         foreach ($relations as $relation) {
-
             // First, we check that the relation has not been already
             // set, in which case, we'll just pass.
             if (array_key_exists($relation, $attributes) && !is_null($attributes[$relation])) {
@@ -423,11 +438,7 @@ class ObjectWrapper implements InternallyMappable
             $localKey = $localKey['id'];
         }
 
-        if (!isset($attributes[$localKey])) {
-            return false;
-        }
-
-        if (is_null($attributes[$localKey])) {
+        if (!isset($attributes[$localKey]) || is_null($attributes[$localKey])) {
             return false;
         }
 

@@ -1,8 +1,8 @@
 <?php
 
-
 use TestApp\Article;
 use TestApp\Blog;
+use TestApp\Movie;
 use TestApp\User;
 
 class EntityTest extends AnalogueTestCase
@@ -85,6 +85,34 @@ class EntityTest extends AnalogueTestCase
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertInstanceOf(Blog::class, $user->blog);
+    }
+
+    /** @test */
+    public function we_can_access_mapped_columns()
+    {
+        $user = $this->factoryMake(User::class);
+        $mapper = $this->mapper($user);
+        $user->rememberToken = '123456';
+        $user->identity->fname = 'adro';
+        $mapper->store($user);
+        $id = $user->id;
+        $user = null;
+        $user = $mapper->find($id);
+        $this->assertEquals('123456', $user->rememberToken);
+        $this->assertEquals('adro', $user->identity->fname);
+    }
+
+    /** @test */
+    public function we_can_access_camel_case_properities()
+    {
+        $movie = new Movie('Analogue Tutorial');
+        $mapper = $this->mapper($movie);
+        $movie->setSomeText('analogue is awesome');
+        $mapper->store($movie);
+        $id = $movie->getId();
+        $movie = null;
+        $movie = $mapper->find($id);
+        $this->assertEquals('analogue is awesome', $movie->getSomeText());
     }
 
     /** @test */

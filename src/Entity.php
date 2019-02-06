@@ -130,12 +130,7 @@ class Entity extends ValueObject
     public function fill(array $attributes)
     {
         foreach ($attributes as $key => $attribute) {
-            if ($this->hasSetMutator($key)) {
-                $method = 'set'.$this->getMutatorMethod($key);
-                $this->attributes[$key] = $this->$method($attribute);
-            } else {
-                $this->attributes[$key] = $attribute;
-            }
+            $this->{$key} = $attribute;
         }
     }
 }

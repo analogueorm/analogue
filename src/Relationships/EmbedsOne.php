@@ -59,6 +59,10 @@ class EmbedsOne extends EmbeddedRelationship
             throw new MappingException("'$key' column should be an array");
         }
 
+        if ($this->asJson) {
+            $attributes[$key] = json_decode($attributes[$key], true);
+        }
+
         $attributes[$key] = $this->buildEmbeddedObject($attributes[$key]);
 
         return $attributes;
@@ -142,7 +146,13 @@ class EmbedsOne extends EmbeddedRelationship
     {
         $wrapper = $this->factory->make($object);
 
-        return [$this->relation => $wrapper->getEntityAttributes()];
+        $value = $wrapper->getEntityAttributes();
+
+        if ($this->asJson) {
+            $value = json_encode($value);
+        }
+
+        return [$this->relation => $value];
     }
 
     /**

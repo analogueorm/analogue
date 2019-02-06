@@ -15,6 +15,11 @@ class Movie
     protected $title;
 
     /**
+     * @var string
+     */
+    protected $someText;
+
+    /**
      * @var Realisator;
      */
     protected $realisator;
@@ -32,5 +37,20 @@ class Movie
     public function getRealisator()
     {
         return $this->realisator;
+    }
+
+    public function setSomeText(string $someText)
+    {
+        $this->someText = $someText;
+    }
+
+    public function getSomeText()
+    {
+        return $this->someText;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 }

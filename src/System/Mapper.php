@@ -8,6 +8,8 @@ use Analogue\ORM\Drivers\DBAdapter;
 use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\Mappable;
+use Analogue\ORM\System\Builders\ResultBuilderFactory;
+use Analogue\ORM\System\Builders\ResultBuilderInterface;
 use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Cache\InstanceCache;
 use ErrorException;
@@ -129,7 +131,7 @@ class Mapper
      */
     public function map($results, array $eagerLoads = []) : Collection
     {
-        $builder = new ResultBuilder($this);
+        $builder = $this->newResultBuilder();
 
         if ($results instanceof Collection) {
             // Get underlying collection array
@@ -137,7 +139,7 @@ class Mapper
         }
 
         if (!is_array($results)) {
-            throw new InvalidArgumentException("'results' should be an array or collection.");
+            throw new InvalidArgumentException("Parameter 'results' should be an array or a collection.");
         }
 
         // First, we'll cast every single result to array
@@ -149,14 +151,21 @@ class Mapper
         // any DB specific value can be casted before hydration
         $results = $this->adapter->fromDatabase($results);
 
-        // Then, we'll cache every single results as raw attributes, before
-        // adding relationships, which will be cached when the relationship's
-        // query takes place.
-        //$this->getEntityCache()->add($results);
-
         $entities = $builder->build($results, $eagerLoads);
 
         return $this->entityMap->newCollection($entities);
+    }
+
+    /**
+     * Return result builder used by this mapper.
+     *
+     * @return ResultBuilder
+     */
+    protected function newResultBuilder() : ResultBuilderInterface
+    {
+        $factory = new ResultBuilderFactory();
+
+        return $factory->make($this);
     }
 
     /**
@@ -419,6 +428,17 @@ class Mapper
         $name = $this->entityMap->getClass();
 
         $this->dispatcher->listen("analogue.{$event}.{$name}", $callback);
+    }
+
+    /**
+     * Add a custom object event to the mapper.
+     *
+     * @param string $name
+     * @param string $class
+     */
+    public function addCustomEvent(string $name, string $class)
+    {
+        $this->events[$name] = $class;
     }
 
     /**

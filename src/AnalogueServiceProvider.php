@@ -56,6 +56,7 @@ class AnalogueServiceProvider extends ServiceProvider
 
             // If the cache is pre laravel 5.5, it doesn't implements PSR-16, so we'll skip it.
             $cache = $app->make(CacheRepository::class);
+
             if ($cache instanceof CacheInterface) {
                 $manager->setCache($cache);
             }

@@ -11,5 +11,9 @@ class IdentityMap extends ValueMap
         'lastname',
     ];
 
+    protected $mappings = [
+        'firstname' => 'fname',
+    ];
+
     protected $arrayName = 'attributes';
 }

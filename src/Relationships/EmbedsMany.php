@@ -45,7 +45,11 @@ class EmbedsMany extends EmbedsOne
         $key = $this->relation;
 
         if (!array_key_exists($key, $attributes)) {
-            $attributes[$key] = [];
+            $attributes[$key] = $this->asJson ? json_encode([]) : [];
+        }
+
+        if ($this->asJson) {
+            $attributes[$key] = json_decode($attributes[$key], true);
         }
 
         if (!is_array($attributes[$key])) {
@@ -115,6 +119,10 @@ class EmbedsMany extends EmbedsOne
         foreach ($objects as $object) {
             $wrapper = $this->factory->make($object);
             $normalizedObjects[] = $wrapper->getEntityAttributes();
+        }
+
+        if ($this->asJson) {
+            $normalizedObjects = json_encode($normalizedObjects);
         }
 
         return [$key => $normalizedObjects];

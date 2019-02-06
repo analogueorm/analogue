@@ -20,6 +20,7 @@ class AggregateTest extends AnalogueTestCase
         $user = $this->factoryMake(User::class);
         $id = $this->randId();
         $user->id = $id;
+
         $this->mapper($user)->store($user);
         $this->seeInDatabase('users', ['id' => $id]);
     }

@@ -3,9 +3,9 @@
 use TestApp\Image;
 use TestApp\ImageSize;
 use TestApp\Maps\ImageMap;
-use TestApp\Maps\ImageMapArray;
 use TestApp\Maps\ImageMapCustomMap;
 use TestApp\Maps\ImageMapCustomPrefix;
+use TestApp\Maps\ImageMapJson;
 use TestApp\Maps\ImageMapNoPrefix;
 
 class EmbedsOneTest extends DomainTestCase
@@ -78,6 +78,21 @@ class EmbedsOneTest extends DomainTestCase
             ],
         ]);
     }*/
+
+    /** @test */
+    public function we_can_store_an_embedded_object_as_json()
+    {
+        $this->analogue->register(Image::class, ImageMapJson::class);
+        $image = $this->createImage();
+        $mapper = $this->mapper($image);
+        $mapper->store($image);
+        $this->seeInDatabase('images', [
+            'size' => json_encode([
+                'width'  => 500,
+                'height' => 500,
+            ]),
+        ]);
+    }
 
     /** @test */
     public function we_can_hydrate_embedded_object_with_default_mapping()
@@ -153,6 +168,20 @@ class EmbedsOneTest extends DomainTestCase
         $this->assertEquals(500, $image->getSize()->getHeight());
         $this->assertEquals(500, $image->getSize()->getWidth());
     }*/
+
+    /** @test */
+    public function we_can_hydrate_embedded_object_with_json_mapping()
+    {
+        $this->analogue->register(Image::class, ImageMapJson::class);
+        $id = $this->createImageRecord([
+            'size' => json_encode(['width' => 500, 'height' => 500]),
+        ]);
+        $mapper = $this->mapper(Image::class);
+        $image = $mapper->find($id);
+        $this->assertInstanceOf(ImageSize::class, $image->getSize());
+        $this->assertEquals(500, $image->getSize()->getHeight());
+        $this->assertEquals(500, $image->getSize()->getWidth());
+    }
 
     /** @test */
     public function embedded_object_attributes_get_updated_if_dirty()

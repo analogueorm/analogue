@@ -2,8 +2,8 @@
 
 namespace Analogue\ORM\Relationships;
 
+use Analogue\ORM\System\Builders\ResultBuilder;
 use Analogue\ORM\System\Manager;
-use Analogue\ORM\System\ResultBuilder;
 use Analogue\ORM\System\Wrappers\Factory;
 
 abstract class EmbeddedRelationship
@@ -36,6 +36,14 @@ abstract class EmbeddedRelationship
      * @var bool
      */
     protected $asArray = false;
+
+    /**
+     * If set to true, embedded Object's attributes will
+     * be json encoded before storing to database.
+     *
+     * @var bool
+     */
+    protected $asJson = false;
 
     /**
      * Prefix on which the object's attributes are saved into
@@ -81,6 +89,20 @@ abstract class EmbeddedRelationship
         $this->asArray = $storeAsArray;
 
         return $this;
+    }
+
+    /**
+     * Switch the 'store as json' feature.
+     *
+     * @param bool $storeAsJson
+     *
+     * @return static
+     */
+    public function asJson(bool $storeAsJson = true)
+    {
+        $this->asJson = $storeAsJson;
+
+        return $this->asArray();
     }
 
     /**
