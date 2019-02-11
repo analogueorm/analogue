@@ -124,7 +124,7 @@ class EntityTest extends AnalogueTestCase
         $movie2 = $mapper->find($id);
         $this->assertEquals('analogue is awesome!!', $movie2->getSomeText());
         $this->seeInDatabase('movies', [
-            'title' => 'Analogue Tutorial',
+            'title'     => 'Analogue Tutorial',
             'some_text' => 'analogue is awesome!!',
         ]);
     }
