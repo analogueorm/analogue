@@ -186,6 +186,10 @@ class Store extends Command
                 unset($attributes[$keyName]);
             }
 
+            if (isset($attributes['attributes'])) {
+                unset($attributes['attributes']);
+            }
+
             $id = $this->query->insertGetId($attributes, $keyName);
 
             $aggregate->setEntityAttribute($keyName, $id);
