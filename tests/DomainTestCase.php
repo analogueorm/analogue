@@ -16,9 +16,9 @@ abstract class DomainTestCase extends AnalogueTestCase
     }
 
     /**
-     * Insert a User using raw DB query.
+     * Insert a User using a raw database query.
      *
-     * @return User
+     * @return int The ID of the inserted user
      */
     protected function insertUser()
     {
@@ -33,6 +33,21 @@ abstract class DomainTestCase extends AnalogueTestCase
             'identity_lastname'  => $faker->lastName,
             'created_at'         => Carbon::now(),
             'updated_at'         => Carbon::now(),
+        ]);
+    }
+
+    /**
+     * Insert a Group using a raw database query.
+     *
+     * @return int The ID of the inserted group
+     */
+    protected function insertGroup()
+    {
+        $faker = $this->faker();
+
+        return $this->rawInsert('groups', [
+            'id'   => $this->randId(),
+            'name' => $faker->sentence,
         ]);
     }
 }

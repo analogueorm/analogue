@@ -38,20 +38,29 @@ class ResultBuilder implements ResultBuilderInterface
     protected $builders = [];
 
     /**
+     * Whether to use result and entity caching.
+     *
+     * @var bool
+     */
+    protected $useCache;
+
+    /**
      * ResultBuilder constructor.
      *
-     * @param Mapper $mapper
+     * @param Mapper $mapper   The mapper used to build entities with.
+     * @param bool   $useCache [optional] Whether to use result and entity caching. Defaults to false.
      */
-    public function __construct(Mapper $mapper)
+    public function __construct(Mapper $mapper, bool $useCache = false)
     {
         $this->mapper = $mapper;
         $this->entityMap = $mapper->getEntityMap();
+        $this->useCache = $useCache;
     }
 
     /**
      * Convert a result set into an array of entities.
      *
-     * @param array $results
+     * @param array $results    The results to convert into entities.
      * @param array $eagerLoads name of the relation(s) to be eager loaded on the Entities
      *
      * @return array
@@ -82,9 +91,10 @@ class ResultBuilder implements ResultBuilderInterface
     protected function cacheResults(array $results)
     {
         $mapper = $this->mapper;
+
         // When hydrating EmbeddedValue object, they'll likely won't
         // have a primary key set.
-        if (!is_null($mapper->getEntityMap()->getKeyName())) {
+        if ($mapper->getEntityMap()->getKeyName() !== null) {
             $mapper->getEntityCache()->add($results);
         }
     }
@@ -313,11 +323,7 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function buildResultSet(array $results): array
     {
-        $keyName = $this->entityMap->getKeyName();
-
-        return $keyName
-            ? $this->buildKeyedResultSet($results, $keyName)
-            : $this->buildUnkeyedResultSet($results);
+        return $this->buildUnkeyedResultSet($results);
     }
 
     /**
@@ -329,7 +335,7 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function buildUnkeyedResultSet(array $results) : array
     {
-        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
+        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads), $this->useCache);
 
         return array_map(function ($item) use ($builder) {
             return $builder->build($item);
@@ -346,7 +352,7 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function buildKeyedResultSet(array $results, string $primaryKey) : array
     {
-        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads));
+        $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads), $this->useCache);
 
         $keys = array_map(function ($item) use ($primaryKey) {
             return $item[$primaryKey];

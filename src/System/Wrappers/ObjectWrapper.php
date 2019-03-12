@@ -75,6 +75,8 @@ class ObjectWrapper implements InternallyMappable
      * @param mixed                   $entity
      * @param \Analogue\ORM\EntityMap $entityMap
      * @param HydratorInterface       $hydrator
+     *
+     * @throws MappingException
      */
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
@@ -155,6 +157,8 @@ class ObjectWrapper implements InternallyMappable
      * Extract entity attributes / properties to an array of attributes.
      *
      * @param mixed $entity
+     *
+     * @throws MappingException
      *
      * @return array
      */

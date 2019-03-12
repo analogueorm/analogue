@@ -14,15 +14,16 @@ class Factory
      *
      * @throws \Analogue\ORM\Exceptions\MappingException
      *
-     * @return Wrapper
+     * @return ObjectWrapper
      */
     public function make($object)
     {
         $manager = Manager::getInstance();
 
-        // Instantiate hydrator. We'll need to optimize this and allow pre-generation
-        // of these hydrator, and get it, ideally, from the entityMap or the Mapper class,
-        // so it's only instantiated once
+        // Instantiate hydrator
+        // TODO: We'll need to optimize this and allow pre-generation
+        //       of these hydrators, and get it, ideally, from the entityMap or
+        //       the Mapper class, so it's only instantiated once
         $config = new Configuration(get_class($object));
 
         $hydratorClass = $config->createFactory()->getHydratorClass();

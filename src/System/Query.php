@@ -99,6 +99,13 @@ class Query
     ];
 
     /**
+     * Whether to use the mapper's entity caching.
+     *
+     * @var bool
+     */
+    protected $useCache = true;
+
+    /**
      * Create a new Analogue Query Builder instance.
      *
      * @param Mapper    $mapper
@@ -504,6 +511,32 @@ class Query
     }
 
     /**
+     * Disable loading results from the entity instance cache.
+     *
+     * Loaded entities will still be stored in the cache.
+     *
+     * @return \Analogue\ORM\System\Query
+     */
+    public function disableCache()
+    {
+        $this->useCache = false;
+
+        return $this;
+    }
+
+    /**
+     * Enable loading results from the entity instance cache.
+     *
+     * @return \Analogue\ORM\System\Query
+     */
+    public function enableCache()
+    {
+        $this->useCache = true;
+
+        return $this;
+    }
+
+    /**
      * Get the table for the current query object.
      *
      * @return string
@@ -577,7 +610,7 @@ class Query
         $results = $this->query->get($columns);
 
         // Pass result set to the mapper and return the EntityCollection
-        return $this->mapper->map($results, $this->getEagerLoads());
+        return $this->mapper->map($results, $this->getEagerLoads(), $this->useCache);
     }
 
     /**
