@@ -106,7 +106,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return array
      */
-    protected function buildEmbeddedRelationships(array $results) : array
+    protected function buildEmbeddedRelationships(array $results): array
     {
         $entityMap = $this->entityMap;
         $instance = $this->mapper->newInstance();
@@ -127,7 +127,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return array
      */
-    protected function queryEagerLoadedRelationships(array $results, array $eagerLoads) : array
+    protected function queryEagerLoadedRelationships(array $results, array $eagerLoads): array
     {
         $this->eagerLoads = $this->parseRelations($eagerLoads);
 
@@ -231,7 +231,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return array
      */
-    protected function loadRelation(array $results, string $name, Closure $constraints) : array
+    protected function loadRelation(array $results, string $name, Closure $constraints): array
     {
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the
@@ -255,7 +255,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return \Analogue\ORM\Relationships\Relationship
      */
-    public function getRelation(string $relation) : Relationship
+    public function getRelation(string $relation): Relationship
     {
         // We want to run a relationship query without any constrains so that we will
         // not have to remove these where clauses manually which gets really hacky
@@ -333,7 +333,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return array
      */
-    protected function buildUnkeyedResultSet(array $results) : array
+    protected function buildUnkeyedResultSet(array $results): array
     {
         $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads), $this->useCache);
 
@@ -350,7 +350,7 @@ class ResultBuilder implements ResultBuilderInterface
      *
      * @return array
      */
-    protected function buildKeyedResultSet(array $results, string $primaryKey) : array
+    protected function buildKeyedResultSet(array $results, string $primaryKey): array
     {
         $builder = new EntityBuilder($this->mapper, array_keys($this->eagerLoads), $this->useCache);
 

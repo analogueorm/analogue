@@ -21,7 +21,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    public function match(array $results) : array
+    public function match(array $results): array
     {
         return array_map([$this, 'matchSingleResult'], $results);
     }
@@ -34,7 +34,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    public function matchSingleResult(array $attributes) : array
+    public function matchSingleResult(array $attributes): array
     {
         return $this->asArray ? $this->matchAsArray($attributes) : $this->matchAsAttributes($attributes);
     }
@@ -49,7 +49,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function matchAsArray(array $attributes) : array
+    protected function matchAsArray(array $attributes): array
     {
         // Extract the attributes with the key of the relation,
         // which should be an array.
@@ -76,7 +76,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function matchAsAttributes(array $attributes) : array
+    protected function matchAsAttributes(array $attributes): array
     {
         $attributesMap = $this->getAttributesDictionnary();
 
@@ -108,7 +108,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function getAttributesDictionnary() : array
+    protected function getAttributesDictionnary(): array
     {
         // Get attributes that belongs to the embedded object
         $embeddedAttributeKeys = $this->getEmbeddedObjectAttributes();
@@ -130,7 +130,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array $columns
      */
-    public function normalize($object) : array
+    public function normalize($object): array
     {
         return $this->asArray ? $this->normalizeAsArray($object) : $this->normalizeAsAttributes($object);
     }
@@ -142,7 +142,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function normalizeAsArray($object) : array
+    protected function normalizeAsArray($object): array
     {
         $wrapper = $this->factory->make($object);
 
@@ -162,7 +162,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function normalizeAsAttributes($object) : array
+    protected function normalizeAsAttributes($object): array
     {
         if (is_null($object)) {
             return $this->nullObjectAttributes();
@@ -186,7 +186,7 @@ class EmbedsOne extends EmbeddedRelationship
      *
      * @return array
      */
-    protected function nullObjectAttributes() : array
+    protected function nullObjectAttributes(): array
     {
         $attributesMap = $this->getAttributesDictionnary();
 

@@ -6,7 +6,7 @@ use Analogue\ORM\System\Mapper;
 
 class ResultBuilderFactory
 {
-    public function make(Mapper $mapper, bool $skipCache = false) : ResultBuilderInterface
+    public function make(Mapper $mapper, bool $skipCache = false): ResultBuilderInterface
     {
         switch ($mapper->getEntityMap()->getInheritanceType()) {
             case 'single_table':

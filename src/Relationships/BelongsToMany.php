@@ -196,7 +196,7 @@ class BelongsToMany extends Relationship
      *
      * @return \Illuminate\Support\Collection
      */
-    public function get($columns = ['*']) : Collection
+    public function get($columns = ['*']): Collection
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot

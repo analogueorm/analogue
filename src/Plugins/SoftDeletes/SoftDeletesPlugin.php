@@ -91,7 +91,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
      *
      * @return InternallyMappable
      */
-    protected function getMappable($entity) : InternallyMappable
+    protected function getMappable($entity): InternallyMappable
     {
         if ($entity instanceof InternallyMappable) {
             return $entity;
@@ -106,7 +106,7 @@ class SoftDeletesPlugin extends AnaloguePlugin
     /**
      * {@inheritdoc}
      */
-    public function getCustomEvents():  array
+    public function getCustomEvents(): array
     {
         return [
             'restoring' => Events\Restoring::class,
