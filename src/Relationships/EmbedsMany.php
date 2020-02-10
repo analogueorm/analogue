@@ -17,7 +17,7 @@ class EmbedsMany extends EmbedsOne
      *
      * @return array
      */
-    public function matchSingleResult(array $attributes) : array
+    public function matchSingleResult(array $attributes): array
     {
         $column = $this->relation;
 
@@ -38,7 +38,7 @@ class EmbedsMany extends EmbedsOne
      *
      * @return array
      */
-    protected function matchAsArray(array $attributes) : array
+    protected function matchAsArray(array $attributes): array
     {
         // Extract the attributes with the key of the relation,
         // which should be an array.
@@ -84,7 +84,7 @@ class EmbedsMany extends EmbedsOne
      *
      * @return array $columns
      */
-    public function normalize($objects) : array
+    public function normalize($objects): array
     {
         if (!$this->asArray) {
             throw new MappingException('Cannot normalize an embedsMany relation as row columns');
@@ -102,7 +102,7 @@ class EmbedsMany extends EmbedsOne
      *
      * @return array
      */
-    protected function normalizeAsArray($objects) : array
+    protected function normalizeAsArray($objects): array
     {
         $key = $this->relation;
 

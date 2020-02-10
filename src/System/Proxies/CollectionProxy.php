@@ -75,7 +75,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @return bool true if the proxy could be initialized
      */
-    public function initializeProxy() : bool
+    public function initializeProxy(): bool
     {
         if ($this->isProxyInitialized()) {
             return true;
@@ -94,7 +94,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @return Relationship
      */
-    protected function getRelationshipInstance() : Relationship
+    protected function getRelationshipInstance(): Relationship
     {
         $relation = $this->relationshipMethod;
         $entity = $this->parentEntity;
@@ -106,7 +106,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function isProxyInitialized() : bool
+    public function isProxyInitialized(): bool
     {
         return $this->relationshipLoaded;
     }
@@ -114,7 +114,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    protected function toBaseCollection() : Collection
+    protected function toBaseCollection(): Collection
     {
         return new Collection($this->items);
     }
@@ -1233,7 +1233,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      *
      * @return int
      */
-    protected function countUsingDatabaseQuery() : int
+    protected function countUsingDatabaseQuery(): int
     {
         return $this->getRelationshipInstance()->count();
     }

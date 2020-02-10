@@ -104,7 +104,7 @@ class PolymorphicResultBuilder implements ResultBuilderInterface
         return $builder->build($results, $eagerLoads);
     }
 
-    protected function getMapperForType(string $type) : Mapper
+    protected function getMapperForType(string $type): Mapper
     {
         $columnMap = $this->entityMap->getDiscriminatorColumnMap();
 

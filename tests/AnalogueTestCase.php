@@ -274,13 +274,13 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     protected function logEvents()
     {
         $events = ['store',
-        'stored',
-        'creating',
-        'created',
-        'updating',
-        'updated',
-        'deleting',
-        'deleted',
+            'stored',
+            'creating',
+            'created',
+            'updating',
+            'updated',
+            'deleting',
+            'deleted',
         ];
 
         foreach ($events as $event) {
