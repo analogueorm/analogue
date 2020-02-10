@@ -499,7 +499,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getEvents() : array
+    public function getEvents(): array
     {
         return $this->events;
     }
@@ -510,7 +510,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getAttributesPropertyName() : string
+    public function getAttributesPropertyName(): string
     {
     }
 

@@ -130,7 +130,7 @@ class Mapper
      *
      * @return Collection
      */
-    public function map($results, array $eagerLoads = [], $useCache = false) : Collection
+    public function map($results, array $eagerLoads = [], $useCache = false): Collection
     {
         $builder = $this->newResultBuilder(!$useCache);
 
@@ -164,7 +164,7 @@ class Mapper
      *
      * @return ResultBuilderInterface
      */
-    protected function newResultBuilder(bool $skipCache = false) : ResultBuilderInterface
+    protected function newResultBuilder(bool $skipCache = false): ResultBuilderInterface
     {
         $factory = new ResultBuilderFactory();
 
@@ -361,7 +361,7 @@ class Mapper
      *
      * @return \Analogue\ORM\System\Cache\AttributeCache
      */
-    public function getEntityCache() : AttributeCache
+    public function getEntityCache(): AttributeCache
     {
         return $this->cache;
     }
@@ -371,7 +371,7 @@ class Mapper
      *
      * @return \Analogue\ORM\System\Cache\InstanceCache
      */
-    public function getInstanceCache() : InstanceCache
+    public function getInstanceCache(): InstanceCache
     {
         return $this->instances;
     }

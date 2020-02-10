@@ -138,7 +138,7 @@ abstract class EmbeddedRelationship
      *
      * @return string
      */
-    public function getPrefix() : string
+    public function getPrefix(): string
     {
         return $this->prefix;
     }
@@ -149,7 +149,7 @@ abstract class EmbeddedRelationship
      *
      * @return array
      */
-    protected function getEmbeddedObjectAttributes() : array
+    protected function getEmbeddedObjectAttributes(): array
     {
         $entityMap = $this->getRelatedMapper()->getEntityMap();
 
@@ -166,7 +166,7 @@ abstract class EmbeddedRelationship
      *
      * @return string
      */
-    protected function getParentAttributeKey($key) : string
+    protected function getParentAttributeKey($key): string
     {
         return $this->getPrefixedAttributeKey($this->getMappedParentAttribute($key));
     }
@@ -179,7 +179,7 @@ abstract class EmbeddedRelationship
      *
      * @return string
      */
-    protected function getMappedParentAttribute(string $key) : string
+    protected function getMappedParentAttribute(string $key): string
     {
         if (array_key_exists($key, $this->columnMap)) {
             return $this->columnMap[$key];
@@ -195,7 +195,7 @@ abstract class EmbeddedRelationship
      *
      * @return string
      */
-    protected function getPrefixedAttributeKey(string $attributeKey) : string
+    protected function getPrefixedAttributeKey(string $attributeKey): string
     {
         return $this->prefix.$attributeKey;
     }
@@ -206,7 +206,7 @@ abstract class EmbeddedRelationship
      *
      * @return array
      */
-    abstract public function match(array $results) : array;
+    abstract public function match(array $results): array;
 
     /**
      * Build an embedded object instance.
@@ -233,7 +233,7 @@ abstract class EmbeddedRelationship
      *
      * @return array $columns
      */
-    abstract public function normalize($object) : array;
+    abstract public function normalize($object): array;
 
     /**
      * Return parent mapper.

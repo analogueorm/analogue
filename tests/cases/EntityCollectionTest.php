@@ -1,6 +1,5 @@
 <?php
 
-
 use TestApp\Blog;
 
 class EntityCollectionTest extends DomainTestCase

@@ -1065,7 +1065,7 @@ class Aggregate implements InternallyMappable
      */
     protected function getEntityHashesFromRelation(string $relation): array
     {
-        return array_map(function (Aggregate $aggregate) {
+        return array_map(function (self $aggregate) {
             return $aggregate->getEntityHash();
         }, $this->relationships[$relation]);
     }

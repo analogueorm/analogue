@@ -132,7 +132,7 @@ class Query
      *
      * @return \Illuminate\Support\Collection
      */
-    public function get($columns = ['*']) : Collection
+    public function get($columns = ['*']): Collection
     {
         return $this->getEntities($columns);
     }
