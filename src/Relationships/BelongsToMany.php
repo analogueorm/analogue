@@ -196,7 +196,7 @@ class BelongsToMany extends Relationship
      *
      * @return \Illuminate\Support\Collection
      */
-    public function get($columns = ['*']) : Collection
+    public function get($columns = ['*']): Collection
     {
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
@@ -205,7 +205,7 @@ class BelongsToMany extends Relationship
 
         $select = $this->getSelectColumns($columns);
 
-        $entities = $this->query->addSelect($select)->get()->all();
+        $entities = $this->query->addSelect($select)->disableCache()->get()->all();
 
         $entities = $this->hydratePivotRelation($entities);
 
@@ -217,28 +217,29 @@ class BelongsToMany extends Relationship
      *
      * @param array $entities
      *
-     * @return void
+     * @return array
      */
     protected function hydratePivotRelation(array $entities)
     {
         // TODO (note) We should definitely get rid of the pivot in a next
         // release, as this is not quite relevant in a datamapper context.
-        $host = $this;
-
-        return array_map(function ($entity) use ($host) {
+        return array_map(function ($entity) {
             $entityWrapper = $this->factory->make($entity);
 
-            $pivot = $this->newExistingPivot($this->cleanPivotAttributes($entityWrapper));
+            $pivotAttributes = $this->cleanPivotAttributes($entityWrapper);
+            $pivot = $this->newExistingPivot($pivotAttributes);
             $entityWrapper->setEntityAttribute('pivot', $pivot);
 
-            return $entityWrapper->getObject();
+            $object = $entityWrapper->unwrap();
+
+            return $object;
         }, $entities);
     }
 
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  $entity
+     * @param InternallyMappable $entity
      *
      * @return array
      */
@@ -442,7 +443,9 @@ class BelongsToMany extends Relationship
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         return array_map(function ($result) use ($dictionary, $keyName, $cache, $relation, $host) {
-            if (isset($dictionary[$key = $result[$keyName]])) {
+            $key = $result[$keyName];
+
+            if (isset($dictionary[$key])) {
                 $collection = $host->relatedMap->newCollection($dictionary[$key]);
 
                 $result[$relation] = $collection;
@@ -475,7 +478,10 @@ class BelongsToMany extends Relationship
 
         foreach ($results as $entity) {
             $wrapper = $this->factory->make($entity);
-            $dictionary[$wrapper->getEntityAttribute('pivot')->$foreign][] = $entity;
+
+            $foreignKey = $wrapper->getEntityAttribute('pivot')->$foreign;
+
+            $dictionary[$foreignKey][] = $entity;
         }
 
         return $dictionary;
@@ -614,8 +620,6 @@ class BelongsToMany extends Relationship
         $query->where($this->foreignKey, '=', $this->parent->getEntityAttribute($parentKey));
 
         $query->delete();
-
-        $query = $this->newPivotQuery();
     }
 
     /**

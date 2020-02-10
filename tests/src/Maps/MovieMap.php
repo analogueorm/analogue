@@ -12,11 +12,10 @@ class MovieMap extends EntityMap
         'id',
         'title',
         'realisator',
+        'some_text',
     ];
 
     protected $camelCaseHydratation = true;
-
-    protected $arrayName = null;
 
     public function realisator(Movie $movie)
     {

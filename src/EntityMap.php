@@ -499,7 +499,7 @@ class EntityMap
      *
      * @return array
      */
-    public function getEvents() : array
+    public function getEvents(): array
     {
         return $this->events;
     }
@@ -510,7 +510,7 @@ class EntityMap
      *
      * @return string
      */
-    public function getAttributesPropertyName() : string
+    public function getAttributesPropertyName(): string
     {
     }
 
@@ -1572,10 +1572,7 @@ class EntityMap
      */
     public function newCollection(array $entities = []): EntityCollection
     {
-        $collection = new EntityCollection($entities);
-        $keyName = $this->getAttributeNameForColumn($this->getKeyName());
-
-        return $collection->keyBy($keyName);
+        return new EntityCollection($entities);
     }
 
     /**
@@ -1745,6 +1742,7 @@ class EntityMap
             return $newArray;
         }
         if ($this->camelCaseHydratation) {
+            $newArray = [];
             foreach ($array as $key => $value) {
                 $attributeName = camel_case($key);
                 $newArray[$attributeName] = $value;
@@ -1796,6 +1794,7 @@ class EntityMap
             return $newArray;
         }
         if ($this->camelCaseHydratation) {
+            $newArray = [];
             foreach ($array as $key => $value) {
                 $attributeName = snake_case($key);
                 $newArray[$attributeName] = $value;

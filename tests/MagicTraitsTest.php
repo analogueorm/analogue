@@ -51,9 +51,9 @@ class MagicTraitsTest extends AnalogueTestCase
         $entity = new MagicEntity();
         $array = $entity->toArray();
         $this->assertEquals([
-                'attr1' => 'Some Value',
-                'attr2' => 'Some Value',
-            ], $array);
+            'attr1' => 'Some Value',
+            'attr2' => 'Some Value',
+        ], $array);
     }
 
     /** @test */
@@ -62,8 +62,8 @@ class MagicTraitsTest extends AnalogueTestCase
         $entity = new MagicEntity();
         $json = $entity->toJson();
         $this->assertEquals([
-                'attr1' => 'Some Value',
-                'attr2' => 'Some Value',
-            ], json_decode($json, true));
+            'attr1' => 'Some Value',
+            'attr2' => 'Some Value',
+        ], json_decode($json, true));
     }
 }

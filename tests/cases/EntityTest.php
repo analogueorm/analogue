@@ -100,6 +100,11 @@ class EntityTest extends AnalogueTestCase
         $user = $mapper->find($id);
         $this->assertEquals('123456', $user->rememberToken);
         $this->assertEquals('adro', $user->identity->fname);
+        $user->rememberToken = '1234567';
+        $mapper->store($user);
+        $user = null;
+        $user = $mapper->find($id);
+        $this->assertEquals('1234567', $user->rememberToken);
     }
 
     /** @test */
@@ -113,6 +118,15 @@ class EntityTest extends AnalogueTestCase
         $movie = null;
         $movie = $mapper->find($id);
         $this->assertEquals('analogue is awesome', $movie->getSomeText());
+        $movie->setSomeText('analogue is awesome!!');
+        $mapper->store($movie);
+        $movie = null;
+        $movie2 = $mapper->find($id);
+        $this->assertEquals('analogue is awesome!!', $movie2->getSomeText());
+        $this->seeInDatabase('movies', [
+            'title'     => 'Analogue Tutorial',
+            'some_text' => 'analogue is awesome!!',
+        ]);
     }
 
     /** @test */

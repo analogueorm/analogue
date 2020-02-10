@@ -66,7 +66,7 @@ class TimestampsPlugin extends AnaloguePlugin
      *
      * @return InternallyMappable
      */
-    protected function getMappable($entity) : InternallyMappable
+    protected function getMappable($entity): InternallyMappable
     {
         if ($entity instanceof InternallyMappable) {
             return $entity;

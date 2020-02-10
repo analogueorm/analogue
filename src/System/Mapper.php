@@ -126,12 +126,13 @@ class Mapper
      *
      * @param array|Collection $results
      * @param array            $eagerLoads
+     * @param bool             $useCache
      *
      * @return Collection
      */
-    public function map($results, array $eagerLoads = []) : Collection
+    public function map($results, array $eagerLoads = [], $useCache = false): Collection
     {
-        $builder = $this->newResultBuilder();
+        $builder = $this->newResultBuilder(!$useCache);
 
         if ($results instanceof Collection) {
             // Get underlying collection array
@@ -159,13 +160,15 @@ class Mapper
     /**
      * Return result builder used by this mapper.
      *
-     * @return ResultBuilder
+     * @param bool $skipCache
+     *
+     * @return ResultBuilderInterface
      */
-    protected function newResultBuilder() : ResultBuilderInterface
+    protected function newResultBuilder(bool $skipCache = false): ResultBuilderInterface
     {
         $factory = new ResultBuilderFactory();
 
-        return $factory->make($this);
+        return $factory->make($this, $skipCache);
     }
 
     /**
@@ -358,7 +361,7 @@ class Mapper
      *
      * @return \Analogue\ORM\System\Cache\AttributeCache
      */
-    public function getEntityCache() : AttributeCache
+    public function getEntityCache(): AttributeCache
     {
         return $this->cache;
     }
@@ -368,7 +371,7 @@ class Mapper
      *
      * @return \Analogue\ORM\System\Cache\InstanceCache
      */
-    public function getInstanceCache() : InstanceCache
+    public function getInstanceCache(): InstanceCache
     {
         return $this->instances;
     }

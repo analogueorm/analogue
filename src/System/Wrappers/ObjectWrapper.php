@@ -75,6 +75,8 @@ class ObjectWrapper implements InternallyMappable
      * @param mixed                   $entity
      * @param \Analogue\ORM\EntityMap $entityMap
      * @param HydratorInterface       $hydrator
+     *
+     * @throws MappingException
      */
     public function __construct($entity, $entityMap, HydratorInterface $hydrator)
     {
@@ -156,6 +158,8 @@ class ObjectWrapper implements InternallyMappable
      *
      * @param mixed $entity
      *
+     * @throws MappingException
+     *
      * @return array
      */
     protected function dehydrate($entity): array
@@ -167,7 +171,7 @@ class ObjectWrapper implements InternallyMappable
         if (isset($properties[$attributesName])) {
             $properties[$attributesName] = $this->entityMap->getColumnNamesFromAttributes($properties[$attributesName]);
         } else {
-            $properties = $this->entityMap->getColumnNamesFromAttributes($properties);
+            $properties[$attributesName] = $this->entityMap->getColumnNamesFromAttributes($properties);
         }
 
         $this->properties = $properties;
@@ -191,7 +195,7 @@ class ObjectWrapper implements InternallyMappable
         if (isset($properties[$attributesName])) {
             $properties[$attributesName] = $this->entityMap->getAttributeNamesFromColumns($properties[$attributesName]);
         } else {
-            $properties = $this->entityMap->getAttributeNamesFromColumns($properties);
+            $properties[$attributesName] = $this->entityMap->getAttributeNamesFromColumns($properties);
         }
 
         // In some case, attributes will miss some properties, so we'll just complete the hydration

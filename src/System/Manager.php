@@ -276,7 +276,7 @@ class Manager
      *
      * @return bool
      */
-    protected function isAnonymous($class) : bool
+    protected function isAnonymous($class): bool
     {
         $instance = new ReflectionClass($class);
 

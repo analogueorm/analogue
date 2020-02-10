@@ -150,7 +150,7 @@ class Store extends Command
 
         // Now we can sync the related collections
         //
-        // TODO (note) : not sute this check is needed, as we can assume
+        // TODO (note) : not sure this check is needed, as we can assume
         // the aggregate exists in the Post Store Process
         if ($this->aggregate->exists()) {
             $this->aggregate->syncRelationships($foreignRelationships);
@@ -184,6 +184,10 @@ class Store extends Command
             // Prevent inserting with a null ID
             if (array_key_exists($keyName, $attributes)) {
                 unset($attributes[$keyName]);
+            }
+
+            if (isset($attributes['attributes'])) {
+                unset($attributes['attributes']);
             }
 
             $id = $this->query->insertGetId($attributes, $keyName);
