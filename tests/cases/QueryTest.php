@@ -98,4 +98,22 @@ class QueryTest extends AnalogueTestCase
 
         $this->assertEquals([$blogA->id, $blogB->id], $ids->all());
     }
+
+    public function test_alias()
+    {
+        $user = $this->factoryCreateUid(User::class);
+        /** @var \Analogue\ORM\System\Mapper $userMapper */
+        $userMapper = $this->mapper($user);
+        $userMapper->store($user);
+        $userTable = $userMapper->getEntityMap()->getTable();
+        $primaryKey = $userMapper->getEntityMap()->getKeyName();
+        $this->clearCache();
+
+        $query = $userMapper->getQuery();
+        $query->select(["$userTable.$primaryKey as $primaryKey", 'identity_firstname', 'identity_lastname']);
+        $results = $query->get();
+
+        $this->assertCount(1, $results);
+        $this->assertEquals($user->id, $results->first()->id);
+    }
 }
