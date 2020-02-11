@@ -583,8 +583,26 @@ class Query
      */
     protected function enforceIdColumn($columns)
     {
-        if (!in_array($this->entityMap->getKeyName(), $columns)) {
-            $columns[] = $this->entityMap->getKeyName();
+        $primaryKey = $this->entityMap->getKeyName();
+        $escapedKeyName = preg_quote($primaryKey, '/');
+        $table = $this->entityMap->getTable();
+
+        $match = false;
+
+        foreach ($columns as $column) {
+            if (substr($column, -strlen($primaryKey)) === $primaryKey) {
+                if (strlen($column) === strlen($primaryKey)) {
+                    $match = true;
+                    break;
+                } elseif (preg_match("/\w+\s+(?:(?:(AS|as)\s+)?$escapedKeyName/", $column)) {
+                    $match = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$match) {
+            $columns[] = "$table.$primaryKey AS $primaryKey";
         }
 
         return $columns;
