@@ -3,6 +3,7 @@
 namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\Exceptions\MappingException;
+use Illuminate\Support\Arr;
 
 class EmbedsOne extends EmbeddedRelationship
 {
@@ -82,7 +83,7 @@ class EmbedsOne extends EmbeddedRelationship
 
         // Get the subset that only the embedded object is concerned with and, convert it back
         // to embedded object attributes keys
-        $originalAttributes = array_only($attributes, $attributesMap);
+        $originalAttributes = Arr::only($attributes, $attributesMap);
 
         $embeddedAttributes = [];
 

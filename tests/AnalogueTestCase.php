@@ -17,7 +17,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 
     protected $usedIds = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
             $faker = Faker::create();
             $analogueManager = $app->make('analogue');
 
-            return Factory::construct($faker, __DIR__.'/factories', $analogueManager);
+            return Factory::construct($faker, __DIR__ . '/factories', $analogueManager);
         });
 
         $this->analogue = $this->app->make('analogue');
@@ -66,9 +66,9 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     {
         $conn = new PDO('mysql:host=localhost', 'root', '');
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = 'DROP DATABASE IF EXISTS '.$this->testDbName;
+        $sql = 'DROP DATABASE IF EXISTS ' . $this->testDbName;
         $conn->exec($sql);
-        $sql = 'CREATE DATABASE IF NOT EXISTS '.$this->testDbName;
+        $sql = 'CREATE DATABASE IF NOT EXISTS ' . $this->testDbName;
         $conn->exec($sql);
         $conn = null;
     }
@@ -77,12 +77,12 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     {
         $conn = new PDO('mysql:host=localhost', 'root', '');
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = 'DROP DATABASE '.$this->testDbName;
+        $sql = 'DROP DATABASE ' . $this->testDbName;
         $conn->exec($sql);
         $conn = null;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if (!$this->useSqlite) {
             $this->dropTestDatabase();
@@ -98,7 +98,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../vendor/laravel/laravel/bootstrap/app.php';
+        $app = require __DIR__ . '/../vendor/laravel/laravel/bootstrap/app.php';
 
         $app->register(\Analogue\ORM\AnalogueServiceProvider::class);
         $app->register(\Analogue\Factory\FactoryServiceProvider::class);
@@ -116,7 +116,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
     protected function migrateDatabase()
     {
         $migrationPaths = [
-            __DIR__.'/migrations',
+            __DIR__ . '/migrations',
         ];
 
         foreach ($migrationPaths as $path) {
@@ -273,7 +273,8 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
      */
     protected function logEvents()
     {
-        $events = ['store',
+        $events = [
+            'store',
             'stored',
             'creating',
             'created',
@@ -285,7 +286,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 
         foreach ($events as $event) {
             $this->analogue->registerGlobalEvent($event, function ($entity) use ($event) {
-                dump(get_class($entity).' '.$event);
+                dump(get_class($entity) . ' ' . $event);
             });
         }
     }

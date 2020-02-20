@@ -4,6 +4,7 @@ namespace Analogue\ORM\System\Builders;
 
 use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Mapper;
+use Illuminate\Support\Arr;
 
 class PolymorphicResultBuilder implements ResultBuilderInterface
 {
@@ -76,7 +77,7 @@ class PolymorphicResultBuilder implements ResultBuilderInterface
 
         // Make a list of types appearing within this result set.
         $discriminatorColumn = $this->entityMap->getDiscriminatorColumn();
-        $types = array_unique(array_pluck($results, $discriminatorColumn));
+        $types = array_unique(Arr::pluck($results, $discriminatorColumn));
 
         // We'll split the result set by type that will make it easier to deal
         // with.

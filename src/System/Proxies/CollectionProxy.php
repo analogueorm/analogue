@@ -208,6 +208,22 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
+    public function duplicates($callback = null, $strict = false)
+    {
+        return parent::duplicates($callback, $strict);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function duplicatesStrict($callback = null)
+    {
+        return parent::duplicatesStrict($callback);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function diff($items)
     {
         $this->initializeProxy();
@@ -321,7 +337,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function firstWhere($key, $operator, $value = null)
+    public function firstWhere($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
@@ -333,7 +349,151 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function where($key, $operator, $value = null)
+    public function lazy()
+    {
+        return parent::lazy();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function join($glue, $finalGlue = '')
+    {
+        return parent::join($glue, $finalGlue);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mergeRecursive($items)
+    {
+        return parent::mergeRecursive($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replace($items)
+    {
+        return parent::replace($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceRecursive($items)
+    {
+        return parent::replaceRecursive($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function skip($count)
+    {
+        return parent::skip($count);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($entity)
+    {
+        return parent::add($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function some($key, $operator = null, $value = null)
+    {
+        return parent::some($key, $operator, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whenEmpty(callable $callback, ?callable $default = null)
+    {
+        return parent::whenEmpty($callback, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whenNotEmpty(callable $callback, ?callable $default = null)
+    {
+        return parent::whenNotEmpty($callback, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unlessEmpty(callable $callback, ?callable $default = null)
+    {
+        return parent::unlessEmpty($callback, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unlessNotEmpty(callable $callback, ?callable $default = null)
+    {
+        return parent::unlessNotEmpty($callback, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whereNull($key = null)
+    {
+        return parent::whereNull($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whereNotNull($key = null)
+    {
+        return parent::whereNotNull($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whereBetween($key, $values)
+    {
+        return parent::whereBetween($key, $values);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function whereNotBetween($key, $values)
+    {
+        return parent::whereNotBetween($key, $valuese);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function collect()
+    {
+        return parent::collect();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function countBy($callback = null)
+    {
+        return parent::countBy($callback);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($key, $operator = null, $value = null)
     {
         $this->initializeProxy();
 
@@ -917,7 +1077,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
     /**
      * {@inheritdoc}
      */
-    public function reject($callback)
+    public function reject($callback = true)
     {
         $this->initializeProxy();
 

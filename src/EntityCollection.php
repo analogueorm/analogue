@@ -45,7 +45,7 @@ class EntityCollection extends Collection
             $key = $this->getEntityKey($key);
         }
 
-        return array_first($this->items, function ($entity, $itemKey) use ($key) {
+        return Arr::first($this->items, function ($entity, $itemKey) use ($key) {
             return $this->getEntityKey($entity) == $key;
         }, $default);
     }
@@ -148,7 +148,7 @@ class EntityCollection extends Collection
      */
     public function fetch($key)
     {
-        return new static(array_fetch($this->toArray(), $key));
+        return new static(Arr::pluck($this->toArray(), $key));
     }
 
     /**
@@ -160,16 +160,18 @@ class EntityCollection extends Collection
      */
     public function getEntityHashes()
     {
-        return array_map(function ($entity) {
-            $class = get_class($entity);
+        return array_map(
+            function ($entity) {
+                $class = get_class($entity);
 
-            $mapper = Manager::getMapper($class);
+                $mapper = Manager::getMapper($class);
 
-            $keyName = $mapper->getEntityMap()->getKeyName();
+                $keyName = $mapper->getEntityMap()->getKeyName();
 
-            return $class.'.'.$entity->getEntityAttribute($keyName);
-        },
-        $this->items);
+                return $class . '.' . $entity->getEntityAttribute($keyName);
+            },
+            $this->items
+        );
     }
 
     /**
@@ -192,7 +194,7 @@ class EntityCollection extends Collection
 
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            if (in_array($class.'.'.$item->$keyName, $hashes)) {
+            if (in_array($class . '.' . $item->$keyName, $hashes)) {
                 $subset[] = $item;
             }
         }
@@ -275,7 +277,7 @@ class EntityCollection extends Collection
      */
     public function only($keys)
     {
-        $dictionary = array_only($this->getDictionary(), $keys);
+        $dictionary = Arr::only($this->getDictionary(), $keys);
 
         return new static(array_values($dictionary));
     }
@@ -289,7 +291,7 @@ class EntityCollection extends Collection
      */
     public function except($keys)
     {
-        $dictionary = array_except($this->getDictionary(), $keys);
+        $dictionary = Arr::except($this->getDictionary(), $keys);
 
         return new static(array_values($dictionary));
     }

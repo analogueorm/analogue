@@ -6,7 +6,7 @@ use TestApp\User;
 
 class HasOneTest extends DomainTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");

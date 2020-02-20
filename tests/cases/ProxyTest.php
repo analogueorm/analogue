@@ -11,7 +11,7 @@ use TestApp\User;
 
 class ProxyTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");
@@ -66,14 +66,16 @@ class ProxyTest extends AnalogueTestCase
             $table->string('title');
         });
 
-        $this->analogue->register(Foo::class, new class() extends EntityMap {
+        $this->analogue->register(Foo::class, new class () extends EntityMap
+        {
             public function bars(Foo $foo)
             {
                 return $this->hasMany($foo, Bar::class, 'custom_id', 'id')->orderBy('title', 'desc');
             }
         });
 
-        $this->analogue->register(Bar::class, new class() extends EntityMap {
+        $this->analogue->register(Bar::class, new class () extends EntityMap
+        {
         });
 
         $foo = new Foo();
@@ -116,7 +118,8 @@ class ProxyTest extends AnalogueTestCase
             $table->integer('foo_id');
             $table->string('title');
         });
-        $this->analogue->register(Foo::class, new class() extends EntityMap {
+        $this->analogue->register(Foo::class, new class () extends EntityMap
+        {
             protected $with = ['bars'];
 
             public function bars(Foo $foo)
@@ -124,7 +127,8 @@ class ProxyTest extends AnalogueTestCase
                 return $this->hasMany($foo, Bar::class, 'food_id', 'id');
             }
         });
-        $this->analogue->register(Bar::class, new class() extends EntityMap {
+        $this->analogue->register(Bar::class, new class () extends EntityMap
+        {
         });
         $foo = new Foo();
         $foo->title = 'Test';
@@ -148,9 +152,11 @@ class ProxyTest extends AnalogueTestCase
             $table->integer('foo_id')->nullable();
             $table->string('title');
         });
-        $this->analogue->register(Foo::class, new class() extends EntityMap {
+        $this->analogue->register(Foo::class, new class () extends EntityMap
+        {
         });
-        $this->analogue->register(Bar::class, new class() extends EntityMap {
+        $this->analogue->register(Bar::class, new class () extends EntityMap
+        {
             protected $with = ['foo'];
 
             public function foo(Bar $bar)

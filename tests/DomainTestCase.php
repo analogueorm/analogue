@@ -1,10 +1,11 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 abstract class DomainTestCase extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");
@@ -28,7 +29,7 @@ abstract class DomainTestCase extends AnalogueTestCase
             'id'                 => $this->randId(),
             'name'               => $faker->name,
             'email'              => $faker->email,
-            'password'           => bcrypt(str_random(30)),
+            'password'           => bcrypt(Str::random(30)),
             'identity_firstname' => $faker->firstName,
             'identity_lastname'  => $faker->lastName,
             'created_at'         => Carbon::now(),

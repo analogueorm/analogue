@@ -4,7 +4,7 @@ use TestApp\Blog;
 
 class EntityCollectionTest extends DomainTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");

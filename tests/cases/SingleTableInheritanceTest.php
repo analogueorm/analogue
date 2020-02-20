@@ -8,7 +8,7 @@ use TestApp\Wheel;
 
 class SingleTableInheritanceTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -86,13 +86,15 @@ class SingleTableInheritanceTest extends AnalogueTestCase
             $table->integer('car_id');
             $table->integer('number');
         });
-        $this->analogue->register(Car::class, new class() extends VehicleMap {
+        $this->analogue->register(Car::class, new class () extends VehicleMap
+        {
             public function wheels(Car $car)
             {
                 return $this->hasMany($car, Wheel::class);
             }
         });
-        $this->analogue->register(Wheel::class, new class() extends EntityMap {
+        $this->analogue->register(Wheel::class, new class () extends EntityMap
+        {
         });
         $id = $this->rawInsert('vehicles', [
             'name' => 'car',
@@ -123,13 +125,15 @@ class SingleTableInheritanceTest extends AnalogueTestCase
             $table->integer('car_id');
             $table->integer('number');
         });
-        $this->analogue->register(Car::class, new class() extends VehicleMap {
+        $this->analogue->register(Car::class, new class () extends VehicleMap
+        {
             public function wheels(Car $car)
             {
                 return $this->hasMany($car, Wheel::class);
             }
         });
-        $this->analogue->register(Wheel::class, new class() extends EntityMap {
+        $this->analogue->register(Wheel::class, new class () extends EntityMap
+        {
         });
 
         for ($x = 1; $x <= 10; $x++) {

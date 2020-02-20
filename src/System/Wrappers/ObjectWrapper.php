@@ -6,6 +6,7 @@ use Analogue\ORM\EntityMap;
 use Analogue\ORM\Exceptions\MappingException;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Proxies\ProxyFactory;
+use Illuminate\Support\Arr;
 use Zend\Hydrator\HydratorInterface;
 
 /**
@@ -116,7 +117,7 @@ class ObjectWrapper implements InternallyMappable
      */
     public function getEntityHash(): string
     {
-        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
+        return $this->getEntityClass() . '.' . $this->getEntityKeyValue();
     }
 
     /**
@@ -176,7 +177,7 @@ class ObjectWrapper implements InternallyMappable
 
         $this->properties = $properties;
 
-        $this->unmanagedProperties = array_except($properties, $this->getManagedProperties());
+        $this->unmanagedProperties = Arr::except($properties, $this->getManagedProperties());
 
         return $this->attributesFromProperties($properties);
     }
@@ -240,7 +241,7 @@ class ObjectWrapper implements InternallyMappable
         // attributes
         $managedProperties = $this->getManagedProperties();
 
-        $properties = array_only($properties, $managedProperties);
+        $properties = Arr::only($properties, $managedProperties);
 
         // If the entity does not uses the attributes array to store
         // part of its attributes, we'll directly return the properties
@@ -251,7 +252,7 @@ class ObjectWrapper implements InternallyMappable
         $arrayName = $this->entityMap->getAttributesArrayName();
 
         if (!array_key_exists($arrayName, $properties)) {
-            throw new MappingException("Property $arrayName not set on object of type ".$this->getEntityClass());
+            throw new MappingException("Property $arrayName not set on object of type " . $this->getEntityClass());
         }
 
         if (!is_array($properties[$arrayName])) {
@@ -276,8 +277,8 @@ class ObjectWrapper implements InternallyMappable
         // Get all managed properties
         $propertyNames = $this->entityMap->getProperties();
 
-        $propertyAttributes = array_only($this->attributes, $propertyNames);
-        $attributesArray = array_except($this->attributes, $propertyNames);
+        $propertyAttributes = Arr::only($this->attributes, $propertyNames);
+        $attributesArray = Arr::except($this->attributes, $propertyNames);
 
         $attributesArrayName = $this->entityMap->getAttributesArrayName();
 

@@ -5,6 +5,7 @@ namespace Analogue\ORM\System\Builders;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Mapper;
 use Closure;
+use Illuminate\Support\Str;
 
 class ResultBuilder implements ResultBuilderInterface
 {
@@ -292,7 +293,7 @@ class ResultBuilder implements ResultBuilderInterface
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoads as $name => $constraints) {
             if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation.'.'))] = $constraints;
+                $nested[substr($name, strlen($relation . '.'))] = $constraints;
             }
         }
 
@@ -309,9 +310,9 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function isNested(string $name, string $relation): bool
     {
-        $dots = str_contains($name, '.');
+        $dots = Str::contains($name, '.');
 
-        return $dots && starts_with($name, $relation.'.');
+        return $dots && Str::startsWith($name, $relation . '.');
     }
 
     /**
