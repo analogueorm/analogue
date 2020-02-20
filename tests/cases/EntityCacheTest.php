@@ -19,8 +19,7 @@ class EntityCacheTest extends AnalogueTestCase
             $table->timestamps();
         });
 
-        $this->analogue->register(Foo::class, new class () extends EntityMap
-        {
+        $this->analogue->register(Foo::class, new class() extends EntityMap {
             public $timestamps = true;
         });
 

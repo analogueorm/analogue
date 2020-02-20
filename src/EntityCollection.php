@@ -168,7 +168,7 @@ class EntityCollection extends Collection
 
                 $keyName = $mapper->getEntityMap()->getKeyName();
 
-                return $class . '.' . $entity->getEntityAttribute($keyName);
+                return $class.'.'.$entity->getEntityAttribute($keyName);
             },
             $this->items
         );
@@ -194,7 +194,7 @@ class EntityCollection extends Collection
 
             $keyName = $mapper->getEntityMap()->getKeyName();
 
-            if (in_array($class . '.' . $item->$keyName, $hashes)) {
+            if (in_array($class.'.'.$item->$keyName, $hashes)) {
                 $subset[] = $item;
             }
         }
