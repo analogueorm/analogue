@@ -117,7 +117,7 @@ class ObjectWrapper implements InternallyMappable
      */
     public function getEntityHash(): string
     {
-        return $this->getEntityClass() . '.' . $this->getEntityKeyValue();
+        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
     }
 
     /**
@@ -252,7 +252,7 @@ class ObjectWrapper implements InternallyMappable
         $arrayName = $this->entityMap->getAttributesArrayName();
 
         if (!array_key_exists($arrayName, $properties)) {
-            throw new MappingException("Property $arrayName not set on object of type " . $this->getEntityClass());
+            throw new MappingException("Property $arrayName not set on object of type ".$this->getEntityClass());
         }
 
         if (!is_array($properties[$arrayName])) {

@@ -293,7 +293,7 @@ class ResultBuilder implements ResultBuilderInterface
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoads as $name => $constraints) {
             if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation . '.'))] = $constraints;
+                $nested[substr($name, strlen($relation.'.'))] = $constraints;
             }
         }
 
@@ -312,7 +312,7 @@ class ResultBuilder implements ResultBuilderInterface
     {
         $dots = Str::contains($name, '.');
 
-        return $dots && Str::startsWith($name, $relation . '.');
+        return $dots && Str::startsWith($name, $relation.'.');
     }
 
     /**

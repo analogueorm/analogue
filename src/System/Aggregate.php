@@ -9,8 +9,8 @@ use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\System\Wrappers\Factory;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use MongoDB\BSON\ObjectId;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use ProxyManager\Proxy\ProxyInterface;
@@ -362,7 +362,7 @@ class Aggregate implements InternallyMappable
      */
     public function getEntityHash(): string
     {
-        return $this->getEntityClass() . '.' . $this->getEntityKeyValue();
+        return $this->getEntityClass().'.'.$this->getEntityKeyValue();
     }
 
     /**
@@ -694,7 +694,7 @@ class Aggregate implements InternallyMappable
             $prefix = Str::snake(class_basename($embed));
 
             foreach ($valueObjectAttributes as $key => $value) {
-                $valueObjectAttributes[$prefix . '_' . $key] = $value;
+                $valueObjectAttributes[$prefix.'_'.$key] = $value;
                 unset($valueObjectAttributes[$key]);
             }
 

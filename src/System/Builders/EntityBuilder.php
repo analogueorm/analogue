@@ -186,11 +186,11 @@ class EntityBuilder
         $voWrapper = $this->factory->make($valueObject);
 
         foreach ($embeddedAttributes as $key) {
-            $prefix = lcfirst(class_basename($valueClass)) . '_';
+            $prefix = lcfirst(class_basename($valueClass)).'_';
 
-            $voWrapper->setEntityAttribute($key, $attributes[$prefix . $key]);
+            $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
 
-            unset($attributes[$prefix . $key]);
+            unset($attributes[$prefix.$key]);
         }
 
         $attributes[$localKey] = $voWrapper->getObject();

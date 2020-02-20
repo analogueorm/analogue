@@ -405,7 +405,7 @@ class Mapper
             throw new InvalidArgumentException('Fired Event with invalid Entity Object');
         }*/
 
-        $eventName = "analogue.{$event}." . $this->entityMap->getClass();
+        $eventName = "analogue.{$event}.".$this->entityMap->getClass();
 
         $method = $halt ? 'until' : 'dispatch';
 
