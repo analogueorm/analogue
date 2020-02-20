@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use TestApp\Identity;
 
 $factory->define(TestApp\User::class, function (Faker\Generator $faker) {
@@ -11,8 +12,8 @@ $factory->define(TestApp\User::class, function (Faker\Generator $faker) {
         'email'          => $faker->email,
         'identity'       => $identity,
         'groups'         => new Collection(),
-        'password'       => bcrypt(str_random(10)),
-        'remember_token' => str_random(10),
+        'password'       => bcrypt(Str::random(10)),
+        'remember_token' => Str::random(10),
     ];
 });
 

@@ -5,7 +5,7 @@ use TestApp\Stubs\Foo;
 
 class EntityCacheTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

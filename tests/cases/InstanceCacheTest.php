@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Support\Str;
 use TestApp\Blog;
 use TestApp\User;
 
 class InstanceCacheTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");
@@ -84,7 +85,7 @@ class InstanceCacheTest extends AnalogueTestCase
 
         foreach ($props as $prop) {
             $name = $prop->getName();
-            if (starts_with($prop->getName(), 'valueHolder')) {
+            if (Str::startsWith($prop->getName(), 'valueHolder')) {
                 $prop->setAccessible(true);
 
                 return $prop->getValue($proxy);

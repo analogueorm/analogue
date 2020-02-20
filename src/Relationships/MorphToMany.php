@@ -4,6 +4,7 @@ namespace Analogue\ORM\Relationships;
 
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Query;
+use Illuminate\Support\Arr;
 
 class MorphToMany extends BelongsToMany
 {
@@ -110,7 +111,7 @@ class MorphToMany extends BelongsToMany
     {
         $record = parent::createAttachRecord($id, $timed);
 
-        return array_add($record, $this->morphType, $this->morphClass);
+        return Arr::add($record, $this->morphType, $this->morphClass);
     }
 
     /**

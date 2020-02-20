@@ -52,7 +52,7 @@ class CollectionProxyTest extends DomainTestCase
             }
 
             if (!in_array($parentMethod, $proxyMethods)) {
-                throw new \Exception("$parentMethod should be ovverided");
+                throw new \Exception("$parentMethod should be overridden");
             }
         }
 

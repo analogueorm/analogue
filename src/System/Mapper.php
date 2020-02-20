@@ -15,6 +15,7 @@ use Analogue\ORM\System\Cache\InstanceCache;
 use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
@@ -406,7 +407,7 @@ class Mapper
 
         $eventName = "analogue.{$event}.".$this->entityMap->getClass();
 
-        $method = $halt ? 'until' : 'fire';
+        $method = $halt ? 'until' : 'dispatch';
 
         if (!array_key_exists($event, $this->events)) {
             throw new \LogicException("Analogue : Event $event doesn't exist");
@@ -477,7 +478,7 @@ class Mapper
      */
     public function getGlobalScope($scope)
     {
-        return array_first($this->globalScopes, function ($key, $value) use ($scope) {
+        return Arr::first($this->globalScopes, function ($key, $value) use ($scope) {
             return $scope instanceof $value;
         });
     }

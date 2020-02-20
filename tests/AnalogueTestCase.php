@@ -17,7 +17,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
 
     protected $usedIds = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -82,7 +82,7 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
         $conn = null;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if (!$this->useSqlite) {
             $this->dropTestDatabase();
@@ -273,7 +273,8 @@ abstract class AnalogueTestCase extends Illuminate\Foundation\Testing\TestCase
      */
     protected function logEvents()
     {
-        $events = ['store',
+        $events = [
+            'store',
             'stored',
             'creating',
             'created',
