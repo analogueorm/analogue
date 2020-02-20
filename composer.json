@@ -15,6 +15,11 @@
         {
             "name": "Rémi Collin",
             "email": "remi@code16.fr"
+        },
+        {
+            "name": "Adro Rocker",
+            "email": "me@adro.rocks",
+            "homepage": "https://github.com/adrorocker"
         }
     ],
     "require": {
