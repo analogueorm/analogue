@@ -278,7 +278,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
 
         $parent = $this->toBaseCollection();
 
-        return $parent->diffKeysUsing($items);
+        return $parent->diffKeysUsing($items, $callback);
     }
 
     /**
@@ -471,7 +471,7 @@ class CollectionProxy extends EntityCollection implements ProxyInterface
      */
     public function whereNotBetween($key, $values)
     {
-        return parent::whereNotBetween($key, $valuese);
+        return parent::whereNotBetween($key, $values);
     }
 
     /**
