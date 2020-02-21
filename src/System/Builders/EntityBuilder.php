@@ -5,6 +5,7 @@ namespace Analogue\ORM\System\Builders;
 use Analogue\ORM\System\InternallyMappable;
 use Analogue\ORM\System\Mapper;
 use Analogue\ORM\System\Wrappers\Factory;
+use Illuminate\Support\Str;
 
 /**
  * This class builds an array of Entity object(s) from a result set.
@@ -186,7 +187,7 @@ class EntityBuilder
         $voWrapper = $this->factory->make($valueObject);
 
         foreach ($embeddedAttributes as $key) {
-            $prefix = lcfirst(class_basename($valueClass)).'_';
+            $prefix = Str::snake(class_basename($valueClass)).'_';
 
             $voWrapper->setEntityAttribute($key, $attributes[$prefix.$key]);
 
