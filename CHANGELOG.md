@@ -1,5 +1,8 @@
 # Changelog
 
+#### Version 6.0
+- Laravel 6.0 support
+
 #### Version 5.6
 - Laravel 5.6 support
 - Bring back ability to map DB columns that name are not equals to the name of the attribute.

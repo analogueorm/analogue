@@ -8,7 +8,7 @@ use TestApp\Wheel;
 
 class SingleTableInheritanceTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

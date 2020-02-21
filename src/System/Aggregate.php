@@ -8,7 +8,9 @@ use Analogue\ORM\Relationships\Pivot;
 use Analogue\ORM\System\Cache\AttributeCache;
 use Analogue\ORM\System\Proxies\CollectionProxy;
 use Analogue\ORM\System\Wrappers\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use MongoDB\BSON\ObjectId;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use ProxyManager\Proxy\ProxyInterface;
@@ -689,7 +691,7 @@ class Aggregate implements InternallyMappable
 
             // Now (if setup in the entity map) we prefix the value object's
             // attributes with the snake_case name of the embedded class.
-            $prefix = snake_case(class_basename($embed));
+            $prefix = Str::snake(class_basename($embed));
 
             foreach ($valueObjectAttributes as $key => $value) {
                 $valueObjectAttributes[$prefix.'_'.$key] = $value;
@@ -737,7 +739,7 @@ class Aggregate implements InternallyMappable
             return $cachedAttributes;
         }
 
-        return array_only($cachedAttributes, $columns);
+        return Arr::only($cachedAttributes, $columns);
     }
 
     /**
@@ -878,7 +880,8 @@ class Aggregate implements InternallyMappable
         // methods on the parent entity map
         $parentRelation = $this->parentRelationship;
 
-        if (in_array($parentRelation, $parentForeignRelations) &&
+        if (
+            in_array($parentRelation, $parentForeignRelations) &&
             !in_array($parentRelation, $parentPivotRelations)
         ) {
             $parentObject = $this->parent->getEntityObject();
@@ -964,7 +967,7 @@ class Aggregate implements InternallyMappable
 
             $cachedPivotAttributes = $this->getPivotAttributesFromCache($pivotHash, $relation);
 
-            $actualPivotAttributes = array_only($pivot, array_keys($cachedPivotAttributes));
+            $actualPivotAttributes = Arr::only($pivot, array_keys($cachedPivotAttributes));
 
             $dirty = $this->getDirtyAttributes($actualPivotAttributes, $cachedPivotAttributes);
 
@@ -1114,8 +1117,10 @@ class Aggregate implements InternallyMappable
 
             if (!array_key_exists($key, $cachedAttributes) && !$value instanceof Pivot) {
                 $dirty[$key] = $value;
-            } elseif ($value !== $cachedAttributes[$key] &&
-                !$this->originalIsNumericallyEquivalent($value, $cachedAttributes[$key])) {
+            } elseif (
+                $value !== $cachedAttributes[$key] &&
+                !$this->originalIsNumericallyEquivalent($value, $cachedAttributes[$key])
+            ) {
                 $dirty[$key] = $value;
             }
         }

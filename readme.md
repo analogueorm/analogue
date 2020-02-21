@@ -1,5 +1,3 @@
-(this project is looking for a new maintainer)
-
 # Analogue ORM 
 [![Latest Stable Version](https://poser.pugx.org/analogue/orm/v/stable)](https://packagist.org/packages/analogue/orm)
 [![Latest Unstable Version](https://poser.pugx.org/analogue/orm/v/unstable)](https://packagist.org/packages/analogue/orm)
@@ -121,6 +119,9 @@ Check the [Documentation](https://github.com/analogueorm/analogue/wiki) for more
 
 
 ## Changelog 
+
+#### Version 6.0
+- Laravel 6.0 support
 
 #### Version 5.6
 - Laravel 5.6 support

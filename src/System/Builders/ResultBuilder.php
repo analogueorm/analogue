@@ -5,6 +5,7 @@ namespace Analogue\ORM\System\Builders;
 use Analogue\ORM\Relationships\Relationship;
 use Analogue\ORM\System\Mapper;
 use Closure;
+use Illuminate\Support\Str;
 
 class ResultBuilder implements ResultBuilderInterface
 {
@@ -309,9 +310,9 @@ class ResultBuilder implements ResultBuilderInterface
      */
     protected function isNested(string $name, string $relation): bool
     {
-        $dots = str_contains($name, '.');
+        $dots = Str::contains($name, '.');
 
-        return $dots && starts_with($name, $relation.'.');
+        return $dots && Str::startsWith($name, $relation.'.');
     }
 
     /**

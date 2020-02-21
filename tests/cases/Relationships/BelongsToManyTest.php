@@ -56,7 +56,7 @@ class BelongsToManyTest extends DomainTestCase
             $user = $mapper->find($userId);
             $this->assertCount(count($groupIds), $user->groups);
             foreach ($user->groups as $group) {
-                $this->assertContains($group->id, $groupIds);
+                $this->assertContains(intval($group->id), $groupIds);
                 $this->assertInstanceOf(Group::class, $group);
             }
         }
@@ -277,7 +277,7 @@ class BelongsToManyTest extends DomainTestCase
             $this->assertInstanceOf(EntityCollection::class, $user->groups);
             $this->assertCount(count($groupIds), $user->groups);
             foreach ($user->groups as $group) {
-                $this->assertContains($group->id, $groupIds);
+                $this->assertContains(intval($group->id), $groupIds);
                 $this->assertInstanceOf(Group::class, $group);
             }
         }

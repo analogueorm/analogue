@@ -5,7 +5,7 @@ use TestApp\User;
 
 class EntityMapTest extends AnalogueTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->analogue->registerMapNamespace("TestApp\Maps");

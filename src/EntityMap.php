@@ -18,6 +18,7 @@ use Analogue\ORM\System\Manager;
 use Analogue\ORM\System\Wrappers\Factory;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use ReflectionClass;
 
 /**
@@ -437,7 +438,7 @@ class EntityMap
             return $this->table;
         }
 
-        return str_replace('\\', '', snake_case(str_plural(class_basename($this->getClass()))));
+        return str_replace('\\', '', Str::snake(Str::plural(class_basename($this->getClass()))));
     }
 
     /**
@@ -871,7 +872,7 @@ class EntityMap
      */
     public function getForeignKey(): string
     {
-        return snake_case(class_basename($this->getClass())).'_id';
+        return Str::snake(class_basename($this->getClass())).'_id';
     }
 
     /**
@@ -1094,7 +1095,7 @@ class EntityMap
             $this->with[] = $relation;
         }
 
-        return new HasOne($relatedMapper, $entity, /*$relatedMap->getTable().'.'*/$foreignKey, $localKey);
+        return new HasOne($relatedMapper, $entity, /*$relatedMap->getTable().'.'*/ $foreignKey, $localKey);
     }
 
     /**
@@ -1142,7 +1143,7 @@ class EntityMap
             $this->with[] = $relation;
         }
 
-        return new MorphOne($relatedMapper, $entity, /*$table.'.'.*/$type, /*$table.'.'.*/$id, $localKey);
+        return new MorphOne($relatedMapper, $entity, /*$table.'.'.*/ $type, /*$table.'.'.*/ $id, $localKey);
     }
 
     /**
@@ -1171,7 +1172,7 @@ class EntityMap
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (is_null($foreignKey)) {
-            $foreignKey = snake_case($relation).'_id';
+            $foreignKey = Str::snake($relation).'_id';
         }
 
         $this->localForeignKeys[$relation] = $foreignKey;
@@ -1203,7 +1204,7 @@ class EntityMap
         if (is_null($name)) {
             list(, $caller) = debug_backtrace(false);
 
-            $name = snake_case($caller['function']);
+            $name = Str::snake($caller['function']);
         }
         $this->addSingleRelation($name);
         $this->addLocalRelation($name);
@@ -1368,7 +1369,7 @@ class EntityMap
         $this->addManyRelation($relation);
         $this->addForeignRelation($relation);
 
-        return new MorphMany($relatedMapper, $entity, /*$table.'.'.*/$type, /*$table.'.'.*/$id, $localKey);
+        return new MorphMany($relatedMapper, $entity, /*$table.'.'.*/ $type, /*$table.'.'.*/ $id, $localKey);
     }
 
     /**
@@ -1463,7 +1464,7 @@ class EntityMap
 
         $otherKey = $otherKey ?: $relatedMapper->getEntityMap()->getForeignKey();
 
-        $table = $table ?: str_plural($name);
+        $table = $table ?: Str::plural($name);
 
         return new MorphToMany($relatedMapper, $entity, $name, $table, $foreignKey, $otherKey, $caller, $inverse);
     }
@@ -1744,7 +1745,7 @@ class EntityMap
         if ($this->camelCaseHydratation) {
             $newArray = [];
             foreach ($array as $key => $value) {
-                $attributeName = camel_case($key);
+                $attributeName = Str::camel($key);
                 $newArray[$attributeName] = $value;
             }
 
@@ -1796,7 +1797,7 @@ class EntityMap
         if ($this->camelCaseHydratation) {
             $newArray = [];
             foreach ($array as $key => $value) {
-                $attributeName = snake_case($key);
+                $attributeName = Str::snake($key);
                 $newArray[$attributeName] = $value;
             }
 
@@ -1812,6 +1813,6 @@ class EntityMap
             return in_array($attribute, array_values($this->mappings));
         }
 
-        return in_array($attribute, $attributes);
+        return in_array($attribute, $this->attributes);
     }
 }
