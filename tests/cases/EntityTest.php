@@ -29,7 +29,7 @@ class EntityTest extends AnalogueTestCase
         $userJson = json_encode($user);
         $this->assertFalse(array_key_exists('password', $userArray));
         $reencode = json_decode($userJson);
-        $this->assertFalse(array_key_exists('password', $reencode));
+        $this->assertFalse(property_exists($reencode, 'password'));
     }
 
     /** @test */

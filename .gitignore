@@ -5,3 +5,4 @@ composer.lock
 psr2
 studio.json
 .idea
+.phpunit.result.cache

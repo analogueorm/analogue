@@ -3,6 +3,7 @@ language: php
 php:
   - 7.2
   - 7.3
+  - 7.4
 
 matrix:
   fast_finish: true
@@ -18,4 +19,6 @@ script:
   - vendor/bin/phpunit
 
 env:
-  - LARAVEL_VERSION=6.*
+  - LARAVEL_VERSION=6.0.*
+  - LARAVEL_VERSION=6.1.*
+  - LARAVEL_VERSION=6.2.*
