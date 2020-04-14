@@ -222,7 +222,9 @@ class EmbedsOneTest extends DomainTestCase
     protected function createImageRecord(array $size)
     {
         $id = $this->db()->table('images')->insertGetId(array_merge(
-            ['url' => 'some url'], $size));
+            ['url' => 'some url'],
+            $size
+        ));
 
         return $id;
     }
